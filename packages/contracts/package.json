@@ -1,0 +1,19 @@
+{
+  "name": "@disastar/contracts",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    "./health": "./src/health.ts"
+  },
+  "scripts": {
+    "lint": "eslint . --max-warnings 0",
+    "check-types": "tsc --noEmit --pretty false"
+  },
+  "devDependencies": {
+    "@disastar/eslint-config": "workspace:*",
+    "@disastar/typescript-config": "workspace:*",
+    "eslint": "^9.39.1",
+    "typescript": "^7.0.0"
+  }
+}

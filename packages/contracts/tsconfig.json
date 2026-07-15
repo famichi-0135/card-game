@@ -1,0 +1,8 @@
+{
+  "extends": "@disastar/typescript-config/base.json",
+  "compilerOptions": {
+    "noEmit": true
+  },
+  "include": ["src"],
+  "exclude": ["node_modules", "dist"]
+}

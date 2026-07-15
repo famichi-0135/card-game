@@ -1,0 +1,12 @@
+{
+  "extends": ["//"],
+  "tasks": {
+    "build": {
+      "inputs": ["$TURBO_DEFAULT$", ".env*", ".dev.vars*"],
+      "outputs": ["dist/**"]
+    },
+    "check-types": {
+      "outputs": ["node_modules/.tmp/*.tsbuildinfo"]
+    }
+  }
+}

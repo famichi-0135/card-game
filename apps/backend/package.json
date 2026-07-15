@@ -1,0 +1,22 @@
+{
+  "name": "@disastar/backend",
+  "type": "module",
+  "scripts": {
+    "dev": "wrangler dev",
+    "build": "wrangler deploy --dry-run",
+    "lint": "eslint . --max-warnings 0",
+    "check-types": "tsc --noEmit --pretty false",
+    "deploy": "wrangler deploy --minify",
+    "cf-typegen": "wrangler types --env-interface CloudflareBindings"
+  },
+  "dependencies": {
+    "@disastar/contracts": "workspace:*",
+    "hono": "^4.12.30"
+  },
+  "devDependencies": {
+    "@disastar/eslint-config": "workspace:*",
+    "eslint": "^9.39.1",
+    "typescript": "^7.0.0",
+    "wrangler": "^4.110.0"
+  }
+}

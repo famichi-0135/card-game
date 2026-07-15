@@ -1,0 +1,8 @@
+node_modules/
+.agents/
+.turbo/
+dist/
+.wrangler/
+pnpm-lock.yaml
+skills-lock.json
+worker-configuration.d.ts

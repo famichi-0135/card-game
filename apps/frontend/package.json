@@ -1,0 +1,32 @@
+{
+  "name": "@disastar/frontend",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc -b && vite build",
+    "lint": "eslint . --max-warnings 0",
+    "check-types": "tsc -b --pretty false",
+    "preview": "pnpm run build && vite preview",
+    "deploy": "pnpm run build && wrangler deploy",
+    "cf-typegen": "wrangler types"
+  },
+  "dependencies": {
+    "@disastar/contracts": "workspace:*",
+    "react": "^19.2.7",
+    "react-dom": "^19.2.7"
+  },
+  "devDependencies": {
+    "@disastar/eslint-config": "workspace:*",
+    "@cloudflare/vite-plugin": "^1.44.0",
+    "@types/node": "^24.13.3",
+    "@types/react": "^19.2.17",
+    "@types/react-dom": "^19.2.3",
+    "@vitejs/plugin-react": "^6.0.3",
+    "eslint": "^9.39.1",
+    "typescript": "^7.0.0",
+    "vite": "^8.1.1",
+    "wrangler": "^4.110.0"
+  }
+}
