@@ -2,6 +2,8 @@
 
 Cloudflare Workers と React を使うカードゲーム用の pnpm / Turborepo モノレポです。
 
+チームでの Git/GitHub 運用は [docs/チーム開発ガイド](./docs/team-development.md) を参照してください。
+
 ## Workspace
 
 - `apps/frontend`: React + Vite のフロントエンド Worker。`/api/*` を Backend へ Service Binding 経由で委譲します。
@@ -26,6 +28,8 @@ pnpm run lint
 pnpm run check-types
 pnpm run build
 ```
+
+GitHub Actions は pull request、push、手動実行で、整形・lint・型検査・build を実行します。
 
 `pnpm run dev` は Frontend と Backend を同時に起動します。Frontend は
 `http://localhost:5173`、Backend は `http://127.0.0.1:8787` で待ち受けます。
