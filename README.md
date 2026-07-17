@@ -43,4 +43,5 @@ pnpm --filter @disastar/frontend run cf-typegen
 
 本番では Backend を先に deploy し、Frontend が `BACKEND` Service Binding を通じて
 `disastar-backend` を呼び出します。
+
 # card-game
