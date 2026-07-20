@@ -26,10 +26,11 @@ pnpm run dev
 pnpm run format:check
 pnpm run lint
 pnpm run check-types
+pnpm run test
 pnpm run build
 ```
 
-GitHub Actions は pull request、push、手動実行で、整形・lint・型検査・build を実行します。
+GitHub Actions は `main` 宛の pull request、`main` への push、手動実行で、整形・lint・型検査・テスト・build を実行します。
 
 `pnpm run dev` は Frontend と Backend を同時に起動します。Frontend は
 `http://localhost:5173`、Backend は `http://127.0.0.1:8787` で待ち受けます。
