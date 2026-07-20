@@ -14,10 +14,9 @@
 
 - カード効果の発動条件検証
 - 効果対象の検証
-- 効果解決前の実行可能性検証
-- カード効果の解決
-- 継続効果の登録
-- 継続効果の終了
+- 効果計画作成前の実行可能性検証
+- カード効果の`EffectResolutionPlan`作成
+- 継続効果の登録・終了計画作成
 - 効果適用順序の管理
 - 攻撃力修正
 - みなもと変更
@@ -25,7 +24,6 @@
 - カードドロー
 - 攻撃グループ除去
 - サポートカード除去
-- 効果に対応するゲームイベントの生成
 
 カード効果システムは、次の処理を直接担当しない。
 
@@ -39,6 +37,9 @@
 - 通常の攻撃カード配置
 - 通常の手札補充
 - 通常の勝敗判定
+- 計画の状態への適用
+- 効果インスタンスIDとシーケンスの採番
+- ドメインイベントの生成
 
 これらは、ゲームエンジンまたはバックエンド層が担当する。
 
@@ -59,9 +60,11 @@
 ↓
 発動条件と対象を検証
 ↓
-効果を解決
+EffectResolutionPlanを作成
 ↓
-必要な場合は継続効果を登録
+ゲームエンジンが仮状態へ適用・検証
+↓
+成功時だけ状態とイベントを確定
 ```
 
 カード名やカードIDごとの処理を、ゲームエンジン本体の巨大な`switch`文へ直接記述してはならない。
@@ -151,9 +154,7 @@ onPlay効果を解決
 
 ## 6. サポートカードの継続期間
 
-```ts
-export type SupportDuration = "instant" | "untilRoundEnd" | "permanent";
-```
+`SupportDuration`は「ゲームエンジン仕様書」の共通契約を使用し、`instant`、`untilRoundEnd`、`permanent`の3種類とする。
 
 ### 6.1 `instant`
 
@@ -215,34 +216,15 @@ export type SupportDuration = "instant" | "untilRoundEnd" | "permanent";
 
 ### 7.1 攻撃カード定義
 
-```ts
-export type AttackCardDefinition = {
-  id: CardDefinitionId;
-  name: string;
-  cardType: "attack";
-  attribute: Attribute;
-  cost: number;
-  basePower: number;
-  chainableCardIds: CardDefinitionId[];
-  effects: CardEffectDefinition[];
-};
-```
+`AttackCardDefinition`は「ゲームエンジン仕様書」で定義した共通契約を使用する。本書で別の型を再定義しない。
 
 効果を持たない攻撃カードは、`effects`を空配列とする。
 
+初期カードカタログではすべての攻撃カードの`effects`を空配列とする。ただし、エンジンの配置・連鎖処理は将来の追加に備えて効果入力、`onPlay`計画、`continuous`登録の処理経路を持つ。
+
 ### 7.2 サポートカード定義
 
-```ts
-export type SupportCardDefinition = {
-  id: CardDefinitionId;
-  name: string;
-  cardType: "support";
-  attribute: Attribute;
-  cost: number;
-  duration: SupportDuration;
-  effects: CardEffectDefinition[];
-};
-```
+`SupportCardDefinition`も「ゲームエンジン仕様書」で定義した共通契約を使用する。発動形式はカード単位ではなく、`effects`内の各効果が持つ。
 
 サポートカードは最低1つの効果を持たなければならない。
 
@@ -250,7 +232,7 @@ export type SupportCardDefinition = {
 
 ```ts
 export type BaseEffectDefinition = {
-  effectId: string;
+  effectId: EffectId;
   activationType: EffectActivationType;
   targetRule: TargetRule;
 };
@@ -310,74 +292,39 @@ export type CardEffectDefinition =
 export type CustomEffectDefinition = BaseEffectDefinition & {
   type: "custom";
   handlerId: string;
-  config: Record<string, unknown>;
+  config: JsonObject;
 };
 ```
 
 `handlerId`に対応する効果ハンドラーを、効果レジストリから取得する。
 
-```ts
-export type EffectRegistry = Record<string, CardEffectHandler>;
-```
+`EffectRegistry`は「ゲームエンジン仕様書」の共通契約を使用する。
 
 ---
 
 ## 10. 効果対象
 
-```ts
-export type EffectTarget =
-  | CardEffectTarget
-  | AttackGroupEffectTarget
-  | SupportCardEffectTarget
-  | PlayerEffectTarget
-  | ManaEffectTarget;
-```
+`EffectTarget`、`TargetSide`、`TargetZone`、`TargetRule`は`packages/game-engine/src/contracts/effect-target.ts`を唯一の正本とし、「ゲームエンジン仕様書」に記載した共通契約を使用する。
 
 ### 10.1 攻撃カード対象
 
-```ts
-export type CardEffectTarget = {
-  type: "attackCard";
-  cardInstanceId: CardInstanceId;
-};
-```
+判別子`attackCard`と`cardInstanceId`で指定する。
 
 ### 10.2 攻撃グループ対象
 
-```ts
-export type AttackGroupEffectTarget = {
-  type: "attackGroup";
-  groupId: AttackGroupId;
-};
-```
+判別子`attackGroup`と`groupId`で指定する。
 
 ### 10.3 サポートカード対象
 
-```ts
-export type SupportCardEffectTarget = {
-  type: "supportCard";
-  cardInstanceId: CardInstanceId;
-};
-```
+判別子`supportCard`と`cardInstanceId`で指定する。
 
 ### 10.4 プレイヤー対象
 
-```ts
-export type PlayerEffectTarget = {
-  type: "player";
-  playerId: PlayerId;
-};
-```
+判別子`player`と`playerId`で指定する。
 
 ### 10.5 みなもと対象
 
-```ts
-export type ManaEffectTarget = {
-  type: "mana";
-  playerId: PlayerId;
-  attribute: Attribute;
-};
-```
+判別子`mana`、`playerId`、`attribute`で指定する。
 
 対戦中のカードを指定するときは、カード定義IDではなくカードインスタンスIDを使用する。
 
@@ -385,29 +332,26 @@ export type ManaEffectTarget = {
 
 ## 11. 対象ルール
 
-```ts
-export type TargetSide = "self" | "opponent" | "either";
-```
+対象ルールは共通契約の`TargetRule`を使用する。`minTargets`と`maxTargets`は0以上の整数かつ`minTargets <= maxTargets`でなければならない。
 
-```ts
-export type TargetZone =
-  | "attackCard"
-  | "attackGroup"
-  | "supportCard"
-  | "player"
-  | "mana";
-```
+- `required: true`では`minTargets >= 1`
+- `required: false`では`minTargets === 0`
+- `maxTargets === 0`では`zones`を空配列にする
+- `maxTargets >= 1`では`zones`を1種類以上指定する
+- `allowSourceCard`はカードを対象にできる効果でだけ使用する
 
-```ts
-export type TargetRule = {
-  required: boolean;
-  minTargets: number;
-  maxTargets: number;
-  side: TargetSide;
-  zones: TargetZone[];
-  allowSourceCard: boolean;
-};
-```
+初期共通効果の対象ゾーンは次の組み合わせに限定する。
+
+| 効果                         | 対象ゾーン    |
+| ---------------------------- | ------------- |
+| `modifyPower` + `cardPower`  | `attackCard`  |
+| `modifyPower` + `groupPower` | `attackGroup` |
+| `modifyPower` + `totalPower` | `player`      |
+| `changeStamina`              | `player`      |
+| `reduceMana`                 | `mana`        |
+| `drawCards`                  | 対象なし      |
+| `removeAttackGroup`          | `attackGroup` |
+| `removeSupportCard`          | `supportCard` |
 
 ### 11.1 対象を必要としない効果
 
@@ -415,7 +359,6 @@ export type TargetRule = {
 
 ```text
 カードを2枚引く
-自分のスタミナを3増やす
 ```
 
 ```ts
@@ -452,18 +395,9 @@ const targetRule: TargetRule = {
 
 ## 12. サポートカード使用コマンド
 
-複数対象に対応するため、サポートカード使用コマンドは対象を配列として保持する。
+`EffectInput`と`PlaySupportCardCommand`は「ゲームエンジン仕様書」の共通契約を使用する。コマンドはカード定義にある効果ごとに、`effectId`、`targets`、任意のJSONパラメーターを1組送る。対象を必要としない効果では、対応する入力の`targets`を空配列とする。
 
-```ts
-export type PlaySupportCardCommand = BaseGameCommand & {
-  type: "PLAY_SUPPORT_CARD";
-  cardInstanceId: CardInstanceId;
-  targets: EffectTarget[];
-  parameters?: Record<string, unknown>;
-};
-```
-
-対象を必要としないカードでは、`targets`を空配列とする。
+同じ`effectId`の重複、未知の`effectId`、必要な入力の不足はコマンド全体の拒否理由とする。入力配列の順番は解決順に使用せず、カード定義の`effects`順で解決する。
 
 フロントエンドが送信した対象情報を信用せず、バックエンド側で再検証する。
 
@@ -471,18 +405,7 @@ export type PlaySupportCardCommand = BaseGameCommand & {
 
 ## 13. 効果実行コンテキスト
 
-```ts
-export type EffectContext = {
-  state: GameState;
-  sourceCardInstanceId: CardInstanceId;
-  sourceCardDefinitionId: CardDefinitionId;
-  ownerId: PlayerId;
-  targets: EffectTarget[];
-  parameters: Record<string, unknown>;
-  currentRound: number;
-  appliedSequence: number;
-};
-```
+`EffectContext`と`DeepReadonly`は「ゲームエンジン仕様書」の共通契約を使用する。コンテキストには読み取り専用状態、固定済みルール、固定済みカードカタログ、効果元カード、所有者、現在処理中の`EffectInput`、現在ラウンドを含める。
 
 効果ハンドラーは、ネットワーク、データベース、現在時刻、乱数へ直接アクセスしてはならない。
 
@@ -492,43 +415,15 @@ export type EffectContext = {
 
 ## 14. 効果ハンドラー
 
-```ts
-export interface CardEffectHandler {
-  validate(
-    context: EffectContext,
-    definition: CardEffectDefinition,
-  ): EffectValidationResult;
-
-  resolve(
-    context: EffectContext,
-    definition: CardEffectDefinition,
-  ): EffectResolution;
-}
-```
+`CardEffectHandler`は「ゲームエンジン仕様書」の共通契約を使用する。`validateDefinition`はカタログ読み込み時に設定を検証し、`validate`は実行時状態を変更せず検証結果を返し、`plan`は検証済み入力から`EffectResolutionPlan`を返す。
 
 ### 14.1 検証結果
 
-```ts
-export type EffectValidationResult =
-  | {
-      valid: true;
-    }
-  | {
-      valid: false;
-      errors: EffectValidationError[];
-    };
-```
+`EffectValidationResult`と`EffectValidationError`も共通契約を使用する。
 
-### 14.2 解決結果
+### 14.2 解決計画
 
-```ts
-export type EffectResolution = {
-  state: GameState;
-  events: GameEvent[];
-  activeEffectsAdded: ActiveEffect[];
-  activeEffectIdsRemoved: EffectInstanceId[];
-};
-```
+`EffectResolutionPlan`と`EffectPlanOperation`は「ゲームエンジン仕様書」の共通契約を使用する。ハンドラーは新しい状態やイベントを返さず、状態変更の意図だけを返す。
 
 ---
 
@@ -573,34 +468,28 @@ export type EffectResolution = {
 - 継続効果登録
 - 捨て札追加
 
+ハンドラーへ渡す状態は`DeepReadonly<GameState>`とする。エンジンは元状態を直接変更せず、計画をローカルな仮状態へ適用する。開発・テストでは入力状態を再帰的に`deepFreeze`し、ハンドラーによる実行時の変更も検出する。
+
 ---
 
 ## 17. 効果解決前の計画作成
 
 複数段階の効果では、可能な限り状態変更前に解決計画を作成する。
 
-```ts
-export type EffectResolutionPlan = {
-  cardMoves: PlannedCardMove[];
-  staminaChanges: PlannedStaminaChange[];
-  manaChanges: PlannedManaChange[];
-  activeEffectsToAdd: ActiveEffect[];
-  activeEffectIdsToRemove: EffectInstanceId[];
-};
-```
+計画型は共通契約の`EffectResolutionPlan`を使用する。効果ハンドラーは操作列だけを作り、カード移動、効果インスタンスID、適用順、イベント順の確定はゲームエンジンに委ねる。
 
 処理順：
 
 ```text
-現在状態から解決計画を作成
+読み取り専用の現在状態から解決計画を作成
 ↓
 計画全体を検証
 ↓
-計画を新しい状態へ適用
+計画をローカルな仮状態へ適用
 ↓
 不変条件を検証
 ↓
-状態を確定
+全効果が成功した場合だけ状態とイベントを確定
 ```
 
 ---
@@ -623,7 +512,7 @@ effectB
 effectC
 ```
 
-ただし、状態の確定はカード使用コマンド全体が成功した後に一度だけ行う。
+ただし、状態とイベントの確定はカード使用コマンド全体が成功した後に一度だけ行う。
 
 後続効果は、先行効果を適用した仮状態を参照する。
 
@@ -641,11 +530,12 @@ effectC
 6. 対象情報を検証する
 7. カード固有条件を検証する
 8. カードを手札からサポートゾーンへ移動した仮状態を作る
-9. すべての`onPlay`効果を定義順に解決する
-10. `continuous`効果を登録する
-11. 継続期間に応じてカード位置を確定する
-12. 状態不変条件を検証する
-13. 新しい状態とイベントを確定する
+9. すべての`onPlay`効果の計画を定義順に作る
+10. `continuous`効果の登録計画を作る
+11. 継続期間に応じたカード移動計画を作る
+12. 全計画をローカルな仮状態へ適用する
+13. 状態不変条件を検証する
+14. 新しい状態とイベントを一括確定する
 
 ---
 
@@ -656,29 +546,33 @@ effectC
 ### 20.1 新規グループへ配置
 
 ```text
-配置条件検証
+配置条件と効果入力を検証
 ↓
-新規グループ作成
+仮状態に新規グループを作成
 ↓
 みなもと再計算
 ↓
-onPlay効果解決
+onPlay効果計画
 ↓
-continuous効果登録
+continuous効果登録計画
+↓
+一括検証・確定
 ```
 
 ### 20.2 既存グループへ連鎖
 
 ```text
-連鎖条件検証
+連鎖条件と効果入力を検証
 ↓
-グループ末尾へ追加
+仮状態でグループ末尾へ追加
 ↓
 グループコスト再計算
 ↓
-onPlay効果解決
+onPlay効果計画
 ↓
-continuous効果登録
+continuous効果登録計画
+↓
+一括検証・確定
 ```
 
 攻撃カードの効果解決に失敗した場合は、配置または連鎖操作全体を取り消す。
@@ -687,28 +581,7 @@ continuous効果登録
 
 ## 21. 継続効果
 
-```ts
-export type ActiveEffect = {
-  effectInstanceId: EffectInstanceId;
-  effectDefinitionId: string;
-
-  sourceCardInstanceId: CardInstanceId;
-  ownerId: PlayerId;
-
-  target: EffectTarget;
-  scope: EffectScope;
-  operation: EffectOperation;
-  value: number;
-
-  duration: ActiveEffectDuration;
-  appliedSequence: number;
-  appliedRound: number;
-};
-```
-
-```ts
-export type ActiveEffectDuration = "untilRoundEnd" | "whileSourceOnField";
-```
+`ActiveEffect`と`ActiveEffectDuration`は「ゲームエンジン仕様書」の共通契約を使用する。`instant`はアクティブ効果として登録しない。複数対象の継続効果は対象ごとに1つの`ActiveEffect`を登録する。
 
 ### 21.1 `untilRoundEnd`
 
@@ -733,7 +606,7 @@ export type ActiveEffectDuration = "untilRoundEnd" | "whileSourceOnField";
 
 複数の上書き効果が存在する場合は、最も大きい`appliedSequence`を持つ効果を採用する。
 
-ゲーム状態には、次の値を保持する。
+ゲーム状態には、共通契約で定義した次の値を保持する。
 
 ```ts
 nextEffectSequence: number;
@@ -804,13 +677,7 @@ permanentサポートが除去される
 
 ## 26. 攻撃力変更効果
 
-```ts
-export type PowerScope = "cardPower" | "groupPower" | "totalPower";
-```
-
-```ts
-export type PowerOperation = "overwrite" | "add" | "multiply";
-```
+`PowerScope`と`PowerOperation`は「ゲームエンジン仕様書」の共通契約を使用する。
 
 ```ts
 export type ModifyPowerEffectDefinition = BaseEffectDefinition & {
@@ -971,6 +838,8 @@ export type DrawCardsEffectDefinition = BaseEffectDefinition & {
 };
 ```
 
+`drawCards`は効果所有者自身に適用し、対象を取らない。`TargetRule`は`required: false`、`minTargets: 0`、`maxTargets: 0`、`zones: []`とする。
+
 実際に引く枚数は、次の最小値とする。
 
 ```ts
@@ -1085,7 +954,7 @@ effects: [
 ];
 ```
 
-対象配列のどの対象をどの効果が使用するかは、効果定義またはカスタムハンドラーで明示する。
+各効果は、自身の`effectId`と一致する`EffectInput`だけを使用する。これにより、複合効果が異なる対象を取る場合でも対応関係を一意に決定できる。
 
 ---
 
@@ -1279,31 +1148,7 @@ Bのコマンドは拒否し、次の状態を維持する。
 
 ## 43. 効果エラー
 
-```ts
-export type EffectValidationErrorCode =
-  | "SOURCE_CARD_NOT_FOUND"
-  | "SOURCE_CARD_NOT_ON_EXPECTED_ZONE"
-  | "INVALID_ACTIVATION_TYPE"
-  | "INVALID_TARGET_COUNT"
-  | "INVALID_TARGET_TYPE"
-  | "INVALID_TARGET_OWNER"
-  | "TARGET_NOT_FOUND"
-  | "TARGET_NO_LONGER_VALID"
-  | "INSUFFICIENT_MANA"
-  | "EFFECT_CONDITION_NOT_MET"
-  | "EFFECT_CONFIG_INVALID"
-  | "RESULTING_STATE_INVALID"
-  | "EFFECT_HANDLER_NOT_FOUND"
-  | "EFFECT_RESOLUTION_FAILED";
-```
-
-```ts
-export type EffectValidationError = {
-  code: EffectValidationErrorCode;
-  message: string;
-  details?: Record<string, unknown>;
-};
-```
+`EffectValidationErrorCode`と`EffectValidationError`は「ゲームエンジン仕様書」の共通契約を使用する。対象不正、入力不正、ハンドラー不在、計画失敗、結果状態不正を、文字列メッセージではなく安定したコードで区別する。
 
 エラーメッセージの文字列を、ゲームロジックの条件判定に使用してはならない。
 
@@ -1311,68 +1156,9 @@ export type EffectValidationError = {
 
 ## 44. カード効果イベント
 
-ゲームエンジン内部では、カード効果に対応するイベントを生成する。
+`CardEffectEvent`、`ActiveEffectRemovalReason`、`DomainEvent`は「ゲームエンジン仕様書」の共通契約を使用する。効果ハンドラーはイベントを直接返さず、エンジンが検証済み`EffectResolutionPlan`の適用結果からイベントを生成する。
 
-```ts
-export type CardEffectEvent =
-  | {
-      type: "CARD_EFFECT_ACTIVATED";
-      sourceCardInstanceId: CardInstanceId;
-      effectId: string;
-      ownerId: PlayerId;
-    }
-  | {
-      type: "CARD_EFFECT_RESOLVED";
-      sourceCardInstanceId: CardInstanceId;
-      effectId: string;
-    }
-  | {
-      type: "ACTIVE_EFFECT_ADDED";
-      activeEffect: ActiveEffect;
-    }
-  | {
-      type: "ACTIVE_EFFECT_REMOVED";
-      effectInstanceId: EffectInstanceId;
-      reason: ActiveEffectRemovalReason;
-    }
-  | {
-      type: "MANA_REDUCED";
-      playerId: PlayerId;
-      attribute: Attribute;
-      requestedAmount: number;
-      actualAmount: number;
-    }
-  | {
-      type: "ATTACK_GROUP_REMOVED";
-      playerId: PlayerId;
-      groupId: AttackGroupId;
-      cardInstanceIds: CardInstanceId[];
-    }
-  | {
-      type: "SUPPORT_CARD_REMOVED";
-      playerId: PlayerId;
-      cardInstanceId: CardInstanceId;
-    }
-  | {
-      type: "CARDS_DRAWN_BY_EFFECT";
-      playerId: PlayerId;
-      count: number;
-    }
-  | {
-      type: "STAMINA_CHANGED_BY_EFFECT";
-      playerId: PlayerId;
-      before: number;
-      after: number;
-    };
-```
-
-```ts
-export type ActiveEffectRemovalReason =
-  | "durationEnded"
-  | "sourceLeftField"
-  | "targetLeftField"
-  | "gameFinished";
-```
+進行処理と効果処理で同じ意味を持つカード移動、スタミナ変更、グループ除去、ドローは共通イベントを使用する。効果専用イベントは、効果の開始・完了、アクティブ効果の追加・終了、みなもと減少など、効果追跡に必要なものだけとする。
 
 ---
 
@@ -1382,11 +1168,16 @@ export type ActiveEffectRemovalReason =
 
 カードドローなどの非公開情報を含むイベントは、閲覧者ごとに変換する。
 
-自分向け：
+公開イベントは、共通契約の`DomainEvent`から閲覧者ごとに投影する。
+
+`PlayerVisibleEvent`、`PlayerVisibleEventEnvelope`、`projectEventForPlayer`は「ゲームエンジン仕様書」の共通契約を使用する。
+
+ドローした本人向け：
 
 ```ts
 {
-  type: "CARDS_DRAWN_BY_EFFECT",
+  type: "CARDS_DRAWN",
+  reason: "effect",
   count: 2,
   cardInstanceIds: ["card-1", "card-2"],
 }
@@ -1396,7 +1187,8 @@ export type ActiveEffectRemovalReason =
 
 ```ts
 {
-  type: "CARDS_DRAWN_BY_EFFECT",
+  type: "CARDS_DRAWN",
+  reason: "effect",
   count: 2,
 }
 ```
@@ -1412,7 +1204,7 @@ export type ActiveEffectRemovalReason =
   "id": "support-fire-001",
   "name": "炎の強化",
   "cardType": "support",
-  "attribute": "fire",
+  "attribute": "attributeA",
   "cost": 2,
   "duration": "untilRoundEnd",
   "effects": [
@@ -1445,7 +1237,7 @@ export type ActiveEffectRemovalReason =
   "id": "support-water-002",
   "name": "源流封鎖",
   "cardType": "support",
-  "attribute": "water",
+  "attribute": "attributeB",
   "cost": 3,
   "duration": "instant",
   "effects": [
@@ -1476,7 +1268,7 @@ export type ActiveEffectRemovalReason =
   "id": "support-wind-003",
   "name": "陣形崩壊",
   "cardType": "support",
-  "attribute": "wind",
+  "attribute": "attributeC",
   "cost": 4,
   "duration": "instant",
   "effects": [
@@ -1506,7 +1298,7 @@ export type ActiveEffectRemovalReason =
   "id": "support-fire-004",
   "name": "破壊と補給",
   "cardType": "support",
-  "attribute": "fire",
+  "attribute": "attributeA",
   "cost": 5,
   "duration": "instant",
   "effects": [
@@ -1541,6 +1333,82 @@ export type ActiveEffectRemovalReason =
 }
 ```
 
+### 49.1 効果形式の組み合わせ検証
+
+初期実装では、カードカタログ読み込み時に次の組み合わせを必須とする。
+
+| 効果またはカード        | 許可する形式                                                                 |
+| ----------------------- | ---------------------------------------------------------------------------- |
+| `instant`サポート       | `onPlay`のみ                                                                 |
+| `untilRoundEnd`サポート | `onPlay`、`continuous`                                                       |
+| `permanent`サポート     | `onPlay`、`continuous`                                                       |
+| `modifyPower`           | `continuous`のみ                                                             |
+| `changeStamina`         | `onPlay`のみ                                                                 |
+| `reduceMana`            | `onPlay`のみ                                                                 |
+| `drawCards`             | `onPlay`のみ                                                                 |
+| `removeAttackGroup`     | `onPlay`のみ                                                                 |
+| `removeSupportCard`     | `onPlay`のみ                                                                 |
+| `custom`                | サポート期間との整合を満たし、ハンドラーの`validateDefinition`が許可する形式 |
+
+初期カードカタログの攻撃カードは`effects: []`とする。将来攻撃カード効果を収録するときは、配置・連鎖時の共通EffectPlan経路を使用し、互換性表とエンジン意味バージョンを更新する。
+
+初期実装の`ActiveEffect`は攻撃力変更だけを表現する。`custom + continuous`は現在の`ActiveEffect`で表現できる場合だけ許可し、それ以外の継続ルールを追加する場合は判別可能な`ActiveEffect` Unionと`EngineSemanticsVersion`を拡張する。
+
+### 49.2 カードカタログの検証とバージョン
+
+JSONは、カタログのビルド時、バックエンド起動時、ゲーム初期化時の境界で検証する。TypeScriptの型注釈だけで外部JSONを信用してはならない。
+
+構造検証では、必須プロパティ、判別可能Union、列挙値、JSON値、有限数、非負整数、配列構造を確認する。
+
+意味検証では、最低限次を確認する。
+
+- カード定義IDがカタログ内で一意
+- カード内の効果IDが一意
+- `chainableCardIds`の参照先が存在し、攻撃カードである
+- `handlerId`が固定されたエンジン意味バージョンのレジストリに存在する
+- サポート期間と発動形式が49.1の表に一致する
+- コスト、ドロー枚数、みなもと減少量が0以上の安全な整数
+- 基礎攻撃力、上書き・加算値、スタミナ変更量が安全な整数
+- 乗算値が0以上の有限数
+- `TargetRule`の対象数、ゾーンと効果種別が一致する
+- JSON定義に未知のプロパティを許可するか拒否するかをスキーマで統一する
+
+```ts
+export type CardCatalogValidationError = {
+  code:
+    | "SCHEMA_VALIDATION_FAILED"
+    | "DUPLICATE_CARD_ID"
+    | "DUPLICATE_EFFECT_ID"
+    | "CARD_REFERENCE_NOT_FOUND"
+    | "HANDLER_NOT_FOUND"
+    | "INVALID_LIFECYCLE_COMBINATION"
+    | "INVALID_NUMERIC_VALUE"
+    | "INVALID_TARGET_RULE"
+    | "INVALID_CATALOG_VERSION";
+  cardDefinitionId?: CardDefinitionId;
+  effectId?: EffectId;
+  message: string;
+  details?: JsonObject;
+};
+
+export type CardCatalogValidationResult =
+  | { valid: true }
+  | {
+      valid: false;
+      errors: CardCatalogValidationError[];
+    };
+
+export function validateCardCatalog(
+  catalog: CardCatalog,
+  context: Pick<
+    GameEngineContext,
+    "rules" | "effectRegistry" | "engineSemanticsVersion"
+  >,
+): CardCatalogValidationResult;
+```
+
+`CardCatalogVersion`、`RulesetVersion`、`EngineSemanticsVersion`は内容アドレスまたは不変なリリース識別子として扱う。同じバージョン文字列の内容を上書きしない。進行中ゲームが参照するカタログ、ルール、効果ハンドラーを再取得できる状態で保持する。保持できない場合は、対戦開始時に必要な定義スナップショットを永続化する。
+
 ---
 
 ## 50. カード効果レジストリ
@@ -1572,9 +1440,19 @@ export const customEffectRegistry: EffectRegistry = {
 
 ```text
 packages/game-engine/src/
-├─ cards/
-│  ├─ definitions/
+├─ contracts/
+│  ├─ identifiers.ts
 │  ├─ card-definition.ts
+│  ├─ effect-definition.ts
+│  ├─ effect-target.ts
+│  ├─ game-state.ts
+│  ├─ commands.ts
+│  └─ events.ts
+├─ catalog/
+│  ├─ definitions/
+│  ├─ validate-card-catalog.ts
+│  └─ versions.ts
+├─ cards/
 │  └─ card-instance.ts
 ├─ effects/
 │  ├─ effect-definition.ts
@@ -1599,7 +1477,8 @@ packages/game-engine/src/
 │  ├─ validate-effect-condition.ts
 │  └─ validate-active-effects.ts
 └─ events/
-   └─ card-effect-events.ts
+   ├─ card-effect-events.ts
+   └─ project-event-for-player.ts
 ```
 
 ---
@@ -1617,11 +1496,14 @@ packages/game-engine/src/
 7. 共通効果で実装できるか判断する
 8. 共通効果で表現できない場合はカスタムハンドラーを作る
 9. 効果定義をJSONへ追加する
-10. 正常系テストを作る
-11. 対象不正テストを作る
-12. みなもと不足テストを作る
-13. 効果競合テストを作る
-14. 効果終了テストを作る
+10. カードカタログの構造検証と意味検証を実行する
+11. カタログ内容を変更した場合は`CardCatalogVersion`を更新する
+12. 効果の意味またはハンドラーを変更した場合は`EngineSemanticsVersion`を更新する
+13. 正常系テストを作る
+14. 対象不正テストを作る
+15. みなもと不足テストを作る
+16. 効果競合テストを作る
+17. 効果終了テストを作る
 
 ---
 
@@ -1671,6 +1553,9 @@ packages/game-engine/src/
 - 自分対象と相手対象を間違える
 - 対象数が不足する
 - 対象数が超過する
+- 複合効果の各`effectId`へ異なる対象を割り当てる
+- 重複した効果入力を拒否する
+- 未知または不足した効果入力を拒否する
 
 ### 54.3 みなもと
 
@@ -1696,6 +1581,8 @@ packages/game-engine/src/
 - みなもとが変化しない
 - 捨て札が変化しない
 - 継続効果が登録されない
+- ハンドラーから入力状態を変更できない
+- ハンドラー例外後も元状態が変化しない
 
 ### 54.6 競合
 
@@ -1725,6 +1612,8 @@ packages/game-engine/src/
 - サポートカード除去
 - 効果元カードに紐づく継続効果
 - サーバー受信順による即時解決
+
+攻撃カード効果の型、効果入力、EffectPlan処理経路は実装するが、初期カードカタログでは攻撃カードの`effects`を空配列とする。最初のゲーム動作確認は、サポートカード効果だけを実データとして収録して行う。
 
 初期実装では、次の機能を対象外とする。
 
