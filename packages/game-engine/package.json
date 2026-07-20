@@ -1,23 +1,22 @@
 {
-  "name": "@disastar/contracts",
+  "name": "@disastar/game-engine",
   "version": "0.0.0",
   "private": true,
   "type": "module",
   "exports": {
-    "./health": "./src/health.ts",
-    "./game": "./src/game.ts"
+    ".": "./src/index.ts",
+    "./contracts": "./src/contracts/index.ts"
   },
   "scripts": {
     "lint": "eslint . --max-warnings 0",
-    "check-types": "tsc --noEmit --pretty false"
-  },
-  "dependencies": {
-    "@disastar/game-engine": "workspace:*"
+    "check-types": "tsc --noEmit --pretty false",
+    "test": "vitest run"
   },
   "devDependencies": {
     "@disastar/eslint-config": "workspace:*",
     "@disastar/typescript-config": "workspace:*",
     "eslint": "^9.39.1",
-    "typescript": "^7.0.0"
+    "typescript": "^7.0.0",
+    "vitest": "^4.1.10"
   }
 }
