@@ -19,6 +19,23 @@ export type GameRules = {
   maxSameNamedSupportCards: number;
 };
 
+export type GameRulesValidationError = {
+  code:
+    | "UNSUPPORTED_PLAYER_COUNT"
+    | "INVALID_INTEGER_VALUE"
+    | "INVALID_RANGE"
+    | "INVALID_DECK_COMPOSITION";
+  field?: keyof GameRules;
+  message: string;
+};
+
+export type GameRulesValidationResult =
+  | { valid: true }
+  | {
+      valid: false;
+      errors: GameRulesValidationError[];
+    };
+
 export const GAME_RULES: Readonly<GameRules> = {
   version: "ruleset-v1",
   playerCount: 2,
