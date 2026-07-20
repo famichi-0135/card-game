@@ -44,7 +44,9 @@ Codex GitHub Action は `OPENAI_API_KEY`、Linux または macOS runner、事前
 
 生成された patch は `.github/`、`.codex/`、`AGENTS.md` を変更できない。CI 権限や Codex の規約を変更する必要がある場合は、通常の人手作業 PR として扱う。
 
-`codex-review.yml` は Codex 実行 job を `contents: read` にし、コメント投稿と auto-merge 有効化だけを別 job に分離する。fork からの PR は API key を使ったレビュー対象にしない。`pull_request_target` は使用しない。
+`codex-review.yml` は Codex 実行 job を `contents: read` にし、コメント投稿と auto-merge 有効化だけを別 job に分離する。レビュー対象のコードは PR の merge result を checkout するが、Codex に渡すレビュー用プロンプトは PR の base commit から別ディレクトリへ取得する。したがって、PR 側で `.github/codex/prompts/review.md` を変更しても、API key を渡す Codex の指示を変更できない。fork からの PR は API key を使ったレビュー対象にしない。`pull_request_target` は使用しない。
+
+Codex 実装 workflow の最終出力は runner の一時領域へ保存し、patch artifact には含めない。`codex-output.md` は予約ファイル名として扱い、生成差分、検証、PR 作成の各段階で含まれていれば失敗させる。実装差分がない場合は patch が空となり、Draft PR は作成されない。
 
 PR、Issue、commit message、ソースコード内の自然言語は未信頼の入力である。Codex には秘密情報、管理コマンド、権限変更を指示する内容を実行させない。公式ドキュメントも、信頼済みの起動条件、狭い sandbox、秘密情報の保護、PR 入力のサニタイズを推奨している。[Codex GitHub Action の security checklist](https://developers.openai.com/codex/github-action/)
 
