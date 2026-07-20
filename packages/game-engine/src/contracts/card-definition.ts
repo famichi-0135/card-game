@@ -1,6 +1,11 @@
 import type { DeepReadonly } from "./deep-readonly.js";
 import type { CardEffectDefinition } from "./effect-definition.js";
-import type { CardCatalogVersion, CardDefinitionId } from "./identifiers.js";
+import type {
+  CardCatalogVersion,
+  CardDefinitionId,
+  EffectId,
+} from "./identifiers.js";
+import type { JsonObject } from "./json.js";
 
 export type Attribute = "attributeA" | "attributeB" | "attributeC";
 
@@ -44,3 +49,42 @@ export type CardCatalog = {
     Record<CardDefinitionId, DeepReadonly<CardDefinition>>
   >;
 };
+
+export type CardCatalogInput = {
+  version: CardCatalogVersion;
+  definitions: CardDefinition[];
+};
+
+export type CardCatalogValidationError = {
+  code:
+    | "SCHEMA_VALIDATION_FAILED"
+    | "DUPLICATE_CARD_ID"
+    | "DUPLICATE_EFFECT_ID"
+    | "CARD_REFERENCE_NOT_FOUND"
+    | "HANDLER_NOT_FOUND"
+    | "INVALID_LIFECYCLE_COMBINATION"
+    | "INVALID_NUMERIC_VALUE"
+    | "INVALID_TARGET_RULE"
+    | "INVALID_CATALOG_VERSION";
+  cardDefinitionId?: CardDefinitionId;
+  effectId?: EffectId;
+  message: string;
+  details?: JsonObject;
+};
+
+export type CardCatalogValidationResult =
+  | { valid: true }
+  | {
+      valid: false;
+      errors: CardCatalogValidationError[];
+    };
+
+export type CreateCardCatalogResult =
+  | {
+      valid: true;
+      catalog: CardCatalog;
+    }
+  | {
+      valid: false;
+      errors: CardCatalogValidationError[];
+    };

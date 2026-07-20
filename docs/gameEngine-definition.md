@@ -146,7 +146,7 @@ export type RandomGenerator = {
 };
 ```
 
-同じseedから作った乱数列は、常に同じ値列を返す。`next()`は`0以上1未満`の有限数を返す。範囲外、`NaN`、無限値は依存性エラーとして扱う。初期手札の引き直しは無限ループを避けるため実装上の試行上限を持ち、上限到達時は初期化を失敗させて状態を保存しない。
+同じseedから作った乱数列は、常に同じ値列を返す。`next()`は`0以上1未満`の有限数を返す。範囲外、`NaN`、無限値は依存性エラーとして扱う。初期手札の引き直しは無限ループを避けるため`MAX_INITIAL_HAND_ATTEMPTS = 20`の試行上限を持ち、上限到達時は`INITIAL_HAND_SELECTION_FAILED`として初期化を失敗させ、状態を保存しない。
 
 ```ts
 export type GameClock = {
@@ -863,6 +863,8 @@ export function shuffle<T>(items: readonly T[], random: RandomSequence): T[];
 2. 再度シャッフルする
 3. 5枚引く
 4. 攻撃カードまたはサポートカードが1枚以上含まれるまで繰り返す
+
+引き直しは最大20回とし、上限到達時は`INITIAL_HAND_SELECTION_FAILED`を返してゲーム状態を作成しない。
 
 初期手札が確定した後に、みなもとカードを処理する。
 
