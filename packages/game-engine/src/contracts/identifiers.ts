@@ -1,0 +1,11 @@
+export type GameId = string;
+export type PlayerId = string;
+export type CardDefinitionId = string;
+export type CardInstanceId = string;
+export type AttackGroupId = string;
+export type EffectInstanceId = string;
+export type EffectId = string;
+export type CommandId = string;
+export type RulesetVersion = string;
+export type CardCatalogVersion = string;
+export type EngineSemanticsVersion = string;
