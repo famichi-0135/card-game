@@ -11,10 +11,12 @@ import type {
   GameCommand,
   HandlePhaseTimeoutCommand,
   PlaceAttackCardCommand,
+  PlaySupportCardCommand,
   ReceivedCommandEnvelope,
 } from "../contracts/commands.js";
 import type { DeepReadonly } from "../contracts/deep-readonly.js";
 import type { GameEngineContext } from "../contracts/engine.js";
+import type { EffectContext } from "../contracts/effects.js";
 import type {
   GameCommandError,
   GameCommandErrorCode,
@@ -38,6 +40,12 @@ import type {
 } from "../contracts/identifiers.js";
 import { calculateMana } from "../mana/calculate-mana.js";
 import { calculateTotalPower } from "../power/calculate-power.js";
+import { deepFreeze } from "../catalog/deep-freeze.js";
+import { applyEffectResolutionPlan } from "../effects/apply-effect-resolution-plan.js";
+import {
+  planCardEffect,
+  validateEffectInputs,
+} from "../effects/plan-card-effect.js";
 import {
   getCardDefinitionForInstance,
   getPlayer,
@@ -214,16 +222,7 @@ function applyPlayerCommand(
     case "FINISH_SUPPORT":
       return finishSupport(state, command, receivedAt, context, events);
     case "PLAY_SUPPORT_CARD":
-      if (state.phase !== "support") {
-        return commandError(
-          "INVALID_PHASE",
-          "現在はサポートフェーズではありません。",
-        );
-      }
-      return commandError(
-        "EFFECT_PLANNING_FAILED",
-        "カード効果のないゲーム進行ではサポートカードを使用できません。",
-      );
+      return playSupportCard(state, command, context, dependencies, events);
   }
 }
 
@@ -398,6 +397,161 @@ function discardHandCard(
   return null;
 }
 
+function playSupportCard(
+  state: GameState,
+  command: PlaySupportCardCommand,
+  context: GameEngineContext,
+  dependencies: GameEngineDependencies,
+  events: DomainEvent[],
+): GameCommandError | null {
+  if (state.phase !== "support") {
+    return commandError(
+      "INVALID_PHASE",
+      "現在はサポートフェーズではありません。",
+    );
+  }
+  if (state.supportFinishedBy.includes(command.playerId)) {
+    return commandError(
+      "SUPPORT_ALREADY_FINISHED",
+      "サポート終了を宣言した後はカードを使用できません。",
+    );
+  }
+  const support = validateSupportCardInHand(
+    state,
+    command.playerId,
+    command.cardInstanceId,
+    context,
+  );
+  if (isGameCommandError(support)) {
+    return support;
+  }
+  const effectInputs = validateEffectInputs(
+    support.effects,
+    command.effectInputs,
+  );
+  if (!effectInputs.valid) {
+    return effectValidationError(effectInputs.error);
+  }
+
+  const player = getRequiredPlayer(state, command.playerId);
+  const manaBeforePlay = calculateMana(
+    state,
+    command.playerId,
+    support.attribute,
+    context,
+  );
+  if (manaBeforePlay.available < support.cost) {
+    return commandError(
+      "INSUFFICIENT_MANA",
+      "サポートカードのコストに必要なみなもとが不足しています。",
+    );
+  }
+
+  removeCardFromHand(player, command.cardInstanceId);
+  player.battlefield.supportZone.push({
+    cardInstanceId: command.cardInstanceId,
+    ownerId: command.playerId,
+    playedRound: state.round,
+    playedSequence: state.nextEventSequence + events.length,
+    duration: support.duration,
+  });
+  events.push({
+    type: "SUPPORT_CARD_PLAYED",
+    playerId: command.playerId,
+    cardInstanceId: command.cardInstanceId,
+  });
+
+  for (const effect of support.effects) {
+    const input = effectInputs.inputsByEffectId.get(effect.effectId);
+    if (input === undefined) {
+      return commandError(
+        "INTERNAL_INVARIANT_VIOLATION",
+        `効果ID ${effect.effectId} の入力を取得できません。`,
+      );
+    }
+    const planningState = deepFreeze(cloneGameState(state));
+    const effectContext: EffectContext = {
+      state: planningState,
+      rules: context.rules,
+      cardCatalog: context.cardCatalog,
+      sourceCardInstanceId: command.cardInstanceId,
+      sourceCardDefinitionId: support.id,
+      ownerId: command.playerId,
+      input,
+      currentRound: state.round,
+    };
+    const planning = planCardEffect(
+      effectContext,
+      effect,
+      context.effectRegistry,
+    );
+    if (!planning.planned) {
+      return effectValidationError(planning.error);
+    }
+
+    events.push({
+      type: "CARD_EFFECT_ACTIVATED",
+      sourceCardInstanceId: command.cardInstanceId,
+      effectId: effect.effectId,
+      ownerId: command.playerId,
+    });
+    const application = applyEffectResolutionPlan(
+      state,
+      planning.plan,
+      context,
+      dependencies,
+    );
+    if (!application.applied) {
+      return effectValidationError(application.error);
+    }
+    events.push(...application.events);
+    events.push({
+      type: "CARD_EFFECT_RESOLVED",
+      sourceCardInstanceId: command.cardInstanceId,
+      effectId: effect.effectId,
+    });
+  }
+
+  if (support.duration === "instant") {
+    if (
+      state.activeEffects.some(
+        (effect) => effect.sourceCardInstanceId === command.cardInstanceId,
+      )
+    ) {
+      return commandError(
+        "EFFECT_VALIDATION_FAILED",
+        "instantサポートカードは継続効果を登録できません。",
+      );
+    }
+    if (
+      player.battlefield.supportZone.some(
+        (card) => card.cardInstanceId === command.cardInstanceId,
+      )
+    ) {
+      removeSupportCardFromField(player, command.cardInstanceId);
+      player.discardPile.push(command.cardInstanceId);
+      events.push({
+        type: "SUPPORT_CARD_REMOVED",
+        playerId: command.playerId,
+        cardInstanceId: command.cardInstanceId,
+      });
+    }
+  }
+
+  const manaAfterPlay = calculateMana(
+    state,
+    command.playerId,
+    support.attribute,
+    context,
+  );
+  return manaAfterPlay.available < 0
+    ? commandError(
+        "INSUFFICIENT_MANA",
+        "サポートカード使用後のみなもとが不足します。",
+      )
+    : null;
+}
+
 function finishPlacement(
   state: GameState,
   command: FinishPlacementCommand,
@@ -540,6 +694,7 @@ function resolveRound(
   const normalWinner = resolveStaminaWinner(playerA, playerB);
 
   if (normalWinner !== null) {
+    cleanupRound(state, context, events);
     const result = createRoundResult(
       state,
       totalPowers,
@@ -555,6 +710,7 @@ function resolveRound(
   }
 
   if (state.round >= context.rules.maxRounds) {
+    cleanupRound(state, context, events);
     const winner = resolveMaxRoundWinner(playerA, playerB, totalPowers);
     const result = createRoundResult(
       state,
@@ -571,7 +727,7 @@ function resolveRound(
   }
 
   transitionPhase(state, "cleanup", receivedAt, context, events);
-  cleanupRound(state, context);
+  cleanupRound(state, context, events);
   transitionPhase(state, "refill", receivedAt, context, events);
 
   if (playerA.deck.length === 0 || playerB.deck.length === 0) {
@@ -649,10 +805,24 @@ function resolveScore(
   return higherPlayerId;
 }
 
-function cleanupRound(state: GameState, context: GameEngineContext): void {
+function cleanupRound(
+  state: GameState,
+  context: GameEngineContext,
+  events: DomainEvent[],
+): void {
+  const expiredEffects = state.activeEffects.filter(
+    (effect) => effect.duration === "untilRoundEnd",
+  );
   state.activeEffects = state.activeEffects.filter(
     (effect) => effect.duration !== "untilRoundEnd",
   );
+  for (const effect of expiredEffects) {
+    events.push({
+      type: "ACTIVE_EFFECT_REMOVED",
+      effectInstanceId: effect.effectInstanceId,
+      reason: "durationEnded",
+    });
+  }
   for (const player of Object.values(state.players)) {
     const retainedSupports = [];
     for (const support of player.battlefield.supportZone) {
@@ -660,6 +830,11 @@ function cleanupRound(state: GameState, context: GameEngineContext): void {
         retainedSupports.push(support);
       } else {
         player.discardPile.push(support.cardInstanceId);
+        events.push({
+          type: "SUPPORT_CARD_REMOVED",
+          playerId: player.playerId,
+          cardInstanceId: support.cardInstanceId,
+        });
       }
     }
     player.battlefield.supportZone = retainedSupports;
@@ -932,6 +1107,28 @@ function validateAttackCardInHand(
     : commandError("INVALID_CARD_TYPE", "攻撃カードを指定してください。");
 }
 
+function validateSupportCardInHand(
+  state: GameState,
+  playerId: PlayerId,
+  cardInstanceId: CardInstanceId,
+  context: GameEngineContext,
+):
+  | DeepReadonly<Extract<CardDefinition, { cardType: "support" }>>
+  | GameCommandError {
+  const definition = validateCardInHand(
+    state,
+    playerId,
+    cardInstanceId,
+    context,
+  );
+  if (isGameCommandError(definition)) {
+    return definition;
+  }
+  return definition.cardType === "support"
+    ? definition
+    : commandError("INVALID_CARD_TYPE", "サポートカードを指定してください。");
+}
+
 function validateCardInHand(
   state: GameState,
   playerId: PlayerId,
@@ -1001,6 +1198,19 @@ function removeCardFromHand(
     throw new Error(`手札にカード ${cardInstanceId} がありません。`);
   }
   player.hand.splice(index, 1);
+}
+
+function removeSupportCardFromField(
+  player: PlayerState,
+  cardInstanceId: CardInstanceId,
+): void {
+  const index = player.battlefield.supportZone.findIndex(
+    (card) => card.cardInstanceId === cardInstanceId,
+  );
+  if (index < 0) {
+    throw new Error(`サポートゾーンにカード ${cardInstanceId} がありません。`);
+  }
+  player.battlefield.supportZone.splice(index, 1);
 }
 
 function getRequiredPlayer(state: GameState, playerId: PlayerId): PlayerState {
@@ -1098,8 +1308,18 @@ function cloneGameState(state: GameState): GameState {
 function commandError(
   code: GameCommandErrorCode,
   message: string,
+  details?: GameCommandError["details"],
 ): GameCommandError {
-  return { code, message };
+  return details === undefined ? { code, message } : { code, message, details };
+}
+
+function effectValidationError(error: {
+  code: string;
+  message: string;
+}): GameCommandError {
+  return commandError("EFFECT_VALIDATION_FAILED", error.message, {
+    effectErrorCode: error.code,
+  });
 }
 
 function reject(

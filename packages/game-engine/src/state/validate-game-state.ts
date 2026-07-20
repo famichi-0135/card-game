@@ -1,4 +1,6 @@
 import type { GameEngineContext } from "../contracts/engine.js";
+import type { ActiveEffect } from "../contracts/effects.js";
+import type { EffectTarget } from "../contracts/effect-target.js";
 import type {
   CardInstance,
   GameState,
@@ -23,9 +25,140 @@ export function validateGameState(
   validatePlayers(state, playerIds, context, issues);
   validateCardInstances(state, playerIds, context, issues);
   validateCardLocations(state, playerIds, context, issues);
+  validateActiveEffects(state, issues);
   validateFinishedState(state, issues);
 
   return issues.length === 0 ? { valid: true } : { valid: false, issues };
+}
+
+function validateActiveEffects(
+  state: GameState,
+  issues: StateValidationIssue[],
+): void {
+  const effectInstanceIds = new Set<string>();
+  const appliedSequences = new Set<number>();
+  let highestAppliedSequence = 0;
+
+  for (const effect of state.activeEffects) {
+    if (
+      typeof effect.effectInstanceId !== "string" ||
+      effect.effectInstanceId.length === 0 ||
+      effectInstanceIds.has(effect.effectInstanceId)
+    ) {
+      issues.push({
+        code: "INVALID_ACTIVE_EFFECT_ID",
+        message: "継続効果の識別子が空または重複しています。",
+      });
+    }
+    effectInstanceIds.add(effect.effectInstanceId);
+
+    const sourceCard = state.cardInstances[effect.sourceCardInstanceId];
+    const owner = state.players[effect.ownerId];
+    if (
+      sourceCard === undefined ||
+      sourceCard.ownerId !== effect.ownerId ||
+      owner === undefined ||
+      !isCardOnBattlefield(owner, effect.sourceCardInstanceId)
+    ) {
+      issues.push({
+        code: "ACTIVE_EFFECT_SOURCE_NOT_ON_FIELD",
+        message: "継続効果の効果元カードが場に存在しません。",
+      });
+    }
+
+    if (!targetExists(state, effect.target)) {
+      issues.push({
+        code: "ACTIVE_EFFECT_TARGET_NOT_FOUND",
+        message: "継続効果の対象が現在の状態に存在しません。",
+      });
+    }
+    if (!isTargetCompatibleWithScope(effect)) {
+      issues.push({
+        code: "INVALID_ACTIVE_EFFECT_TARGET",
+        message: "継続効果の対象種別と攻撃力スコープが一致しません。",
+      });
+    }
+    if (
+      !Number.isFinite(effect.value) ||
+      !["overwrite", "add", "multiply"].includes(effect.operation) ||
+      !["untilRoundEnd", "whileSourceOnField"].includes(effect.duration) ||
+      !Number.isSafeInteger(effect.appliedSequence) ||
+      effect.appliedSequence < 1 ||
+      !Number.isSafeInteger(effect.appliedRound) ||
+      effect.appliedRound < 1
+    ) {
+      issues.push({
+        code: "INVALID_ACTIVE_EFFECT",
+        message: "継続効果の設定または適用順序が不正です。",
+      });
+    } else if (appliedSequences.has(effect.appliedSequence)) {
+      issues.push({
+        code: "INVALID_ACTIVE_EFFECT_SEQUENCE",
+        message: "継続効果の適用シーケンスが重複しています。",
+      });
+    } else {
+      appliedSequences.add(effect.appliedSequence);
+      highestAppliedSequence = Math.max(
+        highestAppliedSequence,
+        effect.appliedSequence,
+      );
+    }
+  }
+
+  if (state.nextEffectSequence <= highestAppliedSequence) {
+    issues.push({
+      code: "INVALID_ACTIVE_EFFECT_SEQUENCE",
+      message: "次の継続効果シーケンスが登録済み効果より後ではありません。",
+    });
+  }
+}
+
+function isCardOnBattlefield(
+  player: PlayerState,
+  cardInstanceId: CardInstanceId,
+): boolean {
+  return (
+    player.battlefield.attackGroups.some((group) =>
+      group.cardIds.includes(cardInstanceId),
+    ) ||
+    player.battlefield.supportZone.some(
+      (card) => card.cardInstanceId === cardInstanceId,
+    )
+  );
+}
+
+function targetExists(state: GameState, target: EffectTarget): boolean {
+  switch (target.type) {
+    case "player":
+    case "mana":
+      return state.players[target.playerId] !== undefined;
+    case "attackGroup":
+      return Object.values(state.players).some((player) =>
+        player.battlefield.attackGroups.some(
+          (group) => group.groupId === target.groupId,
+        ),
+      );
+    case "attackCard":
+      return Object.values(state.players).some((player) =>
+        player.battlefield.attackGroups.some((group) =>
+          group.cardIds.includes(target.cardInstanceId),
+        ),
+      );
+    case "supportCard":
+      return Object.values(state.players).some((player) =>
+        player.battlefield.supportZone.some(
+          (card) => card.cardInstanceId === target.cardInstanceId,
+        ),
+      );
+  }
+}
+
+function isTargetCompatibleWithScope(effect: ActiveEffect): boolean {
+  return (
+    (effect.scope === "cardPower" && effect.target.type === "attackCard") ||
+    (effect.scope === "groupPower" && effect.target.type === "attackGroup") ||
+    (effect.scope === "totalPower" && effect.target.type === "player")
+  );
 }
 
 function validateVersions(
