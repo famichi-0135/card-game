@@ -1,0 +1,91 @@
+name: Codex Review
+
+on:
+  pull_request:
+    branches:
+      - main
+    types:
+      - opened
+      - synchronize
+      - reopened
+      - ready_for_review
+
+permissions:
+  contents: read
+
+jobs:
+  codex_review:
+    if: >-
+      github.event.pull_request.head.repo.full_name == github.repository &&
+      vars.CODEX_REVIEW_ENABLED == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    permissions:
+      contents: read
+    outputs:
+      final_message: ${{ steps.run_codex.outputs.final-message }}
+
+    steps:
+      - name: Check out the pull request merge result
+        uses: actions/checkout@v5
+        with:
+          ref: refs/pull/${{ github.event.pull_request.number }}/merge
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Run Codex review
+        id: run_codex
+        uses: openai/codex-action@v1
+        with:
+          openai-api-key: ${{ secrets.OPENAI_API_KEY }}
+          prompt-file: .github/codex/prompts/review.md
+          sandbox: read-only
+          safety-strategy: drop-sudo
+          output-file: codex-review.md
+
+  post_feedback:
+    needs: codex_review
+    if: >-
+      needs.codex_review.result == 'success' &&
+      needs.codex_review.outputs.final_message != ''
+    runs-on: ubuntu-latest
+    permissions:
+      issues: write
+      pull-requests: write
+
+    steps:
+      - name: Post Codex feedback
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ github.token }}
+          script: |
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.payload.pull_request.number,
+              body: process.env.CODEX_FINAL_MESSAGE,
+            });
+        env:
+          CODEX_FINAL_MESSAGE: ${{ needs.codex_review.outputs.final_message }}
+
+  promote_generated_pr:
+    needs:
+      - codex_review
+      - post_feedback
+    if: >-
+      needs.codex_review.result == 'success' &&
+      needs.post_feedback.result == 'success' &&
+      github.event.pull_request.draft == true &&
+      contains(github.event.pull_request.labels.*.name, 'codex:generated')
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+
+    steps:
+      - name: Mark the generated PR ready and enable squash auto-merge
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh pr ready "${{ github.event.pull_request.number }}" --repo "$GITHUB_REPOSITORY"
+          gh pr merge "${{ github.event.pull_request.number }}" --auto --squash --repo "$GITHUB_REPOSITORY"

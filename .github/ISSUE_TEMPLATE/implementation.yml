@@ -1,0 +1,40 @@
+name: 実装タスク
+description: 人間が内容を確認した後に Codex 実装の候補にする作業
+title: "[実装]: "
+labels: ["example"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        `codex:implement` ラベルは、内容を確認した人だけが付けます。このラベルだけでは Codex は起動しません。
+  - type: textarea
+    id: purpose
+    attributes:
+      label: 目的・背景
+      description: 解決したい課題と変更する理由を記載してください。
+    validations:
+      required: true
+  - type: textarea
+    id: acceptance
+    attributes:
+      label: 受け入れ条件
+      description: 完了と判断できる振る舞い、テスト、確認条件を列挙してください。
+      placeholder: |
+        - [ ]
+        - [ ]
+    validations:
+      required: true
+  - type: textarea
+    id: out_of_scope
+    attributes:
+      label: 対象外
+      description: 今回は変更しない範囲を記載してください。なければ「なし」と記載してください。
+    validations:
+      required: true
+  - type: textarea
+    id: related_files
+    attributes:
+      label: 関連画面・ファイル
+      description: 分かる範囲で対象の画面、API、パッケージ、文書を記載してください。
+    validations:
+      required: true
