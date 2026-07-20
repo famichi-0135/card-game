@@ -12,6 +12,7 @@ import type {
   RulesetVersion,
 } from "./identifiers.js";
 import type { GameWinner, RoundResult } from "./events.js";
+import type { JsonObject } from "./json.js";
 
 export type GameStatus = "initializing" | "active" | "finished";
 
@@ -126,3 +127,16 @@ export type GameEngineDependencies = {
   clock: GameClock;
   idGenerator: IdGenerator;
 };
+
+export type StateValidationIssue = {
+  code: string;
+  message: string;
+  details?: JsonObject;
+};
+
+export type StateValidationResult =
+  | { valid: true }
+  | {
+      valid: false;
+      issues: StateValidationIssue[];
+    };

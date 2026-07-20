@@ -1,12 +1,14 @@
 import type { JsonObject } from "./json.js";
 
 export type GameCommandErrorCode =
+  | "GAME_ID_MISMATCH"
   | "GAME_NOT_ACTIVE"
   | "INVALID_PHASE"
   | "NOT_CURRENT_PLAYER"
   | "PHASE_SEQUENCE_MISMATCH"
   | "CLIENT_STATE_VERSION_AHEAD"
   | "PHASE_DEADLINE_EXPIRED"
+  | "INVALID_COMMAND_TIMESTAMP"
   | "CONTEXT_VERSION_MISMATCH"
   | "CARD_NOT_FOUND"
   | "CARD_NOT_IN_HAND"

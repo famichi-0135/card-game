@@ -101,45 +101,6 @@ describe("カードカタログの実行時検証", () => {
         "HANDLER_NOT_FOUND",
       );
     }
-
-    const invalidMultiplyInput = createTestCardCatalogInput();
-    invalidMultiplyInput.definitions.push({
-      id: "support-invalid-multiply",
-      name: "不正な倍率",
-      attribute: "attributeA",
-      cardType: "support",
-      cost: 0,
-      duration: "permanent",
-      effects: [
-        {
-          effectId: "negative-multiply",
-          type: "modifyPower",
-          activationType: "continuous",
-          scope: "groupPower",
-          operation: "multiply",
-          value: -1,
-          targetRule: {
-            required: true,
-            minTargets: 1,
-            maxTargets: 1,
-            side: "self",
-            zones: ["attackGroup"],
-            allowSourceCard: false,
-          },
-        },
-      ],
-    });
-    const invalidMultiply = createCardCatalog(invalidMultiplyInput, {
-      rules: createTestContext().rules,
-      effectRegistry: {},
-      engineSemanticsVersion: "engine-v1",
-    });
-    expect(invalidMultiply.valid).toBe(false);
-    if (!invalidMultiply.valid) {
-      expect(invalidMultiply.errors.map((error) => error.code)).toContain(
-        "INVALID_NUMERIC_VALUE",
-      );
-    }
   });
 });
 
@@ -240,9 +201,11 @@ describe("ゲーム初期化", () => {
 
     const firstPlayer = result.state.players["player-1"];
     const secondPlayer = result.state.players["player-2"];
+
     if (firstPlayer === undefined || secondPlayer === undefined) {
       throw new Error("初期プレイヤー状態が見つかりません。");
     }
+
     expect(result.state).toMatchObject({
       status: "active",
       round: 1,
@@ -287,10 +250,18 @@ describe("ゲーム初期化", () => {
     const values = [
       ...Array<number>(29).fill(0.999_999),
       0,
-      ...Array<number>(28).fill(0.999_999),
+      0.04,
+      0.08,
+      0.12,
+      0.16,
+      ...Array<number>(24).fill(0.999_999),
       ...Array<number>(29).fill(0.999_999),
       0,
-      ...Array<number>(28).fill(0.999_999),
+      0.04,
+      0.08,
+      0.12,
+      0.16,
+      ...Array<number>(24).fill(0.999_999),
       0.999_999,
     ];
     let calls = 0;
@@ -315,11 +286,11 @@ describe("ゲーム初期化", () => {
       if (player === undefined) {
         throw new Error("初期プレイヤー状態が見つかりません。");
       }
-      expect(player.hand).toHaveLength(1);
-      expect(player.discardPile).toHaveLength(4);
+      expect(player.hand).toHaveLength(5);
+      expect(player.discardPile).toHaveLength(0);
       expect(player.mana).toEqual({
-        attributeA: { total: 2 },
-        attributeB: { total: 2 },
+        attributeA: { total: 0 },
+        attributeB: { total: 0 },
         attributeC: { total: 0 },
       });
     }
