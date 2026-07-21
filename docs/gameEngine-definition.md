@@ -215,7 +215,7 @@ export const GAME_RULES: Readonly<GameRules> = {
   maxRounds: 30,
   minManaCards: 8,
   maxManaCards: 12,
-  minAttackCards: 10,
+  minAttackCards: 11,
   maxSupportCards: 7,
   maxSameNamedAttackCards: 2,
   maxSameNamedSupportCards: 2,
@@ -803,7 +803,7 @@ export type DeckValidationError = {
 
 - 合計30枚ちょうど
 - みなもとカード8枚以上12枚以下
-- 攻撃カード10枚以上
+- 攻撃カード11枚以上
 - サポートカード7枚以下
 
 ### 19.2 同名制限
@@ -1296,7 +1296,7 @@ export type ExecuteCommandResult =
 
 同じ`commandId`を持つコマンドを再度受信した場合は、ゲーム状態を再変更しない。
 
-バックエンドは、受理・拒否を問わず最初の実行結果をゲーム終了まで取得できる冪等性ストアへ保存し、同じコマンドIDには最初の結果を再送する。
+バックエンドは、受理・拒否を問わず最初の実行結果をゲーム終了まで取得できる冪等性ストアへ、認証済みプレイヤーと完全なコマンド内容を結び付けて保存する。同じ認証済みプレイヤーから同一内容が再送された場合だけ最初の結果を返す。別プレイヤーまたは異なる内容が同じ`commandId`を使用した場合は、保存済みの公開状態を返さず競合として拒否する。
 
 `GameState.processedCommandIds`は、受理済みコマンドの二重適用を防ぐ補助情報とする。進行中ゲームでは削除しない。ゲーム終了後の保持期限はバックエンドの保存方針で決定する。
 
@@ -1706,6 +1706,8 @@ return noWinner;
 7. 総パワーも同じなら引き分け
 
 第30ラウンド終了後は、手札補充へ進まない。
+
+最終総パワー比較には、`untilRoundEnd`効果を含めて手順2で確定した`RoundPowerResult`を使用する。効果終了後の盤面から総パワーを再計算してはならない。
 
 ---
 

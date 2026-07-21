@@ -168,9 +168,15 @@ function gameSessionError(
   code:
     | "GAME_NOT_FOUND"
     | "GAME_ACCESS_FORBIDDEN"
-    | "AUTHENTICATED_PLAYER_MISMATCH",
+    | "AUTHENTICATED_PLAYER_MISMATCH"
+    | "COMMAND_ID_CONFLICT",
 ): Response {
-  const status = code === "GAME_NOT_FOUND" ? 404 : 403;
+  const status =
+    code === "GAME_NOT_FOUND"
+      ? 404
+      : code === "COMMAND_ID_CONFLICT"
+        ? 409
+        : 403;
   return context.json(
     { error: { code } } satisfies GameHttpApiErrorResponse,
     status,

@@ -12,6 +12,45 @@ import {
 } from "./auth-test-bindings.js";
 
 describe("Better Auth HTTP統合", () => {
+  it("許可済みOriginの認証プリフライトへCredential付きCORSを返す", async () => {
+    const response = await createApp().request(
+      new Request(`${baseURL}/api/auth/sign-in/email`, {
+        method: "OPTIONS",
+        headers: {
+          origin: trustedOrigin,
+          "access-control-request-method": "POST",
+          "access-control-request-headers": "content-type",
+        },
+      }),
+      undefined,
+      createAuthTestBindings(),
+    );
+
+    expect(response.status).toBe(204);
+    expect(response.headers.get("access-control-allow-origin")).toBe(
+      trustedOrigin,
+    );
+    expect(response.headers.get("access-control-allow-credentials")).toBe(
+      "true",
+    );
+  });
+
+  it("未許可Originの認証プリフライトへOrigin許可を返さない", async () => {
+    const response = await createApp().request(
+      new Request(`${baseURL}/api/auth/sign-in/email`, {
+        method: "OPTIONS",
+        headers: {
+          origin: "https://untrusted.example.test",
+          "access-control-request-method": "POST",
+        },
+      }),
+      undefined,
+      createAuthTestBindings(),
+    );
+
+    expect(response.headers.get("access-control-allow-origin")).toBeNull();
+  });
+
   it("Honoの認証ルートで登録し、セッションから既存APIを認証する", async () => {
     const app = createApp();
     const sentEmails: EmailMessageBuilder[] = [];

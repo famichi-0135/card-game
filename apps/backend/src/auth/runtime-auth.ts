@@ -55,7 +55,7 @@ export async function authenticateBetterAuthRequest(
   return result?.user.id ?? null;
 }
 
-function parseTrustedOrigins(value: string): string[] {
+export function parseTrustedOrigins(value: string): string[] {
   const configured = requireBinding(value, "BETTER_AUTH_TRUSTED_ORIGINS");
   const origins = [
     ...new Set(

@@ -49,7 +49,7 @@ export const GAME_RULES: Readonly<GameRules> = {
   maxRounds: 30,
   minManaCards: 8,
   maxManaCards: 12,
-  minAttackCards: 10,
+  minAttackCards: 11,
   maxSupportCards: 7,
   maxSameNamedAttackCards: 2,
   maxSameNamedSupportCards: 2,

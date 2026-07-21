@@ -295,6 +295,138 @@ describe("サポートカード効果", () => {
 });
 
 describe("即時効果", () => {
+  it("プロパティ順が異なる同一対象を重複指定として拒否する", () => {
+    const context = createContextWithSupport({
+      id: "support-duplicate-target",
+      name: "重複対象テスト",
+      attribute: "attributeA",
+      cardType: "support",
+      cost: 0,
+      duration: "instant",
+      effects: [
+        {
+          effectId: "duplicate-mana-target",
+          type: "reduceMana",
+          activationType: "onPlay",
+          amount: 1,
+          targetRule: {
+            required: true,
+            minTargets: 1,
+            maxTargets: 2,
+            side: "self",
+            zones: ["mana"],
+            allowSourceCard: false,
+          },
+        },
+      ],
+    });
+    const state = prepareSupportPhase(context, "support-duplicate-target");
+    const playerId = state.firstPlayerId;
+    const supportCardInstanceId = findHandCard(
+      state,
+      playerId,
+      "support-duplicate-target",
+    );
+    const result = executeGameCommand(
+      state,
+      playerId,
+      {
+        type: "PLAY_SUPPORT_CARD",
+        cardInstanceId: supportCardInstanceId,
+        effectInputs: [
+          {
+            effectId: "duplicate-mana-target",
+            targets: [
+              {
+                type: "mana",
+                playerId,
+                attribute: "attributeA",
+              },
+              {
+                attribute: "attributeA",
+                playerId,
+                type: "mana",
+              },
+            ],
+          },
+        ],
+      },
+      "play-duplicate-target",
+      context,
+    );
+
+    expect(result).toMatchObject({
+      accepted: false,
+      error: { code: "EFFECT_VALIDATION_FAILED" },
+    });
+    expect(result.state).toBe(state);
+  });
+
+  it("instantカードの解決中は使用コストを予約する", () => {
+    const context = createContextWithSupport({
+      id: "support-self-mana-drain",
+      name: "自己みなもと減少",
+      attribute: "attributeA",
+      cardType: "support",
+      cost: 2,
+      duration: "instant",
+      effects: [
+        {
+          effectId: "drain-own-mana",
+          type: "reduceMana",
+          activationType: "onPlay",
+          amount: 1,
+          targetRule: {
+            required: true,
+            minTargets: 1,
+            maxTargets: 1,
+            side: "self",
+            zones: ["mana"],
+            allowSourceCard: false,
+          },
+        },
+      ],
+    });
+    const state = prepareSupportPhase(context, "support-self-mana-drain");
+    const playerId = state.firstPlayerId;
+    getPlayer(state, playerId).mana.attributeA.total = 2;
+    const supportCardInstanceId = findHandCard(
+      state,
+      playerId,
+      "support-self-mana-drain",
+    );
+
+    const result = requireAccepted(
+      executeGameCommand(
+        state,
+        playerId,
+        {
+          type: "PLAY_SUPPORT_CARD",
+          cardInstanceId: supportCardInstanceId,
+          effectInputs: [
+            {
+              effectId: "drain-own-mana",
+              targets: [
+                {
+                  type: "mana",
+                  playerId,
+                  attribute: "attributeA",
+                },
+              ],
+            },
+          ],
+        },
+        "play-self-mana-drain",
+        context,
+      ),
+    );
+
+    expect(getPlayer(result.state, playerId).mana.attributeA.total).toBe(2);
+    expect(getPlayer(result.state, playerId).discardPile).toContain(
+      supportCardInstanceId,
+    );
+  });
+
   it("スタミナ変更を効果計画から適用し、instantカードを捨て札へ移動する", () => {
     const context = createContextWithSupport({
       id: "support-stamina-strike",

@@ -1,4 +1,4 @@
-import { env } from "cloudflare:test";
+import { env, runInDurableObject } from "cloudflare:test";
 import { describe, expect, it } from "vitest";
 import type {
   AuthenticatedGameCommand,
@@ -115,6 +115,65 @@ describe("GameSession Durable Object", () => {
     );
   });
 
+  it("別プレイヤーが同じcommandIdを再利用しても保存済み結果を返さない", async () => {
+    const gameId = "game-session-command-id-owner";
+    const stub = getGameSession(gameId);
+    await stub.initialize(createInitializeInput(gameId));
+    const initial = await stub.getSnapshot("player-1", 0);
+    if (!initial.found) {
+      throw new Error("初期スナップショットを取得できませんでした。");
+    }
+    const firstPlayerId = initial.snapshot.view.firstPlayerId;
+    const secondPlayerId = initial.snapshot.view.secondPlayerId;
+    const firstCommand: AuthenticatedGameCommand = {
+      authenticatedPlayerId: firstPlayerId,
+      receivedAt: Date.now(),
+      command: {
+        type: "FINISH_PLACEMENT",
+        commandId: "shared-command-id",
+        gameId,
+        playerId: firstPlayerId,
+        phaseSequence: initial.snapshot.view.phaseSequence,
+        clientStateVersion: initial.snapshot.view.stateVersion,
+        issuedAt: 0,
+      },
+    };
+    const first = await stub.submit(firstCommand);
+    expect(first).toMatchObject({ submitted: true });
+    await expect(
+      stub.submit({
+        ...firstCommand,
+        command: { ...firstCommand.command, issuedAt: 1 },
+      }),
+    ).resolves.toEqual({
+      submitted: false,
+      error: { code: "COMMAND_ID_CONFLICT" },
+    });
+
+    const current = await stub.getSnapshot(secondPlayerId, 0);
+    if (!current.found) {
+      throw new Error("第2プレイヤーの状態を取得できませんでした。");
+    }
+    await expect(
+      stub.submit({
+        authenticatedPlayerId: secondPlayerId,
+        receivedAt: Date.now(),
+        command: {
+          type: "FINISH_PLACEMENT",
+          commandId: "shared-command-id",
+          gameId,
+          playerId: secondPlayerId,
+          phaseSequence: current.snapshot.view.phaseSequence,
+          clientStateVersion: current.snapshot.view.stateVersion,
+          issuedAt: 0,
+        },
+      }),
+    ).resolves.toEqual({
+      submitted: false,
+      error: { code: "COMMAND_ID_CONFLICT" },
+    });
+  });
+
   it("同一の初期化入力は再送として受理し、異なる入力では再初期化しない", async () => {
     const gameId = "game-session-initialize-idempotency";
     const stub = getGameSession(gameId);
@@ -129,9 +188,25 @@ describe("GameSession Durable Object", () => {
     }
     const initialSnapshot = initialSnapshotResult.snapshot;
 
+    await runInDurableObject(
+      stub as unknown as DurableObjectStub,
+      async (_instance, state) => {
+        await state.storage.deleteAlarm();
+        expect(await state.storage.getAlarm()).toBeNull();
+      },
+    );
+
     await expect(stub.initialize(input)).resolves.toEqual({
       initialized: true,
     });
+    await runInDurableObject(
+      stub as unknown as DurableObjectStub,
+      async (_instance, state) => {
+        expect(await state.storage.getAlarm()).toBe(
+          initialSnapshot.view.phaseDeadlineAt,
+        );
+      },
+    );
     await expect(
       stub.initialize({ ...input, randomSeed: "different-seed" }),
     ).resolves.toMatchObject({ initialized: false });

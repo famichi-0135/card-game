@@ -212,6 +212,30 @@ describe("ゲーム HTTP API", () => {
     ]);
   });
 
+  it("commandId競合を非公開状態なしの409へ変換する", async () => {
+    const app = createGameApi({
+      authenticate: async () => "player-1",
+      getGameSession: () => ({
+        getSnapshot: async () =>
+          ({ found: true, snapshot }) satisfies GetGameSnapshotResult,
+        submit: async () => ({
+          submitted: false,
+          error: { code: "COMMAND_ID_CONFLICT" },
+        }),
+      }),
+    });
+
+    const response = await request(app, "/game-1/commands", {
+      method: "POST",
+      body: JSON.stringify({ command: createFinishPlacementCommand() }),
+    });
+
+    expect(response.status).toBe(409);
+    expect(await response.json()).toEqual({
+      error: { code: "COMMAND_ID_CONFLICT" },
+    });
+  });
+
   it("Durable Objectの未初期化・参加者外結果を安定したHTTPエラーへ変換する", async () => {
     const missing = createGameApi({
       authenticate: async () => "player-1",
