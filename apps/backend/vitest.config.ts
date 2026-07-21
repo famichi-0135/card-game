@@ -1,10 +1,29 @@
-import { cloudflareTest } from "@cloudflare/vitest-pool-workers";
+import path from "node:path";
+import { fileURLToPath } from "node:url";
+import {
+  cloudflareTest,
+  readD1Migrations,
+} from "@cloudflare/vitest-pool-workers";
 import { defineConfig } from "vitest/config";
+
+const directory = path.dirname(fileURLToPath(import.meta.url));
 
 export default defineConfig({
   plugins: [
-    cloudflareTest({
-      wrangler: { configPath: "./wrangler.jsonc" },
+    cloudflareTest(async () => {
+      const migrations = await readD1Migrations(
+        path.join(directory, "drizzle"),
+      );
+
+      return {
+        wrangler: { configPath: "./wrangler.jsonc" },
+        miniflare: {
+          bindings: { TEST_MIGRATIONS: migrations },
+        },
+      };
     }),
   ],
+  test: {
+    setupFiles: ["./test/apply-migrations.ts"],
+  },
 });
