@@ -6,7 +6,8 @@
   "exports": {
     "./health": "./src/health.ts",
     "./game": "./src/game.ts",
-    "./match": "./src/match.ts"
+    "./match": "./src/match.ts",
+    "./deck": "./src/deck.ts"
   },
   "scripts": {
     "lint": "eslint . --max-warnings 0",

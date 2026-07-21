@@ -36,6 +36,7 @@ export type MatchRequestAuthenticator = (
 export type AuthorizedDeckResolver = (
   playerId: PlayerId,
   deckId: string,
+  environment: CloudflareBindings,
 ) => Promise<CardDefinitionId[] | null>;
 
 type MatchLobbyRpc = {
@@ -101,6 +102,7 @@ export function createMatchApi({
     const deckDefinitionIds = await resolveAuthorizedDeck(
       c.var.authenticatedPlayerId,
       parsed.request.deckId,
+      c.env,
     );
     if (deckDefinitionIds === null) {
       return matchError(c, "DECK_NOT_FOUND", 404);
@@ -157,6 +159,7 @@ export function createMatchApi({
     const deckDefinitionIds = await resolveAuthorizedDeck(
       c.var.authenticatedPlayerId,
       parsed.request.deckId,
+      c.env,
     );
     if (deckDefinitionIds === null) {
       return matchError(c, "DECK_NOT_FOUND", 404);

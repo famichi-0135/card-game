@@ -78,6 +78,20 @@ HTTPアダプターは、認証後かつDO呼び出し前にJSON本文と`afterS
 
 `MatchLobby`の公開状態にデッキ、乱数seed、開始中のゲーム初期化入力を含めない。状態遷移の詳細は[対戦待機・開始の設計](./matchmaking.md)を参照する。
 
+## 保存済みデッキ
+
+保存済みデッキは認証済みプレイヤー本人だけが操作できる。リクエスト本文に`playerId`を含めず、Workerが認証結果から対象の`PlayerDecks`を決定する。`cardDefinitionIds`は作成・置換時に現在のカードカタログとゲームルールで検証し、違法な構成は`422 DECK_VALIDATION_FAILED`で拒否する。
+
+| 操作     | エンドポイント              | クライアント本文              | 成功時の応答              |
+| -------- | --------------------------- | ----------------------------- | ------------------------- |
+| 一覧取得 | `GET /api/decks`            | なし                          | `{ decks: SavedDeck[] }`  |
+| 作成     | `POST /api/decks`           | `{ name, cardDefinitionIds }` | `201 { deck: SavedDeck }` |
+| 取得     | `GET /api/decks/:deckId`    | なし                          | `{ deck: SavedDeck }`     |
+| 置換     | `PUT /api/decks/:deckId`    | `{ name, cardDefinitionIds }` | `{ deck: SavedDeck }`     |
+| 削除     | `DELETE /api/decks/:deckId` | なし                          | `204`                     |
+
+対戦作成・参加時も、保存済みデッキを現在のルールで再検証する。削除済みまたは無効化されたデッキは`404 DECK_NOT_FOUND`として扱い、`MatchLobby`へ渡さない。
+
 ## 順序と再同期
 
 1. クライアントは`stateVersion`とイベント`sequence`を保持する。
