@@ -13,6 +13,7 @@
   },
   "dependencies": {
     "@disastar/contracts": "workspace:*",
+    "@disastar/game-engine": "workspace:*",
     "hono": "^4.12.30"
   },
   "devDependencies": {

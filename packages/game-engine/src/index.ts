@@ -8,3 +8,5 @@ export * from "./mana/calculate-mana.js";
 export * from "./power/calculate-power.js";
 export * from "./random/shuffle.js";
 export * from "./state/validate-game-state.js";
+export * from "./views/project-event-for-player.js";
+export * from "./views/project-player-view.js";
