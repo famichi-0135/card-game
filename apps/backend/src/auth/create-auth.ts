@@ -3,6 +3,10 @@ import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import type { RuntimeDatabase } from "../db/runtime.js";
 import { createRuntimeDatabase } from "../db/runtime.js";
 import * as schema from "../db/schema/index.js";
+import type {
+  AuthEmailMessage,
+  AuthEmailService,
+} from "./auth-email-service.js";
 
 const minimumSecretLength = 32;
 
@@ -11,7 +15,11 @@ export type CreateAuthInput = {
   baseURL: string;
   secret: string;
   trustedOrigins: string[];
+  emailService?: AuthEmailService;
+  scheduleBackgroundTask?: BackgroundTaskScheduler;
 };
+
+export type BackgroundTaskScheduler = (task: Promise<unknown>) => void;
 
 type CreateAuthWithDatabaseInput = Omit<CreateAuthInput, "database"> & {
   database: RuntimeDatabase;
@@ -29,6 +37,8 @@ export function createAuthWithDatabase({
   baseURL,
   secret,
   trustedOrigins,
+  emailService,
+  scheduleBackgroundTask,
 }: CreateAuthWithDatabaseInput) {
   assertAuthConfiguration({ baseURL, secret, trustedOrigins });
 
@@ -45,7 +55,44 @@ export function createAuthWithDatabase({
       enabled: true,
       minPasswordLength: 12,
       maxPasswordLength: 128,
+      requireEmailVerification: emailService !== undefined,
+      resetPasswordTokenExpiresIn: 60 * 30,
+      revokeSessionsOnPasswordReset: true,
+      sendResetPassword:
+        emailService === undefined
+          ? undefined
+          : ({ user, url }) =>
+              dispatchAuthEmail(
+                emailService,
+                {
+                  type: "password-reset",
+                  to: user.email,
+                  userName: user.name,
+                  actionURL: url,
+                },
+                scheduleBackgroundTask,
+              ),
     },
+    emailVerification:
+      emailService === undefined
+        ? undefined
+        : {
+            expiresIn: 60 * 60,
+            sendOnSignUp: true,
+            sendOnSignIn: true,
+            autoSignInAfterVerification: false,
+            sendVerificationEmail: ({ user, url }) =>
+              dispatchAuthEmail(
+                emailService,
+                {
+                  type: "email-verification",
+                  to: user.email,
+                  userName: user.name,
+                  actionURL: url,
+                },
+                scheduleBackgroundTask,
+              ),
+          },
     rateLimit: {
       enabled: true,
       storage: "database",
@@ -59,8 +106,26 @@ export function createAuthWithDatabase({
       ipAddress: {
         ipAddressHeaders: ["cf-connecting-ip"],
       },
+      backgroundTasks:
+        scheduleBackgroundTask === undefined
+          ? undefined
+          : { handler: scheduleBackgroundTask },
     },
   });
+}
+
+function dispatchAuthEmail(
+  emailService: AuthEmailService,
+  message: AuthEmailMessage,
+  scheduleBackgroundTask?: BackgroundTaskScheduler,
+): Promise<void> {
+  const task = emailService.send(message);
+  if (scheduleBackgroundTask === undefined) {
+    return task;
+  }
+
+  scheduleBackgroundTask(task);
+  return Promise.resolve();
 }
 
 function assertAuthConfiguration({

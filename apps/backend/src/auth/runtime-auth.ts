@@ -1,10 +1,15 @@
 import type { PlayerId } from "@disastar/game-engine/contracts";
-import { createAuth } from "./create-auth.js";
+import { createAuthEmailService } from "./auth-email-service.js";
+import { createAuth, type BackgroundTaskScheduler } from "./create-auth.js";
+import { createCloudflareEmailSender } from "../email/cloudflare-email-sender.js";
 import type { BetterAuthEnvironment } from "./request-authenticator.js";
 
 export type { BetterAuthEnvironment } from "./request-authenticator.js";
 
-export function createRuntimeAuth(environment: BetterAuthEnvironment) {
+export function createRuntimeAuth(
+  environment: BetterAuthEnvironment,
+  scheduleBackgroundTask?: BackgroundTaskScheduler,
+) {
   return createAuth({
     database: environment.DB,
     baseURL: requireBinding(environment.BETTER_AUTH_URL, "BETTER_AUTH_URL"),
@@ -15,14 +20,29 @@ export function createRuntimeAuth(environment: BetterAuthEnvironment) {
     trustedOrigins: parseTrustedOrigins(
       environment.BETTER_AUTH_TRUSTED_ORIGINS,
     ),
+    emailService: createAuthEmailService(
+      createCloudflareEmailSender({
+        binding: requireEmailBinding(environment.EMAIL),
+        from: {
+          email: requireBinding(environment.AUTH_EMAIL_FROM, "AUTH_EMAIL_FROM"),
+          name:
+            optionalBinding(environment.AUTH_EMAIL_FROM_NAME) ??
+            "Disastar Card Game",
+        },
+      }),
+    ),
+    scheduleBackgroundTask,
   });
 }
 
 export function handleBetterAuthRequest(
   request: Request,
   environment: BetterAuthEnvironment,
+  scheduleBackgroundTask?: BackgroundTaskScheduler,
 ): Promise<Response> {
-  return createRuntimeAuth(environment).handler(request);
+  return createRuntimeAuth(environment, scheduleBackgroundTask).handler(
+    request,
+  );
 }
 
 export async function authenticateBetterAuthRequest(
@@ -59,4 +79,20 @@ function requireBinding(value: string, name: string): string {
     throw new Error(`${name} must not be empty`);
   }
   return value.trim();
+}
+
+function optionalBinding(value: string | undefined): string | undefined {
+  if (typeof value !== "string") {
+    return undefined;
+  }
+
+  const configured = value.trim();
+  return configured.length === 0 ? undefined : configured;
+}
+
+function requireEmailBinding(binding: SendEmail | undefined): SendEmail {
+  if (binding === undefined || typeof binding.send !== "function") {
+    throw new Error("EMAIL binding must provide send()");
+  }
+  return binding;
 }

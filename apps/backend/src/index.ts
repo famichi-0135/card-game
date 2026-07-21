@@ -47,7 +47,9 @@ export function createApp({
     return c.json(response);
   });
   app.on(["GET", "POST"], "/api/auth/*", (c) =>
-    handleAuthRequest(c.req.raw, c.env),
+    handleAuthRequest(c.req.raw, c.env, (task) => {
+      c.executionCtx.waitUntil(task);
+    }),
   );
   app.route(
     "/api/games",

@@ -1,3 +1,7 @@
+import {
+  createExecutionContext,
+  waitOnExecutionContext,
+} from "cloudflare:test";
 import { describe, expect, it } from "vitest";
 import { createApp } from "../src/index.js";
 import { createRuntimeAuth } from "../src/auth/runtime-auth.js";
@@ -10,7 +14,9 @@ import {
 describe("Better Auth HTTP統合", () => {
   it("Honoの認証ルートで登録し、セッションから既存APIを認証する", async () => {
     const app = createApp();
-    const bindings = createAuthTestBindings();
+    const sentEmails: EmailMessageBuilder[] = [];
+    const bindings = createAuthTestBindings(sentEmails);
+    const registrationContext = createExecutionContext();
     const registration = await app.request(
       new Request(`${baseURL}/api/auth/sign-up/email`, {
         method: "POST",
@@ -27,18 +33,59 @@ describe("Better Auth HTTP統合", () => {
       }),
       undefined,
       bindings,
+      registrationContext,
     );
+    await waitOnExecutionContext(registrationContext);
 
     expect(registration.status).toBe(200);
-    const cookie = getSessionCookie(registration);
+    expect(registration.headers.get("set-cookie")).toBeNull();
+    expect(sentEmails).toHaveLength(1);
 
+    const verificationURL = extractActionURL(sentEmails[0]?.text);
+    const verificationContext = createExecutionContext();
+    const verification = await app.request(
+      new Request(verificationURL, {
+        headers: { "cf-connecting-ip": "203.0.113.20" },
+      }),
+      undefined,
+      bindings,
+      verificationContext,
+    );
+    await waitOnExecutionContext(verificationContext);
+    expect(verification.status).toBe(302);
+
+    const signInContext = createExecutionContext();
+    const signIn = await app.request(
+      new Request(`${baseURL}/api/auth/sign-in/email`, {
+        method: "POST",
+        headers: {
+          "cf-connecting-ip": "203.0.113.20",
+          "content-type": "application/json",
+          origin: trustedOrigin,
+        },
+        body: JSON.stringify({
+          email: "http-auth@example.com",
+          password: "a-secure-test-password",
+        }),
+      }),
+      undefined,
+      bindings,
+      signInContext,
+    );
+    await waitOnExecutionContext(signInContext);
+    expect(signIn.status).toBe(200);
+    const cookie = getSessionCookie(signIn);
+
+    const sessionContext = createExecutionContext();
     const session = await app.request(
       new Request(`${baseURL}/api/auth/get-session`, {
         headers: authenticatedHeaders(cookie),
       }),
       undefined,
       bindings,
+      sessionContext,
     );
+    await waitOnExecutionContext(sessionContext);
     expect(session.status).toBe(200);
     await expect(session.json()).resolves.toMatchObject({
       user: {
@@ -110,6 +157,30 @@ describe("Better Auth HTTP統合", () => {
       "BETTER_AUTH_TRUSTED_ORIGINS must not be empty",
     );
   });
+
+  it("送信元メールアドレスが欠けている場合は設定エラーにする", () => {
+    const bindings = createAuthTestBindings();
+    const invalidBindings = {
+      ...bindings,
+      AUTH_EMAIL_FROM: "  ",
+    };
+
+    expect(() => createRuntimeAuth(invalidBindings)).toThrowError(
+      "AUTH_EMAIL_FROM must not be empty",
+    );
+  });
+
+  it("Email Service Bindingが欠けている場合は設定エラーにする", () => {
+    const bindings = createAuthTestBindings();
+    const invalidBindings = {
+      ...bindings,
+      EMAIL: undefined,
+    } as unknown as Parameters<typeof createRuntimeAuth>[0];
+
+    expect(() => createRuntimeAuth(invalidBindings)).toThrowError(
+      "EMAIL binding must provide send()",
+    );
+  });
 });
 
 function getSessionCookie(response: Response): string {
@@ -125,4 +196,12 @@ function authenticatedHeaders(cookie: string): HeadersInit {
     "cf-connecting-ip": "203.0.113.20",
     cookie,
   };
+}
+
+function extractActionURL(text: string | undefined): string {
+  const actionURL = text?.match(/https:\/\/[^\s]+/)?.[0];
+  if (actionURL === undefined) {
+    throw new Error("認証メールに操作URLがありません。");
+  }
+  return actionURL;
 }
