@@ -6,6 +6,7 @@ import {
 } from "./game-api/create-game-api.js";
 
 export { GameSession } from "./game-session/game-session.js";
+export { MatchLobby } from "./match-lobby/match-lobby.js";
 
 type CreateAppOptions = {
   authenticateGameRequest?: GameRequestAuthenticator;

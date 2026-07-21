@@ -10,12 +10,20 @@
         "name": "GAME_SESSION",
         "class_name": "GameSession",
       },
+      {
+        "name": "MATCH_LOBBY",
+        "class_name": "MatchLobby",
+      },
     ],
   },
   "migrations": [
     {
       "tag": "v1-game-session",
       "new_sqlite_classes": ["GameSession"],
+    },
+    {
+      "tag": "v2-match-lobby",
+      "new_sqlite_classes": ["MatchLobby"],
     },
   ],
   // "compatibility_flags": [
