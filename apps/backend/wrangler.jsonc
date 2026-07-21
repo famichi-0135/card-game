@@ -4,6 +4,15 @@
   "workers_dev": false,
   "main": "src/index.ts",
   "compatibility_date": "2026-07-15",
+  "compatibility_flags": ["nodejs_compat"],
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "disastar-card-game",
+      "database_id": "replace-with-cloudflare-d1-database-id",
+      "migrations_dir": "drizzle",
+    },
+  ],
   "durable_objects": {
     "bindings": [
       {
@@ -34,9 +43,6 @@
       "new_sqlite_classes": ["PlayerDecks"],
     },
   ],
-  // "compatibility_flags": [
-  //   "nodejs_compat"
-  // ],
   // "vars": {
   //   "MY_VAR": "my-variable"
   // },
@@ -50,13 +56,6 @@
   //   {
   //     "binding": "MY_BUCKET",
   //     "bucket_name": "my-bucket"
-  //   }
-  // ],
-  // "d1_databases": [
-  //   {
-  //     "binding": "MY_DB",
-  //     "database_name": "my-database",
-  //     "database_id": ""
   //   }
   // ],
   // "ai": {
