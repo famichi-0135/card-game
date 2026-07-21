@@ -87,6 +87,27 @@ describe("GameSession Durable Object", () => {
     )) as GameSnapshotResponse;
     expect(snapshot.view.stateVersion).toBe(firstResult.view.stateVersion);
   });
+
+  it("同一の初期化入力は再送として受理し、異なる入力では再初期化しない", async () => {
+    const gameId = "game-session-initialize-idempotency";
+    const stub = getGameSession(gameId);
+    const input = createInitializeInput(gameId);
+
+    await expect(stub.initialize(input)).resolves.toEqual({
+      initialized: true,
+    });
+    const initialSnapshot = await stub.getSnapshot("player-1", 0);
+
+    await expect(stub.initialize(input)).resolves.toEqual({
+      initialized: true,
+    });
+    await expect(
+      stub.initialize({ ...input, randomSeed: "different-seed" }),
+    ).resolves.toMatchObject({ initialized: false });
+
+    const retriedSnapshot = await stub.getSnapshot("player-1", 0);
+    expect(retriedSnapshot).toEqual(initialSnapshot);
+  });
 });
 
 type GameSessionRpc = {

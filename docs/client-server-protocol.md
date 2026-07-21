@@ -65,6 +65,16 @@ apps/backend, apps/frontend
 
 HTTPアダプターは、認証後かつDO呼び出し前にJSON本文と`afterSequence`を検証する。本文の`gameId`がパスと異なる場合は`400 GAME_ID_MISMATCH`、本文の`playerId`が認証結果と異なる場合は`403 AUTHENTICATED_PLAYER_MISMATCH`で拒否する。ゲームルール上の拒否は通信エラーではないため、`SubmitGameCommandResponse`の`accepted: false`を`200`で返す。
 
+## 対戦待機
+
+招待式の対戦待機は`MatchLobby` Durable Objectで直列化する。実認証とデッキ所有権の検証が未実装のため、現時点ではHTTPエンドポイントを公開しない。導入時のAPIは認証結果からプレイヤーを決定し、クライアント本文のプレイヤーIDを信用しない。
+
+- 対戦作成: 認可済みの作成者デッキを`MatchLobby.initialize`へ渡し、サーバー生成の招待IDを返す。
+- 対戦参加: 認可済みの参加者デッキを`MatchLobby.accept`へ渡す。
+- 対戦取消: 作成者だけが待機中の`MatchLobby.cancel`を呼べる。
+
+`MatchLobby`の公開状態にデッキ、乱数seed、開始中のゲーム初期化入力を含めない。状態遷移の詳細は[対戦待機・開始の設計](./matchmaking.md)を参照する。
+
 ## 順序と再同期
 
 1. クライアントは`stateVersion`とイベント`sequence`を保持する。
@@ -79,7 +89,8 @@ HTTPアダプターは、認証後かつDO呼び出し前にJSON本文と`afterS
 
 - HTTPとWebSocketの使い分け
 - 認証方式とセッション管理
-- マッチング、ルーム作成、観戦
+- 認証方式と接続する対戦作成・参加・取消のHTTP DTO
+- 公開対戦、ランダムマッチ、観戦
 - Durable Objectの永続化形式、アラーム、イベント保持期間
 - エラー表示文言
 

@@ -16,7 +16,7 @@ GameSession Durable Object
 @disastar/game-engine
 ```
 
-`GameSession`の公開RPCは次の3つである。Workerは認証アダプターでプレイヤーを確定してから、HTTP API経由で`getSnapshot`と`submit`を呼び出す。認証方式と対戦作成は未実装のため、標準Workerの認証アダプターはすべてのゲームAPIリクエストを拒否する。
+`GameSession`の公開RPCは次の3つである。Workerは認証アダプターでプレイヤーを確定してから、HTTP API経由で`getSnapshot`と`submit`を呼び出す。標準Workerの認証アダプターは未接続のため、ゲームAPIはすべてのリクエストを拒否する。
 
 - `initialize`: 対戦状態と初期イベントを作成して永続化する。
 - `getSnapshot`: 閲覧者別の`PlayerGameView`と公開イベントを返す。
@@ -24,7 +24,7 @@ GameSession Durable Object
 
 状態とコマンド結果は、応答する前にDO Storageへ書き込む。同じ`commandId`が再送された場合は、エンジンを再実行せず保存済みの最初の結果を返す。フェーズ期限がある間はDO Alarmを1つだけ設定し、アラームでは`HANDLE_PHASE_TIMEOUT`をエンジンへ渡す。
 
-マッチング層は、信頼済みの2人のプレイヤーとデッキを`createGameSessionInEnvironment`へ渡す。このサービスがWeb Cryptoで`gameId`と初期乱数seedを生成し、対応する`GameSession.initialize`を一度だけ呼ぶ。クライアント入力から`gameId`やseedを受け取らない。対戦相手の選出、参加承諾、デッキ選択の認可はマッチング・認証層の責務であり、このサービスは担当しない。
+マッチング層は、信頼済みの2人のプレイヤーとデッキを`GameSession.initialize`へ渡す。`MatchLobby`はゲームIDと初期乱数seedをWeb Cryptoで生成してから、開始中の入力を永続化する。クライアント入力から`gameId`やseedを受け取らない。対戦相手の選出、参加承諾、デッキ選択の認可はマッチング・認証層の責務であり、このサービスは担当しない。詳細は[対戦待機・開始の設計](./matchmaking.md)を参照する。
 
 ## PartyKitの評価
 
@@ -44,6 +44,6 @@ ID生成器は初期乱数seedをID文字列へそのまま含めない。不透
 
 ## 次の実装
 
-1. 実際の認証アダプターとマッチングを接続し、信頼済みのプレイヤー・デッキを対戦作成サービスへ渡す。
+1. 実際の認証アダプターと保存済みデッキの認可を`MatchLobby`へ接続する。
 2. Durable Objectのイベント保持期間と再接続時の差分取得を定義する。
 3. WebSocket配信、接続休止、プレゼンスを追加する。

@@ -19,6 +19,21 @@ export type CreateGameSessionDependencies = {
   getGameSession: (gameId: string) => GameSessionInitializer;
 };
 
+/**
+ * 生成済みのゲームIDと乱数seedで、対応するゲームセッションを初期化する。
+ * 呼び出し元は同じ入力で再実行できるため、対戦待機部屋の復旧にも使える。
+ */
+export function initializeGameSession(
+  input: InitializeGameInput,
+  dependencies: Pick<CreateGameSessionDependencies, "getGameSession">,
+): Promise<InitializeGameSessionResult> {
+  return dependencies.getGameSession(input.gameId).initialize(input);
+}
+
+export type InitializeGameSessionResult =
+  | { initialized: true }
+  | { initialized: false; error: InitializeGameError };
+
 export type CreateGameSessionResult =
   | { created: true; gameId: string }
   | {
@@ -52,11 +67,14 @@ export async function createGameSession(
     };
   }
 
-  const initialized = await dependencies.getGameSession(gameId).initialize({
-    gameId,
-    randomSeed,
-    players: input.players,
-  });
+  const initialized = await initializeGameSession(
+    {
+      gameId,
+      randomSeed,
+      players: input.players,
+    },
+    dependencies,
+  );
   return initialized.initialized
     ? { created: true, gameId }
     : { created: false, error: initialized.error };
@@ -72,6 +90,19 @@ export function createGameSessionInEnvironment(
   return createGameSession(input, {
     createGameId: () => `game-${crypto.randomUUID()}`,
     createRandomSeed: () => crypto.randomUUID(),
+    getGameSession: (gameId) =>
+      environment.GAME_SESSION.getByName(
+        gameId,
+      ) as unknown as GameSessionInitializer,
+  });
+}
+
+/** Cloudflare Worker上で、指定済みの初期化入力をゲームセッションへ渡す。 */
+export function initializeGameSessionInEnvironment(
+  input: InitializeGameInput,
+  environment: CloudflareBindings,
+): Promise<InitializeGameSessionResult> {
+  return initializeGameSession(input, {
     getGameSession: (gameId) =>
       environment.GAME_SESSION.getByName(
         gameId,

@@ -25,6 +25,7 @@ import {
 const SESSION_STORAGE_KEY = "game-session";
 
 type StoredGameSession = {
+  initializationInput: InitializeGameInput;
   state: GameState;
   events: GameEventEnvelope[];
   commandResults: Record<string, SubmitGameCommandResponse>;
@@ -52,6 +53,9 @@ export class GameSession extends DurableObject<CloudflareBindings> {
   ): Promise<InitializeGameSessionResult> {
     await this.loadSession;
     if (this.session !== null) {
+      if (isSameInitializeInput(this.session.initializationInput, input)) {
+        return { initialized: true };
+      }
       return {
         initialized: false,
         error: {
@@ -71,6 +75,7 @@ export class GameSession extends DurableObject<CloudflareBindings> {
     }
 
     const session: StoredGameSession = {
+      initializationInput: cloneInitializeInput(input),
       state: initialized.state,
       events: initialized.events,
       commandResults: Object.create(null),
@@ -142,6 +147,7 @@ export class GameSession extends DurableObject<CloudflareBindings> {
           view: createPlayerView(result.state, authenticatedPlayerId),
         };
     const nextSession: StoredGameSession = {
+      initializationInput: session.initializationInput,
       state: result.state,
       events: result.accepted
         ? [...session.events, ...result.events]
@@ -223,6 +229,43 @@ export class GameSession extends DurableObject<CloudflareBindings> {
     }
     await this.ctx.storage.setAlarm(state.phaseDeadlineAt);
   }
+}
+
+function isSameInitializeInput(
+  left: InitializeGameInput | undefined,
+  right: InitializeGameInput,
+): boolean {
+  if (left === undefined) {
+    return false;
+  }
+  return (
+    left.gameId === right.gameId &&
+    left.randomSeed === right.randomSeed &&
+    left.players.length === right.players.length &&
+    left.players.every((player, index) => {
+      const compared = right.players[index];
+      return (
+        compared !== undefined &&
+        player.playerId === compared.playerId &&
+        player.deckDefinitionIds.length === compared.deckDefinitionIds.length &&
+        player.deckDefinitionIds.every(
+          (definitionId, deckIndex) =>
+            definitionId === compared.deckDefinitionIds[deckIndex],
+        )
+      );
+    })
+  );
+}
+
+function cloneInitializeInput(input: InitializeGameInput): InitializeGameInput {
+  return {
+    gameId: input.gameId,
+    randomSeed: input.randomSeed,
+    players: input.players.map((player) => ({
+      playerId: player.playerId,
+      deckDefinitionIds: [...player.deckDefinitionIds],
+    })) as InitializeGameInput["players"],
+  };
 }
 
 function assertParticipant(state: GameState, playerId: PlayerId): void {
