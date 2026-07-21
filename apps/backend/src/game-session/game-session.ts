@@ -7,6 +7,7 @@ import {
 } from "@disastar/game-engine";
 import type {
   GameEventEnvelope,
+  GameCommand,
   GameState,
   InitializeGameError,
   InitializeGameInput,
@@ -28,7 +29,13 @@ type StoredGameSession = {
   initializationInput: InitializeGameInput;
   state: GameState;
   events: GameEventEnvelope[];
-  commandResults: Record<string, SubmitGameCommandResponse>;
+  commandResults: Record<string, StoredCommandResult>;
+};
+
+type StoredCommandResult = {
+  authenticatedPlayerId: PlayerId;
+  command: GameCommand;
+  response: SubmitGameCommandResponse;
 };
 
 export type InitializeGameSessionResult =
@@ -38,7 +45,8 @@ export type InitializeGameSessionResult =
 export type GameSessionAccessErrorCode =
   | "GAME_NOT_FOUND"
   | "GAME_ACCESS_FORBIDDEN"
-  | "AUTHENTICATED_PLAYER_MISMATCH";
+  | "AUTHENTICATED_PLAYER_MISMATCH"
+  | "COMMAND_ID_CONFLICT";
 
 export type GetGameSnapshotResult =
   | { found: true; snapshot: GameSnapshotResponse }
@@ -67,6 +75,7 @@ export class GameSession extends DurableObject<CloudflareBindings> {
     await this.loadSession;
     if (this.session !== null) {
       if (isSameInitializeInput(this.session.initializationInput, input)) {
+        await this.syncPhaseAlarm(this.session.state);
         return { initialized: true };
       }
       return {
@@ -148,9 +157,19 @@ export class GameSession extends DurableObject<CloudflareBindings> {
       };
     }
 
-    const storedResult = session.commandResults[command.commandId];
+    const storedResult: unknown = session.commandResults[command.commandId];
     if (storedResult !== undefined) {
-      return { submitted: true, response: storedResult };
+      if (
+        !isStoredCommandResult(storedResult) ||
+        storedResult.authenticatedPlayerId !== authenticatedPlayerId ||
+        !areEqualJsonValues(storedResult.command, command)
+      ) {
+        return {
+          submitted: false,
+          error: { code: "COMMAND_ID_CONFLICT" },
+        };
+      }
+      return { submitted: true, response: storedResult.response };
     }
 
     const result = executeCommand(
@@ -186,7 +205,11 @@ export class GameSession extends DurableObject<CloudflareBindings> {
         : session.events,
       commandResults: {
         ...session.commandResults,
-        [command.commandId]: response,
+        [command.commandId]: {
+          authenticatedPlayerId,
+          command: structuredClone(command),
+          response,
+        },
       },
     };
 
@@ -300,4 +323,44 @@ function assertAfterSequence(afterSequence: number): void {
   if (!Number.isSafeInteger(afterSequence) || afterSequence < 0) {
     throw new RangeError("イベント連番は0以上の安全な整数で指定してください。");
   }
+}
+
+function isStoredCommandResult(value: unknown): value is StoredCommandResult {
+  return (
+    isRecord(value) &&
+    typeof value.authenticatedPlayerId === "string" &&
+    isRecord(value.command) &&
+    isRecord(value.response)
+  );
+}
+
+function areEqualJsonValues(left: unknown, right: unknown): boolean {
+  if (Object.is(left, right)) {
+    return true;
+  }
+  if (Array.isArray(left) || Array.isArray(right)) {
+    return (
+      Array.isArray(left) &&
+      Array.isArray(right) &&
+      left.length === right.length &&
+      left.every((value, index) => areEqualJsonValues(value, right[index]))
+    );
+  }
+  if (!isRecord(left) || !isRecord(right)) {
+    return false;
+  }
+
+  const leftKeys = Object.keys(left).sort();
+  const rightKeys = Object.keys(right).sort();
+  return (
+    leftKeys.length === rightKeys.length &&
+    leftKeys.every(
+      (key, index) =>
+        key === rightKeys[index] && areEqualJsonValues(left[key], right[key]),
+    )
+  );
+}
+
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return typeof value === "object" && value !== null && !Array.isArray(value);
 }

@@ -40,8 +40,7 @@ export function calculateMana(
       if (definition?.cardType !== "support") {
         throw new Error("サポートゾーンにサポートカード以外が存在します。");
       }
-      return definition.attribute === attribute &&
-        support.duration !== "instant"
+      return definition.attribute === attribute
         ? reserved + definition.cost
         : reserved;
     },

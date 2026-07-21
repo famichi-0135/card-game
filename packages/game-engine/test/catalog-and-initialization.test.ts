@@ -1,9 +1,11 @@
 import { describe, expect, it } from "vitest";
 import {
+  GAME_RULES,
   createCardCatalog,
   initializeGame,
   shuffle,
   validateDeck,
+  validateGameRules,
 } from "../src/index.js";
 import type { TargetRule } from "../src/contracts/index.js";
 import {
@@ -101,6 +103,25 @@ describe("カードカタログの実行時検証", () => {
         "HANDLER_NOT_FOUND",
       );
     }
+  });
+});
+
+describe("ゲームルール検証", () => {
+  it("初期手札枚数が手札上限を超えるルールを拒否する", () => {
+    const result = validateGameRules({
+      ...GAME_RULES,
+      initialDrawCount: GAME_RULES.handLimit + 1,
+    });
+
+    expect(result).toMatchObject({
+      valid: false,
+      errors: expect.arrayContaining([
+        expect.objectContaining({
+          code: "INVALID_RANGE",
+          field: "initialDrawCount",
+        }),
+      ]),
+    });
   });
 });
 

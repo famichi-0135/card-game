@@ -71,6 +71,14 @@ export function validateGameRules(
     });
   }
 
+  if (rules.initialDrawCount > rules.handLimit) {
+    errors.push({
+      code: "INVALID_RANGE",
+      field: "initialDrawCount",
+      message: "初期手札枚数は手札上限以下でなければなりません。",
+    });
+  }
+
   if (rules.minManaCards + rules.minAttackCards > rules.deckSize) {
     errors.push({
       code: "INVALID_DECK_COMPOSITION",

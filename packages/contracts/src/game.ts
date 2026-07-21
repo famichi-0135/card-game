@@ -96,7 +96,8 @@ export type GameHttpApiErrorCode =
   | "GAME_ID_MISMATCH"
   | "AUTHENTICATED_PLAYER_MISMATCH"
   | "GAME_NOT_FOUND"
-  | "GAME_ACCESS_FORBIDDEN";
+  | "GAME_ACCESS_FORBIDDEN"
+  | "COMMAND_ID_CONFLICT";
 
 export type GameHttpApiErrorResponse = {
   error: {

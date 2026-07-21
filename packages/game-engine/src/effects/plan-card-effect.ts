@@ -445,7 +445,7 @@ function validateTargets(
         "対象種別はこの効果では選択できません。",
       );
     }
-    const targetKey = JSON.stringify(target);
+    const targetKey = createEffectTargetKey(target);
     if (targetKeys.has(targetKey)) {
       return effectError(
         "INVALID_TARGET_COUNT",
@@ -535,14 +535,25 @@ function isEffectTarget(value: unknown): value is DeepReadonly<EffectTarget> {
     case "attackCard":
     case "supportCard":
       return (
-        "cardInstanceId" in value && typeof value.cardInstanceId === "string"
+        hasExactKeys(value, ["type", "cardInstanceId"]) &&
+        "cardInstanceId" in value &&
+        typeof value.cardInstanceId === "string"
       );
     case "attackGroup":
-      return "groupId" in value && typeof value.groupId === "string";
+      return (
+        hasExactKeys(value, ["type", "groupId"]) &&
+        "groupId" in value &&
+        typeof value.groupId === "string"
+      );
     case "player":
-      return "playerId" in value && typeof value.playerId === "string";
+      return (
+        hasExactKeys(value, ["type", "playerId"]) &&
+        "playerId" in value &&
+        typeof value.playerId === "string"
+      );
     case "mana":
       return (
+        hasExactKeys(value, ["type", "playerId", "attribute"]) &&
         "playerId" in value &&
         typeof value.playerId === "string" &&
         "attribute" in value &&
@@ -553,6 +564,29 @@ function isEffectTarget(value: unknown): value is DeepReadonly<EffectTarget> {
     default:
       return false;
   }
+}
+
+function createEffectTargetKey(target: DeepReadonly<EffectTarget>): string {
+  switch (target.type) {
+    case "attackCard":
+    case "supportCard":
+      return `${target.type}:${target.cardInstanceId}`;
+    case "attackGroup":
+      return `${target.type}:${target.groupId}`;
+    case "player":
+      return `${target.type}:${target.playerId}`;
+    case "mana":
+      return `${target.type}:${target.playerId}:${target.attribute}`;
+  }
+}
+
+function hasExactKeys(value: object, expectedKeys: readonly string[]): boolean {
+  const actualKeys = Object.keys(value).sort();
+  const sortedExpectedKeys = [...expectedKeys].sort();
+  return (
+    actualKeys.length === sortedExpectedKeys.length &&
+    actualKeys.every((key, index) => key === sortedExpectedKeys[index])
+  );
 }
 
 function isAllowedSide(

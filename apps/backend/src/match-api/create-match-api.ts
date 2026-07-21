@@ -179,9 +179,15 @@ export function createMatchApi({
       deckDefinitionIds,
     });
     return result.accepted
-      ? c.json(result satisfies AcceptMatchResponse)
+      ? c.json({
+          accepted: true,
+          gameId: result.gameId,
+        } satisfies AcceptMatchResponse)
       : c.json(
-          result satisfies AcceptMatchResponse,
+          {
+            accepted: false,
+            error: { code: result.error.code },
+          } satisfies AcceptMatchResponse,
           statusForMatchError(result.error.code),
         );
   });
@@ -197,9 +203,12 @@ export function createMatchApi({
     }
     const result = await lobby.cancel(c.var.authenticatedPlayerId);
     return result.cancelled
-      ? c.json(result satisfies CancelMatchResponse)
+      ? c.json({ cancelled: true } satisfies CancelMatchResponse)
       : c.json(
-          result satisfies CancelMatchResponse,
+          {
+            cancelled: false,
+            error: { code: result.error.code },
+          } satisfies CancelMatchResponse,
           statusForMatchError(result.error.code),
         );
   });

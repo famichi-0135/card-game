@@ -177,6 +177,38 @@ describe("対戦待機 HTTP API", () => {
     ]);
   });
 
+  it("ゲーム作成失敗時に内部初期化エラーをHTTPレスポンスへ公開しない", async () => {
+    const api = createMatchApi({
+      authenticate: async () => "player-2",
+      resolveAuthorizedDeck: async () => deckDefinitionIds,
+      getMatchLobby: () => ({
+        getView: async () => ({ visible: true as const, view: waitingMatch }),
+        accept: async () => ({
+          accepted: false as const,
+          error: {
+            code: "GAME_CREATION_FAILED" as const,
+            initializationError: {
+              code: "DEPENDENCY_OUTPUT_INVALID" as const,
+              message: "内部カタログと依存値の詳細",
+            },
+          },
+        }),
+        cancel: async () => ({ cancelled: true as const }),
+      }),
+    });
+
+    const response = await request(api, "/match-1/accept", {
+      method: "POST",
+      body: JSON.stringify({ deckId: "deck-2" }),
+    });
+
+    expect(response.status).toBe(422);
+    expect(await response.json()).toEqual({
+      accepted: false,
+      error: { code: "GAME_CREATION_FAILED" },
+    });
+  });
+
   it("所有していないデッキでは参加処理を呼ばない", async () => {
     let resolvedLobby = false;
     const api = createMatchApi({

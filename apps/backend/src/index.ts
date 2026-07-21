@@ -1,4 +1,5 @@
 import { Hono } from "hono";
+import { cors } from "hono/cors";
 import { HEALTH_STATUS, type HealthResponse } from "@disastar/contracts/health";
 import {
   createGameApi,
@@ -17,6 +18,7 @@ import { resolveAuthorizedDeckInEnvironment } from "./player-decks/resolve-autho
 import {
   authenticateBetterAuthRequest,
   handleBetterAuthRequest,
+  parseTrustedOrigins,
   type BetterAuthEnvironment,
 } from "./auth/runtime-auth.js";
 
@@ -46,6 +48,19 @@ export function createApp({
 
     return c.json(response);
   });
+  app.use(
+    "/api/auth/*",
+    cors({
+      origin: (origin, c) =>
+        parseTrustedOrigins(c.env.BETTER_AUTH_TRUSTED_ORIGINS).includes(origin)
+          ? origin
+          : undefined,
+      allowMethods: ["GET", "POST", "OPTIONS"],
+      allowHeaders: ["Content-Type", "Authorization"],
+      credentials: true,
+      maxAge: 600,
+    }),
+  );
   app.on(["GET", "POST"], "/api/auth/*", (c) =>
     handleAuthRequest(c.req.raw, c.env, (task) => {
       c.executionCtx.waitUntil(task);
