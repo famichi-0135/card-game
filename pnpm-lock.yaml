@@ -20,6 +20,9 @@ importers:
       '@disastar/contracts':
         specifier: workspace:*
         version: link:../../packages/contracts
+      '@disastar/game-engine':
+        specifier: workspace:*
+        version: link:../../packages/game-engine
       hono:
         specifier: ^4.12.30
         version: 4.12.30

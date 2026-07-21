@@ -4,6 +4,20 @@
   "workers_dev": false,
   "main": "src/index.ts",
   "compatibility_date": "2026-07-15",
+  "durable_objects": {
+    "bindings": [
+      {
+        "name": "GAME_SESSION",
+        "class_name": "GameSession",
+      },
+    ],
+  },
+  "migrations": [
+    {
+      "tag": "v1-game-session",
+      "new_sqlite_classes": ["GameSession"],
+    },
+  ],
   // "compatibility_flags": [
   //   "nodejs_compat"
   // ],
