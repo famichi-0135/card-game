@@ -19,8 +19,8 @@ GameSession Durable Object
 `GameSession`の公開RPCは次の3つである。Workerは認証アダプターでプレイヤーを確定してから、HTTP API経由で`getSnapshot`と`submit`を呼び出す。標準Workerの認証アダプターは未接続のため、ゲームAPIはすべてのリクエストを拒否する。
 
 - `initialize`: 対戦状態と初期イベントを作成して永続化する。
-- `getSnapshot`: 閲覧者別の`PlayerGameView`と公開イベントを返す。
-- `submit`: 認証済みプレイヤーのコマンドを処理し、最初の結果を`commandId`単位で保存する。
+- `getSnapshot`: 閲覧者別の`PlayerGameView`と公開イベントを返す。未初期化時は`GAME_NOT_FOUND`、参加者外は`GAME_ACCESS_FORBIDDEN`を返す。
+- `submit`: 認証済みプレイヤーのコマンドを処理し、最初の結果を`commandId`単位で保存する。未初期化・参加者外・認証済みプレイヤー不一致は安定したエラー結果で返す。
 
 状態とコマンド結果は、応答する前にDO Storageへ書き込む。同じ`commandId`が再送された場合は、エンジンを再実行せず保存済みの最初の結果を返す。フェーズ期限がある間はDO Alarmを1つだけ設定し、アラームでは`HANDLE_PHASE_TIMEOUT`をエンジンへ渡す。
 

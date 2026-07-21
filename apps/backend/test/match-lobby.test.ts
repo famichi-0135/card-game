@@ -1,8 +1,8 @@
 import { env } from "cloudflare:test";
 import { describe, expect, it } from "vitest";
-import type { GameSnapshotResponse } from "@disastar/contracts/game";
 import type { CardDefinitionId } from "@disastar/game-engine/contracts";
 import { createInitialStarterDeckDefinitionIds } from "../src/game-engine/runtime.js";
+import type { GetGameSnapshotResult } from "../src/game-session/game-session.js";
 import { createMatchLobbyInEnvironment } from "../src/match-lobby/match-lobby.js";
 
 type MatchLobbyRpc = {
@@ -151,10 +151,16 @@ describe("MatchLobby Durable Object", () => {
       },
     });
 
-    const snapshot = await getGameSession(accepted.gameId).getSnapshot(
+    const snapshotResult = await getGameSession(accepted.gameId).getSnapshot(
       "player-1",
       0,
     );
+    if (!snapshotResult.found) {
+      throw new Error(
+        "開始済みゲームのスナップショットを取得できませんでした。",
+      );
+    }
+    const snapshot = snapshotResult.snapshot;
     expect(snapshot.view.gameId).toBe(accepted.gameId);
     expect(snapshot.view.opponent.playerId).toBe("player-2");
 
@@ -241,14 +247,14 @@ function getGameSession(gameId: string): {
   getSnapshot(
     viewerPlayerId: string,
     afterSequence?: number,
-  ): Promise<GameSnapshotResponse>;
+  ): Promise<GetGameSnapshotResult>;
 } {
   const gameSessions = env.GAME_SESSION as unknown as {
     getByName(name: string): {
       getSnapshot(
         viewerPlayerId: string,
         afterSequence?: number,
-      ): Promise<GameSnapshotResponse>;
+      ): Promise<GetGameSnapshotResult>;
     };
   };
   return gameSessions.getByName(gameId);

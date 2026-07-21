@@ -5,6 +5,10 @@ import type {
   SubmitGameCommandResponse,
 } from "@disastar/contracts/game";
 import { createGameApi } from "../src/game-api/create-game-api.js";
+import type {
+  GetGameSnapshotResult,
+  SubmitGameCommandResult,
+} from "../src/game-session/game-session.js";
 import worker from "../src/index.js";
 
 const snapshot = {
@@ -64,9 +68,13 @@ describe("ゲーム HTTP API", () => {
         getSnapshot: async (viewerPlayerId, afterSequence) => {
           expect(gameId).toBe("game-1");
           received.push({ viewerPlayerId, afterSequence: afterSequence ?? 0 });
-          return snapshot;
+          return { found: true, snapshot } satisfies GetGameSnapshotResult;
         },
-        submit: async () => acceptedResponse,
+        submit: async () =>
+          ({
+            submitted: true,
+            response: acceptedResponse,
+          }) satisfies SubmitGameCommandResult,
       }),
     });
 
@@ -173,11 +181,15 @@ describe("ゲーム HTTP API", () => {
       authenticate: async () => "player-1",
       now: () => 1_234,
       getGameSession: (gameId) => ({
-        getSnapshot: async () => snapshot,
+        getSnapshot: async () =>
+          ({ found: true, snapshot }) satisfies GetGameSnapshotResult,
         submit: async (command) => {
           expect(gameId).toBe("game-1");
           submitted.push(command);
-          return acceptedResponse;
+          return {
+            submitted: true,
+            response: acceptedResponse,
+          } satisfies SubmitGameCommandResult;
         },
       }),
     });
@@ -197,6 +209,47 @@ describe("ゲーム HTTP API", () => {
         command,
       },
     ]);
+  });
+
+  it("Durable Objectの未初期化・参加者外結果を安定したHTTPエラーへ変換する", async () => {
+    const missing = createGameApi({
+      authenticate: async () => "player-1",
+      getGameSession: () => ({
+        getSnapshot: async () => ({
+          found: false,
+          error: { code: "GAME_NOT_FOUND" },
+        }),
+        submit: async () => ({
+          submitted: false,
+          error: { code: "GAME_NOT_FOUND" },
+        }),
+      }),
+    });
+    const forbidden = createGameApi({
+      authenticate: async () => "player-1",
+      getGameSession: () => ({
+        getSnapshot: async () => ({
+          found: false,
+          error: { code: "GAME_ACCESS_FORBIDDEN" },
+        }),
+        submit: async () => ({
+          submitted: false,
+          error: { code: "GAME_ACCESS_FORBIDDEN" },
+        }),
+      }),
+    });
+
+    const missingResponse = await request(missing, "/missing-game");
+    const forbiddenResponse = await request(forbidden, "/existing-game");
+
+    expect(missingResponse.status).toBe(404);
+    expect(await missingResponse.json()).toEqual({
+      error: { code: "GAME_NOT_FOUND" },
+    });
+    expect(forbiddenResponse.status).toBe(403);
+    expect(await forbiddenResponse.json()).toEqual({
+      error: { code: "GAME_ACCESS_FORBIDDEN" },
+    });
   });
 });
 

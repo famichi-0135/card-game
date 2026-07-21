@@ -1,12 +1,14 @@
-import { Hono } from "hono";
+import { Hono, type Context } from "hono";
 import {
   parseSubmitGameCommandRequest,
   type AuthenticatedGameCommand,
   type GameHttpApiErrorResponse,
-  type GameSnapshotResponse,
-  type SubmitGameCommandResponse,
 } from "@disastar/contracts/game";
 import type { GameId, PlayerId } from "@disastar/game-engine/contracts";
+import type {
+  GetGameSnapshotResult,
+  SubmitGameCommandResult,
+} from "../game-session/game-session.js";
 
 type GameApiEnvironment = {
   Bindings: CloudflareBindings;
@@ -24,10 +26,10 @@ type GameSessionRpc = {
   getSnapshot(
     viewerPlayerId: PlayerId,
     afterSequence?: number,
-  ): Promise<GameSnapshotResponse>;
+  ): Promise<GetGameSnapshotResult>;
   submit(
     authenticatedCommand: AuthenticatedGameCommand,
-  ): Promise<SubmitGameCommandResponse>;
+  ): Promise<SubmitGameCommandResult>;
 };
 
 type GameSessionResolver = (
@@ -74,11 +76,13 @@ export function createGameApi({
       );
     }
 
-    const response = await getGameSession(
+    const result = await getGameSession(
       c.req.param("gameId"),
       c.env,
     ).getSnapshot(c.var.authenticatedPlayerId, afterSequence);
-    return c.json(response);
+    return result.found
+      ? c.json(result.snapshot)
+      : gameSessionError(c, result.error.code);
   });
 
   api.post("/:gameId/commands", async (c) => {
@@ -123,12 +127,14 @@ export function createGameApi({
       );
     }
 
-    const response = await getGameSession(gameId, c.env).submit({
+    const result = await getGameSession(gameId, c.env).submit({
       authenticatedPlayerId: c.var.authenticatedPlayerId,
       receivedAt: now(),
       command: parsed.request.command,
     });
-    return c.json(response);
+    return result.submitted
+      ? c.json(result.response)
+      : gameSessionError(c, result.error.code);
   });
 
   return api;
@@ -153,4 +159,18 @@ function parseAfterSequence(value: string | undefined): number | null {
 
   const parsed = Number(value);
   return Number.isSafeInteger(parsed) ? parsed : null;
+}
+
+function gameSessionError(
+  context: Context<GameApiEnvironment>,
+  code:
+    | "GAME_NOT_FOUND"
+    | "GAME_ACCESS_FORBIDDEN"
+    | "AUTHENTICATED_PLAYER_MISMATCH",
+): Response {
+  const status = code === "GAME_NOT_FOUND" ? 404 : 403;
+  return context.json(
+    { error: { code } } satisfies GameHttpApiErrorResponse,
+    status,
+  );
 }
