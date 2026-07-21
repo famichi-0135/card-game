@@ -21,16 +21,18 @@ import {
   type MatchLobbyAcceptResult,
   type MatchLobbyCancelResult,
 } from "../match-lobby/match-lobby.js";
+import type {
+  BetterAuthEnvironment,
+  RequestAuthenticator,
+} from "../auth/request-authenticator.js";
 
 type MatchApiEnvironment = {
-  Bindings: CloudflareBindings;
+  Bindings: BetterAuthEnvironment;
   Variables: { authenticatedPlayerId: PlayerId };
 };
 
 /** 実際の認証方式に依存しない、対戦待機 API の認証境界。 */
-export type MatchRequestAuthenticator = (
-  request: Request,
-) => Promise<PlayerId | null>;
+export type MatchRequestAuthenticator = RequestAuthenticator;
 
 /** 保存済みデッキの所有権を確認し、ゲーム初期化に渡すカード定義IDを返す。 */
 export type AuthorizedDeckResolver = (
@@ -77,7 +79,7 @@ export function createMatchApi({
   const api = new Hono<MatchApiEnvironment>();
 
   api.use("*", async (c, next) => {
-    const authenticatedPlayerId = await authenticate(c.req.raw);
+    const authenticatedPlayerId = await authenticate(c.req.raw, c.env);
     if (authenticatedPlayerId === null) {
       return c.json(
         { error: { code: "UNAUTHENTICATED" } } satisfies MatchApiErrorResponse,

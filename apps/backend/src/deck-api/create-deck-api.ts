@@ -18,16 +18,18 @@ import {
   getPlayerDecksInEnvironment,
   type PlayerDecksRpc,
 } from "../player-decks/player-decks.js";
+import type {
+  BetterAuthEnvironment,
+  RequestAuthenticator,
+} from "../auth/request-authenticator.js";
 
 type DeckApiEnvironment = {
-  Bindings: CloudflareBindings;
+  Bindings: BetterAuthEnvironment;
   Variables: { authenticatedPlayerId: PlayerId };
 };
 
 /** 実際の認証方式に依存しない、保存済みデッキ API の認証境界。 */
-export type DeckRequestAuthenticator = (
-  request: Request,
-) => Promise<PlayerId | null>;
+export type DeckRequestAuthenticator = RequestAuthenticator;
 
 export type PlayerDecksResolver = (
   playerId: PlayerId,
@@ -48,7 +50,7 @@ export function createDeckApi({
   const api = new Hono<DeckApiEnvironment>();
 
   api.use("*", async (c, next) => {
-    const authenticatedPlayerId = await authenticate(c.req.raw);
+    const authenticatedPlayerId = await authenticate(c.req.raw, c.env);
     if (
       authenticatedPlayerId === null ||
       authenticatedPlayerId.trim().length === 0

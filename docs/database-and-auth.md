@@ -7,6 +7,7 @@
 - `apps/backend/src/db/schema/`: Drizzle スキーマの正本
 - `apps/backend/drizzle/`: レビュー・適用する SQL マイグレーション
 - `apps/backend/src/db/runtime.ts`: Workers の `env.DB` から作る実行時 Drizzle
+- `apps/backend/src/auth/runtime-auth.ts`: リクエストごとの Better Auth 生成とセッション認証
 - `apps/backend/src/db/migration.ts`: Better Auth CLI がスキーマを検査するための Drizzle
 - `apps/backend/auth.cli.ts`: Better Auth CLI 専用設定
 - `apps/backend/drizzle.config.ts`: Drizzle Kit 専用設定
@@ -25,6 +26,12 @@ pnpm --filter @disastar/backend run test
 Better Auth の設定やプラグインを変更した場合は、`auth:schema` で認証スキーマを更新し、差分を確認してから `db:generate` を実行する。生成された TypeScript と SQL は commit する。
 
 `.dev.vars.example`を`.dev.vars`へ複製し、32文字以上のランダムな`BETTER_AUTH_SECRET`を設定する。実際の値は commit しない。
+
+`BETTER_AUTH_URL`にはクライアントから見える認証APIの公開オリジンを設定する。フロントエンドWorkerが`/api/*`をサービスバインディングでバックエンドへ転送する本番構成では、バックエンドWorker内部の名前ではなくフロントエンドの公開オリジンを指定する。`BETTER_AUTH_TRUSTED_ORIGINS`には、カンマ区切りで許可するクライアントオリジンを設定する。
+
+バックエンドは`GET`と`POST`の`/api/auth/*`をBetter Authへ渡す。ゲーム、対戦待機、保存済みデッキAPIは、同じBetter AuthセッションCookieからユーザーIDを取得し、`PlayerId`として使用する。セッションがない場合は`401 UNAUTHENTICATED`を返し、D1障害や認証設定不備を未認証として扱わない。
+
+Better Authインスタンスは、リクエスト中のD1 Bindingと最新の環境設定から生成する。リクエスト固有のインスタンスや秘密情報をモジュールスコープへ保存しない。
 
 ## 既存 D1 の取り込み
 

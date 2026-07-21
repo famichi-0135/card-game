@@ -6,6 +6,7 @@ import {
 import type { CardDefinitionId } from "@disastar/game-engine/contracts";
 import { createDeckApi } from "../src/deck-api/create-deck-api.js";
 import worker from "../src/index.js";
+import { createAuthTestBindings } from "./auth-test-bindings.js";
 
 const validDeck: CardDefinitionId[] = ["attack-1"];
 
@@ -37,10 +38,10 @@ describe("保存済みデッキのリクエスト検証", () => {
 });
 
 describe("保存済みデッキ HTTP API", () => {
-  it("標準Workerは認証アダプター未接続時にデッキAPIを拒否する", async () => {
+  it("標準WorkerはセッションCookieがないデッキAPIリクエストを拒否する", async () => {
     const response = await worker.fetch(
       new Request("http://example.com/api/decks"),
-      {} as CloudflareBindings,
+      createAuthTestBindings(),
     );
 
     expect(response.status).toBe(401);

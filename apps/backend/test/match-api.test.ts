@@ -7,6 +7,7 @@ import {
 import type { CardDefinitionId } from "@disastar/game-engine/contracts";
 import { createMatchApi } from "../src/match-api/create-match-api.js";
 import worker from "../src/index.js";
+import { createAuthTestBindings } from "./auth-test-bindings.js";
 
 const deckDefinitionIds: CardDefinitionId[] = ["attack-fire-001"];
 const waitingMatch: MatchLobbyView = {
@@ -36,10 +37,10 @@ describe("対戦待機リクエストの検証", () => {
 });
 
 describe("対戦待機 HTTP API", () => {
-  it("標準Workerは認証アダプター未接続時に対戦待機APIを拒否する", async () => {
+  it("標準WorkerはセッションCookieがない対戦待機APIリクエストを拒否する", async () => {
     const response = await worker.fetch(
       new Request("http://example.com/api/matches"),
-      {} as CloudflareBindings,
+      createAuthTestBindings(),
     );
 
     expect(response.status).toBe(401);
