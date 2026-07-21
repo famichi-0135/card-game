@@ -31,6 +31,8 @@ apps/backend, apps/frontend
 
 カード対象はカード定義IDではなくカードインスタンスIDで指定する。複合効果の対象は`EffectInput`を効果ID単位で送る。
 
+バックエンドは、JSON本文を`GameCommand`として型アサーションしない。`@disastar/game-engine`の`parseGameCommand`で実行時検証してから扱う。未知フィールド、空の識別子、負の世代番号、有限でない数値、JSON値ではない`parameters`を含む入力は、認証やゲーム状態の検証より前に拒否する。
+
 ## バックエンドが付与する情報
 
 バックエンドはクライアント入力をそのままエンジンへ渡さない。認証と対戦参加者の照合後、次を付与した`AuthenticatedGameCommand`を作る。
