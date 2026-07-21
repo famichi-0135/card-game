@@ -88,6 +88,21 @@ export type GameSnapshotResponse = {
   latestEventSequence: number;
 };
 
+/** HTTPアダプターがゲームエンジンの呼び出し前に返すエラー。 */
+export type GameHttpApiErrorCode =
+  | "UNAUTHENTICATED"
+  | "INVALID_AFTER_SEQUENCE"
+  | "INVALID_REQUEST"
+  | "GAME_ID_MISMATCH"
+  | "AUTHENTICATED_PLAYER_MISMATCH";
+
+export type GameHttpApiErrorResponse = {
+  error: {
+    code: GameHttpApiErrorCode;
+  };
+  errors?: SubmitGameCommandRequestParseError[];
+};
+
 function isRecord(value: unknown): value is Record<string, unknown> {
   return typeof value === "object" && value !== null && !Array.isArray(value);
 }
