@@ -16,7 +16,7 @@ GameSession Durable Object
 @disastar/game-engine
 ```
 
-`GameSession`の公開RPCは次の3つである。外部HTTP APIは認証とマッチングが未実装のため、この時点では追加しない。
+`GameSession`の公開RPCは次の3つである。Workerは認証アダプターでプレイヤーを確定してから、HTTP API経由で`getSnapshot`と`submit`を呼び出す。認証方式と対戦作成は未実装のため、標準Workerの認証アダプターはすべてのゲームAPIリクエストを拒否する。
 
 - `initialize`: 対戦状態と初期イベントを作成して永続化する。
 - `getSnapshot`: 閲覧者別の`PlayerGameView`と公開イベントを返す。
@@ -42,7 +42,7 @@ ID生成器は初期乱数seedをID文字列へそのまま含めない。不透
 
 ## 次の実装
 
-1. Workerで認証済みプレイヤーを確定し、`getSnapshot`と`submit`へ接続するHTTP APIを追加する。
-2. 対戦作成と実カードカタログを追加し、開発用カタログを置き換える。
+1. 対戦作成と実カードカタログを追加し、開発用カタログを置き換える。
+2. 実際の認証アダプターを接続し、認証済みプレイヤーを確定する。
 3. Durable Objectのイベント保持期間と再接続時の差分取得を定義する。
 4. WebSocket配信、接続休止、プレゼンスを追加する。

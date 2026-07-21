@@ -54,6 +54,17 @@ apps/backend, apps/frontend
 
 `PlayerGameView`と公開イベントには、相手の手札、山札内容と順番、初期乱数seed、内部カード効果設定を含めない。`CARDS_DRAWN`イベントは本人にはカードID、相手には枚数だけを公開する。
 
+## 暫定 HTTP アダプター
+
+対戦作成と実認証が未実装の間は、次のHTTPアダプターだけを提供する。標準Workerは認証アダプター未接続のため、ゲームAPIを常に`401 UNAUTHENTICATED`で拒否する。実認証の導入時は、リクエストから`PlayerId`を確定するアダプターをWorkerへ渡す。
+
+| 操作                 | 暫定エンドポイント                              | 成功時の応答                |
+| -------------------- | ----------------------------------------------- | --------------------------- |
+| スナップショット取得 | `GET /api/games/:gameId?afterSequence=<number>` | `GameSnapshotResponse`      |
+| コマンド送信         | `POST /api/games/:gameId/commands`              | `SubmitGameCommandResponse` |
+
+HTTPアダプターは、認証後かつDO呼び出し前にJSON本文と`afterSequence`を検証する。本文の`gameId`がパスと異なる場合は`400 GAME_ID_MISMATCH`、本文の`playerId`が認証結果と異なる場合は`403 AUTHENTICATED_PLAYER_MISMATCH`で拒否する。ゲームルール上の拒否は通信エラーではないため、`SubmitGameCommandResponse`の`accepted: false`を`200`で返す。
+
 ## 順序と再同期
 
 1. クライアントは`stateVersion`とイベント`sequence`を保持する。
@@ -70,6 +81,6 @@ apps/backend, apps/frontend
 - 認証方式とセッション管理
 - マッチング、ルーム作成、観戦
 - Durable Objectの永続化形式、アラーム、イベント保持期間
-- APIのURL、メッセージ形式、エラー表示文言
+- エラー表示文言
 
 通信方式を追加しても、`GameCommand`、`PlayerGameView`、公開イベントの意味は変えない。通信形式の変更が必要な場合は、`@disastar/contracts`のDTOをバージョン追加し、ゲームエンジンの型正本を複製しない。
