@@ -1,4 +1,7 @@
 import type { GameId, PlayerId } from "@disastar/game-engine/contracts";
+import type { DeckId } from "./deck.js";
+
+export type { DeckId } from "./deck.js";
 
 export type MatchLobbyStatus = "waiting" | "starting" | "started" | "cancelled";
 
@@ -9,9 +12,6 @@ export type MatchLobbyView = {
   opponentPlayerId: PlayerId | null;
   gameId: GameId | null;
 };
-
-/** クライアントが選択する、保存済みデッキの不透明な識別子。 */
-export type DeckId = string;
 
 export type CreateMatchRequest = { deckId: DeckId };
 export type AcceptMatchRequest = { deckId: DeckId };

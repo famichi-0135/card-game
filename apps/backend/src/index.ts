@@ -9,20 +9,28 @@ import {
   type AuthorizedDeckResolver,
   type MatchRequestAuthenticator,
 } from "./match-api/create-match-api.js";
+import {
+  createDeckApi,
+  type DeckRequestAuthenticator,
+} from "./deck-api/create-deck-api.js";
+import { resolveAuthorizedDeckInEnvironment } from "./player-decks/resolve-authorized-deck.js";
 
 export { GameSession } from "./game-session/game-session.js";
 export { MatchLobby } from "./match-lobby/match-lobby.js";
+export { PlayerDecks } from "./player-decks/player-decks.js";
 
 type CreateAppOptions = {
   authenticateGameRequest?: GameRequestAuthenticator;
   authenticateMatchRequest?: MatchRequestAuthenticator;
+  authenticateDeckRequest?: DeckRequestAuthenticator;
   resolveAuthorizedDeck?: AuthorizedDeckResolver;
 };
 
 export function createApp({
   authenticateGameRequest = rejectUnauthenticatedRequest,
   authenticateMatchRequest = rejectUnauthenticatedRequest,
-  resolveAuthorizedDeck = rejectUnauthorizedDeck,
+  authenticateDeckRequest = rejectUnauthenticatedRequest,
+  resolveAuthorizedDeck = resolveAuthorizedDeckInEnvironment,
 }: CreateAppOptions = {}) {
   const app = new Hono<{ Bindings: CloudflareBindings }>();
 
@@ -36,6 +44,10 @@ export function createApp({
     createGameApi({ authenticate: authenticateGameRequest }),
   );
   app.route(
+    "/api/decks",
+    createDeckApi({ authenticate: authenticateDeckRequest }),
+  );
+  app.route(
     "/api/matches",
     createMatchApi({
       authenticate: authenticateMatchRequest,
@@ -47,7 +59,6 @@ export function createApp({
 }
 
 const rejectUnauthenticatedRequest: GameRequestAuthenticator = async () => null;
-const rejectUnauthorizedDeck: AuthorizedDeckResolver = async () => null;
 
 const app = createApp();
 

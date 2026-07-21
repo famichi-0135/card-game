@@ -9,7 +9,11 @@
 ```text
 認証アダプター
        |
-       | 確定済みPlayerId・認可済みデッキ
+       | 確定済みPlayerId
+       v
+PlayerDecks Durable Object
+       |
+       | 所有者限定の保存済みデッキ・現在のルールでの再検証
        v
 MatchLobby Durable Object
        |
@@ -40,12 +44,26 @@ GameSession Durable Object -> @disastar/game-engine
 
 ## 永続化の分担
 
-`MatchLobby`は短命な招待・参加・開始の直列化を担当する。将来D1を導入する場合は、ユーザー、所有デッキ、対戦履歴、公開対戦の検索インデックスを保存する。D1を待機部屋の正本にしないため、参加の競合やゲーム開始の二重実行を複数のWorkerリクエストで調停する必要がない。
+`MatchLobby`は短命な招待・参加・開始の直列化を担当する。`PlayerDecks`は認証済み`PlayerId`を名前として1プレイヤーにつき1つ取得し、そのプレイヤーの保存済みデッキだけをDO Storageへ保存する。デッキの一覧・更新・削除は同じDO内で直列化され、他プレイヤーのデッキを参照できない。
+
+対戦作成・参加時は、`PlayerDecks`から取得したデッキを現在のカードカタログとゲームルールで再検証する。削除済み、またはカードカタログ更新で違法になったデッキは`MatchLobby`へ渡さない。
+
+将来D1を導入する場合は、ユーザー、対戦履歴、公開対戦の検索インデックスを保存する。D1を待機部屋の正本にしないため、参加の競合やゲーム開始の二重実行を複数のWorkerリクエストで調停する必要がない。
 
 ## HTTP境界
 
 `POST /api/matches`、`GET /api/matches/:matchId`、`POST /api/matches/:matchId/accept`、`POST /api/matches/:matchId/cancel`のHTTPアダプターを用意する。作成・参加の本文は保存済みデッキを選ぶ`deckId`だけであり、`PlayerId`やカード定義ID配列は含めない。
 
-アダプターは認証済み`PlayerId`と`deckId`から、所有権確認済みのカード定義ID配列を解決してから`MatchLobby`を呼ぶ。現在の標準Workerは認証アダプター未接続のため、すべて`401 UNAUTHENTICATED`で拒否する。
+保存済みデッキは次のHTTPアダプターで操作する。本文の`cardDefinitionIds`は現在のゲームルールで検証し、違法なデッキは保存しない。すべての操作は認証済みプレイヤー自身の`PlayerDecks`だけを対象にする。
 
-認証プロバイダー、デッキCRUD、待機期限、D1のスキーマは後続の実装で確定する。
+| 操作     | エンドポイント              | クライアント本文              |
+| -------- | --------------------------- | ----------------------------- |
+| 一覧取得 | `GET /api/decks`            | なし                          |
+| 作成     | `POST /api/decks`           | `{ name, cardDefinitionIds }` |
+| 取得     | `GET /api/decks/:deckId`    | なし                          |
+| 置換     | `PUT /api/decks/:deckId`    | `{ name, cardDefinitionIds }` |
+| 削除     | `DELETE /api/decks/:deckId` | なし                          |
+
+対戦アダプターは認証済み`PlayerId`と`deckId`から、所有権確認済みかつ現在も有効なカード定義ID配列を解決してから`MatchLobby`を呼ぶ。現在の標準Workerは認証アダプター未接続のため、すべて`401 UNAUTHENTICATED`で拒否する。
+
+認証プロバイダー、待機期限、D1のスキーマは後続の実装で確定する。
