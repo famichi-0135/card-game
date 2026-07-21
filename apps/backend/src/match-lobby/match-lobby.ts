@@ -1,4 +1,5 @@
 import { DurableObject } from "cloudflare:workers";
+import type { MatchLobbyView as MatchLobbyViewDto } from "@disastar/contracts/match";
 import type {
   CardDefinitionId,
   GameId,
@@ -47,16 +48,14 @@ type MatchLobbyState =
   | StartedMatch
   | CancelledMatch;
 
-export type MatchLobbyView = {
-  status: MatchLobbyState["status"];
-  ownerPlayerId: PlayerId;
-  opponentPlayerId: PlayerId | null;
-  gameId: GameId | null;
-};
+export type MatchLobbyView = MatchLobbyViewDto;
 
 export type GetMatchLobbyViewResult =
   | { visible: true; view: MatchLobbyView }
-  | { visible: false; error: { code: "MATCH_ACCESS_FORBIDDEN" } };
+  | {
+      visible: false;
+      error: { code: "MATCH_ACCESS_FORBIDDEN" | "MATCH_NOT_FOUND" };
+    };
 
 export type MatchLobbyAcceptResult =
   | { accepted: true; gameId: GameId }
@@ -66,6 +65,7 @@ export type MatchLobbyAcceptResult =
         code:
           | "CANNOT_ACCEPT_OWN_MATCH"
           | "MATCH_NOT_ACCEPTING"
+          | "MATCH_NOT_FOUND"
           | "GAME_CREATION_FAILED";
         initializationError?: InitializeGameError;
       };
@@ -76,7 +76,10 @@ export type MatchLobbyCancelResult =
   | {
       cancelled: false;
       error: {
-        code: "MATCH_CANCELLATION_FORBIDDEN" | "MATCH_NOT_CANCELLABLE";
+        code:
+          | "MATCH_CANCELLATION_FORBIDDEN"
+          | "MATCH_NOT_CANCELLABLE"
+          | "MATCH_NOT_FOUND";
       };
     };
 
@@ -171,7 +174,10 @@ export class MatchLobby extends DurableObject<CloudflareBindings> {
   }
 
   async getView(viewerPlayerId: PlayerId): Promise<GetMatchLobbyViewResult> {
-    const match = await this.requireMatch();
+    const match = await this.getMatch();
+    if (match === null) {
+      return { visible: false, error: { code: "MATCH_NOT_FOUND" } };
+    }
     return isParticipant(match, viewerPlayerId)
       ? { visible: true, view: toMatchLobbyView(match) }
       : { visible: false, error: { code: "MATCH_ACCESS_FORBIDDEN" } };
@@ -181,7 +187,10 @@ export class MatchLobby extends DurableObject<CloudflareBindings> {
     playerId: PlayerId;
     deckDefinitionIds: CardDefinitionId[];
   }): Promise<MatchLobbyAcceptResult> {
-    const match = await this.requireMatch();
+    const match = await this.getMatch();
+    if (match === null) {
+      return { accepted: false, error: { code: "MATCH_NOT_FOUND" } };
+    }
     assertNonEmptyIdentifier(input.playerId, "参加者のプレイヤーID");
 
     if (match.status === "starting") {
@@ -234,7 +243,10 @@ export class MatchLobby extends DurableObject<CloudflareBindings> {
   }
 
   async cancel(playerId: PlayerId): Promise<MatchLobbyCancelResult> {
-    const match = await this.requireMatch();
+    const match = await this.getMatch();
+    if (match === null) {
+      return { cancelled: false, error: { code: "MATCH_NOT_FOUND" } };
+    }
     if (match.ownerPlayerId !== playerId) {
       return {
         cancelled: false,
@@ -295,11 +307,8 @@ export class MatchLobby extends DurableObject<CloudflareBindings> {
     return { accepted: true, gameId: started.gameId };
   }
 
-  private async requireMatch(): Promise<MatchLobbyState> {
+  private async getMatch(): Promise<MatchLobbyState | null> {
     await this.loadMatch;
-    if (this.match === null) {
-      throw new Error("対戦待機部屋はまだ初期化されていません。");
-    }
     return this.match;
   }
 
