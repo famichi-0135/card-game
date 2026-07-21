@@ -65,6 +65,8 @@ apps/backend, apps/frontend
 
 HTTPアダプターは、認証後かつDO呼び出し前にJSON本文と`afterSequence`を検証する。本文の`gameId`がパスと異なる場合は`400 GAME_ID_MISMATCH`、本文の`playerId`が認証結果と異なる場合は`403 AUTHENTICATED_PLAYER_MISMATCH`で拒否する。ゲームルール上の拒否は通信エラーではないため、`SubmitGameCommandResponse`の`accepted: false`を`200`で返す。
 
+未初期化または存在しないゲームは`404 GAME_NOT_FOUND`、認証済みプレイヤーがそのゲームの参加者でない場合は`403 GAME_ACCESS_FORBIDDEN`を返す。Durable Object内部の未初期化・参加者外アクセスを例外のままHTTP応答へ流さない。
+
 ## 対戦待機
 
 招待式の対戦待機は`MatchLobby` Durable Objectで直列化する。HTTPアダプターは認証結果からプレイヤーを決定し、保存済みデッキを所有権確認してから待機部屋へ渡す。クライアント本文のプレイヤーIDやカード定義ID配列は信用しない。標準Workerは認証アダプター未接続のため、対戦待機APIも`401 UNAUTHENTICATED`で拒否する。

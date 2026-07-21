@@ -35,6 +35,19 @@ export type InitializeGameSessionResult =
   | { initialized: true }
   | { initialized: false; error: InitializeGameError };
 
+export type GameSessionAccessErrorCode =
+  | "GAME_NOT_FOUND"
+  | "GAME_ACCESS_FORBIDDEN"
+  | "AUTHENTICATED_PLAYER_MISMATCH";
+
+export type GetGameSnapshotResult =
+  | { found: true; snapshot: GameSnapshotResponse }
+  | { found: false; error: { code: GameSessionAccessErrorCode } };
+
+export type SubmitGameCommandResult =
+  | { submitted: true; response: SubmitGameCommandResponse }
+  | { submitted: false; error: { code: GameSessionAccessErrorCode } };
+
 export class GameSession extends DurableObject<CloudflareBindings> {
   private session: StoredGameSession | null = null;
   private readonly loadSession: Promise<void>;
@@ -89,36 +102,55 @@ export class GameSession extends DurableObject<CloudflareBindings> {
   async getSnapshot(
     viewerPlayerId: PlayerId,
     afterSequence = 0,
-  ): Promise<GameSnapshotResponse> {
-    const session = await this.requireSession();
+  ): Promise<GetGameSnapshotResult> {
+    const session = await this.requireSessionOrNull();
+    if (session === null) {
+      return { found: false, error: { code: "GAME_NOT_FOUND" } };
+    }
+    if (!isParticipant(session.state, viewerPlayerId)) {
+      return { found: false, error: { code: "GAME_ACCESS_FORBIDDEN" } };
+    }
     assertAfterSequence(afterSequence);
-    assertParticipant(session.state, viewerPlayerId);
 
     return {
-      view: createPlayerView(session.state, viewerPlayerId),
-      events: session.events
-        .filter((envelope) => envelope.sequence > afterSequence)
-        .map((envelope) => projectEventForPlayer(envelope, viewerPlayerId))
-        .filter((event): event is NonNullable<typeof event> => event !== null),
-      latestEventSequence: session.state.nextEventSequence - 1,
+      found: true,
+      snapshot: {
+        view: createPlayerView(session.state, viewerPlayerId),
+        events: session.events
+          .filter((envelope) => envelope.sequence > afterSequence)
+          .map((envelope) => projectEventForPlayer(envelope, viewerPlayerId))
+          .filter(
+            (event): event is NonNullable<typeof event> => event !== null,
+          ),
+        latestEventSequence: session.state.nextEventSequence - 1,
+      },
     };
   }
 
   async submit(
     authenticatedCommand: AuthenticatedGameCommand,
-  ): Promise<SubmitGameCommandResponse> {
-    const session = await this.requireSession();
+  ): Promise<SubmitGameCommandResult> {
+    const session = await this.requireSessionOrNull();
+    if (session === null) {
+      return { submitted: false, error: { code: "GAME_NOT_FOUND" } };
+    }
     const { authenticatedPlayerId, command } = authenticatedCommand;
-    assertParticipant(session.state, authenticatedPlayerId);
+    if (!isParticipant(session.state, authenticatedPlayerId)) {
+      return {
+        submitted: false,
+        error: { code: "GAME_ACCESS_FORBIDDEN" },
+      };
+    }
     if (command.playerId !== authenticatedPlayerId) {
-      throw new Error(
-        "認証済みプレイヤーとコマンドのプレイヤーIDが一致しません。",
-      );
+      return {
+        submitted: false,
+        error: { code: "AUTHENTICATED_PLAYER_MISMATCH" },
+      };
     }
 
     const storedResult = session.commandResults[command.commandId];
     if (storedResult !== undefined) {
-      return storedResult;
+      return { submitted: true, response: storedResult };
     }
 
     const result = executeCommand(
@@ -163,7 +195,7 @@ export class GameSession extends DurableObject<CloudflareBindings> {
     if (result.accepted) {
       await this.syncPhaseAlarm(result.state);
     }
-    return response;
+    return { submitted: true, response };
   }
 
   async alarm(): Promise<void> {
@@ -203,14 +235,6 @@ export class GameSession extends DurableObject<CloudflareBindings> {
     await this.persist(nextSession);
     this.session = nextSession;
     await this.syncPhaseAlarm(nextSession.state);
-  }
-
-  private async requireSession(): Promise<StoredGameSession> {
-    const session = await this.requireSessionOrNull();
-    if (session === null) {
-      throw new Error("ゲームセッションはまだ初期化されていません。");
-    }
-    return session;
   }
 
   private async requireSessionOrNull(): Promise<StoredGameSession | null> {
@@ -268,12 +292,8 @@ function cloneInitializeInput(input: InitializeGameInput): InitializeGameInput {
   };
 }
 
-function assertParticipant(state: GameState, playerId: PlayerId): void {
-  if (state.players[playerId] === undefined) {
-    throw new RangeError(
-      `プレイヤー ${playerId} はこのゲームに参加していません。`,
-    );
-  }
+function isParticipant(state: GameState, playerId: PlayerId): boolean {
+  return state.players[playerId] !== undefined;
 }
 
 function assertAfterSequence(afterSequence: number): void {

@@ -94,7 +94,9 @@ export type GameHttpApiErrorCode =
   | "INVALID_AFTER_SEQUENCE"
   | "INVALID_REQUEST"
   | "GAME_ID_MISMATCH"
-  | "AUTHENTICATED_PLAYER_MISMATCH";
+  | "AUTHENTICATED_PLAYER_MISMATCH"
+  | "GAME_NOT_FOUND"
+  | "GAME_ACCESS_FORBIDDEN";
 
 export type GameHttpApiErrorResponse = {
   error: {

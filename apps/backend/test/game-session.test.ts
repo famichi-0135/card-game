@@ -3,9 +3,12 @@ import { describe, expect, it } from "vitest";
 import type {
   AuthenticatedGameCommand,
   GameSnapshotResponse,
-  SubmitGameCommandResponse,
 } from "@disastar/contracts/game";
 import type { InitializeGameInput } from "@disastar/game-engine/contracts";
+import type {
+  GetGameSnapshotResult,
+  SubmitGameCommandResult,
+} from "../src/game-session/game-session.js";
 
 describe("GameSession Durable Object", () => {
   it("ゲーム状態とイベントを保存し、閲覧者別のスナップショットを返す", async () => {
@@ -14,8 +17,15 @@ describe("GameSession Durable Object", () => {
 
     expect(initialized).toEqual({ initialized: true });
 
-    const playerOneSnapshot = await stub.getSnapshot("player-1", 0);
-    const playerTwoSnapshot = await stub.getSnapshot("player-2", 0);
+    const playerOneSnapshotResult = await stub.getSnapshot("player-1", 0);
+    const playerTwoSnapshotResult = await stub.getSnapshot("player-2", 0);
+    expect(playerOneSnapshotResult).toMatchObject({ found: true });
+    expect(playerTwoSnapshotResult).toMatchObject({ found: true });
+    if (!playerOneSnapshotResult.found || !playerTwoSnapshotResult.found) {
+      throw new Error("参加者のスナップショットを取得できませんでした。");
+    }
+    const playerOneSnapshot = playerOneSnapshotResult.snapshot;
+    const playerTwoSnapshot = playerTwoSnapshotResult.snapshot;
 
     expect(playerOneSnapshot.view.viewerPlayerId).toBe("player-1");
     expect(playerOneSnapshot.view.self.hand.length).toBeGreaterThan(0);
@@ -54,9 +64,19 @@ describe("GameSession Durable Object", () => {
     const stub = getGameSession(gameId);
     await stub.initialize(createInitializeInput(gameId));
 
-    const initialSnapshot = await stub.getSnapshot("player-1", 0);
+    const initialSnapshotResult = await stub.getSnapshot("player-1", 0);
+    if (!initialSnapshotResult.found) {
+      throw new Error("初期スナップショットを取得できませんでした。");
+    }
+    const initialSnapshot = initialSnapshotResult.snapshot;
     const currentPlayerId = initialSnapshot.view.firstPlayerId;
-    const currentSnapshot = await stub.getSnapshot(currentPlayerId, 0);
+    const currentSnapshotResult = await stub.getSnapshot(currentPlayerId, 0);
+    if (!currentSnapshotResult.found) {
+      throw new Error(
+        "現在プレイヤーのスナップショットを取得できませんでした。",
+      );
+    }
+    const currentSnapshot = currentSnapshotResult.snapshot;
     const command: AuthenticatedGameCommand = {
       authenticatedPlayerId: currentPlayerId,
       receivedAt: Date.now(),
@@ -74,18 +94,25 @@ describe("GameSession Durable Object", () => {
     const firstResult = await stub.submit(command);
     const retriedResult = await stub.submit(command);
 
-    expect(firstResult).toMatchObject({
+    expect(firstResult).toMatchObject({ submitted: true });
+    if (!firstResult.submitted) {
+      throw new Error("コマンドが送信されませんでした。");
+    }
+    expect(firstResult.response).toMatchObject({
       accepted: true,
       commandId: command.command.commandId,
       view: { phase: "secondPlayerPlacement" },
     });
     expect(retriedResult).toEqual(firstResult);
 
-    const snapshot = (await stub.getSnapshot(
-      currentPlayerId,
-      0,
-    )) as GameSnapshotResponse;
-    expect(snapshot.view.stateVersion).toBe(firstResult.view.stateVersion);
+    const snapshotResult = await stub.getSnapshot(currentPlayerId, 0);
+    if (!snapshotResult.found || !firstResult.response.accepted) {
+      throw new Error("コマンド後のスナップショットを取得できませんでした。");
+    }
+    const snapshot = snapshotResult.snapshot as GameSnapshotResponse;
+    expect(snapshot.view.stateVersion).toBe(
+      firstResult.response.view.stateVersion,
+    );
   });
 
   it("同一の初期化入力は再送として受理し、異なる入力では再初期化しない", async () => {
@@ -96,7 +123,11 @@ describe("GameSession Durable Object", () => {
     await expect(stub.initialize(input)).resolves.toEqual({
       initialized: true,
     });
-    const initialSnapshot = await stub.getSnapshot("player-1", 0);
+    const initialSnapshotResult = await stub.getSnapshot("player-1", 0);
+    if (!initialSnapshotResult.found) {
+      throw new Error("初期スナップショットを取得できませんでした。");
+    }
+    const initialSnapshot = initialSnapshotResult.snapshot;
 
     await expect(stub.initialize(input)).resolves.toEqual({
       initialized: true,
@@ -105,8 +136,45 @@ describe("GameSession Durable Object", () => {
       stub.initialize({ ...input, randomSeed: "different-seed" }),
     ).resolves.toMatchObject({ initialized: false });
 
-    const retriedSnapshot = await stub.getSnapshot("player-1", 0);
-    expect(retriedSnapshot).toEqual(initialSnapshot);
+    const retriedSnapshotResult = await stub.getSnapshot("player-1", 0);
+    if (!retriedSnapshotResult.found) {
+      throw new Error("再送後のスナップショットを取得できませんでした。");
+    }
+    expect(retriedSnapshotResult.snapshot).toEqual(initialSnapshot);
+  });
+
+  it("未初期化セッションと参加者外アクセスを安定した結果で拒否する", async () => {
+    const missing = getGameSession("game-session-missing");
+    await expect(missing.getSnapshot("player-1", 0)).resolves.toEqual({
+      found: false,
+      error: { code: "GAME_NOT_FOUND" },
+    });
+
+    const gameId = "game-session-access";
+    const initialized = getGameSession(gameId);
+    await initialized.initialize(createInitializeInput(gameId));
+    await expect(initialized.getSnapshot("player-3", 0)).resolves.toEqual({
+      found: false,
+      error: { code: "GAME_ACCESS_FORBIDDEN" },
+    });
+    await expect(
+      initialized.submit({
+        authenticatedPlayerId: "player-3",
+        receivedAt: 1_000,
+        command: {
+          type: "FINISH_PLACEMENT",
+          commandId: "forbidden-command",
+          gameId,
+          playerId: "player-3",
+          phaseSequence: 1,
+          clientStateVersion: 1,
+          issuedAt: 1_000,
+        },
+      }),
+    ).resolves.toEqual({
+      submitted: false,
+      error: { code: "GAME_ACCESS_FORBIDDEN" },
+    });
   });
 });
 
@@ -115,10 +183,10 @@ type GameSessionRpc = {
   getSnapshot(
     viewerPlayerId: string,
     afterSequence?: number,
-  ): Promise<GameSnapshotResponse>;
+  ): Promise<GetGameSnapshotResult>;
   submit(
     authenticatedCommand: AuthenticatedGameCommand,
-  ): Promise<SubmitGameCommandResponse>;
+  ): Promise<SubmitGameCommandResult>;
 };
 
 function getGameSession(gameId: string): GameSessionRpc {
