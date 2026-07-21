@@ -2,6 +2,7 @@ export * from "./contracts/index.js";
 export * from "./catalog/create-card-catalog.js";
 export * from "./catalog/validate-game-rules.js";
 export * from "./commands/execute-command.js";
+export * from "./commands/parse-game-command.js";
 export * from "./deck/validate-deck.js";
 export * from "./initialize/initialize-game.js";
 export * from "./mana/calculate-mana.js";

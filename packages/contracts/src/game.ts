@@ -1,7 +1,9 @@
+import { parseGameCommand } from "@disastar/game-engine";
 import type {
   CommandId,
   GameCommand,
   GameCommandError,
+  GameCommandParseError,
   PlayerGameView,
   PlayerId,
   PlayerVisibleEventEnvelope,
@@ -11,6 +13,48 @@ import type {
 export type SubmitGameCommandRequest = {
   command: GameCommand;
 };
+
+export type SubmitGameCommandRequestParseError =
+  | GameCommandParseError
+  | {
+      code: "INVALID_SUBMIT_GAME_COMMAND_REQUEST";
+      message: string;
+      path: string;
+    };
+
+export type ParseSubmitGameCommandRequestResult =
+  | {
+      parsed: true;
+      request: SubmitGameCommandRequest;
+    }
+  | {
+      parsed: false;
+      errors: SubmitGameCommandRequestParseError[];
+    };
+
+export function parseSubmitGameCommandRequest(
+  input: unknown,
+): ParseSubmitGameCommandRequestResult {
+  if (!isRecord(input)) {
+    return invalidRequest(
+      "リクエスト本文はJSONオブジェクトでなければなりません。",
+      "",
+    );
+  }
+
+  const keys = Object.keys(input);
+  if (keys.length !== 1 || keys[0] !== "command") {
+    return invalidRequest(
+      "リクエスト本文にはcommandだけを含めてください。",
+      "",
+    );
+  }
+
+  const parsed = parseGameCommand(input.command);
+  return parsed.parsed
+    ? { parsed: true, request: { command: parsed.command } }
+    : { parsed: false, errors: parsed.errors };
+}
 
 /** バックエンドが認証結果と受信時刻を付与した、エンジン呼び出し用の入力。 */
 export type AuthenticatedGameCommand = {
@@ -43,3 +87,17 @@ export type GameSnapshotResponse = {
   events: PlayerVisibleEventEnvelope[];
   latestEventSequence: number;
 };
+
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return typeof value === "object" && value !== null && !Array.isArray(value);
+}
+
+function invalidRequest(
+  message: string,
+  path: string,
+): ParseSubmitGameCommandRequestResult {
+  return {
+    parsed: false,
+    errors: [{ code: "INVALID_SUBMIT_GAME_COMMAND_REQUEST", message, path }],
+  };
+}

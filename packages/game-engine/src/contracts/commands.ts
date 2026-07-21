@@ -120,6 +120,22 @@ export type GameCommand =
   | PlaySupportCardCommand
   | FinishSupportCommand;
 
+export type GameCommandParseError = {
+  code: "INVALID_GAME_COMMAND";
+  message: string;
+  path: string;
+};
+
+export type ParseGameCommandResult =
+  | {
+      parsed: true;
+      command: GameCommand;
+    }
+  | {
+      parsed: false;
+      errors: GameCommandParseError[];
+    };
+
 export type HandlePhaseTimeoutCommand = {
   type: "HANDLE_PHASE_TIMEOUT";
   gameId: GameId;
