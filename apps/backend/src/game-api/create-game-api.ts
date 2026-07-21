@@ -9,18 +9,20 @@ import type {
   GetGameSnapshotResult,
   SubmitGameCommandResult,
 } from "../game-session/game-session.js";
+import type {
+  BetterAuthEnvironment,
+  RequestAuthenticator,
+} from "../auth/request-authenticator.js";
 
 type GameApiEnvironment = {
-  Bindings: CloudflareBindings;
+  Bindings: BetterAuthEnvironment;
   Variables: {
     authenticatedPlayerId: PlayerId;
   };
 };
 
 /** 実際の認証方式に依存しない、ゲーム API の認証境界。 */
-export type GameRequestAuthenticator = (
-  request: Request,
-) => Promise<PlayerId | null>;
+export type GameRequestAuthenticator = RequestAuthenticator;
 
 type GameSessionRpc = {
   getSnapshot(
@@ -51,7 +53,7 @@ export function createGameApi({
   const api = new Hono<GameApiEnvironment>();
 
   api.use("*", async (c, next) => {
-    const authenticatedPlayerId = await authenticate(c.req.raw);
+    const authenticatedPlayerId = await authenticate(c.req.raw, c.env);
     if (authenticatedPlayerId === null) {
       return c.json(
         {

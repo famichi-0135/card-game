@@ -10,6 +10,7 @@ import type {
   SubmitGameCommandResult,
 } from "../src/game-session/game-session.js";
 import worker from "../src/index.js";
+import { createAuthTestBindings } from "./auth-test-bindings.js";
 
 const snapshot = {
   view: {
@@ -28,10 +29,10 @@ const acceptedResponse = {
 } as SubmitGameCommandResponse;
 
 describe("ゲーム HTTP API", () => {
-  it("標準Workerは認証アダプター未接続時にゲームAPIを拒否する", async () => {
+  it("標準WorkerはセッションCookieがないゲームAPIリクエストを拒否する", async () => {
     const response = await worker.fetch(
       new Request("http://example.com/api/games/game-1"),
-      {} as CloudflareBindings,
+      createAuthTestBindings(),
     );
 
     expect(response.status).toBe(401);
