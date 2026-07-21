@@ -42,4 +42,10 @@ GameSession Durable Object -> @disastar/game-engine
 
 `MatchLobby`は短命な招待・参加・開始の直列化を担当する。将来D1を導入する場合は、ユーザー、所有デッキ、対戦履歴、公開対戦の検索インデックスを保存する。D1を待機部屋の正本にしないため、参加の競合やゲーム開始の二重実行を複数のWorkerリクエストで調停する必要がない。
 
-認証プロバイダー、デッキCRUD、招待URLのHTTP API、待機期限、D1のスキーマは後続の実装で確定する。
+## HTTP境界
+
+`POST /api/matches`、`GET /api/matches/:matchId`、`POST /api/matches/:matchId/accept`、`POST /api/matches/:matchId/cancel`のHTTPアダプターを用意する。作成・参加の本文は保存済みデッキを選ぶ`deckId`だけであり、`PlayerId`やカード定義ID配列は含めない。
+
+アダプターは認証済み`PlayerId`と`deckId`から、所有権確認済みのカード定義ID配列を解決してから`MatchLobby`を呼ぶ。現在の標準Workerは認証アダプター未接続のため、すべて`401 UNAUTHENTICATED`で拒否する。
+
+認証プロバイダー、デッキCRUD、待機期限、D1のスキーマは後続の実装で確定する。

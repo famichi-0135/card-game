@@ -67,11 +67,14 @@ HTTPアダプターは、認証後かつDO呼び出し前にJSON本文と`afterS
 
 ## 対戦待機
 
-招待式の対戦待機は`MatchLobby` Durable Objectで直列化する。実認証とデッキ所有権の検証が未実装のため、現時点ではHTTPエンドポイントを公開しない。導入時のAPIは認証結果からプレイヤーを決定し、クライアント本文のプレイヤーIDを信用しない。
+招待式の対戦待機は`MatchLobby` Durable Objectで直列化する。HTTPアダプターは認証結果からプレイヤーを決定し、保存済みデッキを所有権確認してから待機部屋へ渡す。クライアント本文のプレイヤーIDやカード定義ID配列は信用しない。標準Workerは認証アダプター未接続のため、対戦待機APIも`401 UNAUTHENTICATED`で拒否する。
 
-- 対戦作成: 認可済みの作成者デッキを`MatchLobby.initialize`へ渡し、サーバー生成の招待IDを返す。
-- 対戦参加: 認可済みの参加者デッキを`MatchLobby.accept`へ渡す。
-- 対戦取消: 作成者だけが待機中の`MatchLobby.cancel`を呼べる。
+| 操作     | エンドポイント                      | クライアント本文 | 成功時の応答                 |
+| -------- | ----------------------------------- | ---------------- | ---------------------------- |
+| 対戦作成 | `POST /api/matches`                 | `{ deckId }`     | `201 { matchId }`            |
+| 対戦取得 | `GET /api/matches/:matchId`         | なし             | `{ match: MatchLobbyView }`  |
+| 対戦参加 | `POST /api/matches/:matchId/accept` | `{ deckId }`     | `{ accepted: true, gameId }` |
+| 対戦取消 | `POST /api/matches/:matchId/cancel` | なし             | `{ cancelled: true }`        |
 
 `MatchLobby`の公開状態にデッキ、乱数seed、開始中のゲーム初期化入力を含めない。状態遷移の詳細は[対戦待機・開始の設計](./matchmaking.md)を参照する。
 
@@ -89,7 +92,7 @@ HTTPアダプターは、認証後かつDO呼び出し前にJSON本文と`afterS
 
 - HTTPとWebSocketの使い分け
 - 認証方式とセッション管理
-- 認証方式と接続する対戦作成・参加・取消のHTTP DTO
+- 認証方式と保存済みデッキの所有権確認
 - 公開対戦、ランダムマッチ、観戦
 - Durable Objectの永続化形式、アラーム、イベント保持期間
 - エラー表示文言

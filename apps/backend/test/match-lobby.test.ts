@@ -21,7 +21,10 @@ type MatchLobbyRpc = {
           gameId: string | null;
         };
       }
-    | { visible: false; error: { code: "MATCH_ACCESS_FORBIDDEN" } }
+    | {
+        visible: false;
+        error: { code: "MATCH_ACCESS_FORBIDDEN" | "MATCH_NOT_FOUND" };
+      }
   >;
   accept(input: {
     playerId: string;
@@ -38,6 +41,25 @@ type MatchLobbyRpc = {
 };
 
 describe("MatchLobby Durable Object", () => {
+  it("初期化されていない招待IDは安定した未検出結果を返す", async () => {
+    const lobby = getMatchLobby("match-lobby-missing");
+
+    await expect(lobby.getView("player-1")).resolves.toEqual({
+      visible: false,
+      error: { code: "MATCH_NOT_FOUND" },
+    });
+    await expect(
+      lobby.accept({ playerId: "player-1", deckDefinitionIds: createDeck() }),
+    ).resolves.toEqual({
+      accepted: false,
+      error: { code: "MATCH_NOT_FOUND" },
+    });
+    await expect(lobby.cancel("player-1")).resolves.toEqual({
+      cancelled: false,
+      error: { code: "MATCH_NOT_FOUND" },
+    });
+  });
+
   it("Workerは推測不可能なDurable Object IDで待機部屋を作成する", async () => {
     const result = await createMatchLobbyInEnvironment(
       {

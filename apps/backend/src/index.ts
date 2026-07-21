@@ -4,16 +4,25 @@ import {
   createGameApi,
   type GameRequestAuthenticator,
 } from "./game-api/create-game-api.js";
+import {
+  createMatchApi,
+  type AuthorizedDeckResolver,
+  type MatchRequestAuthenticator,
+} from "./match-api/create-match-api.js";
 
 export { GameSession } from "./game-session/game-session.js";
 export { MatchLobby } from "./match-lobby/match-lobby.js";
 
 type CreateAppOptions = {
   authenticateGameRequest?: GameRequestAuthenticator;
+  authenticateMatchRequest?: MatchRequestAuthenticator;
+  resolveAuthorizedDeck?: AuthorizedDeckResolver;
 };
 
 export function createApp({
   authenticateGameRequest = rejectUnauthenticatedRequest,
+  authenticateMatchRequest = rejectUnauthenticatedRequest,
+  resolveAuthorizedDeck = rejectUnauthorizedDeck,
 }: CreateAppOptions = {}) {
   const app = new Hono<{ Bindings: CloudflareBindings }>();
 
@@ -26,11 +35,19 @@ export function createApp({
     "/api/games",
     createGameApi({ authenticate: authenticateGameRequest }),
   );
+  app.route(
+    "/api/matches",
+    createMatchApi({
+      authenticate: authenticateMatchRequest,
+      resolveAuthorizedDeck,
+    }),
+  );
 
   return app;
 }
 
 const rejectUnauthenticatedRequest: GameRequestAuthenticator = async () => null;
+const rejectUnauthorizedDeck: AuthorizedDeckResolver = async () => null;
 
 const app = createApp();
 
