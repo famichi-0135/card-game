@@ -38,7 +38,10 @@ import type {
   CardInstanceId,
   PlayerId,
 } from "../contracts/identifiers.js";
-import { calculateMana } from "../mana/calculate-mana.js";
+import {
+  calculateAttackGroupCost,
+  calculateMana,
+} from "../mana/calculate-mana.js";
 import { calculateTotalPower } from "../power/calculate-power.js";
 import { deepFreeze } from "../catalog/deep-freeze.js";
 import { applyEffectResolutionPlan } from "../effects/apply-effect-resolution-plan.js";
@@ -51,6 +54,12 @@ import {
   getPlayer,
 } from "../state/card-access.js";
 import { validateGameState } from "../state/validate-game-state.js";
+import { getPlacementPlayerId as getPlacementPlayerIdForPhase } from "../actions/placement-phase.js";
+import {
+  canChainAttackCard,
+  getAdditionalAttackGroupManaRequired,
+  hasAvailableMana,
+} from "../actions/attack-availability.js";
 
 const attributes = ["attributeA", "attributeB", "attributeC"] as const;
 
@@ -272,6 +281,15 @@ function placeAttackCard(
       "指定された攻撃グループ枠は使用できません。",
     );
   }
+  const manaBeforePlacement = calculateMana(
+    state,
+    command.playerId,
+    card.attribute,
+    context,
+  );
+  if (!hasAvailableMana(manaBeforePlacement.available, card.cost)) {
+    return commandError("INSUFFICIENT_MANA", "配置後のみなもとが不足します。");
+  }
 
   const groupId = createAttackGroupId(state, command, dependencies);
   if (isGameCommandError(groupId)) {
@@ -290,10 +308,6 @@ function placeAttackCard(
     (left, right) => left.slotIndex - right.slotIndex,
   );
 
-  const mana = calculateMana(state, command.playerId, card.attribute, context);
-  if (mana.available < 0) {
-    return commandError("INSUFFICIENT_MANA", "配置後のみなもとが不足します。");
-  }
   events.push({
     type: "ATTACK_GROUP_CREATED",
     playerId: command.playerId,
@@ -352,7 +366,12 @@ function chainAttackCard(
   const topCard = getCardDefinitionForInstance(state, topCardId, context);
   if (
     topCard?.cardType !== "attack" ||
-    !topCard.chainableCardIds.includes(card.id)
+    !canChainAttackCard(
+      group.attribute,
+      card.attribute,
+      topCard.chainableCardIds,
+      card.id,
+    )
   ) {
     return commandError(
       "CHAIN_NOT_ALLOWED",
@@ -360,12 +379,22 @@ function chainAttackCard(
     );
   }
 
-  removeCardFromHand(player, command.cardInstanceId);
-  group.cardIds.push(command.cardInstanceId);
-  const mana = calculateMana(state, command.playerId, card.attribute, context);
-  if (mana.available < 0) {
+  const manaBeforeChain = calculateMana(
+    state,
+    command.playerId,
+    card.attribute,
+    context,
+  );
+  const additionalManaRequired = getAdditionalAttackGroupManaRequired(
+    calculateAttackGroupCost(state, group, context),
+    card.cost,
+  );
+  if (!hasAvailableMana(manaBeforeChain.available, additionalManaRequired)) {
     return commandError("INSUFFICIENT_MANA", "連鎖後のみなもとが不足します。");
   }
+
+  removeCardFromHand(player, command.cardInstanceId);
+  group.cardIds.push(command.cardInstanceId);
   events.push({
     type: "CARD_CHAINED",
     playerId: command.playerId,
@@ -1091,13 +1120,11 @@ function validatePlacementPlayer(
 }
 
 function getPlacementPlayerId(state: GameState): PlayerId | null {
-  if (state.phase === "firstPlayerPlacement") {
-    return state.firstPlayerId;
-  }
-  if (state.phase === "secondPlayerPlacement") {
-    return state.secondPlayerId;
-  }
-  return null;
+  return getPlacementPlayerIdForPhase(
+    state.phase,
+    state.firstPlayerId,
+    state.secondPlayerId,
+  );
 }
 
 function validateAttackCardInHand(
