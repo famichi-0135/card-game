@@ -6,6 +6,7 @@ import {
   projectEventForPlayer,
 } from "@disastar/game-engine";
 import type {
+  GameEngineContext,
   GameEventEnvelope,
   GameCommand,
   GameState,
@@ -22,20 +23,37 @@ import {
   gameEngineContext,
   gameEngineDependencies,
 } from "../game-engine/runtime.js";
+import {
+  cloneCardCatalog,
+  GAME_RECONNECT_GRACE_PERIOD_MS,
+  type CatalogRetentionLease,
+  type RetainCatalogResult,
+} from "../catalog-archive/catalog-archive.js";
 
 const SESSION_STORAGE_KEY = "game-session-v2-factions";
 
 type StoredGameSession = {
   initializationInput: InitializeGameInput;
   state: GameState;
+  engineContext?: StoredGameEngineContext;
+  retentionExpiresAt?: number | null;
   events: GameEventEnvelope[];
   commandResults: Record<string, StoredCommandResult>;
 };
+
+type StoredGameEngineContext = Pick<
+  GameEngineContext,
+  "rules" | "cardCatalog" | "engineSemanticsVersion"
+>;
 
 type StoredCommandResult = {
   authenticatedPlayerId: PlayerId;
   command: GameCommand;
   response: SubmitGameCommandResponse;
+};
+
+type CatalogArchiveRpc = {
+  retain(lease: CatalogRetentionLease): Promise<RetainCatalogResult>;
 };
 
 export type InitializeGameSessionResult =
@@ -72,10 +90,11 @@ export class GameSession extends DurableObject<CloudflareBindings> {
   async initialize(
     input: InitializeGameInput,
   ): Promise<InitializeGameSessionResult> {
-    await this.loadSession;
-    if (this.session !== null) {
-      if (isSameInitializeInput(this.session.initializationInput, input)) {
-        await this.syncPhaseAlarm(this.session.state);
+    const existing = await this.requireSessionOrNull();
+    if (existing !== null) {
+      if (isSameInitializeInput(existing.initializationInput, input)) {
+        await this.syncCatalogRetention(existing);
+        await this.syncSessionAlarm(existing);
         return { initialized: true };
       }
       return {
@@ -87,9 +106,10 @@ export class GameSession extends DurableObject<CloudflareBindings> {
       };
     }
 
+    const engineContext = cloneEngineContext(gameEngineContext);
     const initialized = initializeGame(
       input,
-      gameEngineContext,
+      toGameEngineContext(engineContext),
       gameEngineDependencies,
     );
     if (!initialized.initialized) {
@@ -99,12 +119,15 @@ export class GameSession extends DurableObject<CloudflareBindings> {
     const session: StoredGameSession = {
       initializationInput: cloneInitializeInput(input),
       state: initialized.state,
+      engineContext,
+      retentionExpiresAt: null,
       events: initialized.events,
       commandResults: Object.create(null),
     };
     await this.persist(session);
     this.session = session;
-    await this.syncPhaseAlarm(session.state);
+    await this.syncCatalogRetention(session);
+    await this.syncSessionAlarm(session);
     return { initialized: true };
   }
 
@@ -175,7 +198,7 @@ export class GameSession extends DurableObject<CloudflareBindings> {
     const result = executeCommand(
       session.state,
       { command, receivedAt: authenticatedCommand.receivedAt },
-      gameEngineContext,
+      getSessionEngineContext(session),
       gameEngineDependencies,
     );
     const response = result.accepted
@@ -200,6 +223,8 @@ export class GameSession extends DurableObject<CloudflareBindings> {
     const nextSession: StoredGameSession = {
       initializationInput: session.initializationInput,
       state: result.state,
+      engineContext: getStoredEngineContext(session),
+      retentionExpiresAt: getRetentionExpiresAt(result.state, session),
       events: result.accepted
         ? [...session.events, ...result.events]
         : session.events,
@@ -215,15 +240,29 @@ export class GameSession extends DurableObject<CloudflareBindings> {
 
     await this.persist(nextSession);
     this.session = nextSession;
-    if (result.accepted) {
-      await this.syncPhaseAlarm(result.state);
-    }
+    await this.syncCatalogRetention(nextSession);
+    await this.syncSessionAlarm(nextSession);
     return { submitted: true, response };
   }
 
   async alarm(): Promise<void> {
     const session = await this.requireSessionOrNull();
-    if (session === null || session.state.phaseDeadlineAt === null) {
+    if (session === null) {
+      return;
+    }
+
+    const retentionExpiresAt = getRetentionExpiresAt(session.state, session);
+    if (retentionExpiresAt !== null) {
+      if (retentionExpiresAt <= Date.now()) {
+        await this.ctx.storage.delete(SESSION_STORAGE_KEY);
+        await this.ctx.storage.deleteAlarm();
+        this.session = null;
+        return;
+      }
+      await this.syncSessionAlarm(session);
+      return;
+    }
+    if (session.state.phaseDeadlineAt === null) {
       return;
     }
 
@@ -237,7 +276,7 @@ export class GameSession extends DurableObject<CloudflareBindings> {
         },
         receivedAt: Date.now(),
       },
-      gameEngineContext,
+      getSessionEngineContext(session),
       gameEngineDependencies,
     );
     if (!result.accepted) {
@@ -246,22 +285,30 @@ export class GameSession extends DurableObject<CloudflareBindings> {
       );
     }
     if (result.state === session.state) {
-      await this.syncPhaseAlarm(session.state);
+      await this.syncSessionAlarm(session);
       return;
     }
 
     const nextSession: StoredGameSession = {
       ...session,
       state: result.state,
+      engineContext: getStoredEngineContext(session),
+      retentionExpiresAt: getRetentionExpiresAt(result.state, session),
       events: [...session.events, ...result.events],
     };
     await this.persist(nextSession);
     this.session = nextSession;
-    await this.syncPhaseAlarm(nextSession.state);
+    await this.syncCatalogRetention(nextSession);
+    await this.syncSessionAlarm(nextSession);
   }
 
   private async requireSessionOrNull(): Promise<StoredGameSession | null> {
     await this.loadSession;
+    if (this.session !== null && isRetentionExpired(this.session, Date.now())) {
+      await this.ctx.storage.delete(SESSION_STORAGE_KEY);
+      await this.ctx.storage.deleteAlarm();
+      this.session = null;
+    }
     return this.session;
   }
 
@@ -269,12 +316,30 @@ export class GameSession extends DurableObject<CloudflareBindings> {
     await this.ctx.storage.put(SESSION_STORAGE_KEY, session);
   }
 
-  private async syncPhaseAlarm(state: GameState): Promise<void> {
-    if (state.phaseDeadlineAt === null) {
+  private async syncCatalogRetention(
+    session: StoredGameSession,
+  ): Promise<void> {
+    const retained = await getCatalogArchive(this.env).retain({
+      gameId: session.state.gameId,
+      catalog: getStoredEngineContext(session).cardCatalog,
+      expiresAt: getRetentionExpiresAt(session.state, session),
+    });
+    if (!retained.retained) {
+      throw new Error(
+        `カードカタログ ${getStoredEngineContext(session).cardCatalog.version} の保持に失敗しました: ${retained.error.code}`,
+      );
+    }
+  }
+
+  private async syncSessionAlarm(session: StoredGameSession): Promise<void> {
+    const alarmAt =
+      getRetentionExpiresAt(session.state, session) ??
+      session.state.phaseDeadlineAt;
+    if (alarmAt === null) {
       await this.ctx.storage.deleteAlarm();
       return;
     }
-    await this.ctx.storage.setAlarm(state.phaseDeadlineAt);
+    await this.ctx.storage.setAlarm(alarmAt);
   }
 }
 
@@ -315,6 +380,68 @@ function cloneInitializeInput(input: InitializeGameInput): InitializeGameInput {
       deckDefinitionIds: [...player.deckDefinitionIds],
     })) as InitializeGameInput["players"],
   };
+}
+
+function cloneEngineContext(
+  context: GameEngineContext,
+): StoredGameEngineContext {
+  return structuredClone({
+    rules: context.rules,
+    cardCatalog: cloneCardCatalog(context.cardCatalog),
+    engineSemanticsVersion: context.engineSemanticsVersion,
+  });
+}
+
+function getStoredEngineContext(
+  session: StoredGameSession,
+): StoredGameEngineContext {
+  return session.engineContext ?? cloneEngineContext(gameEngineContext);
+}
+
+function toGameEngineContext(
+  stored: StoredGameEngineContext,
+): GameEngineContext {
+  return {
+    ...stored,
+    effectRegistry: gameEngineContext.effectRegistry,
+  };
+}
+
+function getSessionEngineContext(
+  session: StoredGameSession,
+): GameEngineContext {
+  return toGameEngineContext(getStoredEngineContext(session));
+}
+
+export function getGameSessionRetentionExpiresAt(
+  state: Pick<GameState, "status" | "phaseStartedAt">,
+  storedRetentionExpiresAt?: number | null,
+): number | null {
+  if (state.status !== "finished") {
+    return null;
+  }
+  return (
+    storedRetentionExpiresAt ??
+    state.phaseStartedAt + GAME_RECONNECT_GRACE_PERIOD_MS
+  );
+}
+
+function getRetentionExpiresAt(
+  state: GameState,
+  session: StoredGameSession,
+): number | null {
+  return getGameSessionRetentionExpiresAt(state, session.retentionExpiresAt);
+}
+
+function isRetentionExpired(session: StoredGameSession, now: number): boolean {
+  const retentionExpiresAt = getRetentionExpiresAt(session.state, session);
+  return retentionExpiresAt !== null && retentionExpiresAt <= now;
+}
+
+function getCatalogArchive(environment: CloudflareBindings): CatalogArchiveRpc {
+  return environment.CATALOG_ARCHIVE.getByName(
+    "card-catalog-retention",
+  ) as unknown as CatalogArchiveRpc;
 }
 
 function isParticipant(state: GameState, playerId: PlayerId): boolean {

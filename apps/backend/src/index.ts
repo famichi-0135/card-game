@@ -23,6 +23,7 @@ import {
 } from "./auth/runtime-auth.js";
 
 export { GameSession } from "./game-session/game-session.js";
+export { CatalogArchive } from "./catalog-archive/catalog-archive.js";
 export { MatchLobby } from "./match-lobby/match-lobby.js";
 export { PlayerDecks } from "./player-decks/player-decks.js";
 

@@ -26,6 +26,20 @@ GameSession Durable Object
 
 ゲーム状態に記録した`RulesetVersion`、`CardCatalogVersion`、`EngineSemanticsVersion`から、対応する不変の`GameEngineContext`を解決して`initialize`、`getSnapshot`、`submit`、`alarm`を実行する。最新の固定コンテキストを進行中ゲームへ直接適用してはならない。公開カードカタログも同じ`CardCatalogVersion`から投影する。
 
+## カタログと再接続の保持
+
+ゲーム中に参照されるカードカタログは、`CatalogArchive` Durable Objectでリース管理する。`GameSession`は初期化時のルール、カードカタログ、エンジン意味論バージョンを保存し、そのカタログをゲームID単位でリースする。実行中のゲームのリースに期限はない。
+
+ゲームが終了した時点のサーバー時刻から**24時間**を再接続猶予とする。この期間は次を必ず保持する。
+
+- `GameSession`の状態、閲覧者別スナップショットに必要なイベント、同一`commandId`の結果
+- ゲーム開始時のカードカタログ内容とカタログ版
+- そのカタログを参照する他のゲームのリース情報
+
+終了時に`GameSession`と`CatalogArchive`の両方へ同じ失効時刻を保存し、Durable Object Alarmで削除する。カタログは、進行中または猶予中のリースが1つでもある限り削除してはならない。最後のリースが失効した時点でカタログを削除し、同じゲームの`GameSession`も削除する。期限後のスナップショット取得は`404 GAME_NOT_FOUND`、期限後のカタログ取得は`404 CARD_CATALOG_NOT_FOUND`とする。
+
+同一の`CardCatalogVersion`に異なる内容を登録することは、`CARD_CATALOG_VERSION_CONFLICT`として拒否する。新しいカタログを公開する際は必ず新しい版を発行し、旧版を上書きしない。
+
 マッチング層は、信頼済みの2人のプレイヤーとデッキを`GameSession.initialize`へ渡す。`MatchLobby`はゲームIDと初期乱数seedをWeb Cryptoで生成してから、開始中の入力を永続化する。クライアント入力から`gameId`やseedを受け取らない。対戦相手の選出、参加承諾、デッキ選択の認可はマッチング・認証層の責務であり、このサービスは担当しない。詳細は[対戦待機・開始の設計](./matchmaking.md)を参照する。
 
 ## PartyKitの評価
@@ -49,5 +63,4 @@ ID生成器は初期乱数seedをID文字列へそのまま含めない。不透
 ## 次の実装
 
 1. 固定スロット、公開盤面数値、公開カードカタログ、バージョンコンテキスト解決を実装する。
-2. ゲーム終了後の Durable Object・コマンド結果・イベントの保持期限を定義する。
-3. WebSocket配信、接続休止、プレゼンスを追加する。
+2. WebSocket配信、接続休止、プレゼンスを追加する。
