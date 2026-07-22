@@ -26,6 +26,10 @@
         "class_name": "GameSession",
       },
       {
+        "name": "CATALOG_ARCHIVE",
+        "class_name": "CatalogArchive",
+      },
+      {
         "name": "MATCH_LOBBY",
         "class_name": "MatchLobby",
       },
@@ -47,6 +51,10 @@
     {
       "tag": "v3-player-decks",
       "new_sqlite_classes": ["PlayerDecks"],
+    },
+    {
+      "tag": "v4-catalog-archive",
+      "new_sqlite_classes": ["CatalogArchive"],
     },
   ],
   // "vars": {

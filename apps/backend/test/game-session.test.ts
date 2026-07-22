@@ -9,10 +9,14 @@ import type {
   GetGameSnapshotResult,
   SubmitGameCommandResult,
 } from "../src/game-session/game-session.js";
+import { getGameSessionRetentionExpiresAt } from "../src/game-session/game-session.js";
 import {
   createCountermeasureStarterDeckDefinitionIds,
   createDisasterStarterDeckDefinitionIds,
+  gameEngineContext,
 } from "../src/game-engine/runtime.js";
+import { GAME_RECONNECT_GRACE_PERIOD_MS } from "../src/catalog-archive/catalog-archive.js";
+import { cloneCardCatalog } from "../src/catalog-archive/catalog-archive.js";
 
 describe("GameSession Durable Object", () => {
   it("ゲーム状態とイベントを保存し、閲覧者別のスナップショットを返す", async () => {
@@ -61,6 +65,45 @@ describe("GameSession Durable Object", () => {
         }),
       ]),
     );
+  });
+
+  it("初期化時のカードカタログをアーカイブへ無期限リースする", async () => {
+    const gameId = "game-session-catalog-retention";
+    const stub = getGameSession(gameId);
+
+    await expect(
+      stub.initialize(createInitializeInput(gameId)),
+    ).resolves.toEqual({
+      initialized: true,
+    });
+
+    const catalogs = env.CATALOG_ARCHIVE as unknown as {
+      getByName(name: string): {
+        getCatalog(version: string): Promise<unknown>;
+      };
+    };
+    await expect(
+      catalogs
+        .getByName("card-catalog-retention")
+        .getCatalog(gameEngineContext.cardCatalog.version),
+    ).resolves.toEqual(cloneCardCatalog(gameEngineContext.cardCatalog));
+  });
+
+  it("終了したゲームの再接続猶予を24時間に固定する", () => {
+    const finishedAt = 1_000;
+
+    expect(
+      getGameSessionRetentionExpiresAt({
+        status: "active",
+        phaseStartedAt: finishedAt,
+      }),
+    ).toBeNull();
+    expect(
+      getGameSessionRetentionExpiresAt({
+        status: "finished",
+        phaseStartedAt: finishedAt,
+      }),
+    ).toBe(finishedAt + GAME_RECONNECT_GRACE_PERIOD_MS);
   });
 
   it("同じ commandId の再送には最初の結果を返す", async () => {
