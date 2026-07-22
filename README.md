@@ -2,7 +2,7 @@
 
 Cloudflare Workers と React を使うカードゲーム用の pnpm / Turborepo モノレポです。
 
-チームでの Git/GitHub 運用は [docs/チーム開発ガイド](./docs/team-development.md) を参照してください。
+チームでの Git/GitHub 運用は [docs/チーム開発ガイド](./docs/environment/team-development.md) を参照してください。
 
 ## Workspace
 

@@ -30,7 +30,7 @@ pnpm install
 pnpm run check-types
 ```
 
-Node.js 26 と pnpm 11 が必要です。詳細な開発コマンドと構成は [ルート README](../README.md) を参照してください。
+Node.js 26 と pnpm 11 が必要です。詳細な開発コマンドと構成は [ルート README](../../README.md) を参照してください。
 
 ### GitHub 側で最初に設定すること
 
