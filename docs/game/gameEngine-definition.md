@@ -282,6 +282,10 @@ export type BaseCardDefinition = {
   faction: Faction;
   attribute: Attribute;
   cardType: "mana" | "attack" | "support";
+  presentation: {
+    rulesText: string;
+    imageAssetId: string | null;
+  };
 };
 ```
 
@@ -350,6 +354,8 @@ export type CardCatalog = {
   >;
 };
 ```
+
+`presentation`は表示専用のメタデータであり、ゲームルールの判定には使用しない。`rulesText`は空でない公開文言、`imageAssetId`は画像アセットを指す不透明な識別子または`null`とする。カード定義に属するため、同じ`CardCatalogVersion`内で変更してはならない。
 
 同じ`CardCatalogVersion`が異なる定義内容を指してはならない。進行中ゲームの再開に必要なバージョンを取得できるようにするか、対戦開始時に使用カード定義のスナップショットを永続化する。
 
@@ -515,6 +521,7 @@ export type BattlefieldState = {
 ```ts
 export type AttackGroup = {
   groupId: AttackGroupId;
+  slotIndex: 0 | 1 | 2 | 3 | 4;
   ownerId: PlayerId;
   attribute: Attribute;
   cardIds: CardInstanceId[];
@@ -990,6 +997,7 @@ export type SystemGameCommand = HandlePhaseTimeoutCommand;
 export type PlaceAttackCardCommand = BaseGameCommand & {
   type: "PLACE_ATTACK_CARD";
   cardInstanceId: CardInstanceId;
+  slotIndex: 0 | 1 | 2 | 3 | 4;
   effectInputs: EffectInput[];
 };
 ```
@@ -1002,7 +1010,7 @@ export type PlaceAttackCardCommand = BaseGameCommand & {
 - 制限時間内にサーバーが受信している
 - 対象カードが送信者の手札に存在する
 - 対象カードが攻撃カード
-- 攻撃グループ数が5未満
+- 指定した`slotIndex`が空である
 - 配置後も対象属性のみなもとが不足しない
 - `effectInputs`が対象カードの効果定義と一致する
 
@@ -1010,7 +1018,7 @@ export type PlaceAttackCardCommand = BaseGameCommand & {
 
 1. 元状態を変更しないローカルな仮状態を作る
 2. 仮状態で手札から対象カードを削除する
-3. 新しいグループIDを生成し、カード1枚の攻撃グループを作成する
+3. 新しいグループIDと指定された`slotIndex`で、カード1枚の攻撃グループを作成する
 4. 使用中みなもとを再計算する
 5. カード定義順に`onPlay`効果の計画を作る
 6. `continuous`効果の登録計画を作る
@@ -1021,7 +1029,7 @@ export type PlaceAttackCardCommand = BaseGameCommand & {
 
 - 対象カードは手札に存在しない
 - 対象カードは1つの攻撃グループにだけ存在する
-- 攻撃グループ数は5以下
+- 攻撃グループの`slotIndex`はプレイヤー内で一意であり、0から4の範囲内
 - 使用可能みなもとは0以上
 
 ---
@@ -2134,6 +2142,8 @@ export type VisibleCardInstance = Pick<
 
 export type VisibleAttackGroup = Omit<AttackGroup, "cardIds"> & {
   cards: VisibleCardInstance[];
+  requiredMana: number;
+  currentPower: number;
 };
 
 export type PublicPlayerState = {
@@ -2145,7 +2155,7 @@ export type PublicPlayerState = {
   discardPile: VisibleCardInstance[];
   attackGroups: VisibleAttackGroup[];
   supportZone: VisibleCardInstance[];
-  mana: ManaState;
+  mana: Record<Attribute, CalculatedManaState>;
   activeEffects: ActiveEffect[];
   supportFinished: boolean;
 };
@@ -2172,12 +2182,29 @@ export type PlayerGameView = {
 };
 ```
 
-クライアントは`cardCatalogVersion`に対応する公開カードカタログを取得し、`definitionId`から表示情報を解決する。公開カードカタログは内部`CardCatalog`と別のDTOとし、カード名、公開ルール文章、属性、コストなど表示に必要な情報だけを含める。`handlerId`、カスタム`config`、未公開の内部条件をクライアントへ送らない。
+クライアントは`cardCatalogVersion`に対応する公開カードカタログを取得し、`definitionId`から表示情報を解決する。公開カードカタログは内部`CardCatalog`と別のDTOとし、カード名、公開ルール文章、属性、コスト、基礎攻撃力、継続期間、連鎖条件、効果対象選択情報など表示・操作候補判定に必要な情報だけを含める。`handlerId`、カスタム`config`、未公開の内部条件をクライアントへ送らない。
+
+グループの`requiredMana`、`currentPower`、属性ごとの`CalculatedManaState`は、`GameEngineContext`を使ってサーバーで投影する。フロントエンドが内部`GameState`から同じ数値を再構成してはならない。
+
+```ts
+export function createPublicCardCatalog(
+  catalog: CardCatalog,
+): PublicCardCatalog;
+
+export function getAvailableGameActions(input: {
+  view: PlayerGameView;
+  catalog: PublicCardCatalog;
+  now: number;
+}): AvailableGameActions;
+```
+
+`createPublicCardCatalog`はカード定義の`presentation`と公開可能な操作情報から DTO を投影する。`getAvailableGameActions`は公開情報から判定できる配置、連鎖、破棄、サポート対象、フェーズ終了だけを返す。サーバー受信時刻、同時操作、再送の結果は返り値で確定してはならない。
 
 ```ts
 export function createPlayerView(
   state: GameState,
   viewerPlayerId: PlayerId,
+  context: GameEngineContext,
 ): PlayerGameView;
 ```
 
@@ -2322,6 +2349,7 @@ export type GameCommandError = {
 - 空のグループは存在しない
 - すべてのカードが同じ属性
 - グループIDは一意
+- `slotIndex`は0から4の範囲内で、同じプレイヤーの攻撃グループ間で重複しない
 - カードインスタンスIDは重複しない
 
 ### 63.3 みなもと
