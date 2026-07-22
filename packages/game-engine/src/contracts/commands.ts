@@ -10,7 +10,7 @@ import type {
   PlayerId,
 } from "./identifiers.js";
 import type { GameEventEnvelope } from "./events.js";
-import type { GameState } from "./game-state.js";
+import type { AttackGroupSlotIndex, GameState } from "./game-state.js";
 import type { JsonObject } from "./json.js";
 
 export type InitializeGameInput = {
@@ -88,6 +88,7 @@ export type BaseGameCommand = {
 export type PlaceAttackCardCommand = BaseGameCommand & {
   type: "PLACE_ATTACK_CARD";
   cardInstanceId: CardInstanceId;
+  slotIndex: AttackGroupSlotIndex;
   effectInputs: EffectInput[];
 };
 

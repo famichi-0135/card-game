@@ -962,6 +962,7 @@ function prepareSupportPhase(
       {
         type: "PLACE_ATTACK_CARD",
         cardInstanceId: attackCardInstanceId,
+        slotIndex: 0,
         effectInputs: [],
       },
       "place-target-group",
@@ -988,6 +989,7 @@ function prepareSupportPhase(
           state.secondPlayerId,
           "attack-1",
         ),
+        slotIndex: 0,
         effectInputs: [],
       },
       "place-opponent-target-group",
@@ -1011,6 +1013,7 @@ type CommandInput =
   | {
       type: "PLACE_ATTACK_CARD";
       cardInstanceId: string;
+      slotIndex: 0 | 1 | 2 | 3 | 4;
       effectInputs: EffectInput[];
     }
   | {

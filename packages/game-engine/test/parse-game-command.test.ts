@@ -16,6 +16,7 @@ describe("ゲームコマンドの実行時検証", () => {
         ...base,
         type: "PLACE_ATTACK_CARD",
         cardInstanceId: "card-1",
+        slotIndex: 0,
         effectInputs: [],
       },
       {

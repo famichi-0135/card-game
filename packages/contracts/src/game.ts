@@ -7,6 +7,7 @@ import type {
   PlayerGameView,
   PlayerId,
   PlayerVisibleEventEnvelope,
+  PublicCardCatalog,
 } from "@disastar/game-engine/contracts";
 
 /** クライアントが送信する、未認証のゲーム操作。 */
@@ -86,6 +87,17 @@ export type GameSnapshotResponse = {
   view: PlayerGameView;
   events: PlayerVisibleEventEnvelope[];
   latestEventSequence: number;
+};
+
+/** バージョン固定された、表示専用のカードカタログ。 */
+export type PublicCardCatalogResponse = {
+  catalog: PublicCardCatalog;
+};
+
+export type PublicCardCatalogApiErrorResponse = {
+  error: {
+    code: "CARD_CATALOG_NOT_FOUND";
+  };
 };
 
 /** HTTPアダプターがゲームエンジンの呼び出し前に返すエラー。 */

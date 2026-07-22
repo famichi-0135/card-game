@@ -15,23 +15,23 @@
 - Better Auth のセッションを使ってゲーム・対戦・デッキ API を認証する。
 - Frontend Worker は同一オリジンの `/api/*` を `BACKEND` Service Binding へ転送する。
 
-一方、Frontend はスターター画面のままであり、ルーター、サーバー状態キャッシュ、認証クライアント、対戦 UI、`@dnd-kit/react` は未導入である。また、現行の `PlayerGameView` とゲームコマンドには、固定スロット・盤面数値・公開カードカタログ・合法手判定 API がない。
+一方、Frontend はスターター画面のままであり、ルーター、サーバー状態キャッシュ、認証クライアント、対戦 UI、`@dnd-kit/react` は未導入である。固定スロット、盤面数値、公開カードカタログは契約ゲートで実装済みだが、D&D の可否を返す合法手判定 API は未実装である。
 
 ## 3. 変更判断
 
-| ID   | 確認結果                                                                                                                      | 決定                                                                                                                           | 担当                              | フロントエンド開始への影響       |
-| ---- | ----------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------ | --------------------------------- | -------------------------------- |
-| G-01 | `AttackGroup` と `PLACE_ATTACK_CARD` に `slotIndex` がなく、除去後の固定位置を表せない。                                      | UI 要件は維持し、ゲームエンジンとバックエンドを変更する。                                                                      | Game engine / Backend             | 操作実装の必須前提               |
-| G-02 | `PlayerGameView` にグループの現在パワー・必要みなもと、属性別の予約量・使用可能量がない。                                     | UI 側で内部ルールを再計算しない。ゲームエンジンの公開ビューを拡張する。                                                        | Game engine / Backend             | 読み取り専用盤面の必須前提       |
-| G-03 | `cardCatalogVersion` は返るが、公開カードカタログを取得する DTO・HTTP API がない。                                            | バックエンドにバージョン指定の公開カタログ API を追加する。                                                                    | Game engine / Contracts / Backend | カード表示・操作判定の必須前提   |
-| G-04 | `getAvailableGameActions` が未実装である。                                                                                    | ブラウザ非依存の純粋 API をゲームエンジンに追加する。クライアントはこれだけで D&D の可否を判断する。                           | Game engine                       | 操作実装の必須前提               |
-| F-01 | スナップショットには特定 `commandId` の結果がないため、通信失敗時に GET だけでは受理・拒否を判別できない。                    | フロントエンド要件を変更し、同じ `commandId` で同じ POST を再送して結果を取得する。GET は正規状態への再同期専用とする。        | Frontend                          | 必須                             |
-| F-02 | HTTP 初期実装の相手操作反映頻度が未定義である。                                                                               | WebSocket を初回リリースから外し、可視中は 2 秒間隔の差分ポーリングを行う。                                                    | Frontend                          | 必須                             |
-| B-01 | `GameSession` は現在の固定 `gameEngineContext` を直接使用しており、仕様上要求するゲーム開始時のバージョン固定を再解決しない。 | 進行中ゲームの `rulesetVersion`、`cardCatalogVersion`、`engineSemanticsVersion` から不変コンテキストを解決する実装へ変更する。 | Backend                           | 公開カタログ導入と同じ契約ゲート |
-| B-02 | Durable Object の文書には「標準 Worker の認証アダプター未接続」とあるが、実装は Better Auth を標準で使用している。            | バックエンド文書を実装に合わせて修正する。                                                                                     | Backend docs                      | 文書修正のみ                     |
-| F-03 | 要件は React Query を前提にしているが、依存関係にない。ルーティングも未導入である。                                           | `@tanstack/react-query`、`react-router`、`@dnd-kit/react` をフロントエンド基盤 PR で導入する。                                 | Frontend                          | 読み取り専用盤面の前提           |
+| ID   | 確認結果                                                                                                                      | 決定                                                                                                                    | 担当                              | フロントエンド開始への影響 |
+| ---- | ----------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------- | --------------------------------- | -------------------------- |
+| G-01 | `AttackGroup` と `PLACE_ATTACK_CARD` に `slotIndex` がなく、除去後の固定位置を表せない。                                      | 実装済み: `slotIndex` を必須化し、範囲・重複をエンジンで検証する。                                                      | Game engine / Backend             | 完了                       |
+| G-02 | `PlayerGameView` にグループの現在パワー・必要みなもと、属性別の予約量・使用可能量がない。                                     | 実装済み: UI 側で内部ルールを再計算せず、ゲームエンジンの公開ビューが計算済み値を返す。                                 | Game engine / Backend             | 完了                       |
+| G-03 | `cardCatalogVersion` は返るが、公開カードカタログを取得する DTO・HTTP API がない。                                            | 実装済み: バージョン指定の公開カタログ API を追加し、内部効果設定を投影前に除外する。                                   | Game engine / Contracts / Backend | 完了                       |
+| G-04 | `getAvailableGameActions` が未実装である。                                                                                    | ブラウザ非依存の純粋 API をゲームエンジンに追加する。クライアントはこれだけで D&D の可否を判断する。                    | Game engine                       | 操作実装の必須前提         |
+| F-01 | スナップショットには特定 `commandId` の結果がないため、通信失敗時に GET だけでは受理・拒否を判別できない。                    | フロントエンド要件を変更し、同じ `commandId` で同じ POST を再送して結果を取得する。GET は正規状態への再同期専用とする。 | Frontend                          | 必須                       |
+| F-02 | HTTP 初期実装の相手操作反映頻度が未定義である。                                                                               | WebSocket を初回リリースから外し、可視中は 2 秒間隔の差分ポーリングを行う。                                             | Frontend                          | 必須                       |
+| B-01 | `GameSession` は現在の固定 `gameEngineContext` を直接使用しており、仕様上要求するゲーム開始時のバージョン固定を再解決しない。 | 実装済み: ゲーム開始時の不変コンテキストを保存し、状態とのバージョン一致を検証して使用する。                            | Backend                           | 完了                       |
+| B-02 | Durable Object の文書には「標準 Worker の認証アダプター未接続」とあるが、実装は Better Auth を標準で使用している。            | バックエンド文書を実装に合わせて修正する。                                                                              | Backend docs                      | 文書修正のみ               |
+| F-03 | 要件は React Query を前提にしているが、依存関係にない。ルーティングも未導入である。                                           | `@tanstack/react-query`、`react-router`、`@dnd-kit/react` をフロントエンド基盤 PR で導入する。                          | Frontend                          | 読み取り専用盤面の前提     |
 
-`G-01` から `G-04` と `B-01` は、フロントエンドの見た目だけを先行して実装する場合を除き、実 API 接続前に完了させる。固定 5 枠を可変配列の見た目だけで補う、またはカード効果をフロントエンド固有の規則で再計算する案は採用しない。
+`G-04` は、フロントエンドの見た目だけを先行して実装する場合を除き、実 API 接続前に完了させる。固定 5 枠を可変配列の見た目だけで補う、またはカード効果をフロントエンド固有の規則で再計算する案は採用しない。
 
 ## 4. 契約ゲート
 
@@ -59,7 +59,7 @@ type PublicPlayerState = {
 };
 ```
 
-`createPlayerView` は `GameEngineContext` を受け、サーバーで計算した値を返す。既存の開発用 `GameSession` は保存形式が非互換になるため、実装 PR ではストレージキーを更新して旧ローカルセッションを破棄する。正式データを扱う段階では、明示的なマイグレーションを別途設計する。
+`createPlayerView` は `GameEngineContext` を受け、サーバーで計算した値を返す。既存 `GameSession` の保存済み攻撃グループに `slotIndex` がない場合、読み込み時に作成順で空き枠を割り当てて同じストレージキーへ永続化する。再接続猶予中の終了済みゲームも、この移行対象に含める。
 
 ### 4.2 公開カードカタログ
 
@@ -72,7 +72,7 @@ GET /api/card-catalogs/:cardCatalogVersion
 ```
 
 - カタログはログイン前を含めて取得可能とする。ただし、対戦画面は認証済みのゲームスナップショットを取得した後、その `cardCatalogVersion` だけを要求する。
-- `PublicCardCatalog` は `version` と定義 ID ごとの `CardCatalogEntryView` を含む。
+- `PublicCardCatalog` は `version` と定義 ID ごとの `PublicCardDefinition` を含む。
 - エントリには `name`、`faction`、`attribute`、`cardType`、`cost`、`basePower`、`duration`、`rulesText`、`imageAssetId`、`PublicCardInteraction` を含める。
 - `PublicCardInteraction` には攻撃カードの連鎖先定義 ID、およびサポート効果ごとの `effectId`、対象数、対象領域、対象所有者、対象選択順だけを含める。`handlerId`、`config`、未公開条件、乱数 seed は含めない。
 - `rulesText` と `imageAssetId` は、各カード定義に属するバージョン管理された `presentation` メタデータを正本にする。初回実装の `imageAssetId` は `null` を許容し、Frontend は属性・種別を示すプレースホルダーを表示する。
@@ -111,9 +111,10 @@ getAvailableGameActions({
 
 ### フェーズ 0: 契約ゲート
 
-1. Game engine: `slotIndex`、公開盤面数値、`PublicCardCatalog`、`getAvailableGameActions`、対応する単体・境界テストを実装する。
-2. Contracts / Backend: 公開カタログ API、バージョンコンテキスト解決、保存形式の更新、HTTP API テストを実装する。
-3. 受け入れ: 1 つのスナップショットと同じカタログだけで、5 枠・手札・捨て札・サポート・みなもと・グループ数値を表示できる。相手の手札・山札・内部効果設定は取得できない。
+1. 実装済み: Game engine の `slotIndex`、公開盤面数値、`PublicCardCatalog`、対応する単体・境界テストを実装する。
+2. 実装済み: Contracts / Backend の公開カタログ API、バージョン固定コンテキスト、保存形式移行、HTTP API テストを実装する。
+3. 次: `getAvailableGameActions` をゲームエンジンへ追加する。
+4. 受け入れ: 1 つのスナップショットと同じカタログだけで、5 枠・手札・捨て札・サポート・みなもと・グループ数値を表示できる。相手の手札・山札・内部効果設定は取得できない。
 
 ### フェーズ 1: フロントエンド基盤と静的盤面
 

@@ -261,6 +261,17 @@ function placeAttackCard(
       "攻撃グループ数が上限です。",
     );
   }
+  if (
+    command.slotIndex >= context.rules.maxAttackGroups ||
+    player.battlefield.attackGroups.some(
+      (group) => group.slotIndex === command.slotIndex,
+    )
+  ) {
+    return commandError(
+      "ATTACK_GROUP_SLOT_UNAVAILABLE",
+      "指定された攻撃グループ枠は使用できません。",
+    );
+  }
 
   const groupId = createAttackGroupId(state, command, dependencies);
   if (isGameCommandError(groupId)) {
@@ -270,10 +281,14 @@ function placeAttackCard(
   player.battlefield.attackGroups.push({
     groupId,
     ownerId: command.playerId,
+    slotIndex: command.slotIndex,
     attribute: card.attribute,
     cardIds: [command.cardInstanceId],
     createdRound: state.round,
   });
+  player.battlefield.attackGroups.sort(
+    (left, right) => left.slotIndex - right.slotIndex,
+  );
 
   const mana = calculateMana(state, command.playerId, card.attribute, context);
   if (mana.available < 0) {

@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import {
   createPlayerView,
+  executeCommand,
   initializeGame,
   projectEventForPlayer,
 } from "../src/index.js";
@@ -16,7 +17,7 @@ describe("プレイヤー向け公開状態", () => {
     const state = initializeState();
     const viewerPlayerId = state.playerOrder[0];
     const opponentPlayerId = state.playerOrder[1];
-    const view = createPlayerView(state, viewerPlayerId);
+    const view = createPlayerView(state, viewerPlayerId, createTestContext());
 
     expect(view.self.faction).toBe(state.players[viewerPlayerId]?.faction);
     expect(view.opponent.faction).toBe(
@@ -85,12 +86,66 @@ describe("プレイヤー向け公開状態", () => {
       },
     });
   });
+
+  it("盤面表示に固定枠とサーバー計算済みの攻撃力・みなもとを含める", () => {
+    const context = createTestContext();
+    const state = initializeState(context);
+    const playerId = state.firstPlayerId;
+    const cardInstanceId = state.players[playerId]?.hand.find((candidate) => {
+      const definitionId = state.cardInstances[candidate]?.definitionId;
+      return (
+        context.cardCatalog.definitions[definitionId ?? ""]?.cardType ===
+        "attack"
+      );
+    });
+    if (cardInstanceId === undefined) {
+      throw new Error("テスト用の攻撃カードが手札にありません。");
+    }
+
+    const result = executeCommand(
+      state,
+      {
+        command: {
+          type: "PLACE_ATTACK_CARD",
+          commandId: "place-for-view",
+          gameId: state.gameId,
+          playerId,
+          phaseSequence: state.phaseSequence,
+          clientStateVersion: state.stateVersion,
+          issuedAt: 0,
+          cardInstanceId,
+          slotIndex: 2,
+          effectInputs: [],
+        },
+        receivedAt: state.phaseStartedAt + 1,
+      },
+      context,
+      createDependencies(),
+    );
+    if (!result.accepted) {
+      throw new Error(result.error.message);
+    }
+
+    const view = createPlayerView(result.state, playerId, context);
+    expect(view.self.attackGroups).toEqual([
+      expect.objectContaining({
+        slotIndex: 2,
+        requiredMana: 0,
+        currentPower: expect.any(Number),
+      }),
+    ]);
+    expect(view.self.mana.attributeA).toEqual({
+      total: result.state.players[playerId]?.mana.attributeA.total,
+      reserved: 0,
+      available: result.state.players[playerId]?.mana.attributeA.total,
+    });
+  });
 });
 
-function initializeState(): GameState {
+function initializeState(context = createTestContext()): GameState {
   const initialized = initializeGame(
     createInitializationInput(),
-    createTestContext(),
+    context,
     createDependencies(),
   );
   if (!initialized.initialized) {

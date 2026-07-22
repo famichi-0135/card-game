@@ -9,7 +9,10 @@ import type {
   GetGameSnapshotResult,
   SubmitGameCommandResult,
 } from "../src/game-session/game-session.js";
-import { getGameSessionRetentionExpiresAt } from "../src/game-session/game-session.js";
+import {
+  getGameSessionRetentionExpiresAt,
+  migrateAttackGroupSlots,
+} from "../src/game-session/game-session.js";
 import {
   createCountermeasureStarterDeckDefinitionIds,
   createDisasterStarterDeckDefinitionIds,
@@ -104,6 +107,26 @@ describe("GameSession Durable Object", () => {
         phaseStartedAt: finishedAt,
       }),
     ).toBe(finishedAt + GAME_RECONNECT_GRACE_PERIOD_MS);
+  });
+
+  it("旧保存形式の攻撃グループへ作成順の固定スロットを割り当てる", () => {
+    const state = {
+      players: {
+        "player-1": {
+          battlefield: {
+            attackGroups: [{ groupId: "group-1" }, { groupId: "group-2" }],
+          },
+        },
+      },
+    } as unknown as Parameters<typeof migrateAttackGroupSlots>[0];
+
+    expect(migrateAttackGroupSlots(state)).toBe(true);
+    expect(
+      state.players["player-1"]?.battlefield.attackGroups.map(
+        (group) => group.slotIndex,
+      ),
+    ).toEqual([0, 1]);
+    expect(migrateAttackGroupSlots(state)).toBe(false);
   });
 
   it("同じ commandId の再送には最初の結果を返す", async () => {

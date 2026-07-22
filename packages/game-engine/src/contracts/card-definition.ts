@@ -10,12 +10,19 @@ import type { JsonObject } from "./json.js";
 export type Attribute = "attributeA" | "attributeB" | "attributeC";
 export type Faction = "disaster" | "countermeasure";
 
+/** カードカタログに含める、ゲームルールから独立した表示情報。 */
+export type CardPresentation = {
+  rulesText: string;
+  imageAssetId: string | null;
+};
+
 export type BaseCardDefinition = {
   id: CardDefinitionId;
   name: string;
   faction: Faction;
   attribute: Attribute;
   cardType: "mana" | "attack" | "support";
+  presentation?: CardPresentation;
 };
 
 export type ManaCardDefinition = BaseCardDefinition & {
