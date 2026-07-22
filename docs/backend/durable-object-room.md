@@ -16,13 +16,15 @@ GameSession Durable Object
 @disastar/game-engine
 ```
 
-`GameSession`の公開RPCは次の3つである。Workerは認証アダプターでプレイヤーを確定してから、HTTP API経由で`getSnapshot`と`submit`を呼び出す。標準Workerの認証アダプターは未接続のため、ゲームAPIはすべてのリクエストを拒否する。
+`GameSession`の公開RPCは次の3つである。Workerは Better Auth のセッションからプレイヤーを確定してから、HTTP API経由で`getSnapshot`と`submit`を呼び出す。ローカル・本番ともに認証設定が不足している場合は API を有効な利用者として扱わず、設定不備を解消する。
 
 - `initialize`: 対戦状態と初期イベントを作成して永続化する。
 - `getSnapshot`: 閲覧者別の`PlayerGameView`と公開イベントを返す。未初期化時は`GAME_NOT_FOUND`、参加者外は`GAME_ACCESS_FORBIDDEN`を返す。
 - `submit`: 認証済みプレイヤーのコマンドを処理し、最初の結果を`commandId`単位で保存する。未初期化・参加者外・認証済みプレイヤー不一致は安定したエラー結果で返す。
 
-状態とコマンド結果は、応答する前にDO Storageへ書き込む。同じ`commandId`が再送された場合は、エンジンを再実行せず保存済みの最初の結果を返す。フェーズ期限がある間はDO Alarmを1つだけ設定し、アラームでは`HANDLE_PHASE_TIMEOUT`をエンジンへ渡す。
+状態とコマンド結果は、応答する前にDO Storageへ書き込む。同じ`commandId`が再送された場合は、エンジンを再実行せず保存済みの最初の結果を返す。フェーズ期限がある間はDO Alarmを1つだけ設定し、アラームでは`HANDLE_PHASE_TIMEOUT`をエンジンへ渡す。HTTP 初期実装ではゲーム中の公開イベントを保持し、`afterSequence`による差分取得を可能にする。
+
+ゲーム状態に記録した`RulesetVersion`、`CardCatalogVersion`、`EngineSemanticsVersion`から、対応する不変の`GameEngineContext`を解決して`initialize`、`getSnapshot`、`submit`、`alarm`を実行する。最新の固定コンテキストを進行中ゲームへ直接適用してはならない。公開カードカタログも同じ`CardCatalogVersion`から投影する。
 
 マッチング層は、信頼済みの2人のプレイヤーとデッキを`GameSession.initialize`へ渡す。`MatchLobby`はゲームIDと初期乱数seedをWeb Cryptoで生成してから、開始中の入力を永続化する。クライアント入力から`gameId`やseedを受け取らない。対戦相手の選出、参加承諾、デッキ選択の認可はマッチング・認証層の責務であり、このサービスは担当しない。詳細は[対戦待機・開始の設計](./matchmaking.md)を参照する。
 
@@ -46,6 +48,6 @@ ID生成器は初期乱数seedをID文字列へそのまま含めない。不透
 
 ## 次の実装
 
-1. 実際の認証アダプターを接続し、`PlayerDecks`と対戦・ゲームAPIを有効化する。
-2. Durable Objectのイベント保持期間と再接続時の差分取得を定義する。
+1. 固定スロット、公開盤面数値、公開カードカタログ、バージョンコンテキスト解決を実装する。
+2. ゲーム終了後の Durable Object・コマンド結果・イベントの保持期限を定義する。
 3. WebSocket配信、接続休止、プレゼンスを追加する。

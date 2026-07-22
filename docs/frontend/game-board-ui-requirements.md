@@ -58,7 +58,7 @@
 - 色だけに依存せず、属性名とアイコンを併記する。
 - カード詳細は、ホバー、フォーカス、または選択操作で開く。
 
-現在の公開カードカタログには、効果説明、連鎖条件、画像識別子がない。対戦画面の実装前に、公開用の次のデータを追加する。
+現在は公開カードカタログの取得 API がない。対戦画面の API 接続前に、[フロントエンド連携の実装計画](./frontend-integration-plan.md)で定めるバージョン指定の公開カタログを追加する。
 
 ```ts
 type CardCatalogEntryView = {
@@ -70,15 +70,21 @@ type CardCatalogEntryView = {
   cardType: "mana" | "attack" | "support";
   cost: number | null;
   basePower: number | null;
+  duration: "instant" | "untilRoundEnd" | "permanent" | null;
 
   // UI 用の公開情報
   rulesText: string;
   imageAssetId: string | null;
   interaction: PublicCardInteraction;
 };
+
+type PublicCardCatalog = {
+  version: CardCatalogVersion;
+  entries: Record<CardDefinitionId, CardCatalogEntryView>;
+};
 ```
 
-`PublicCardInteraction` は対象数、対象領域、対象所有者などの UI 判定に必要な情報だけを含める。内部 `handlerId`、非公開の効果設定、将来の未公開条件は含めない。
+`PublicCardInteraction` は攻撃カードの連鎖先定義 ID、およびサポート効果ごとの `effectId`、対象数、対象領域、対象所有者、対象選択順など、UI 判定に必要な情報だけを含める。内部 `handlerId`、`config`、非公開の効果設定、将来の未公開条件は含めない。
 
 ### 4.2 攻撃グループ
 
@@ -104,7 +110,7 @@ type PlaceAttackCardCommand = {
 };
 ```
 
-`PLACE_ATTACK_CARD` は空の `slotIndex` だけを受理する。グループが除去されても、他のグループの位置を詰めない。`PlayerGameView` には `slotIndex` を公開する。
+`PLACE_ATTACK_CARD` は空の `slotIndex` だけを受理する。グループが除去されても、他のグループの位置を詰めない。`PlayerGameView` には `slotIndex`、`requiredMana`、`currentPower`を公開する。属性ごとのみなもとは、総量・予約量・使用可能量をサーバーで計算して公開する。UI が内部状態やカード効果を再計算してこれらを作ってはならない。
 
 ## 5. 操作仕様
 
@@ -173,6 +179,7 @@ getAvailableGameActions({
 - API は公開状態だけで判定できる内容に限定する。
 - フェーズ期限、通信遅延、再接続、重複コマンドなどによりサーバーが拒否する可能性は残る。
 - D&D の有効化はこの API を使うが、最終判定はバックエンドの `executeCommand` とする。
+- 公開情報で共通に判定できる条件は、サーバーの検証と同じゲームエンジンの純粋な判定部品を使う。フロントエンドに別のルール表を持たない。
 
 コマンド送信時は、最新 `PlayerGameView` の `gameId`、`viewerPlayerId`、`phaseSequence`、`stateVersion` を使い、新しい `commandId` を発行する。
 
@@ -182,8 +189,9 @@ getAvailableGameActions({
 - 同一カードまたはフェーズ終了の送信中は、追加のゲームコマンドを送信しない。
 - 受理時は応答の `PlayerGameView` を React Query の正規状態として更新し、公開イベントを演出キューへ追加する。
 - ルール拒否時は応答に含まれる `PlayerGameView` へ戻し、安定したエラーコードを利用者向け文言へ変換する。
-- 通信失敗時は、新しい `commandId` を作らず、同じコマンド ID の結果を確認するためスナップショットを取得する。
+- 通信失敗時は、新しい `commandId` を作らず、同じ本文で同じコマンド ID の POST を再送して最初の結果を取得する。スナップショットは表示状態の再同期だけに使い、特定コマンドの受理・拒否を推測しない。
 - イベント連番が欠落した場合は演出の差分適用を止め、スナップショットで再同期する。
+- HTTP 初期実装では、ゲームが終了するまでページ可視中に `afterSequence` を付けたスナップショット取得を 2 秒ごとに行う。非表示中は停止し、フォーカス復帰時に直ちに再同期する。
 - `prefers-reduced-motion` では、ドラッグ・カード移動・イベント演出を短縮または停止する。確定状態の反映を演出完了まで待たせない。
 
 ## 8. 最低限の視覚設計
@@ -195,11 +203,11 @@ getAvailableGameActions({
 
 ## 9. 実装の分割
 
-1. エンジン契約: `slotIndex`、公開カード操作情報、`getAvailableGameActions`、単体テスト
+1. 契約ゲート: `slotIndex`、公開盤面数値、公開カードカタログ、`getAvailableGameActions`、単体・境界テスト
 2. 読み取り専用ボード: 固定 5 枠、カード詳細、プレースホルダー、PC 未対応サイズ表示
-3. 攻撃カード操作: D&D、キーボード代替、送信中・拒否・再同期
+3. HTTP 接続と攻撃カード操作: 差分ポーリング、D&D、キーボード代替、送信中・拒否・再送・再同期
 4. サポート操作: 操作トレイ、対象選択、確認、複数対象
-5. 公開イベント演出と WebSocket 対応
+5. 公開イベント演出。WebSocket は初回リリース後に、同じ DTO と再同期規則で追加する。
 
 ## 10. 受け入れ条件
 

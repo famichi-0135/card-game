@@ -4,6 +4,7 @@
 
 - [対戦画面 UI 要件](./frontend/game-board-ui-requirements.md): 盤面、D&D操作、公開情報、再同期の詳細要件。
 - [フロントエンド要件定義](./frontend/frontend-requirements.md): 対戦画面を含む周辺画面、対応環境、品質・テスト要件。
+- [フロントエンド連携の実装計画](./frontend/frontend-integration-plan.md): 実装前の契約ゲート、責務別の変更判断、PR 分割。
 
 ## Backend
 
