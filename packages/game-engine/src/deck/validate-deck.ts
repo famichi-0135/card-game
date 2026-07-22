@@ -1,6 +1,7 @@
 import type {
   CardCatalog,
   CardDefinition,
+  Faction,
 } from "../contracts/card-definition.js";
 import type { DeepReadonly } from "../contracts/deep-readonly.js";
 import type { CardDefinitionId } from "../contracts/identifiers.js";
@@ -12,6 +13,7 @@ import type { GameRules } from "../contracts/rules.js";
 
 export function validateDeck(
   deckDefinitionIds: readonly CardDefinitionId[],
+  expectedFaction: Faction,
   cardCatalog: CardCatalog,
   rules: Readonly<GameRules>,
 ): DeckValidationResult {
@@ -41,6 +43,15 @@ export function validateDeck(
         code: "CARD_DEFINITION_INVALID",
         cardDefinitionId: definitionId,
         message: `カード定義 ${definitionId} の数値または種別が不正です。`,
+      });
+      continue;
+    }
+
+    if (definition.faction !== expectedFaction) {
+      errors.push({
+        code: "FACTION_MISMATCH",
+        cardDefinitionId: definitionId,
+        message: `カード定義 ${definitionId} は${expectedFaction}陣営のカードではありません。`,
       });
       continue;
     }

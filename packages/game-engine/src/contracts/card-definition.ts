@@ -8,10 +8,12 @@ import type {
 import type { JsonObject } from "./json.js";
 
 export type Attribute = "attributeA" | "attributeB" | "attributeC";
+export type Faction = "disaster" | "countermeasure";
 
 export type BaseCardDefinition = {
   id: CardDefinitionId;
   name: string;
+  faction: Faction;
   attribute: Attribute;
   cardType: "mana" | "attack" | "support";
 };
@@ -61,6 +63,7 @@ export type CardCatalogValidationError = {
     | "DUPLICATE_CARD_ID"
     | "DUPLICATE_EFFECT_ID"
     | "CARD_REFERENCE_NOT_FOUND"
+    | "CROSS_FACTION_CARD_REFERENCE"
     | "HANDLER_NOT_FOUND"
     | "INVALID_LIFECYCLE_COMBINATION"
     | "INVALID_NUMERIC_VALUE"

@@ -832,10 +832,18 @@ function createEffectContext(): GameEngineContext {
 }
 
 function createContextWithSupport(
-  supportDefinition: SupportCardDefinition,
+  supportDefinition: Omit<SupportCardDefinition, "faction">,
 ): GameEngineContext {
   const input: CardCatalogInput = createTestCardCatalogInput();
-  input.definitions.push(supportDefinition);
+  input.definitions.push(
+    { ...supportDefinition, faction: "disaster" },
+    {
+      ...supportDefinition,
+      id: `counter-${supportDefinition.id}`,
+      name: `対策${supportDefinition.name}`,
+      faction: "countermeasure",
+    },
+  );
   const baseContext = createTestContext();
   const catalogResult = createCardCatalog(input, {
     rules: baseContext.rules,
@@ -873,7 +881,7 @@ function createInvalidPlanContext(): GameEngineContext {
     }),
   };
   const input: CardCatalogInput = createTestCardCatalogInput();
-  input.definitions.push({
+  const supportDefinition: Omit<SupportCardDefinition, "faction"> = {
     id: "support-invalid-plan",
     name: "不正計画テスト",
     attribute: "attributeA",
@@ -897,7 +905,16 @@ function createInvalidPlanContext(): GameEngineContext {
         },
       },
     ],
-  });
+  };
+  input.definitions.push(
+    { ...supportDefinition, faction: "disaster" },
+    {
+      ...supportDefinition,
+      id: `counter-${supportDefinition.id}`,
+      name: `対策${supportDefinition.name}`,
+      faction: "countermeasure",
+    },
+  );
   const baseContext = createTestContext();
   const effectRegistry = { "invalid-plan-handler": invalidPlanHandler };
   const catalogResult = createCardCatalog(input, {
@@ -1050,8 +1067,13 @@ function findHandCard(
   playerId: PlayerId,
   definitionId: string,
 ): string {
-  const cardInstanceId = getPlayer(state, playerId).hand.find(
-    (id) => state.cardInstances[id]?.definitionId === definitionId,
+  const player = getPlayer(state, playerId);
+  const factionDefinitionId =
+    player.faction === "countermeasure"
+      ? `counter-${definitionId}`
+      : definitionId;
+  const cardInstanceId = player.hand.find(
+    (id) => state.cardInstances[id]?.definitionId === factionDefinitionId,
   );
   if (cardInstanceId === undefined) {
     throw new Error(`手札に ${definitionId} がありません。`);
@@ -1065,8 +1087,12 @@ function moveDeckCardToHand(
   definitionId: string,
 ): string {
   const player = getPlayer(state, playerId);
+  const factionDefinitionId =
+    player.faction === "countermeasure"
+      ? `counter-${definitionId}`
+      : definitionId;
   const index = player.deck.findIndex(
-    (id) => state.cardInstances[id]?.definitionId === definitionId,
+    (id) => state.cardInstances[id]?.definitionId === factionDefinitionId,
   );
   if (index < 0) {
     throw new Error(`山札に ${definitionId} がありません。`);

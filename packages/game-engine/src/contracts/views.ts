@@ -1,4 +1,5 @@
 import type { ActiveEffect } from "./effects.js";
+import type { Faction } from "./card-definition.js";
 import type {
   CardCatalogVersion,
   CardInstanceId,
@@ -31,6 +32,7 @@ export type VisibleAttackGroup = Omit<AttackGroup, "cardIds"> & {
 
 export type PublicPlayerState = {
   playerId: PlayerId;
+  faction: Faction;
   stamina: number;
   handCount: number;
   deckCount: number;

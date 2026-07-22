@@ -1,6 +1,7 @@
 import { validateDeck } from "@disastar/game-engine";
 import type {
   CardDefinitionId,
+  Faction,
   PlayerId,
 } from "@disastar/game-engine/contracts";
 import { gameEngineContext } from "../game-engine/runtime.js";
@@ -14,7 +15,7 @@ export async function resolveAuthorizedDeckInEnvironment(
   playerId: PlayerId,
   deckId: string,
   environment: CloudflareBindings,
-): Promise<CardDefinitionId[] | null> {
+): Promise<AuthorizedDeck | null> {
   const deck = await getPlayerDecksInEnvironment(playerId, environment).get(
     deckId,
   );
@@ -24,8 +25,19 @@ export async function resolveAuthorizedDeckInEnvironment(
 
   const validation = validateDeck(
     deck.cardDefinitionIds,
+    deck.faction,
     gameEngineContext.cardCatalog,
     gameEngineContext.rules,
   );
-  return validation.valid ? [...deck.cardDefinitionIds] : null;
+  return validation.valid
+    ? {
+        faction: deck.faction,
+        cardDefinitionIds: [...deck.cardDefinitionIds],
+      }
+    : null;
 }
+
+export type AuthorizedDeck = {
+  faction: Faction;
+  cardDefinitionIds: CardDefinitionId[];
+};

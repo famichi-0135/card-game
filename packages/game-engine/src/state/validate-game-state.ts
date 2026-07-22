@@ -253,6 +253,19 @@ function validatePlayers(
     });
   }
 
+  const factions = playerIds.map(
+    (playerId) => state.players[playerId]?.faction,
+  );
+  if (
+    factions.filter((faction) => faction === "disaster").length !== 1 ||
+    factions.filter((faction) => faction === "countermeasure").length !== 1
+  ) {
+    issues.push({
+      code: "INVALID_FACTION_ASSIGNMENT",
+      message: "ゲーム状態には災害側と対策側が1人ずつ必要です。",
+    });
+  }
+
   const finishedPlayers = new Set<PlayerId>();
   for (const playerId of state.supportFinishedBy) {
     if (!playerIds.includes(playerId) || finishedPlayers.has(playerId)) {
@@ -365,13 +378,14 @@ function validateCardInstances(
   }
 
   for (const [key, instance] of instances) {
-    validateCardInstance(key, instance, playerIds, context, issues);
+    validateCardInstance(key, instance, state, playerIds, context, issues);
   }
 }
 
 function validateCardInstance(
   key: string,
   instance: CardInstance,
+  state: GameState,
   playerIds: string[],
   context: GameEngineContext,
   issues: StateValidationIssue[],
@@ -388,10 +402,16 @@ function validateCardInstance(
       message: `カードインスタンス ${key} の所有者が不正です。`,
     });
   }
-  if (context.cardCatalog.definitions[instance.definitionId] === undefined) {
+  const definition = context.cardCatalog.definitions[instance.definitionId];
+  if (definition === undefined) {
     issues.push({
       code: "CARD_DEFINITION_NOT_FOUND",
       message: `カードインスタンス ${key} の定義が見つかりません。`,
+    });
+  } else if (state.players[instance.ownerId]?.faction !== definition.faction) {
+    issues.push({
+      code: "CARD_FACTION_MISMATCH",
+      message: `カードインスタンス ${key} の陣営が所有者と一致しません。`,
     });
   }
 }

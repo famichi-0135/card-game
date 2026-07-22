@@ -3,35 +3,53 @@ import {
   parseCreateDeckRequest,
   parseReplaceDeckRequest,
 } from "@disastar/contracts/deck";
-import type { CardDefinitionId } from "@disastar/game-engine/contracts";
+import type {
+  CardDefinitionId,
+  Faction,
+} from "@disastar/game-engine/contracts";
 import { createDeckApi } from "../src/deck-api/create-deck-api.js";
+import { createDisasterStarterDeckDefinitionIds } from "../src/game-engine/runtime.js";
 import worker from "../src/index.js";
 import { createAuthTestBindings } from "./auth-test-bindings.js";
 
-const validDeck: CardDefinitionId[] = ["attack-1"];
+const validDeck: CardDefinitionId[] = ["disaster-attack-1"];
 
 describe("保存済みデッキのリクエスト検証", () => {
-  it("作成・置換リクエストでは名前とカード定義ID配列だけを受け付ける", () => {
+  it("作成・置換リクエストでは名前、陣営、カード定義ID配列だけを受け付ける", () => {
     expect(
       parseCreateDeckRequest({
         name: "炎デッキ",
+        faction: "disaster",
         cardDefinitionIds: validDeck,
       }),
     ).toEqual({
       parsed: true,
-      request: { name: "炎デッキ", cardDefinitionIds: validDeck },
+      request: {
+        name: "炎デッキ",
+        faction: "disaster",
+        cardDefinitionIds: validDeck,
+      },
     });
     expect(
       parseReplaceDeckRequest({
         name: "炎デッキ",
+        faction: "disaster",
         cardDefinitionIds: validDeck,
       }),
     ).toMatchObject({ parsed: true });
     expect(
       parseCreateDeckRequest({
         name: "炎デッキ",
+        faction: "disaster",
         cardDefinitionIds: validDeck,
         playerId: "player-1",
+      }),
+    ).toMatchObject({ parsed: false });
+    expect(
+      parseCreateDeckRequest({
+        name: "炎デッキ",
+        faction: "unknown",
+        cardDefinitionIds: validDeck,
       }),
     ).toMatchObject({ parsed: false });
   });
@@ -68,7 +86,11 @@ describe("保存済みデッキ HTTP API", () => {
 
     const response = await request(api, "/", {
       method: "POST",
-      body: JSON.stringify({ name: "不正", cardDefinitionIds: [] }),
+      body: JSON.stringify({
+        name: "不正",
+        faction: "disaster",
+        cardDefinitionIds: [],
+      }),
     });
 
     expect(response.status).toBe(422);
@@ -81,6 +103,7 @@ describe("保存済みデッキ HTTP API", () => {
       {
         id: string;
         name: string;
+        faction: Faction;
         cardDefinitionIds: CardDefinitionId[];
         createdAt: number;
         updatedAt: number;
@@ -114,18 +137,25 @@ describe("保存済みデッキ HTTP API", () => {
       method: "POST",
       body: JSON.stringify({
         name: "炎デッキ",
+        faction: "disaster",
         cardDefinitionIds: createValidDeck(),
       }),
     });
     expect(createResponse.status).toBe(201);
     expect(await createResponse.json()).toMatchObject({
-      deck: { id: "deck-1", name: "炎デッキ", createdAt: 1_000 },
+      deck: {
+        id: "deck-1",
+        name: "炎デッキ",
+        faction: "disaster",
+        createdAt: 1_000,
+      },
     });
 
     const replaceResponse = await request(api, "/deck-1", {
       method: "PUT",
       body: JSON.stringify({
         name: "炎デッキ改",
+        faction: "disaster",
         cardDefinitionIds: createValidDeck(),
       }),
     });
@@ -160,36 +190,5 @@ async function request(
 }
 
 function createValidDeck(): CardDefinitionId[] {
-  return [
-    "mana-a",
-    "mana-a",
-    "mana-a",
-    "mana-b",
-    "mana-b",
-    "mana-b",
-    "mana-c",
-    "mana-c",
-    "attack-1",
-    "attack-1",
-    "attack-2",
-    "attack-2",
-    "attack-3",
-    "attack-3",
-    "attack-4",
-    "attack-4",
-    "attack-5",
-    "attack-5",
-    "attack-6",
-    "attack-6",
-    "attack-7",
-    "attack-7",
-    "attack-8",
-    "attack-8",
-    "support-fire-001",
-    "support-water-001",
-    "support-water-002",
-    "support-wind-001",
-    "support-wind-003",
-    "support-fire-004",
-  ];
+  return createDisasterStarterDeckDefinitionIds();
 }

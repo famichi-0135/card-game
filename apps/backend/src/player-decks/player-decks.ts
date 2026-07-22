@@ -2,10 +2,11 @@ import { DurableObject } from "cloudflare:workers";
 import type { SavedDeckView } from "@disastar/contracts/deck";
 import type {
   CardDefinitionId,
+  Faction,
   PlayerId,
 } from "@disastar/game-engine/contracts";
 
-const PLAYER_DECKS_STORAGE_KEY = "player-decks";
+const PLAYER_DECKS_STORAGE_KEY = "player-decks-v2-factions";
 
 type PlayerDecksState = {
   decks: SavedDeckView[];
@@ -24,12 +25,14 @@ export type PlayerDecksRpc = {
 
 export type CreateSavedDeckInput = {
   name: string;
+  faction: Faction;
   cardDefinitionIds: CardDefinitionId[];
   createdAt: number;
 };
 
 export type ReplaceSavedDeckInput = {
   name: string;
+  faction: Faction;
   cardDefinitionIds: CardDefinitionId[];
   updatedAt: number;
 };
@@ -54,11 +57,17 @@ export class PlayerDecks extends DurableObject<CloudflareBindings> {
 
   async create(input: CreateSavedDeckInput): Promise<SavedDeckView> {
     await this.loadDecks;
-    assertDeckInput(input.name, input.cardDefinitionIds, input.createdAt);
+    assertDeckInput(
+      input.name,
+      input.faction,
+      input.cardDefinitionIds,
+      input.createdAt,
+    );
 
     const deck: SavedDeckView = {
       id: `deck-${crypto.randomUUID()}`,
       name: input.name.trim(),
+      faction: input.faction,
       cardDefinitionIds: [...input.cardDefinitionIds],
       createdAt: input.createdAt,
       updatedAt: input.createdAt,
@@ -83,7 +92,12 @@ export class PlayerDecks extends DurableObject<CloudflareBindings> {
     input: ReplaceSavedDeckInput,
   ): Promise<SavedDeckView | null> {
     await this.loadDecks;
-    assertDeckInput(input.name, input.cardDefinitionIds, input.updatedAt);
+    assertDeckInput(
+      input.name,
+      input.faction,
+      input.cardDefinitionIds,
+      input.updatedAt,
+    );
     const index = this.decks.findIndex((deck) => deck.id === deckId);
     if (index === -1) {
       return null;
@@ -93,6 +107,7 @@ export class PlayerDecks extends DurableObject<CloudflareBindings> {
     const replaced: SavedDeckView = {
       id: current.id,
       name: input.name.trim(),
+      faction: input.faction,
       cardDefinitionIds: [...input.cardDefinitionIds],
       createdAt: current.createdAt,
       updatedAt: input.updatedAt,
@@ -135,10 +150,14 @@ export function getPlayerDecksInEnvironment(
 
 function assertDeckInput(
   name: string,
+  faction: Faction,
   cardDefinitionIds: readonly CardDefinitionId[],
   timestamp: number,
 ): void {
   assertNonEmptyString(name, "デッキ名");
+  if (faction !== "disaster" && faction !== "countermeasure") {
+    throw new RangeError("デッキ陣営が不正です。");
+  }
   for (const cardDefinitionId of cardDefinitionIds) {
     assertNonEmptyString(cardDefinitionId, "カード定義ID");
   }

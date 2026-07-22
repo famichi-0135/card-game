@@ -69,7 +69,7 @@ HTTPアダプターは、認証後かつDO呼び出し前にJSON本文と`afterS
 
 ## 対戦待機
 
-招待式の対戦待機は`MatchLobby` Durable Objectで直列化する。HTTPアダプターはBetter Authの認証結果からプレイヤーを決定し、保存済みデッキを所有権確認してから待機部屋へ渡す。クライアント本文のプレイヤーIDやカード定義ID配列は信用しない。
+招待式の対戦待機は`MatchLobby` Durable Objectで直列化する。HTTPアダプターはBetter Authの認証結果からプレイヤーを決定し、保存済みデッキの所有権と陣営を確認してから待機部屋へ渡す。クライアント本文のプレイヤーID、陣営、カード定義ID配列は信用しない。同じ陣営の保存済みデッキ同士では対戦を開始せず、`MATCH_FACTION_CONFLICT`で拒否する。
 
 | 操作     | エンドポイント                      | クライアント本文 | 成功時の応答                 |
 | -------- | ----------------------------------- | ---------------- | ---------------------------- |
@@ -82,15 +82,15 @@ HTTPアダプターは、認証後かつDO呼び出し前にJSON本文と`afterS
 
 ## 保存済みデッキ
 
-保存済みデッキは認証済みプレイヤー本人だけが操作できる。リクエスト本文に`playerId`を含めず、Workerが認証結果から対象の`PlayerDecks`を決定する。`cardDefinitionIds`は作成・置換時に現在のカードカタログとゲームルールで検証し、違法な構成は`422 DECK_VALIDATION_FAILED`で拒否する。
+保存済みデッキは認証済みプレイヤー本人だけが操作できる。リクエスト本文に`playerId`を含めず、Workerが認証結果から対象の`PlayerDecks`を決定する。`faction`と`cardDefinitionIds`は作成・置換時に現在のカードカタログとゲームルールで検証し、異なる陣営のカードを含む構成は`422 DECK_VALIDATION_FAILED`で拒否する。
 
-| 操作     | エンドポイント              | クライアント本文              | 成功時の応答              |
-| -------- | --------------------------- | ----------------------------- | ------------------------- |
-| 一覧取得 | `GET /api/decks`            | なし                          | `{ decks: SavedDeck[] }`  |
-| 作成     | `POST /api/decks`           | `{ name, cardDefinitionIds }` | `201 { deck: SavedDeck }` |
-| 取得     | `GET /api/decks/:deckId`    | なし                          | `{ deck: SavedDeck }`     |
-| 置換     | `PUT /api/decks/:deckId`    | `{ name, cardDefinitionIds }` | `{ deck: SavedDeck }`     |
-| 削除     | `DELETE /api/decks/:deckId` | なし                          | `204`                     |
+| 操作     | エンドポイント              | クライアント本文                       | 成功時の応答              |
+| -------- | --------------------------- | -------------------------------------- | ------------------------- |
+| 一覧取得 | `GET /api/decks`            | なし                                   | `{ decks: SavedDeck[] }`  |
+| 作成     | `POST /api/decks`           | `{ name, faction, cardDefinitionIds }` | `201 { deck: SavedDeck }` |
+| 取得     | `GET /api/decks/:deckId`    | なし                                   | `{ deck: SavedDeck }`     |
+| 置換     | `PUT /api/decks/:deckId`    | `{ name, faction, cardDefinitionIds }` | `{ deck: SavedDeck }`     |
+| 削除     | `DELETE /api/decks/:deckId` | なし                                   | `204`                     |
 
 対戦作成・参加時も、保存済みデッキを現在のルールで再検証する。削除済みまたは無効化されたデッキは`404 DECK_NOT_FOUND`として扱い、`MatchLobby`へ渡さない。
 

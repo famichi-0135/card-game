@@ -4,7 +4,10 @@ import {
   parseCreateMatchRequest,
   type MatchLobbyView,
 } from "@disastar/contracts/match";
-import type { CardDefinitionId } from "@disastar/game-engine/contracts";
+import type {
+  CardDefinitionId,
+  Faction,
+} from "@disastar/game-engine/contracts";
 import { createMatchApi } from "../src/match-api/create-match-api.js";
 import worker from "../src/index.js";
 import { createAuthTestBindings } from "./auth-test-bindings.js";
@@ -13,7 +16,9 @@ const deckDefinitionIds: CardDefinitionId[] = ["attack-fire-001"];
 const waitingMatch: MatchLobbyView = {
   status: "waiting",
   ownerPlayerId: "player-1",
+  ownerFaction: "disaster",
   opponentPlayerId: null,
+  opponentFaction: null,
   gameId: null,
 };
 
@@ -56,7 +61,7 @@ describe("対戦待機 HTTP API", () => {
       authenticate: async () => "player-1",
       resolveAuthorizedDeck: async () => {
         resolvedDeck = true;
-        return deckDefinitionIds;
+        return authorizedDeck();
       },
       createMatchLobby: async () => {
         createdLobby = true;
@@ -81,13 +86,14 @@ describe("対戦待機 HTTP API", () => {
     const resolvedDecks: Array<{ playerId: string; deckId: string }> = [];
     const created: Array<{
       ownerPlayerId: string;
+      ownerFaction: Faction;
       ownerDeckDefinitionIds: CardDefinitionId[];
     }> = [];
     const api = createMatchApi({
       authenticate: async () => "player-1",
       resolveAuthorizedDeck: async (playerId, deckId) => {
         resolvedDecks.push({ playerId, deckId });
-        return deckDefinitionIds;
+        return authorizedDeck();
       },
       createMatchLobby: async (input) => {
         created.push(input);
@@ -108,6 +114,7 @@ describe("対戦待機 HTTP API", () => {
     expect(created).toEqual([
       {
         ownerPlayerId: "player-1",
+        ownerFaction: "disaster",
         ownerDeckDefinitionIds: deckDefinitionIds,
       },
     ]);
@@ -116,7 +123,7 @@ describe("対戦待機 HTTP API", () => {
   it("参加者だけが待機状態を取得できる", async () => {
     const api = createMatchApi({
       authenticate: async () => "player-2",
-      resolveAuthorizedDeck: async () => deckDefinitionIds,
+      resolveAuthorizedDeck: async () => authorizedDeck(),
       getMatchLobby: () => ({
         getView: async () => ({
           visible: false as const,
@@ -138,6 +145,7 @@ describe("対戦待機 HTTP API", () => {
   it("参加時は認証済みプレイヤーの所有デッキを渡し、開始済みゲームIDを返す", async () => {
     const acceptedInputs: Array<{
       playerId: string;
+      faction: Faction;
       deckDefinitionIds: CardDefinitionId[];
     }> = [];
     const api = createMatchApi({
@@ -147,7 +155,7 @@ describe("対戦待機 HTTP API", () => {
           playerId: "player-2",
           deckId: "deck-2",
         });
-        return deckDefinitionIds;
+        return authorizedDeck("countermeasure");
       },
       getMatchLobby: (matchId) => {
         expect(matchId).toBe("match-1");
@@ -173,14 +181,18 @@ describe("対戦待機 HTTP API", () => {
       gameId: "game-started",
     });
     expect(acceptedInputs).toEqual([
-      { playerId: "player-2", deckDefinitionIds },
+      {
+        playerId: "player-2",
+        faction: "countermeasure",
+        deckDefinitionIds,
+      },
     ]);
   });
 
   it("ゲーム作成失敗時に内部初期化エラーをHTTPレスポンスへ公開しない", async () => {
     const api = createMatchApi({
       authenticate: async () => "player-2",
-      resolveAuthorizedDeck: async () => deckDefinitionIds,
+      resolveAuthorizedDeck: async () => authorizedDeck("countermeasure"),
       getMatchLobby: () => ({
         getView: async () => ({ visible: true as const, view: waitingMatch }),
         accept: async () => ({
@@ -236,7 +248,7 @@ describe("対戦待機 HTTP API", () => {
     const cancelledBy: string[] = [];
     const api = createMatchApi({
       authenticate: async () => "player-1",
-      resolveAuthorizedDeck: async () => deckDefinitionIds,
+      resolveAuthorizedDeck: async () => authorizedDeck(),
       getMatchLobby: () => ({
         getView: async () => ({ visible: true as const, view: waitingMatch }),
         accept: async () => ({ accepted: true as const, gameId: "game-1" }),
@@ -272,4 +284,11 @@ async function request(
     }),
     {} as CloudflareBindings,
   );
+}
+
+function authorizedDeck(faction: Faction = "disaster"): {
+  faction: Faction;
+  cardDefinitionIds: CardDefinitionId[];
+} {
+  return { faction, cardDefinitionIds: deckDefinitionIds };
 }

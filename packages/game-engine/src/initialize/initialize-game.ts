@@ -62,6 +62,7 @@ export function initializeGame(
     playerId: player.playerId,
     result: validateDeck(
       player.deckDefinitionIds,
+      player.faction,
       context.cardCatalog,
       context.rules,
     ),
@@ -189,6 +190,16 @@ function validateInitializeInput(
     };
   }
   if (
+    input.players[0].faction === input.players[1].faction ||
+    !["disaster", "countermeasure"].includes(input.players[0].faction) ||
+    !["disaster", "countermeasure"].includes(input.players[1].faction)
+  ) {
+    return {
+      code: "INVALID_FACTION_ASSIGNMENT",
+      message: "ゲーム初期化には災害側と対策側が1人ずつ必要です。",
+    };
+  }
+  if (
     input.gameId.trim().length === 0 ||
     input.randomSeed.trim().length === 0
   ) {
@@ -297,6 +308,7 @@ function createInitialPlayerStates(
 
     players[player.playerId] = {
       playerId: player.playerId,
+      faction: player.faction,
       stamina: context.rules.initialStamina,
       deck: initialHand.deck,
       hand,

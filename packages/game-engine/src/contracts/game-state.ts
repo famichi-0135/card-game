@@ -1,4 +1,4 @@
-import type { Attribute, SupportDuration } from "./card-definition.js";
+import type { Attribute, Faction, SupportDuration } from "./card-definition.js";
 import type { ActiveEffect } from "./effects.js";
 import type {
   AttackGroupId,
@@ -63,6 +63,7 @@ export type CalculatedManaState = {
 
 export type PlayerState = {
   playerId: PlayerId;
+  faction: Faction;
   stamina: number;
   deck: CardInstanceId[];
   hand: CardInstanceId[];

@@ -1,17 +1,22 @@
 import { env } from "cloudflare:test";
 import { describe, expect, it } from "vitest";
-import type { CardDefinitionId } from "@disastar/game-engine/contracts";
-import { createInitialStarterDeckDefinitionIds } from "../src/game-engine/runtime.js";
+import type {
+  CardDefinitionId,
+  Faction,
+} from "@disastar/game-engine/contracts";
+import { createDisasterStarterDeckDefinitionIds } from "../src/game-engine/runtime.js";
 import { resolveAuthorizedDeckInEnvironment } from "../src/player-decks/resolve-authorized-deck.js";
 
 type PlayerDecksRpc = {
   create(input: {
     name: string;
+    faction: Faction;
     cardDefinitionIds: CardDefinitionId[];
     createdAt: number;
   }): Promise<{
     id: string;
     name: string;
+    faction: Faction;
     cardDefinitionIds: CardDefinitionId[];
     createdAt: number;
     updatedAt: number;
@@ -20,6 +25,7 @@ type PlayerDecksRpc = {
     {
       id: string;
       name: string;
+      faction: Faction;
       cardDefinitionIds: CardDefinitionId[];
       createdAt: number;
       updatedAt: number;
@@ -28,6 +34,7 @@ type PlayerDecksRpc = {
   get(deckId: string): Promise<{
     id: string;
     name: string;
+    faction: Faction;
     cardDefinitionIds: CardDefinitionId[];
     createdAt: number;
     updatedAt: number;
@@ -36,12 +43,14 @@ type PlayerDecksRpc = {
     deckId: string,
     input: {
       name: string;
+      faction: Faction;
       cardDefinitionIds: CardDefinitionId[];
       updatedAt: number;
     },
   ): Promise<{
     id: string;
     name: string;
+    faction: Faction;
     cardDefinitionIds: CardDefinitionId[];
     createdAt: number;
     updatedAt: number;
@@ -56,6 +65,7 @@ describe("PlayerDecks Durable Object", () => {
 
     const created = await playerOne.create({
       name: "最初のデッキ",
+      faction: "disaster",
       cardDefinitionIds: createDeck(),
       createdAt: 1_000,
     });
@@ -73,6 +83,7 @@ describe("PlayerDecks Durable Object", () => {
     const decks = getPlayerDecks("player-deck-mutation");
     const created = await decks.create({
       name: "置換前",
+      faction: "disaster",
       cardDefinitionIds: createDeck(),
       createdAt: 1_000,
     });
@@ -80,6 +91,7 @@ describe("PlayerDecks Durable Object", () => {
     await expect(
       decks.replace(created.id, {
         name: "置換後",
+        faction: "disaster",
         cardDefinitionIds: createDeck(),
         updatedAt: 2_000,
       }),
@@ -98,12 +110,14 @@ describe("PlayerDecks Durable Object", () => {
     const decks = getPlayerDecks("player-deck-authorization");
     const validDeck = await decks.create({
       name: "対戦可能",
+      faction: "disaster",
       cardDefinitionIds: createDeck(),
       createdAt: 1_000,
     });
     const invalidDeck = await decks.create({
       name: "無効",
-      cardDefinitionIds: ["attack-1"],
+      faction: "disaster",
+      cardDefinitionIds: ["disaster-attack-1"],
       createdAt: 1_000,
     });
 
@@ -113,7 +127,10 @@ describe("PlayerDecks Durable Object", () => {
         validDeck.id,
         env,
       ),
-    ).resolves.toEqual(createDeck());
+    ).resolves.toEqual({
+      faction: "disaster",
+      cardDefinitionIds: createDeck(),
+    });
     await expect(
       resolveAuthorizedDeckInEnvironment(
         "player-deck-authorization",
@@ -135,5 +152,5 @@ function getPlayerDecks(playerId: string): PlayerDecksRpc {
 }
 
 function createDeck(): CardDefinitionId[] {
-  return createInitialStarterDeckDefinitionIds();
+  return createDisasterStarterDeckDefinitionIds();
 }

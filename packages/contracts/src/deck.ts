@@ -1,6 +1,7 @@
 import type {
   CardDefinitionId,
   DeckValidationError,
+  Faction,
 } from "@disastar/game-engine/contracts";
 
 /** クライアントが選択する、保存済みデッキの不透明な識別子。 */
@@ -10,6 +11,7 @@ export type DeckId = string;
 export type SavedDeckView = {
   id: DeckId;
   name: string;
+  faction: Faction;
   cardDefinitionIds: CardDefinitionId[];
   createdAt: number;
   updatedAt: number;
@@ -17,6 +19,7 @@ export type SavedDeckView = {
 
 export type CreateDeckRequest = {
   name: string;
+  faction: Faction;
   cardDefinitionIds: CardDefinitionId[];
 };
 
@@ -73,17 +76,24 @@ function parseDeckRequest(
 
   const keys = Object.keys(input).sort();
   if (
-    keys.length !== 2 ||
+    keys.length !== 3 ||
     keys[0] !== "cardDefinitionIds" ||
-    keys[1] !== "name"
+    keys[1] !== "faction" ||
+    keys[2] !== "name"
   ) {
     return invalid(
-      "リクエスト本文にはnameとcardDefinitionIdsだけを含めてください。",
+      "リクエスト本文にはname、faction、cardDefinitionIdsだけを含めてください。",
       "",
     );
   }
   if (typeof input.name !== "string" || input.name.trim().length === 0) {
     return invalid("nameは空でない文字列で指定してください。", "/name");
+  }
+  if (input.faction !== "disaster" && input.faction !== "countermeasure") {
+    return invalid(
+      "factionはdisasterまたはcountermeasureで指定してください。",
+      "/faction",
+    );
   }
   if (!Array.isArray(input.cardDefinitionIds)) {
     return invalid(
@@ -108,6 +118,7 @@ function parseDeckRequest(
     parsed: true,
     request: {
       name: input.name.trim(),
+      faction: input.faction,
       cardDefinitionIds: [...input.cardDefinitionIds],
     },
   };

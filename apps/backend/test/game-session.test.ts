@@ -9,6 +9,10 @@ import type {
   GetGameSnapshotResult,
   SubmitGameCommandResult,
 } from "../src/game-session/game-session.js";
+import {
+  createCountermeasureStarterDeckDefinitionIds,
+  createDisasterStarterDeckDefinitionIds,
+} from "../src/game-engine/runtime.js";
 
 describe("GameSession Durable Object", () => {
   it("ゲーム状態とイベントを保存し、閲覧者別のスナップショットを返す", async () => {
@@ -274,32 +278,20 @@ function getGameSession(gameId: string): GameSessionRpc {
 function createInitializeInput(
   gameId = "game-session-snapshot",
 ): InitializeGameInput {
-  const deckDefinitionIds = createDeckDefinitionIds();
   return {
     gameId,
     randomSeed: `${gameId}-seed`,
     players: [
-      { playerId: "player-1", deckDefinitionIds },
-      { playerId: "player-2", deckDefinitionIds: [...deckDefinitionIds] },
+      {
+        playerId: "player-1",
+        faction: "disaster",
+        deckDefinitionIds: createDisasterStarterDeckDefinitionIds(),
+      },
+      {
+        playerId: "player-2",
+        faction: "countermeasure",
+        deckDefinitionIds: createCountermeasureStarterDeckDefinitionIds(),
+      },
     ],
   };
-}
-
-function createDeckDefinitionIds(): string[] {
-  return [
-    "mana-a",
-    "mana-a",
-    "mana-a",
-    "mana-b",
-    "mana-b",
-    "mana-b",
-    "mana-c",
-    "mana-c",
-    "attack-1",
-    "attack-1",
-    ...Array.from({ length: 10 }, (_, index) => [
-      `attack-${index + 2}`,
-      `attack-${index + 2}`,
-    ]).flat(),
-  ];
 }

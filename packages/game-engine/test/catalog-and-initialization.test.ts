@@ -6,6 +6,7 @@ import {
   shuffle,
   validateDeck,
   validateGameRules,
+  validateGameState,
 } from "../src/index.js";
 import type { TargetRule } from "../src/contracts/index.js";
 import {
@@ -73,10 +74,39 @@ describe("カードカタログの実行時検証", () => {
       );
     }
 
+    const crossFactionReferenceInput = createTestCardCatalogInput();
+    const crossFactionAttack = crossFactionReferenceInput.definitions.find(
+      (definition) => definition.id === "attack-1",
+    );
+    if (
+      crossFactionAttack === undefined ||
+      crossFactionAttack.cardType !== "attack"
+    ) {
+      throw new Error("テスト用攻撃カードが見つかりません。");
+    }
+    crossFactionAttack.chainableCardIds = ["counter-attack-1"];
+    const crossFactionReference = createCardCatalog(
+      crossFactionReferenceInput,
+      {
+        rules: createTestContext().rules,
+        effectRegistry: {},
+        engineSemanticsVersion: "engine-v1",
+      },
+    );
+    expect(crossFactionReference).toMatchObject({
+      valid: false,
+      errors: expect.arrayContaining([
+        expect.objectContaining({
+          code: "CROSS_FACTION_CARD_REFERENCE",
+        }),
+      ]),
+    });
+
     const missingHandlerInput = createTestCardCatalogInput();
     missingHandlerInput.definitions.push({
       id: "support-custom",
       name: "未登録ハンドラー",
+      faction: "disaster",
       attribute: "attributeA",
       cardType: "support",
       cost: 0,
@@ -129,6 +159,7 @@ describe("デッキ検証", () => {
   it("有効な30枚デッキを受理する", () => {
     const result = validateDeck(
       createValidDeckDefinitionIds(),
+      "disaster",
       createTestCatalog(),
       createTestContext().rules,
     );
@@ -141,7 +172,7 @@ describe("デッキ検証", () => {
     const rules = createTestContext().rules;
 
     const shortDeck = createValidDeckDefinitionIds().slice(0, -1);
-    const shortResult = validateDeck(shortDeck, catalog, rules);
+    const shortResult = validateDeck(shortDeck, "disaster", catalog, rules);
     expect(shortResult.valid).toBe(false);
     if (!shortResult.valid) {
       expect(shortResult.errors.map((error) => error.code)).toContain(
@@ -153,6 +184,7 @@ describe("デッキ検証", () => {
     duplicateAttackDeck[10] = "attack-1";
     const duplicateAttackResult = validateDeck(
       duplicateAttackDeck,
+      "disaster",
       catalog,
       rules,
     );
@@ -168,6 +200,7 @@ describe("デッキ検証", () => {
     missingAttributeManaDeck[8] = "mana-a";
     const missingAttributeManaResult = validateDeck(
       missingAttributeManaDeck,
+      "disaster",
       catalog,
       rules,
     );
@@ -180,13 +213,37 @@ describe("デッキ検証", () => {
 
     const missingCardDeck = createValidDeckDefinitionIds();
     missingCardDeck[0] = "missing-card";
-    const missingCardResult = validateDeck(missingCardDeck, catalog, rules);
+    const missingCardResult = validateDeck(
+      missingCardDeck,
+      "disaster",
+      catalog,
+      rules,
+    );
     expect(missingCardResult.valid).toBe(false);
     if (!missingCardResult.valid) {
       expect(missingCardResult.errors.map((error) => error.code)).toContain(
         "CARD_DEFINITION_NOT_FOUND",
       );
     }
+  });
+
+  it("指定した陣営以外のカードを含むデッキを拒否する", () => {
+    const deck = createValidDeckDefinitionIds();
+    deck[0] = "counter-mana-a";
+
+    const result = validateDeck(
+      deck,
+      "disaster",
+      createTestCatalog(),
+      createTestContext().rules,
+    );
+
+    expect(result).toMatchObject({
+      valid: false,
+      errors: expect.arrayContaining([
+        expect.objectContaining({ code: "FACTION_MISMATCH" }),
+      ]),
+    });
   });
 });
 
@@ -239,6 +296,7 @@ describe("ゲーム初期化", () => {
       secondPlayerId: "player-1",
     });
     expect(firstPlayer).toMatchObject({
+      faction: "disaster",
       stamina: 25,
       hand: ["cardInstance:seed-1:card:player-1:4"],
       mana: {
@@ -250,6 +308,7 @@ describe("ゲーム初期化", () => {
     expect(firstPlayer.deck).toHaveLength(25);
     expect(firstPlayer.discardPile).toHaveLength(4);
     expect(secondPlayer.hand).toHaveLength(1);
+    expect(secondPlayer.faction).toBe("countermeasure");
     expect(secondPlayer.discardPile).toHaveLength(4);
     expect(Object.keys(result.state.cardInstances)).toHaveLength(60);
 
@@ -265,6 +324,45 @@ describe("ゲーム初期化", () => {
     expect(new Set(allCardIds)).toHaveLength(60);
     expect(result.events).toHaveLength(9);
     expect(result.state.nextEventSequence).toBe(10);
+  });
+
+  it("同じ陣営のプレイヤー2人では初期化しない", () => {
+    const input = createInitializationInput();
+    input.players[1].faction = "disaster";
+    input.players[1].deckDefinitionIds = createValidDeckDefinitionIds();
+
+    expect(
+      initializeGame(input, createTestContext(), createDependencies()),
+    ).toMatchObject({
+      initialized: false,
+      error: { code: "INVALID_FACTION_ASSIGNMENT" },
+    });
+  });
+
+  it("永続状態で陣営割当やカード所有陣営が壊れた場合に検出する", () => {
+    const context = createTestContext();
+    const result = initializeGame(
+      createInitializationInput(),
+      context,
+      createDependencies(),
+    );
+    if (!result.initialized) {
+      throw new Error(result.error.message);
+    }
+
+    const countermeasurePlayer = result.state.players["player-2"];
+    if (countermeasurePlayer === undefined) {
+      throw new Error("対策側プレイヤーが見つかりません。");
+    }
+    countermeasurePlayer.faction = "disaster";
+
+    expect(validateGameState(result.state, context)).toMatchObject({
+      valid: false,
+      issues: expect.arrayContaining([
+        expect.objectContaining({ code: "INVALID_FACTION_ASSIGNMENT" }),
+        expect.objectContaining({ code: "CARD_FACTION_MISMATCH" }),
+      ]),
+    });
   });
 
   it("全みなもと初期手札を山札へ戻して再シャッフルする", () => {

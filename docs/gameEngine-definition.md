@@ -203,7 +203,7 @@ export type GameRules = {
 };
 
 export const GAME_RULES: Readonly<GameRules> = {
-  version: "ruleset-v1",
+  version: "ruleset-v2-factions",
   playerCount: 2,
   deckSize: 30,
   initialStamina: 25,
@@ -249,13 +249,16 @@ export type EngineSemanticsVersion = string;
 
 ---
 
-## 7. 属性
+## 7. 属性と陣営
 
 すべてのカードは1種類の属性を持つ。
 
 ```ts
 export type Attribute = "attributeA" | "attributeB" | "attributeC";
+export type Faction = "disaster" | "countermeasure";
 ```
+
+`Faction`はプレイヤーとカード定義の所属を表す。1ゲームには各陣営のプレイヤーが1人ずつ参加し、各デッキはそのプレイヤーと同じ陣営のカードだけで構成する。
 
 実際の属性名は、カードゲームの正式名称に合わせて変更する。
 
@@ -276,6 +279,7 @@ export type Attribute = "attributeA" | "attributeB" | "attributeC";
 export type BaseCardDefinition = {
   id: CardDefinitionId;
   name: string;
+  faction: Faction;
   attribute: Attribute;
   cardType: "mana" | "attack" | "support";
 };
@@ -304,7 +308,7 @@ export type AttackCardDefinition = BaseCardDefinition & {
 };
 ```
 
-`chainableCardIds`は、このカードの上に配置できるカード定義IDを表す。
+`chainableCardIds`は、このカードの上に配置できる同陣営のカード定義IDを表す。異なる陣営のカード定義を参照してはならない。
 
 攻撃カード効果を追加しても型と配置処理を変更せずに済むよう、`effects`は初期実装から保持する。初期カードカタログでは攻撃カードの`effects`を空配列とする。
 
@@ -483,6 +487,7 @@ export type GamePhase =
 ```ts
 export type PlayerState = {
   playerId: PlayerId;
+  faction: Faction;
   stamina: number;
 
   deck: CardInstanceId[];
@@ -709,10 +714,12 @@ export type InitializeGameInput = {
   players: [
     {
       playerId: PlayerId;
+      faction: Faction;
       deckDefinitionIds: CardDefinitionId[];
     },
     {
       playerId: PlayerId;
+      faction: Faction;
       deckDefinitionIds: CardDefinitionId[];
     },
   ];
@@ -726,6 +733,7 @@ export type InitializeGameError = {
   code:
     | "INVALID_PLAYER_COUNT"
     | "DUPLICATE_PLAYER_ID"
+    | "INVALID_FACTION_ASSIGNMENT"
     | "DECK_VALIDATION_FAILED"
     | "CARD_CATALOG_INVALID"
     | "DEPENDENCY_OUTPUT_INVALID"
@@ -752,19 +760,20 @@ export type InitializeGameResult =
 
 初期化開始時に`clock.now()`を1回だけ呼び、その値を初期フェーズ開始時刻と初期化イベント時刻の基準として使う。`random.create(input.randomSeed)`も1回だけ呼び、すべてのシャッフル、引き直し、先攻決定で同じローカル乱数列を順番に消費する。
 
-1. プレイヤー数を検証する
-2. コンテキストのカタログ、ルール、エンジン意味バージョンを検証する
-3. 各デッキをカタログに対して検証する
-4. 60枚すべてのカードインスタンスを生成して`cardInstances`へ登録する
-5. 各デッキをシャッフルする
-6. 各プレイヤーの初期手札を決定する
-7. 初期手札に含まれるみなもとカードを処理する
-8. 第1ラウンドの先攻を乱数で決定する
-9. 初期スタミナをルール値に設定する
-10. ラウンドを1、`phaseSequence`を1に設定する
-11. `firstPlayerPlacement`へ移行する
-12. ルール値に基づいてフェーズ期限を設定する
-13. 3つのバージョンを`GameState`へ保存する
+1. プレイヤー数とプレイヤーIDの一意性を検証する
+2. 災害側と対策側が1人ずつであることを検証する
+3. コンテキストのカタログ、ルール、エンジン意味バージョンを検証する
+4. 各デッキを指定陣営とカタログに対して検証する
+5. 60枚すべてのカードインスタンスを生成して`cardInstances`へ登録する
+6. 各デッキをシャッフルする
+7. 各プレイヤーの初期手札を決定する
+8. 初期手札に含まれるみなもとカードを処理する
+9. 第1ラウンドの先攻を乱数で決定する
+10. 初期スタミナをルール値に設定する
+11. ラウンドを1、`phaseSequence`を1に設定する
+12. `firstPlayerPlacement`へ移行する
+13. ルール値に基づいてフェーズ期限を設定する
+14. 3つのバージョンを`GameState`へ保存する
 
 初期化成功時は、`status: "active"`、`stateVersion: 1`、空の`activeEffects`・`supportFinishedBy`・`processedCommandIds`、`nextEffectSequence: 1`を持つ。`nextEventSequence`は初期化イベントへ1から連番を付けた後の次番号とする。`initializing`状態は初期化処理内の一時状態であり、不完全な状態を永続化しない。
 
@@ -791,13 +800,16 @@ export type DeckValidationError = {
     | "SAME_NAME_LIMIT_EXCEEDED"
     | "ATTRIBUTE_REQUIREMENT_NOT_MET"
     | "CARD_DEFINITION_NOT_FOUND"
-    | "CARD_DEFINITION_INVALID";
+    | "CARD_DEFINITION_INVALID"
+    | "FACTION_MISMATCH";
   cardDefinitionId?: CardDefinitionId;
   message: string;
 };
 ```
 
 検証条件は次のとおり。
+
+呼び出し側は対象の`Faction`を指定し、デッキ内のすべてのカードがその陣営に属することを検証する。
 
 ### 19.1 基本枚数
 
@@ -830,6 +842,7 @@ export type DeckValidationError = {
 - 基礎攻撃力は1以上
 - 効果値は「カード効果仕様書」の整数・有限数条件を満たす
 - `chainableCardIds`の参照先が存在し、攻撃カードである
+- `chainableCardIds`の参照先が同じ陣営である
 - カードID、カード内の効果IDが重複しない
 - カード定義全体がカードカタログ検証を通過している
 
@@ -2125,6 +2138,7 @@ export type VisibleAttackGroup = Omit<AttackGroup, "cardIds"> & {
 
 export type PublicPlayerState = {
   playerId: PlayerId;
+  faction: Faction;
   stamina: number;
   handCount: number;
   deckCount: number;
@@ -2289,6 +2303,7 @@ export type GameCommandError = {
 - `cardInstances`の全要素が必ずいずれか1領域に存在する
 - カードの`ownerId`と、そのカードを保持するプレイヤーまたは場の所有者が一致する
 - `definitionId`が固定された`CardCatalogVersion`のカタログに存在する
+- カード定義の`faction`と所有プレイヤーの`faction`が一致する
 - 対戦開始後に`cardInstances`の追加・削除を行わない
 - `cardInstances`の件数が`rules.playerCount * rules.deckSize`と一致する
 - Recordのキーと各`CardInstance.instanceId`が一致する
@@ -2296,6 +2311,7 @@ export type GameCommandError = {
 ### 63.1.1 プレイヤー
 
 - `players`の件数が`rules.playerCount`と一致する
+- `disaster`と`countermeasure`のプレイヤーが1人ずつ存在する
 - `playerOrder`、`firstPlayerId`、`secondPlayerId`に未知または重複したプレイヤーIDがない
 - `firstPlayerId`と`secondPlayerId`が異なる
 - `supportFinishedBy`に未知または重複したプレイヤーIDがない
@@ -2568,6 +2584,7 @@ export function executeCommand(
 ```ts
 export function validateDeck(
   deckDefinitionIds: CardDefinitionId[],
+  expectedFaction: Faction,
   cardCatalog: CardCatalog,
   rules: Readonly<GameRules>,
 ): DeckValidationResult;

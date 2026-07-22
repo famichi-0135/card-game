@@ -11,6 +11,7 @@ import {
 } from "@disastar/contracts/match";
 import type {
   CardDefinitionId,
+  Faction,
   PlayerId,
 } from "@disastar/game-engine/contracts";
 import {
@@ -39,12 +40,16 @@ export type AuthorizedDeckResolver = (
   playerId: PlayerId,
   deckId: string,
   environment: CloudflareBindings,
-) => Promise<CardDefinitionId[] | null>;
+) => Promise<{
+  faction: Faction;
+  cardDefinitionIds: CardDefinitionId[];
+} | null>;
 
 type MatchLobbyRpc = {
   getView(viewerPlayerId: PlayerId): Promise<GetMatchLobbyViewResult>;
   accept(input: {
     playerId: PlayerId;
+    faction: Faction;
     deckDefinitionIds: CardDefinitionId[];
   }): Promise<MatchLobbyAcceptResult>;
   cancel(playerId: PlayerId): Promise<MatchLobbyCancelResult>;
@@ -101,19 +106,20 @@ export function createMatchApi({
         400,
       );
     }
-    const deckDefinitionIds = await resolveAuthorizedDeck(
+    const deck = await resolveAuthorizedDeck(
       c.var.authenticatedPlayerId,
       parsed.request.deckId,
       c.env,
     );
-    if (deckDefinitionIds === null) {
+    if (deck === null) {
       return matchError(c, "DECK_NOT_FOUND", 404);
     }
 
     const created = await createMatchLobby(
       {
         ownerPlayerId: c.var.authenticatedPlayerId,
-        ownerDeckDefinitionIds: deckDefinitionIds,
+        ownerFaction: deck.faction,
+        ownerDeckDefinitionIds: deck.cardDefinitionIds,
       },
       c.env,
       now,
@@ -158,12 +164,12 @@ export function createMatchApi({
         400,
       );
     }
-    const deckDefinitionIds = await resolveAuthorizedDeck(
+    const deck = await resolveAuthorizedDeck(
       c.var.authenticatedPlayerId,
       parsed.request.deckId,
       c.env,
     );
-    if (deckDefinitionIds === null) {
+    if (deck === null) {
       return matchError(c, "DECK_NOT_FOUND", 404);
     }
     const lobby = tryResolveMatchLobby(
@@ -176,7 +182,8 @@ export function createMatchApi({
     }
     const result = await lobby.accept({
       playerId: c.var.authenticatedPlayerId,
-      deckDefinitionIds,
+      faction: deck.faction,
+      deckDefinitionIds: deck.cardDefinitionIds,
     });
     return result.accepted
       ? c.json({
