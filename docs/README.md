@@ -1,6 +1,7 @@
 # ドキュメント
 
 - [チーム開発ガイド](./team-development.md): Git と GitHub を初めて使うチーム向けの開発手順、ブランチ戦略、プルリクエスト運用。
+- [開発環境構築ガイド](./development-environment.md): 必要なツール、初回セットアップ、ローカル起動、D1・認証・Cloudflare の設定手順。
 - [AI 開発運用ガイド](./ai-development.md): Codex の実装・レビュー補助と、人間の承認を残す GitHub Actions 運用。
 - [クライアント・サーバー通信境界](./client-server-protocol.md): ゲーム操作、公開状態、再接続時の通信契約。
 - [対戦画面 UI 要件](./game-board-ui-requirements.md): 盤面、D&D操作、公開情報、再同期の詳細要件。
