@@ -2,6 +2,8 @@ export * from "./contracts/index.js";
 export * from "./catalog/create-card-catalog.js";
 export * from "./catalog/project-public-card-catalog.js";
 export * from "./catalog/validate-game-rules.js";
+export * from "./actions/get-available-game-actions.js";
+export * from "./actions/attack-availability.js";
 export * from "./commands/execute-command.js";
 export * from "./commands/parse-game-command.js";
 export * from "./deck/validate-deck.js";

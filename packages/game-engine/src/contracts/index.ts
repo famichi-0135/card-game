@@ -1,4 +1,5 @@
 export * from "./card-definition.js";
+export * from "./available-game-actions.js";
 export * from "./commands.js";
 export * from "./deep-readonly.js";
 export * from "./effect-definition.js";

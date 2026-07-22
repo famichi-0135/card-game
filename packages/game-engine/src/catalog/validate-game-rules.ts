@@ -3,6 +3,7 @@ import type {
   GameRulesValidationError,
   GameRulesValidationResult,
 } from "../contracts/rules.js";
+import { ATTACK_GROUP_SLOT_INDICES } from "../contracts/game-state.js";
 
 const nonNegativeIntegerFields = [
   "deckSize",
@@ -31,6 +32,14 @@ export function validateGameRules(
       code: "UNSUPPORTED_PLAYER_COUNT",
       field: "playerCount",
       message: "初期ゲームエンジンは2人対戦のみをサポートします。",
+    });
+  }
+
+  if (rules.maxAttackGroups !== ATTACK_GROUP_SLOT_INDICES.length) {
+    errors.push({
+      code: "INVALID_RANGE",
+      field: "maxAttackGroups",
+      message: `maxAttackGroupsは固定盤面の${ATTACK_GROUP_SLOT_INDICES.length}でなければなりません。`,
     });
   }
 

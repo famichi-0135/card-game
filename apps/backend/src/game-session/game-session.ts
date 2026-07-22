@@ -1,5 +1,6 @@
 import { DurableObject } from "cloudflare:workers";
 import {
+  ATTACK_GROUP_SLOT_INDICES,
   createPlayerView,
   executeCommand,
   initializeGame,
@@ -31,7 +32,6 @@ import {
 } from "../catalog-archive/catalog-archive.js";
 
 const SESSION_STORAGE_KEY = "game-session-v2-factions";
-const attackGroupSlotIndices = [0, 1, 2, 3, 4] as const;
 
 type StoredGameSession = {
   initializationInput: InitializeGameInput;
@@ -490,7 +490,7 @@ export function migrateAttackGroupSlots(state: GameState): boolean {
         continue;
       }
 
-      const replacement = attackGroupSlotIndices.find(
+      const replacement = ATTACK_GROUP_SLOT_INDICES.find(
         (candidate) => !occupiedSlots.has(candidate),
       );
       if (replacement === undefined) {

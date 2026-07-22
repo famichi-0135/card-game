@@ -153,6 +153,23 @@ describe("ゲームルール検証", () => {
       ]),
     });
   });
+
+  it("固定5枠と異なる攻撃グループ上限を拒否する", () => {
+    const result = validateGameRules({
+      ...GAME_RULES,
+      maxAttackGroups: 4,
+    });
+
+    expect(result).toMatchObject({
+      valid: false,
+      errors: expect.arrayContaining([
+        expect.objectContaining({
+          code: "INVALID_RANGE",
+          field: "maxAttackGroups",
+        }),
+      ]),
+    });
+  });
 });
 
 describe("デッキ検証", () => {

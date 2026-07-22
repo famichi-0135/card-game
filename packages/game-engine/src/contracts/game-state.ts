@@ -43,7 +43,8 @@ export type AttackGroup = {
 };
 
 /** 現行ルールの攻撃グループ盤面は5枠で固定する。 */
-export type AttackGroupSlotIndex = 0 | 1 | 2 | 3 | 4;
+export const ATTACK_GROUP_SLOT_INDICES = [0, 1, 2, 3, 4] as const;
+export type AttackGroupSlotIndex = (typeof ATTACK_GROUP_SLOT_INDICES)[number];
 
 export type SupportCardOnField = {
   cardInstanceId: CardInstanceId;
