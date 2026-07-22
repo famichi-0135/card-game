@@ -300,6 +300,13 @@ function createContextWithSelfChain(): GameEngineContext {
     throw new Error("テスト用攻撃カードが見つかりません。");
   }
   attack.chainableCardIds = ["attack-1"];
+  const counterAttack = input.definitions.find(
+    (definition) => definition.id === "counter-attack-1",
+  );
+  if (counterAttack === undefined || counterAttack.cardType !== "attack") {
+    throw new Error("対策側のテスト用攻撃カードが見つかりません。");
+  }
+  counterAttack.chainableCardIds = ["counter-attack-1"];
 
   const baseContext = createTestContext();
   const catalogResult = createCardCatalog(input, {
@@ -324,6 +331,13 @@ function createContextWithAttackCost(cost: number): GameEngineContext {
     throw new Error("テスト用攻撃カードが見つかりません。");
   }
   attack.cost = cost;
+  const counterAttack = input.definitions.find(
+    (definition) => definition.id === "counter-attack-1",
+  );
+  if (counterAttack === undefined || counterAttack.cardType !== "attack") {
+    throw new Error("対策側のテスト用攻撃カードが見つかりません。");
+  }
+  counterAttack.cost = cost;
 
   const baseContext = createTestContext();
   const catalogResult = createCardCatalog(input, {
@@ -464,8 +478,12 @@ function findCardInstanceId(
   definitionId: string,
 ): string {
   const player = getPlayer(state, playerId);
+  const factionDefinitionId =
+    player.faction === "countermeasure"
+      ? `counter-${definitionId}`
+      : definitionId;
   const cardInstanceId = player.hand.find(
-    (id) => state.cardInstances[id]?.definitionId === definitionId,
+    (id) => state.cardInstances[id]?.definitionId === factionDefinitionId,
   );
   if (cardInstanceId === undefined) {
     throw new Error(`手札に ${definitionId} がありません。`);
@@ -479,8 +497,12 @@ function moveDeckCardToHand(
   definitionId: string,
 ): string {
   const player = getPlayer(state, playerId);
+  const factionDefinitionId =
+    player.faction === "countermeasure"
+      ? `counter-${definitionId}`
+      : definitionId;
   const index = player.deck.findIndex(
-    (id) => state.cardInstances[id]?.definitionId === definitionId,
+    (id) => state.cardInstances[id]?.definitionId === factionDefinitionId,
   );
   if (index < 0) {
     throw new Error(`山札に ${definitionId} がありません。`);

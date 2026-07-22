@@ -2,6 +2,7 @@ import { DurableObject } from "cloudflare:workers";
 import type { MatchLobbyView as MatchLobbyViewDto } from "@disastar/contracts/match";
 import type {
   CardDefinitionId,
+  Faction,
   GameId,
   InitializeGameError,
   InitializeGameInput,
@@ -9,11 +10,12 @@ import type {
 } from "@disastar/game-engine/contracts";
 import { initializeGameSessionInEnvironment } from "../game-creation/create-game-session.js";
 
-const LOBBY_STORAGE_KEY = "match-lobby";
+const LOBBY_STORAGE_KEY = "match-lobby-v2-factions";
 
 type WaitingMatch = {
   status: "waiting";
   ownerPlayerId: PlayerId;
+  ownerFaction: Faction;
   ownerDeckDefinitionIds: CardDefinitionId[];
   createdAt: number;
 };
@@ -21,8 +23,10 @@ type WaitingMatch = {
 type StartingMatch = {
   status: "starting";
   ownerPlayerId: PlayerId;
+  ownerFaction: Faction;
   ownerDeckDefinitionIds: CardDefinitionId[];
   opponentPlayerId: PlayerId;
+  opponentFaction: Faction;
   opponentDeckDefinitionIds: CardDefinitionId[];
   createdAt: number;
   gameInput: InitializeGameInput;
@@ -31,7 +35,9 @@ type StartingMatch = {
 type StartedMatch = {
   status: "started";
   ownerPlayerId: PlayerId;
+  ownerFaction: Faction;
   opponentPlayerId: PlayerId;
+  opponentFaction: Faction;
   gameId: GameId;
   createdAt: number;
 };
@@ -39,6 +45,7 @@ type StartedMatch = {
 type CancelledMatch = {
   status: "cancelled";
   ownerPlayerId: PlayerId;
+  ownerFaction: Faction;
   createdAt: number;
 };
 
@@ -65,6 +72,7 @@ export type MatchLobbyAcceptResult =
         code:
           | "CANNOT_ACCEPT_OWN_MATCH"
           | "MATCH_NOT_ACCEPTING"
+          | "MATCH_FACTION_CONFLICT"
           | "MATCH_NOT_FOUND"
           | "GAME_CREATION_FAILED";
         initializationError?: InitializeGameError;
@@ -90,6 +98,7 @@ export type MatchLobbyInitializationResult =
 type MatchLobbyInitializer = {
   initialize(input: {
     ownerPlayerId: PlayerId;
+    ownerFaction: Faction;
     ownerDeckDefinitionIds: CardDefinitionId[];
     createdAt: number;
   }): Promise<MatchLobbyInitializationResult>;
@@ -97,6 +106,7 @@ type MatchLobbyInitializer = {
 
 export type CreateMatchLobbyInput = {
   ownerPlayerId: PlayerId;
+  ownerFaction: Faction;
   ownerDeckDefinitionIds: CardDefinitionId[];
 };
 
@@ -118,6 +128,7 @@ export async function createMatchLobbyInEnvironment(
     environment.MATCH_LOBBY.get(id) as unknown as MatchLobbyInitializer
   ).initialize({
     ownerPlayerId: input.ownerPlayerId,
+    ownerFaction: input.ownerFaction,
     ownerDeckDefinitionIds: input.ownerDeckDefinitionIds,
     createdAt: now(),
   });
@@ -149,6 +160,7 @@ export class MatchLobby extends DurableObject<CloudflareBindings> {
 
   async initialize(input: {
     ownerPlayerId: PlayerId;
+    ownerFaction: Faction;
     ownerDeckDefinitionIds: CardDefinitionId[];
     createdAt: number;
   }): Promise<MatchLobbyInitializationResult> {
@@ -160,11 +172,13 @@ export class MatchLobby extends DurableObject<CloudflareBindings> {
       };
     }
     assertNonEmptyIdentifier(input.ownerPlayerId, "作成者のプレイヤーID");
+    assertFaction(input.ownerFaction);
     assertTimestamp(input.createdAt);
 
     const match: WaitingMatch = {
       status: "waiting",
       ownerPlayerId: input.ownerPlayerId,
+      ownerFaction: input.ownerFaction,
       ownerDeckDefinitionIds: [...input.ownerDeckDefinitionIds],
       createdAt: input.createdAt,
     };
@@ -185,6 +199,7 @@ export class MatchLobby extends DurableObject<CloudflareBindings> {
 
   async accept(input: {
     playerId: PlayerId;
+    faction: Faction;
     deckDefinitionIds: CardDefinitionId[];
   }): Promise<MatchLobbyAcceptResult> {
     const match = await this.getMatch();
@@ -192,6 +207,7 @@ export class MatchLobby extends DurableObject<CloudflareBindings> {
       return { accepted: false, error: { code: "MATCH_NOT_FOUND" } };
     }
     assertNonEmptyIdentifier(input.playerId, "参加者のプレイヤーID");
+    assertFaction(input.faction);
 
     if (match.status === "starting") {
       if (match.opponentPlayerId !== input.playerId) {
@@ -214,12 +230,20 @@ export class MatchLobby extends DurableObject<CloudflareBindings> {
         error: { code: "CANNOT_ACCEPT_OWN_MATCH" },
       };
     }
+    if (match.ownerFaction === input.faction) {
+      return {
+        accepted: false,
+        error: { code: "MATCH_FACTION_CONFLICT" },
+      };
+    }
 
     const starting: StartingMatch = {
       status: "starting",
       ownerPlayerId: match.ownerPlayerId,
+      ownerFaction: match.ownerFaction,
       ownerDeckDefinitionIds: match.ownerDeckDefinitionIds,
       opponentPlayerId: input.playerId,
+      opponentFaction: input.faction,
       opponentDeckDefinitionIds: [...input.deckDefinitionIds],
       createdAt: match.createdAt,
       gameInput: {
@@ -228,10 +252,12 @@ export class MatchLobby extends DurableObject<CloudflareBindings> {
         players: [
           {
             playerId: match.ownerPlayerId,
+            faction: match.ownerFaction,
             deckDefinitionIds: [...match.ownerDeckDefinitionIds],
           },
           {
             playerId: input.playerId,
+            faction: input.faction,
             deckDefinitionIds: [...input.deckDefinitionIds],
           },
         ],
@@ -263,6 +289,7 @@ export class MatchLobby extends DurableObject<CloudflareBindings> {
     const cancelled: CancelledMatch = {
       status: "cancelled",
       ownerPlayerId: match.ownerPlayerId,
+      ownerFaction: match.ownerFaction,
       createdAt: match.createdAt,
     };
     await this.persist(cancelled);
@@ -281,6 +308,7 @@ export class MatchLobby extends DurableObject<CloudflareBindings> {
       const waiting: WaitingMatch = {
         status: "waiting",
         ownerPlayerId: match.ownerPlayerId,
+        ownerFaction: match.ownerFaction,
         ownerDeckDefinitionIds: match.ownerDeckDefinitionIds,
         createdAt: match.createdAt,
       };
@@ -298,7 +326,9 @@ export class MatchLobby extends DurableObject<CloudflareBindings> {
     const started: StartedMatch = {
       status: "started",
       ownerPlayerId: match.ownerPlayerId,
+      ownerFaction: match.ownerFaction,
       opponentPlayerId: match.opponentPlayerId,
+      opponentFaction: match.opponentFaction,
       gameId: match.gameInput.gameId,
       createdAt: match.createdAt,
     };
@@ -324,21 +354,27 @@ function toMatchLobbyView(match: MatchLobbyState): MatchLobbyView {
       return {
         status: match.status,
         ownerPlayerId: match.ownerPlayerId,
+        ownerFaction: match.ownerFaction,
         opponentPlayerId: null,
+        opponentFaction: null,
         gameId: null,
       };
     case "starting":
       return {
         status: "starting",
         ownerPlayerId: match.ownerPlayerId,
+        ownerFaction: match.ownerFaction,
         opponentPlayerId: match.opponentPlayerId,
+        opponentFaction: match.opponentFaction,
         gameId: null,
       };
     case "started":
       return {
         status: "started",
         ownerPlayerId: match.ownerPlayerId,
+        ownerFaction: match.ownerFaction,
         opponentPlayerId: match.opponentPlayerId,
+        opponentFaction: match.opponentFaction,
         gameId: match.gameId,
       };
   }
@@ -361,5 +397,13 @@ function assertNonEmptyIdentifier(value: string, label: string): void {
 function assertTimestamp(value: number): void {
   if (!Number.isSafeInteger(value) || value < 0) {
     throw new RangeError("作成時刻は0以上の安全な整数で指定してください。");
+  }
+}
+
+function assertFaction(value: Faction): void {
+  if (value !== "disaster" && value !== "countermeasure") {
+    throw new RangeError(
+      "陣営はdisasterまたはcountermeasureで指定してください。",
+    );
   }
 }

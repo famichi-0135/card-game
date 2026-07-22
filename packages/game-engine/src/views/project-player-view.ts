@@ -65,6 +65,7 @@ function createPublicPlayerState(
 ): PublicPlayerState {
   return {
     playerId: player.playerId,
+    faction: player.faction,
     stamina: player.stamina,
     handCount: player.hand.length,
     deckCount: player.deck.length,

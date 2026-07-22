@@ -31,14 +31,14 @@ GameSession Durable Object -> @disastar/game-engine
 | `started`   | `GameSession`の初期化済み                 | 対戦画面へ遷移           |
 | `cancelled` | 作成者が待機を取り消した                  | なし                     |
 
-参加時は、まず`starting`と使用する`gameId`・乱数seed・両デッキをDO Storageへ確定する。その後に`GameSession.initialize`を呼び、成功した場合だけ`started`へ遷移する。同じ初期化入力に対する`GameSession.initialize`は成功として扱うため、`starting`の途中でDOが再起動しても同じ参加者の再送で開始処理を再開できる。
+参加時は、作成者と参加者の保存済みデッキが異なる陣営であることを確認する。次に`starting`と使用する`gameId`・乱数seed・両プレイヤーの陣営・両デッキをDO Storageへ確定する。その後に`GameSession.initialize`を呼び、成功した場合だけ`started`へ遷移する。同じ初期化入力に対する`GameSession.initialize`は成功として扱うため、`starting`の途中でDOが再起動しても同じ参加者の再送で開始処理を再開できる。
 
 ゲーム作成がデッキ検証などで失敗した場合は`waiting`へ戻す。失敗した参加者のデッキは保存せず、作成者は別の相手の参加を受け付けられる。
 
 ## 信頼境界
 
 - `MatchLobby`のRPCには、将来のWorker認証アダプターが確定した`PlayerId`だけを渡す。クライアントが主張する`PlayerId`は使用しない。
-- デッキは所有者の保存済みデッキを認可してから渡す。クライアントが任意のカードID配列を送る公開APIは作らない。
+- デッキは所有者の保存済みデッキを認可し、保存された`Faction`とカード定義ID配列を一体で渡す。クライアントが対戦参加時に任意の陣営やカードID配列を送る公開APIは作らない。
 - `MatchLobbyView`は参加者だけに返し、デッキ内容、乱数seed、開始中の内部入力を含めない。
 - `gameId`は`started`後にだけ返す。`MatchLobby`のDO IDは推測不可能な`newUniqueId()`で生成し、招待URLの識別子として扱う。
 
@@ -52,18 +52,18 @@ GameSession Durable Object -> @disastar/game-engine
 
 ## HTTP境界
 
-`POST /api/matches`、`GET /api/matches/:matchId`、`POST /api/matches/:matchId/accept`、`POST /api/matches/:matchId/cancel`のHTTPアダプターを用意する。作成・参加の本文は保存済みデッキを選ぶ`deckId`だけであり、`PlayerId`やカード定義ID配列は含めない。
+`POST /api/matches`、`GET /api/matches/:matchId`、`POST /api/matches/:matchId/accept`、`POST /api/matches/:matchId/cancel`のHTTPアダプターを用意する。作成・参加の本文は保存済みデッキを選ぶ`deckId`だけであり、`PlayerId`、`Faction`、カード定義ID配列は含めない。`MatchLobbyView`は両プレイヤーの陣営を公開するが、デッキ内容は公開しない。
 
 保存済みデッキは次のHTTPアダプターで操作する。本文の`cardDefinitionIds`は現在のゲームルールで検証し、違法なデッキは保存しない。すべての操作は認証済みプレイヤー自身の`PlayerDecks`だけを対象にする。
 
-| 操作     | エンドポイント              | クライアント本文              |
-| -------- | --------------------------- | ----------------------------- |
-| 一覧取得 | `GET /api/decks`            | なし                          |
-| 作成     | `POST /api/decks`           | `{ name, cardDefinitionIds }` |
-| 取得     | `GET /api/decks/:deckId`    | なし                          |
-| 置換     | `PUT /api/decks/:deckId`    | `{ name, cardDefinitionIds }` |
-| 削除     | `DELETE /api/decks/:deckId` | なし                          |
+| 操作     | エンドポイント              | クライアント本文                       |
+| -------- | --------------------------- | -------------------------------------- |
+| 一覧取得 | `GET /api/decks`            | なし                                   |
+| 作成     | `POST /api/decks`           | `{ name, faction, cardDefinitionIds }` |
+| 取得     | `GET /api/decks/:deckId`    | なし                                   |
+| 置換     | `PUT /api/decks/:deckId`    | `{ name, faction, cardDefinitionIds }` |
+| 削除     | `DELETE /api/decks/:deckId` | なし                                   |
 
-対戦アダプターは認証済み`PlayerId`と`deckId`から、所有権確認済みかつ現在も有効なカード定義ID配列を解決してから`MatchLobby`を呼ぶ。現在の標準Workerは認証アダプター未接続のため、すべて`401 UNAUTHENTICATED`で拒否する。
+対戦アダプターは認証済み`PlayerId`と`deckId`から、所有権確認済みかつ現在も有効な陣営・カード定義ID配列を解決してから`MatchLobby`を呼ぶ。標準WorkerはBetter AuthのセッションからプレイヤーIDを確定する。
 
 認証プロバイダー、待機期限、D1のスキーマは後続の実装で確定する。

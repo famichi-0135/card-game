@@ -1,13 +1,20 @@
 import { env } from "cloudflare:test";
 import { describe, expect, it } from "vitest";
-import type { CardDefinitionId } from "@disastar/game-engine/contracts";
-import { createInitialStarterDeckDefinitionIds } from "../src/game-engine/runtime.js";
+import type {
+  CardDefinitionId,
+  Faction,
+} from "@disastar/game-engine/contracts";
+import {
+  createCountermeasureStarterDeckDefinitionIds,
+  createDisasterStarterDeckDefinitionIds,
+} from "../src/game-engine/runtime.js";
 import type { GetGameSnapshotResult } from "../src/game-session/game-session.js";
 import { createMatchLobbyInEnvironment } from "../src/match-lobby/match-lobby.js";
 
 type MatchLobbyRpc = {
   initialize(input: {
     ownerPlayerId: string;
+    ownerFaction: Faction;
     ownerDeckDefinitionIds: CardDefinitionId[];
     createdAt: number;
   }): Promise<{ initialized: true } | { initialized: false }>;
@@ -17,7 +24,9 @@ type MatchLobbyRpc = {
         view: {
           status: "waiting" | "starting" | "started" | "cancelled";
           ownerPlayerId: string;
+          ownerFaction: Faction;
           opponentPlayerId: string | null;
+          opponentFaction: Faction | null;
           gameId: string | null;
         };
       }
@@ -28,6 +37,7 @@ type MatchLobbyRpc = {
   >;
   accept(input: {
     playerId: string;
+    faction: Faction;
     deckDefinitionIds: CardDefinitionId[];
   }): Promise<
     | { accepted: true; gameId: string }
@@ -49,7 +59,11 @@ describe("MatchLobby Durable Object", () => {
       error: { code: "MATCH_NOT_FOUND" },
     });
     await expect(
-      lobby.accept({ playerId: "player-1", deckDefinitionIds: createDeck() }),
+      lobby.accept({
+        playerId: "player-1",
+        faction: "countermeasure",
+        deckDefinitionIds: createDeck("countermeasure"),
+      }),
     ).resolves.toEqual({
       accepted: false,
       error: { code: "MATCH_NOT_FOUND" },
@@ -64,6 +78,7 @@ describe("MatchLobby Durable Object", () => {
     const result = await createMatchLobbyInEnvironment(
       {
         ownerPlayerId: "player-1",
+        ownerFaction: "disaster",
         ownerDeckDefinitionIds: createDeck(),
       },
       env,
@@ -91,6 +106,7 @@ describe("MatchLobby Durable Object", () => {
     await expect(
       lobby.initialize({
         ownerPlayerId: "player-1",
+        ownerFaction: "disaster",
         ownerDeckDefinitionIds: createDeck(),
         createdAt: 1_000,
       }),
@@ -101,7 +117,9 @@ describe("MatchLobby Durable Object", () => {
       view: {
         status: "waiting",
         ownerPlayerId: "player-1",
+        ownerFaction: "disaster",
         opponentPlayerId: null,
+        opponentFaction: null,
         gameId: null,
       },
     });
@@ -115,13 +133,15 @@ describe("MatchLobby Durable Object", () => {
     const lobby = getMatchLobby("match-lobby-start");
     await lobby.initialize({
       ownerPlayerId: "player-1",
+      ownerFaction: "disaster",
       ownerDeckDefinitionIds: createDeck(),
       createdAt: 1_000,
     });
 
     const accepted = await lobby.accept({
       playerId: "player-2",
-      deckDefinitionIds: createDeck(),
+      faction: "countermeasure",
+      deckDefinitionIds: createDeck("countermeasure"),
     });
 
     expect(accepted).toMatchObject({
@@ -137,7 +157,9 @@ describe("MatchLobby Durable Object", () => {
       view: {
         status: "started",
         ownerPlayerId: "player-1",
+        ownerFaction: "disaster",
         opponentPlayerId: "player-2",
+        opponentFaction: "countermeasure",
         gameId: accepted.gameId,
       },
     });
@@ -146,7 +168,9 @@ describe("MatchLobby Durable Object", () => {
       view: {
         status: "started",
         ownerPlayerId: "player-1",
+        ownerFaction: "disaster",
         opponentPlayerId: "player-2",
+        opponentFaction: "countermeasure",
         gameId: accepted.gameId,
       },
     });
@@ -165,7 +189,11 @@ describe("MatchLobby Durable Object", () => {
     expect(snapshot.view.opponent.playerId).toBe("player-2");
 
     await expect(
-      lobby.accept({ playerId: "player-3", deckDefinitionIds: createDeck() }),
+      lobby.accept({
+        playerId: "player-3",
+        faction: "countermeasure",
+        deckDefinitionIds: createDeck("countermeasure"),
+      }),
     ).resolves.toEqual({
       accepted: false,
       error: { code: "MATCH_NOT_ACCEPTING" },
@@ -176,18 +204,37 @@ describe("MatchLobby Durable Object", () => {
     const lobby = getMatchLobby("match-lobby-invalid");
     await lobby.initialize({
       ownerPlayerId: "player-1",
+      ownerFaction: "disaster",
       ownerDeckDefinitionIds: createDeck(),
       createdAt: 1_000,
     });
 
     await expect(
-      lobby.accept({ playerId: "player-1", deckDefinitionIds: createDeck() }),
+      lobby.accept({
+        playerId: "player-1",
+        faction: "countermeasure",
+        deckDefinitionIds: createDeck("countermeasure"),
+      }),
     ).resolves.toEqual({
       accepted: false,
       error: { code: "CANNOT_ACCEPT_OWN_MATCH" },
     });
     await expect(
-      lobby.accept({ playerId: "player-2", deckDefinitionIds: [] }),
+      lobby.accept({
+        playerId: "player-3",
+        faction: "disaster",
+        deckDefinitionIds: createDeck(),
+      }),
+    ).resolves.toEqual({
+      accepted: false,
+      error: { code: "MATCH_FACTION_CONFLICT" },
+    });
+    await expect(
+      lobby.accept({
+        playerId: "player-2",
+        faction: "countermeasure",
+        deckDefinitionIds: [],
+      }),
     ).resolves.toMatchObject({
       accepted: false,
       error: { code: "GAME_CREATION_FAILED" },
@@ -205,6 +252,7 @@ describe("MatchLobby Durable Object", () => {
     const lobby = getMatchLobby("match-lobby-cancel");
     await lobby.initialize({
       ownerPlayerId: "player-1",
+      ownerFaction: "disaster",
       ownerDeckDefinitionIds: createDeck(),
       createdAt: 1_000,
     });
@@ -221,7 +269,9 @@ describe("MatchLobby Durable Object", () => {
       view: {
         status: "cancelled",
         ownerPlayerId: "player-1",
+        ownerFaction: "disaster",
         opponentPlayerId: null,
+        opponentFaction: null,
         gameId: null,
       },
     });
@@ -260,6 +310,8 @@ function getGameSession(gameId: string): {
   return gameSessions.getByName(gameId);
 }
 
-function createDeck(): CardDefinitionId[] {
-  return createInitialStarterDeckDefinitionIds();
+function createDeck(faction: Faction = "disaster"): CardDefinitionId[] {
+  return faction === "disaster"
+    ? createDisasterStarterDeckDefinitionIds()
+    : createCountermeasureStarterDeckDefinitionIds();
 }

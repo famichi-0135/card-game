@@ -6,24 +6,40 @@ import type {
 } from "@disastar/game-engine/contracts";
 import { createGameSession } from "../src/game-creation/create-game-session.js";
 import {
-  createInitialStarterDeckDefinitionIds,
+  createCountermeasureStarterDeckDefinitionIds,
+  createDisasterStarterDeckDefinitionIds,
   gameEngineContext,
 } from "../src/game-engine/runtime.js";
 
 describe("初期カードカタログ", () => {
   it("固定バージョンの効果付きカードと合法なスターターデッキを提供する", () => {
-    const deck = createInitialStarterDeckDefinitionIds();
-    const result = validateDeck(
-      deck,
+    const disasterDeck = createDisasterStarterDeckDefinitionIds();
+    const countermeasureDeck = createCountermeasureStarterDeckDefinitionIds();
+    const disasterResult = validateDeck(
+      disasterDeck,
+      "disaster",
+      gameEngineContext.cardCatalog,
+      gameEngineContext.rules,
+    );
+    const countermeasureResult = validateDeck(
+      countermeasureDeck,
+      "countermeasure",
       gameEngineContext.cardCatalog,
       gameEngineContext.rules,
     );
 
-    expect(gameEngineContext.cardCatalog.version).toBe("initial-catalog-v1");
-    expect(result).toEqual({ valid: true });
-    expect(deck).toHaveLength(gameEngineContext.rules.deckSize);
+    expect(gameEngineContext.cardCatalog.version).toBe(
+      "initial-catalog-v2-factions",
+    );
+    expect(disasterResult).toEqual({ valid: true });
+    expect(countermeasureResult).toEqual({ valid: true });
+    expect(disasterDeck).toHaveLength(gameEngineContext.rules.deckSize);
+    expect(countermeasureDeck).toHaveLength(gameEngineContext.rules.deckSize);
     expect(
-      gameEngineContext.cardCatalog.definitions["support-fire-001"],
+      disasterDeck.some((cardId) => countermeasureDeck.includes(cardId)),
+    ).toBe(false);
+    expect(
+      gameEngineContext.cardCatalog.definitions["disaster-support-group-boost"],
     ).toMatchObject({
       cardType: "support",
       duration: "untilRoundEnd",
@@ -35,7 +51,9 @@ describe("初期カードカタログ", () => {
       ],
     });
     expect(
-      gameEngineContext.cardCatalog.definitions["support-fire-004"],
+      gameEngineContext.cardCatalog.definitions[
+        "countermeasure-support-destroy-draw"
+      ],
     ).toMatchObject({
       cardType: "support",
       effects: [
@@ -49,13 +67,22 @@ describe("初期カードカタログ", () => {
 describe("対戦作成サービス", () => {
   it("サーバー生成のゲームIDと乱数seedでゲームセッションを初期化する", async () => {
     const initializedInputs: InitializeGameInput[] = [];
-    const deckDefinitionIds = createInitialStarterDeckDefinitionIds();
+    const disasterDeck = createDisasterStarterDeckDefinitionIds();
+    const countermeasureDeck = createCountermeasureStarterDeckDefinitionIds();
 
     const result = await createGameSession(
       {
         players: [
-          { playerId: "player-1", deckDefinitionIds },
-          { playerId: "player-2", deckDefinitionIds: [...deckDefinitionIds] },
+          {
+            playerId: "player-1",
+            faction: "disaster",
+            deckDefinitionIds: disasterDeck,
+          },
+          {
+            playerId: "player-2",
+            faction: "countermeasure",
+            deckDefinitionIds: countermeasureDeck,
+          },
         ],
       },
       {
@@ -82,8 +109,16 @@ describe("対戦作成サービス", () => {
         gameId: "game-created-by-server",
         randomSeed: "seed-created-by-server",
         players: [
-          { playerId: "player-1", deckDefinitionIds },
-          { playerId: "player-2", deckDefinitionIds: [...deckDefinitionIds] },
+          {
+            playerId: "player-1",
+            faction: "disaster",
+            deckDefinitionIds: disasterDeck,
+          },
+          {
+            playerId: "player-2",
+            faction: "countermeasure",
+            deckDefinitionIds: countermeasureDeck,
+          },
         ],
       },
     ]);
@@ -98,8 +133,12 @@ describe("対戦作成サービス", () => {
     const result = await createGameSession(
       {
         players: [
-          { playerId: "player-1", deckDefinitionIds: [] },
-          { playerId: "player-2", deckDefinitionIds: [] },
+          { playerId: "player-1", faction: "disaster", deckDefinitionIds: [] },
+          {
+            playerId: "player-2",
+            faction: "countermeasure",
+            deckDefinitionIds: [],
+          },
         ],
       },
       {

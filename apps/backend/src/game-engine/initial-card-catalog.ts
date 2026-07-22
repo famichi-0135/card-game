@@ -1,142 +1,142 @@
-import type { CardCatalogInput } from "@disastar/game-engine/contracts";
+import type {
+  CardCatalogInput,
+  CardDefinition,
+  Faction,
+} from "@disastar/game-engine/contracts";
+
+const attributes = ["attributeA", "attributeB", "attributeC"] as const;
+const attackAttributes = [
+  "attributeA",
+  "attributeA",
+  "attributeA",
+  "attributeB",
+  "attributeB",
+  "attributeB",
+  "attributeC",
+  "attributeC",
+  "attributeA",
+  "attributeB",
+  "attributeC",
+] as const;
+
+const attackNames: Record<Faction, readonly string[]> = {
+  disaster: [
+    "猛暑の兆候",
+    "長期熱波",
+    "都市熱暴走",
+    "集中豪雨の兆候",
+    "河川氾濫",
+    "広域浸水",
+    "強風の兆候",
+    "大型台風",
+    "森林火災",
+    "土砂災害",
+    "高潮",
+  ],
+  countermeasure: [
+    "早期警戒",
+    "避難誘導",
+    "防災教育",
+    "雨水貯留",
+    "河川改修",
+    "高台移転",
+    "防風林",
+    "耐風補強",
+    "消防活動",
+    "斜面保全",
+    "防潮堤",
+  ],
+};
+
+const supportNames: Record<Faction, readonly string[]> = {
+  disaster: [
+    "ヒートアイランド増幅",
+    "ライフライン寸断",
+    "水源汚染",
+    "災害の長期化",
+    "避難路遮断",
+    "複合災害",
+  ],
+  countermeasure: [
+    "地域連携",
+    "緊急復旧",
+    "備蓄活用",
+    "応急救護",
+    "被害区域封鎖",
+    "復旧計画",
+  ],
+};
 
 export const INITIAL_CARD_CATALOG_INPUT: CardCatalogInput = {
-  version: "initial-catalog-v1",
+  version: "initial-catalog-v2-factions",
   definitions: [
-    {
-      id: "mana-a",
-      name: "みなもとA",
-      attribute: "attributeA",
-      cardType: "mana",
-      manaAmount: 1,
-    },
-    {
-      id: "mana-b",
-      name: "みなもとB",
-      attribute: "attributeB",
-      cardType: "mana",
-      manaAmount: 1,
-    },
-    {
-      id: "mana-c",
-      name: "みなもとC",
-      attribute: "attributeC",
-      cardType: "mana",
-      manaAmount: 1,
-    },
-    {
-      id: "attack-1",
-      name: "炎の斥候",
-      attribute: "attributeA",
-      cardType: "attack",
-      cost: 1,
-      basePower: 2,
-      chainableCardIds: ["attack-2", "attack-3"],
+    ...createFactionDefinitions("disaster"),
+    ...createFactionDefinitions("countermeasure"),
+  ],
+};
+
+const disasterStarterDeckDefinitionIds = createStarterDeckIds("disaster");
+const countermeasureStarterDeckDefinitionIds =
+  createStarterDeckIds("countermeasure");
+
+export function createStarterDeckDefinitionIds(faction: Faction): string[] {
+  return faction === "disaster"
+    ? createDisasterStarterDeckDefinitionIds()
+    : createCountermeasureStarterDeckDefinitionIds();
+}
+
+export function createDisasterStarterDeckDefinitionIds(): string[] {
+  return [...disasterStarterDeckDefinitionIds];
+}
+
+export function createCountermeasureStarterDeckDefinitionIds(): string[] {
+  return [...countermeasureStarterDeckDefinitionIds];
+}
+
+function createFactionDefinitions(faction: Faction): CardDefinition[] {
+  return [
+    ...attributes.map((attribute, index) => ({
+      id: `${faction}-mana-${index + 1}`,
+      name: `${faction === "disaster" ? "災害" : "対策"}のみなもと${index + 1}`,
+      faction,
+      attribute,
+      cardType: "mana" as const,
+      manaAmount: 1 as const,
+    })),
+    ...attackNames[faction].map((name, index) => ({
+      id: `${faction}-attack-${index + 1}`,
+      name,
+      faction,
+      attribute: attackAttributes[index] ?? "attributeA",
+      cardType: "attack" as const,
+      cost: (index % 3) + 1,
+      basePower: (index % 3) + 2,
+      chainableCardIds: createChainableCardIds(faction, index),
       effects: [],
-    },
+    })),
+    ...createSupportDefinitions(faction),
+  ];
+}
+
+function createChainableCardIds(
+  faction: Faction,
+  zeroBasedIndex: number,
+): string[] {
+  const nextIndex = zeroBasedIndex + 2;
+  const currentAttribute = attackAttributes[zeroBasedIndex];
+  const nextAttribute = attackAttributes[zeroBasedIndex + 1];
+  return nextIndex <= 11 && currentAttribute === nextAttribute
+    ? [`${faction}-attack-${nextIndex}`]
+    : [];
+}
+
+function createSupportDefinitions(faction: Faction): CardDefinition[] {
+  const names = supportNames[faction];
+  return [
     {
-      id: "attack-2",
-      name: "炎の衛士",
-      attribute: "attributeA",
-      cardType: "attack",
-      cost: 2,
-      basePower: 3,
-      chainableCardIds: ["attack-3"],
-      effects: [],
-    },
-    {
-      id: "attack-3",
-      name: "炎の騎士",
-      attribute: "attributeA",
-      cardType: "attack",
-      cost: 3,
-      basePower: 5,
-      chainableCardIds: [],
-      effects: [],
-    },
-    {
-      id: "attack-4",
-      name: "水の斥候",
-      attribute: "attributeB",
-      cardType: "attack",
-      cost: 1,
-      basePower: 2,
-      chainableCardIds: ["attack-5", "attack-6"],
-      effects: [],
-    },
-    {
-      id: "attack-5",
-      name: "水の衛士",
-      attribute: "attributeB",
-      cardType: "attack",
-      cost: 2,
-      basePower: 3,
-      chainableCardIds: ["attack-6"],
-      effects: [],
-    },
-    {
-      id: "attack-6",
-      name: "水の騎士",
-      attribute: "attributeB",
-      cardType: "attack",
-      cost: 3,
-      basePower: 5,
-      chainableCardIds: [],
-      effects: [],
-    },
-    {
-      id: "attack-7",
-      name: "風の斥候",
-      attribute: "attributeC",
-      cardType: "attack",
-      cost: 1,
-      basePower: 2,
-      chainableCardIds: ["attack-8"],
-      effects: [],
-    },
-    {
-      id: "attack-8",
-      name: "風の騎士",
-      attribute: "attributeC",
-      cardType: "attack",
-      cost: 2,
-      basePower: 4,
-      chainableCardIds: [],
-      effects: [],
-    },
-    {
-      id: "attack-9",
-      name: "炎の守り手",
-      attribute: "attributeA",
-      cardType: "attack",
-      cost: 2,
-      basePower: 4,
-      chainableCardIds: [],
-      effects: [],
-    },
-    {
-      id: "attack-10",
-      name: "水の守り手",
-      attribute: "attributeB",
-      cardType: "attack",
-      cost: 2,
-      basePower: 4,
-      chainableCardIds: [],
-      effects: [],
-    },
-    {
-      id: "attack-11",
-      name: "風の守り手",
-      attribute: "attributeC",
-      cardType: "attack",
-      cost: 2,
-      basePower: 4,
-      chainableCardIds: [],
-      effects: [],
-    },
-    {
-      id: "support-fire-001",
-      name: "炎の強化",
+      id: `${faction}-support-group-boost`,
+      name: names[0] ?? "攻撃力強化",
+      faction,
       attribute: "attributeA",
       cardType: "support",
       cost: 2,
@@ -161,8 +161,9 @@ export const INITIAL_CARD_CATALOG_INPUT: CardCatalogInput = {
       ],
     },
     {
-      id: "support-water-001",
-      name: "水鏡",
+      id: `${faction}-support-remove-support`,
+      name: names[1] ?? "サポート除去",
+      faction,
       attribute: "attributeB",
       cardType: "support",
       cost: 2,
@@ -184,8 +185,9 @@ export const INITIAL_CARD_CATALOG_INPUT: CardCatalogInput = {
       ],
     },
     {
-      id: "support-water-002",
-      name: "源流封鎖",
+      id: `${faction}-support-reduce-mana`,
+      name: names[2] ?? "みなもと減少",
+      faction,
       attribute: "attributeB",
       cardType: "support",
       cost: 3,
@@ -208,8 +210,9 @@ export const INITIAL_CARD_CATALOG_INPUT: CardCatalogInput = {
       ],
     },
     {
-      id: "support-wind-001",
-      name: "追い風",
+      id: `${faction}-support-stamina`,
+      name: names[3] ?? "スタミナ回復",
+      faction,
       attribute: "attributeC",
       cardType: "support",
       cost: 1,
@@ -232,8 +235,9 @@ export const INITIAL_CARD_CATALOG_INPUT: CardCatalogInput = {
       ],
     },
     {
-      id: "support-wind-003",
-      name: "陣形崩壊",
+      id: `${faction}-support-remove-group`,
+      name: names[4] ?? "攻撃グループ除去",
+      faction,
       attribute: "attributeC",
       cardType: "support",
       cost: 4,
@@ -255,8 +259,9 @@ export const INITIAL_CARD_CATALOG_INPUT: CardCatalogInput = {
       ],
     },
     {
-      id: "support-fire-004",
-      name: "破壊と補給",
+      id: `${faction}-support-destroy-draw`,
+      name: names[5] ?? "複合効果",
+      faction,
       attribute: "attributeA",
       cardType: "support",
       cost: 5,
@@ -291,42 +296,28 @@ export const INITIAL_CARD_CATALOG_INPUT: CardCatalogInput = {
         },
       ],
     },
-  ],
-};
+  ];
+}
 
-const initialStarterDeckDefinitionIds = [
-  "mana-a",
-  "mana-a",
-  "mana-a",
-  "mana-b",
-  "mana-b",
-  "mana-b",
-  "mana-c",
-  "mana-c",
-  "attack-1",
-  "attack-1",
-  "attack-2",
-  "attack-2",
-  "attack-3",
-  "attack-3",
-  "attack-4",
-  "attack-4",
-  "attack-5",
-  "attack-5",
-  "attack-6",
-  "attack-6",
-  "attack-7",
-  "attack-7",
-  "attack-8",
-  "attack-8",
-  "support-fire-001",
-  "support-water-001",
-  "support-water-002",
-  "support-wind-001",
-  "support-wind-003",
-  "support-fire-004",
-];
-
-export function createInitialStarterDeckDefinitionIds(): string[] {
-  return [...initialStarterDeckDefinitionIds];
+function createStarterDeckIds(faction: Faction): string[] {
+  return [
+    `${faction}-mana-1`,
+    `${faction}-mana-1`,
+    `${faction}-mana-1`,
+    `${faction}-mana-2`,
+    `${faction}-mana-2`,
+    `${faction}-mana-2`,
+    `${faction}-mana-3`,
+    `${faction}-mana-3`,
+    ...Array.from({ length: 8 }, (_, index) => [
+      `${faction}-attack-${index + 1}`,
+      `${faction}-attack-${index + 1}`,
+    ]).flat(),
+    `${faction}-support-group-boost`,
+    `${faction}-support-remove-support`,
+    `${faction}-support-reduce-mana`,
+    `${faction}-support-stamina`,
+    `${faction}-support-remove-group`,
+    `${faction}-support-destroy-draw`,
+  ];
 }

@@ -1,4 +1,5 @@
 import type { GameCommandError } from "./errors.js";
+import type { Faction } from "./card-definition.js";
 import type { EffectInput } from "./effects.js";
 import type {
   AttackGroupId,
@@ -18,10 +19,12 @@ export type InitializeGameInput = {
   players: [
     {
       playerId: PlayerId;
+      faction: Faction;
       deckDefinitionIds: CardDefinitionId[];
     },
     {
       playerId: PlayerId;
+      faction: Faction;
       deckDefinitionIds: CardDefinitionId[];
     },
   ];
@@ -31,6 +34,7 @@ export type InitializeGameError = {
   code:
     | "INVALID_PLAYER_COUNT"
     | "DUPLICATE_PLAYER_ID"
+    | "INVALID_FACTION_ASSIGNMENT"
     | "DECK_VALIDATION_FAILED"
     | "CARD_CATALOG_INVALID"
     | "DEPENDENCY_OUTPUT_INVALID"
@@ -57,7 +61,8 @@ export type DeckValidationError = {
     | "SAME_NAME_LIMIT_EXCEEDED"
     | "ATTRIBUTE_REQUIREMENT_NOT_MET"
     | "CARD_DEFINITION_NOT_FOUND"
-    | "CARD_DEFINITION_INVALID";
+    | "CARD_DEFINITION_INVALID"
+    | "FACTION_MISMATCH";
   cardDefinitionId?: CardDefinitionId;
   message: string;
 };

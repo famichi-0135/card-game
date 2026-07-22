@@ -2,6 +2,7 @@ import { GAME_RULES, createCardCatalog } from "../src/index.js";
 import type {
   CardCatalog,
   CardCatalogInput,
+  Faction,
   GameEngineContext,
   GameEngineDependencies,
   InitializeGameInput,
@@ -11,43 +12,63 @@ import type {
 const attributes = ["attributeA", "attributeB", "attributeC"] as const;
 
 export function createTestCardCatalogInput(): CardCatalogInput {
+  const disasterDefinitions: CardCatalogInput["definitions"] = [
+    {
+      id: "mana-a",
+      name: "災害みなもとA",
+      faction: "disaster",
+      attribute: "attributeA",
+      cardType: "mana",
+      manaAmount: 1,
+    },
+    {
+      id: "mana-b",
+      name: "災害みなもとB",
+      faction: "disaster",
+      attribute: "attributeB",
+      cardType: "mana",
+      manaAmount: 1,
+    },
+    {
+      id: "mana-c",
+      name: "災害みなもとC",
+      faction: "disaster",
+      attribute: "attributeC",
+      cardType: "mana",
+      manaAmount: 1,
+    },
+    ...Array.from({ length: 11 }, (_, index) => ({
+      id: `attack-${index + 1}`,
+      name: `災害攻撃カード${index + 1}`,
+      faction: "disaster" as const,
+      attribute: attributes[
+        index % attributes.length
+      ] as (typeof attributes)[number],
+      cardType: "attack" as const,
+      cost: 0,
+      basePower: index + 1,
+      chainableCardIds: [],
+      effects: [],
+    })),
+  ];
+
+  const countermeasureDefinitions = disasterDefinitions.map((definition) => ({
+    ...definition,
+    id: `counter-${definition.id}`,
+    name: definition.name.replace("災害", "対策"),
+    faction: "countermeasure" as const,
+    ...(definition.cardType === "attack"
+      ? {
+          chainableCardIds: definition.chainableCardIds.map(
+            (id) => `counter-${id}`,
+          ),
+        }
+      : {}),
+  })) as CardCatalogInput["definitions"];
+
   return {
     version: "card-catalog-v1",
-    definitions: [
-      {
-        id: "mana-a",
-        name: "みなもとA",
-        attribute: "attributeA",
-        cardType: "mana",
-        manaAmount: 1,
-      },
-      {
-        id: "mana-b",
-        name: "みなもとB",
-        attribute: "attributeB",
-        cardType: "mana",
-        manaAmount: 1,
-      },
-      {
-        id: "mana-c",
-        name: "みなもとC",
-        attribute: "attributeC",
-        cardType: "mana",
-        manaAmount: 1,
-      },
-      ...Array.from({ length: 11 }, (_, index) => ({
-        id: `attack-${index + 1}`,
-        name: `攻撃カード${index + 1}`,
-        attribute: attributes[
-          index % attributes.length
-        ] as (typeof attributes)[number],
-        cardType: "attack" as const,
-        cost: 0,
-        basePower: index + 1,
-        chainableCardIds: [],
-        effects: [],
-      })),
-    ],
+    definitions: [...disasterDefinitions, ...countermeasureDefinitions],
   };
 }
 
@@ -76,8 +97,10 @@ export function createTestContext(
   };
 }
 
-export function createValidDeckDefinitionIds(): string[] {
-  return [
+export function createValidDeckDefinitionIds(
+  faction: Faction = "disaster",
+): string[] {
+  const disasterDeck = [
     "mana-a",
     "mana-a",
     "mana-a",
@@ -93,10 +116,15 @@ export function createValidDeckDefinitionIds(): string[] {
       `attack-${index + 2}`,
     ]).flat(),
   ];
+  return faction === "disaster"
+    ? disasterDeck
+    : disasterDeck.map((id) => `counter-${id}`);
 }
 
-export function createAllManaOpeningDeckDefinitionIds(): string[] {
-  return [
+export function createAllManaOpeningDeckDefinitionIds(
+  faction: Faction = "disaster",
+): string[] {
+  const disasterDeck = [
     "mana-a",
     "mana-a",
     "mana-a",
@@ -110,6 +138,9 @@ export function createAllManaOpeningDeckDefinitionIds(): string[] {
       `attack-${index + 1}`,
     ]).flat(),
   ];
+  return faction === "disaster"
+    ? disasterDeck
+    : disasterDeck.map((id) => `counter-${id}`);
 }
 
 export function createInitializationInput(
@@ -119,8 +150,16 @@ export function createInitializationInput(
     gameId: "game-1",
     randomSeed: "seed-1",
     players: [
-      { playerId: "player-1", deckDefinitionIds: [...deckDefinitionIds] },
-      { playerId: "player-2", deckDefinitionIds: [...deckDefinitionIds] },
+      {
+        playerId: "player-1",
+        faction: "disaster",
+        deckDefinitionIds: [...deckDefinitionIds],
+      },
+      {
+        playerId: "player-2",
+        faction: "countermeasure",
+        deckDefinitionIds: deckDefinitionIds.map((id) => `counter-${id}`),
+      },
     ],
   };
 }

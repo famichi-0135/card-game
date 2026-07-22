@@ -23,7 +23,7 @@ import {
   gameEngineDependencies,
 } from "../game-engine/runtime.js";
 
-const SESSION_STORAGE_KEY = "game-session";
+const SESSION_STORAGE_KEY = "game-session-v2-factions";
 
 type StoredGameSession = {
   initializationInput: InitializeGameInput;
@@ -294,6 +294,7 @@ function isSameInitializeInput(
       return (
         compared !== undefined &&
         player.playerId === compared.playerId &&
+        player.faction === compared.faction &&
         player.deckDefinitionIds.length === compared.deckDefinitionIds.length &&
         player.deckDefinitionIds.every(
           (definitionId, deckIndex) =>
@@ -310,6 +311,7 @@ function cloneInitializeInput(input: InitializeGameInput): InitializeGameInput {
     randomSeed: input.randomSeed,
     players: input.players.map((player) => ({
       playerId: player.playerId,
+      faction: player.faction,
       deckDefinitionIds: [...player.deckDefinitionIds],
     })) as InitializeGameInput["players"],
   };

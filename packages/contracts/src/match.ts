@@ -1,4 +1,8 @@
-import type { GameId, PlayerId } from "@disastar/game-engine/contracts";
+import type {
+  Faction,
+  GameId,
+  PlayerId,
+} from "@disastar/game-engine/contracts";
 import type { DeckId } from "./deck.js";
 
 export type { DeckId } from "./deck.js";
@@ -9,7 +13,9 @@ export type MatchLobbyStatus = "waiting" | "starting" | "started" | "cancelled";
 export type MatchLobbyView = {
   status: MatchLobbyStatus;
   ownerPlayerId: PlayerId;
+  ownerFaction: Faction;
   opponentPlayerId: PlayerId | null;
+  opponentFaction: Faction | null;
   gameId: GameId | null;
 };
 
@@ -59,6 +65,7 @@ export type MatchApiErrorCode =
   | "MATCH_ACCESS_FORBIDDEN"
   | "CANNOT_ACCEPT_OWN_MATCH"
   | "MATCH_NOT_ACCEPTING"
+  | "MATCH_FACTION_CONFLICT"
   | "MATCH_CANCELLATION_FORBIDDEN"
   | "MATCH_NOT_CANCELLABLE"
   | "GAME_CREATION_FAILED"

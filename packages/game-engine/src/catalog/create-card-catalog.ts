@@ -26,6 +26,7 @@ const safeInteger = z
   .refine(Number.isSafeInteger, "安全な整数でなければなりません。");
 const nonNegativeSafeInteger = safeInteger.min(0);
 const nonEmptyString = z.string().trim().min(1);
+const factionSchema = z.enum(["disaster", "countermeasure"]);
 
 const jsonValueSchema: z.ZodType<JsonValue> = z.lazy(() =>
   z.union([
@@ -115,6 +116,7 @@ const cardDefinitionSchema = z.discriminatedUnion("cardType", [
     .object({
       id: nonEmptyString,
       name: nonEmptyString,
+      faction: factionSchema,
       attribute: z.enum(["attributeA", "attributeB", "attributeC"]),
       cardType: z.literal("mana"),
       manaAmount: z.literal(1),
@@ -124,6 +126,7 @@ const cardDefinitionSchema = z.discriminatedUnion("cardType", [
     .object({
       id: nonEmptyString,
       name: nonEmptyString,
+      faction: factionSchema,
       attribute: z.enum(["attributeA", "attributeB", "attributeC"]),
       cardType: z.literal("attack"),
       cost: nonNegativeSafeInteger,
@@ -136,6 +139,7 @@ const cardDefinitionSchema = z.discriminatedUnion("cardType", [
     .object({
       id: nonEmptyString,
       name: nonEmptyString,
+      faction: factionSchema,
       attribute: z.enum(["attributeA", "attributeB", "attributeC"]),
       cardType: z.literal("support"),
       cost: nonNegativeSafeInteger,
@@ -266,6 +270,12 @@ function validateDefinition(
           code: "CARD_REFERENCE_NOT_FOUND",
           cardDefinitionId: definition.id,
           message: `連鎖先 ${chainableCardId} は存在する攻撃カードでなければなりません。`,
+        });
+      } else if (target.faction !== definition.faction) {
+        errors.push({
+          code: "CROSS_FACTION_CARD_REFERENCE",
+          cardDefinitionId: definition.id,
+          message: `連鎖先 ${chainableCardId} は同じ陣営の攻撃カードでなければなりません。`,
         });
       }
     }

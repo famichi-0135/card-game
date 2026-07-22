@@ -37,7 +37,7 @@ export type GameRulesValidationResult =
     };
 
 export const GAME_RULES: Readonly<GameRules> = {
-  version: "ruleset-v1",
+  version: "ruleset-v2-factions",
   playerCount: 2,
   deckSize: 30,
   initialStamina: 25,

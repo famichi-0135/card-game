@@ -77,7 +77,10 @@ export function createDeckApi({
     if (!parsed.parsed) {
       return invalidRequest(c, parsed.errors);
     }
-    const invalidDeck = validateSubmittedDeck(parsed.request.cardDefinitionIds);
+    const invalidDeck = validateSubmittedDeck(
+      parsed.request.cardDefinitionIds,
+      parsed.request.faction,
+    );
     if (invalidDeck !== null) {
       return invalidDeckResponse(c, invalidDeck);
     }
@@ -103,7 +106,10 @@ export function createDeckApi({
     if (!parsed.parsed) {
       return invalidRequest(c, parsed.errors);
     }
-    const invalidDeck = validateSubmittedDeck(parsed.request.cardDefinitionIds);
+    const invalidDeck = validateSubmittedDeck(
+      parsed.request.cardDefinitionIds,
+      parsed.request.faction,
+    );
     if (invalidDeck !== null) {
       return invalidDeckResponse(c, invalidDeck);
     }
@@ -157,9 +163,11 @@ async function parseRequest<T>(
 
 function validateSubmittedDeck(
   cardDefinitionIds: string[],
+  faction: "disaster" | "countermeasure",
 ): DeckValidationError[] | null {
   const validation = validateDeck(
     cardDefinitionIds,
+    faction,
     gameEngineContext.cardCatalog,
     gameEngineContext.rules,
   );

@@ -6,10 +6,12 @@ import type {
 } from "@disastar/game-engine/contracts";
 import {
   INITIAL_CARD_CATALOG_INPUT,
-  createInitialStarterDeckDefinitionIds,
+  createCountermeasureStarterDeckDefinitionIds,
+  createDisasterStarterDeckDefinitionIds,
+  createStarterDeckDefinitionIds,
 } from "./initial-card-catalog.js";
 
-const ENGINE_SEMANTICS_VERSION = "engine-v1";
+const ENGINE_SEMANTICS_VERSION = "engine-v2-factions";
 
 const catalogResult = createCardCatalog(INITIAL_CARD_CATALOG_INPUT, {
   rules: GAME_RULES,
@@ -52,7 +54,11 @@ export const gameEngineDependencies: GameEngineDependencies = {
   },
 };
 
-export { createInitialStarterDeckDefinitionIds };
+export {
+  createCountermeasureStarterDeckDefinitionIds,
+  createDisasterStarterDeckDefinitionIds,
+  createStarterDeckDefinitionIds,
+};
 
 function hashSeed(seed: string): number {
   let hash = 2_166_136_261;

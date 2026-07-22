@@ -18,6 +18,11 @@ describe("プレイヤー向け公開状態", () => {
     const opponentPlayerId = state.playerOrder[1];
     const view = createPlayerView(state, viewerPlayerId);
 
+    expect(view.self.faction).toBe(state.players[viewerPlayerId]?.faction);
+    expect(view.opponent.faction).toBe(
+      state.players[opponentPlayerId]?.faction,
+    );
+
     expect(view.self.hand).toEqual(
       state.players[viewerPlayerId]?.hand.map(
         (cardInstanceId) => state.cardInstances[cardInstanceId],
