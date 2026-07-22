@@ -214,14 +214,7 @@ function applyPlayerCommand(
 ): GameCommandError | null {
   switch (command.type) {
     case "PLACE_ATTACK_CARD":
-      return placeAttackCard(
-        state,
-        command,
-        receivedAt,
-        context,
-        dependencies,
-        events,
-      );
+      return placeAttackCard(state, command, context, dependencies, events);
     case "CHAIN_ATTACK_CARD":
       return chainAttackCard(state, command, context, events);
     case "DISCARD_HAND_CARD":
@@ -238,7 +231,6 @@ function applyPlayerCommand(
 function placeAttackCard(
   state: GameState,
   command: PlaceAttackCardCommand,
-  receivedAt: number,
   context: GameEngineContext,
   dependencies: GameEngineDependencies,
   events: DomainEvent[],

@@ -5,6 +5,6 @@ export default {
     if (url.pathname.startsWith("/api/")) {
       return env.BACKEND.fetch(request);
     }
-    return new Response(null, { status: 404 });
+    return env.ASSETS.fetch(request);
   },
 } satisfies ExportedHandler<Env>;

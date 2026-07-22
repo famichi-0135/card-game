@@ -68,7 +68,7 @@ function applyOperation(
 ): EffectPlanApplicationResult {
   switch (operation.type) {
     case "ADD_ACTIVE_EFFECT":
-      return addActiveEffect(state, operation, context, dependencies);
+      return addActiveEffect(state, operation, dependencies);
     case "CHANGE_STAMINA":
       return changeStamina(state, operation);
     case "REDUCE_MANA":
@@ -390,7 +390,6 @@ function addActiveEffect(
     DeepReadonly<EffectPlanOperation>,
     { type: "ADD_ACTIVE_EFFECT" }
   >,
-  context: GameEngineContext,
   dependencies: GameEngineDependencies,
 ): EffectPlanApplicationResult {
   if (typeof operation.effect !== "object" || operation.effect === null) {
