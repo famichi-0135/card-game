@@ -27,6 +27,12 @@ const safeInteger = z
 const nonNegativeSafeInteger = safeInteger.min(0);
 const nonEmptyString = z.string().trim().min(1);
 const factionSchema = z.enum(["disaster", "countermeasure"]);
+const presentationSchema = z
+  .object({
+    rulesText: nonEmptyString,
+    imageAssetId: z.string().trim().min(1).nullable(),
+  })
+  .strict();
 
 const jsonValueSchema: z.ZodType<JsonValue> = z.lazy(() =>
   z.union([
@@ -119,6 +125,7 @@ const cardDefinitionSchema = z.discriminatedUnion("cardType", [
       faction: factionSchema,
       attribute: z.enum(["attributeA", "attributeB", "attributeC"]),
       cardType: z.literal("mana"),
+      presentation: presentationSchema.optional(),
       manaAmount: z.literal(1),
     })
     .strict(),
@@ -129,6 +136,7 @@ const cardDefinitionSchema = z.discriminatedUnion("cardType", [
       faction: factionSchema,
       attribute: z.enum(["attributeA", "attributeB", "attributeC"]),
       cardType: z.literal("attack"),
+      presentation: presentationSchema.optional(),
       cost: nonNegativeSafeInteger,
       basePower: safeInteger.min(1),
       chainableCardIds: z.array(nonEmptyString),
@@ -142,6 +150,7 @@ const cardDefinitionSchema = z.discriminatedUnion("cardType", [
       faction: factionSchema,
       attribute: z.enum(["attributeA", "attributeB", "attributeC"]),
       cardType: z.literal("support"),
+      presentation: presentationSchema.optional(),
       cost: nonNegativeSafeInteger,
       duration: z.enum(["instant", "untilRoundEnd", "permanent"]),
       effects: z.array(cardEffectDefinitionSchema).min(1),

@@ -31,6 +31,7 @@ import {
 } from "../catalog-archive/catalog-archive.js";
 
 const SESSION_STORAGE_KEY = "game-session-v2-factions";
+const attackGroupSlotIndices = [0, 1, 2, 3, 4] as const;
 
 type StoredGameSession = {
   initializationInput: InitializeGameInput;
@@ -81,9 +82,18 @@ export class GameSession extends DurableObject<CloudflareBindings> {
   constructor(ctx: DurableObjectState, env: CloudflareBindings) {
     super(ctx, env);
     this.loadSession = this.ctx.blockConcurrencyWhile(async () => {
-      this.session =
+      const stored =
         (await this.ctx.storage.get<StoredGameSession>(SESSION_STORAGE_KEY)) ??
         null;
+      if (stored === null) {
+        this.session = null;
+        return;
+      }
+      const migrated = migrateStoredGameSession(stored);
+      this.session = migrated.session;
+      if (migrated.changed) {
+        await this.persist(migrated.session);
+      }
     });
   }
 
@@ -147,7 +157,11 @@ export class GameSession extends DurableObject<CloudflareBindings> {
     return {
       found: true,
       snapshot: {
-        view: createPlayerView(session.state, viewerPlayerId),
+        view: createPlayerView(
+          session.state,
+          viewerPlayerId,
+          getSessionEngineContext(session),
+        ),
         events: session.events
           .filter((envelope) => envelope.sequence > afterSequence)
           .map((envelope) => projectEventForPlayer(envelope, viewerPlayerId))
@@ -205,7 +219,11 @@ export class GameSession extends DurableObject<CloudflareBindings> {
       ? {
           accepted: true as const,
           commandId: command.commandId,
-          view: createPlayerView(result.state, authenticatedPlayerId),
+          view: createPlayerView(
+            result.state,
+            authenticatedPlayerId,
+            getSessionEngineContext(session),
+          ),
           events: result.events
             .map((envelope) =>
               projectEventForPlayer(envelope, authenticatedPlayerId),
@@ -218,7 +236,11 @@ export class GameSession extends DurableObject<CloudflareBindings> {
           accepted: false as const,
           commandId: command.commandId,
           error: result.error,
-          view: createPlayerView(result.state, authenticatedPlayerId),
+          view: createPlayerView(
+            result.state,
+            authenticatedPlayerId,
+            getSessionEngineContext(session),
+          ),
         };
     const nextSession: StoredGameSession = {
       initializationInput: session.initializationInput,
@@ -395,7 +417,23 @@ function cloneEngineContext(
 function getStoredEngineContext(
   session: StoredGameSession,
 ): StoredGameEngineContext {
-  return session.engineContext ?? cloneEngineContext(gameEngineContext);
+  if (session.engineContext === undefined) {
+    throw new Error(
+      "ゲームセッションのバージョン固定コンテキストがありません。",
+    );
+  }
+  if (
+    session.state.rulesetVersion !== session.engineContext.rules.version ||
+    session.state.cardCatalogVersion !==
+      session.engineContext.cardCatalog.version ||
+    session.state.engineSemanticsVersion !==
+      session.engineContext.engineSemanticsVersion
+  ) {
+    throw new Error(
+      "ゲーム状態と保存済みエンジンコンテキストのバージョンが一致しません。",
+    );
+  }
+  return session.engineContext;
 }
 
 function toGameEngineContext(
@@ -411,6 +449,68 @@ function getSessionEngineContext(
   session: StoredGameSession,
 ): GameEngineContext {
   return toGameEngineContext(getStoredEngineContext(session));
+}
+
+function migrateStoredGameSession(stored: StoredGameSession): {
+  session: StoredGameSession;
+  changed: boolean;
+} {
+  const session = structuredClone(stored);
+  let changed = migrateAttackGroupSlots(session.state);
+
+  if (session.engineContext === undefined) {
+    const currentContext = cloneEngineContext(gameEngineContext);
+    if (
+      session.state.rulesetVersion !== currentContext.rules.version ||
+      session.state.cardCatalogVersion !== currentContext.cardCatalog.version ||
+      session.state.engineSemanticsVersion !==
+        currentContext.engineSemanticsVersion
+    ) {
+      throw new Error(
+        "保存済みゲームのバージョン固定コンテキストを復元できません。",
+      );
+    }
+    session.engineContext = currentContext;
+    changed = true;
+  }
+
+  getStoredEngineContext(session);
+  return { session, changed };
+}
+
+/** 保存済みの旧状態に、作成順で固定盤面スロットを割り当てる。 */
+export function migrateAttackGroupSlots(state: GameState): boolean {
+  let changed = false;
+  for (const player of Object.values(state.players)) {
+    const occupiedSlots = new Set<number>();
+    for (const group of player.battlefield.attackGroups) {
+      const slotIndex = (group as { slotIndex?: unknown }).slotIndex;
+      if (isValidAttackGroupSlot(slotIndex) && !occupiedSlots.has(slotIndex)) {
+        occupiedSlots.add(slotIndex);
+        continue;
+      }
+
+      const replacement = attackGroupSlotIndices.find(
+        (candidate) => !occupiedSlots.has(candidate),
+      );
+      if (replacement === undefined) {
+        throw new Error("攻撃グループの固定枠を割り当てられません。");
+      }
+      group.slotIndex = replacement;
+      occupiedSlots.add(replacement);
+      changed = true;
+    }
+  }
+  return changed;
+}
+
+function isValidAttackGroupSlot(value: unknown): value is 0 | 1 | 2 | 3 | 4 {
+  return (
+    Number.isSafeInteger(value) &&
+    typeof value === "number" &&
+    value >= 0 &&
+    value <= 4
+  );
 }
 
 export function getGameSessionRetentionExpiresAt(

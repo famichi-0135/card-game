@@ -463,6 +463,8 @@ function validateCardLocations(
     addCards(player.hand, player.playerId, "手札");
     addCards(player.discardPile, player.playerId, "捨て札");
 
+    const occupiedSlots = new Set<number>();
+
     for (const group of player.battlefield.attackGroups) {
       if (groupIds.has(group.groupId) || group.cardIds.length === 0) {
         issues.push({
@@ -477,6 +479,18 @@ function validateCardLocations(
           message: `攻撃グループ ${group.groupId} の所有者が一致しません。`,
         });
       }
+      if (
+        !Number.isSafeInteger(group.slotIndex) ||
+        group.slotIndex < 0 ||
+        group.slotIndex >= context.rules.maxAttackGroups ||
+        occupiedSlots.has(group.slotIndex)
+      ) {
+        issues.push({
+          code: "INVALID_ATTACK_GROUP_SLOT",
+          message: `攻撃グループ ${group.groupId} の固定枠が不正または重複しています。`,
+        });
+      }
+      occupiedSlots.add(group.slotIndex);
       addCards(group.cardIds, player.playerId, "攻撃グループ");
       for (const cardInstanceId of group.cardIds) {
         const instance = state.cardInstances[cardInstanceId];

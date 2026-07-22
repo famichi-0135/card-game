@@ -74,6 +74,13 @@ const gameCommandSchema = z.discriminatedUnion("type", [
       ...baseCommandFields,
       type: z.literal("PLACE_ATTACK_CARD"),
       cardInstanceId: nonEmptyString,
+      slotIndex: z.union([
+        z.literal(0),
+        z.literal(1),
+        z.literal(2),
+        z.literal(3),
+        z.literal(4),
+      ]),
       effectInputs: z.array(effectInputSchema),
     })
     .strict(),

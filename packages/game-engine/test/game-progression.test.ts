@@ -36,6 +36,7 @@ describe("効果なしのゲーム進行", () => {
       {
         type: "PLACE_ATTACK_CARD",
         cardInstanceId: firstCardId,
+        slotIndex: 0,
         effectInputs: [],
       },
       "place",
@@ -206,7 +207,12 @@ describe("効果なしのゲーム進行", () => {
         command: createCommand(
           state,
           playerId,
-          { type: "PLACE_ATTACK_CARD", cardInstanceId, effectInputs: [] },
+          {
+            type: "PLACE_ATTACK_CARD",
+            cardInstanceId,
+            slotIndex: 0,
+            effectInputs: [],
+          },
           "insufficient-mana",
           state.stateVersion,
         ),
@@ -223,6 +229,58 @@ describe("効果なしのゲーム進行", () => {
     expect(result.state).toBe(state);
     expect(getPlayer(state, playerId).hand).toContain(cardInstanceId);
     expect(getPlayer(state, playerId).battlefield.attackGroups).toEqual([]);
+  });
+
+  it("攻撃グループを指定した固定枠に配置し、使用中の枠を拒否する", () => {
+    const context = createTestContext();
+    const state = initializeForProgression(context);
+    const playerId = state.firstPlayerId;
+    const firstCardInstanceId = findCardInstanceId(state, playerId, "attack-1");
+    const placed = submit(
+      state,
+      playerId,
+      {
+        type: "PLACE_ATTACK_CARD",
+        cardInstanceId: firstCardInstanceId,
+        slotIndex: 3,
+        effectInputs: [],
+      },
+      "place-in-slot-three",
+      context,
+    );
+    const secondCardInstanceId = moveDeckCardToHand(
+      placed.state,
+      playerId,
+      "attack-1",
+    );
+    const duplicateSlot = executeCommand(
+      placed.state,
+      {
+        command: createCommand(
+          placed.state,
+          playerId,
+          {
+            type: "PLACE_ATTACK_CARD",
+            cardInstanceId: secondCardInstanceId,
+            slotIndex: 3,
+            effectInputs: [],
+          },
+          "place-in-used-slot",
+          placed.state.stateVersion,
+        ),
+        receivedAt: placed.state.phaseStartedAt + 1,
+      },
+      context,
+      createDependencies(),
+    );
+
+    expect(placed.state.players[playerId]?.battlefield.attackGroups).toEqual([
+      expect.objectContaining({ slotIndex: 3 }),
+    ]);
+    expect(duplicateSlot).toMatchObject({
+      accepted: false,
+      error: { code: "ATTACK_GROUP_SLOT_UNAVAILABLE" },
+    });
   });
 
   it("期限到達時だけフェーズを進め、古いタイムアウトを無害にする", () => {
@@ -435,7 +493,12 @@ function submit(
 }
 
 type CommandInput =
-  | { type: "PLACE_ATTACK_CARD"; cardInstanceId: string; effectInputs: [] }
+  | {
+      type: "PLACE_ATTACK_CARD";
+      cardInstanceId: string;
+      slotIndex: 0 | 1 | 2 | 3 | 4;
+      effectInputs: [];
+    }
   | {
       type: "CHAIN_ATTACK_CARD";
       cardInstanceId: string;

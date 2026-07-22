@@ -35,10 +35,15 @@ export type CardInstance = {
 export type AttackGroup = {
   groupId: AttackGroupId;
   ownerId: PlayerId;
+  /** プレイヤーごとの盤面上の固定位置。 */
+  slotIndex: AttackGroupSlotIndex;
   attribute: Attribute;
   cardIds: CardInstanceId[];
   createdRound: number;
 };
+
+/** 現行ルールの攻撃グループ盤面は5枠で固定する。 */
+export type AttackGroupSlotIndex = 0 | 1 | 2 | 3 | 4;
 
 export type SupportCardOnField = {
   cardInstanceId: CardInstanceId;

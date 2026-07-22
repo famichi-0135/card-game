@@ -15,6 +15,7 @@ import {
   type DeckRequestAuthenticator,
 } from "./deck-api/create-deck-api.js";
 import { resolveAuthorizedDeckInEnvironment } from "./player-decks/resolve-authorized-deck.js";
+import { createCardCatalogApi } from "./card-catalog-api/create-card-catalog-api.js";
 import {
   authenticateBetterAuthRequest,
   handleBetterAuthRequest,
@@ -67,6 +68,7 @@ export function createApp({
       c.executionCtx.waitUntil(task);
     }),
   );
+  app.route("/api/card-catalogs", createCardCatalogApi());
   app.route(
     "/api/games",
     createGameApi({ authenticate: authenticateGameRequest }),

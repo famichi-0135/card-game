@@ -10,5 +10,6 @@ export * from "./events.js";
 export * from "./game-state.js";
 export * from "./identifiers.js";
 export * from "./json.js";
+export * from "./public-card-catalog.js";
 export * from "./rules.js";
 export * from "./views.js";

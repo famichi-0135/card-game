@@ -1,5 +1,5 @@
 import type { ActiveEffect } from "./effects.js";
-import type { Faction } from "./card-definition.js";
+import type { Attribute, Faction } from "./card-definition.js";
 import type {
   CardCatalogVersion,
   CardInstanceId,
@@ -10,9 +10,9 @@ import type {
 import type {
   AttackGroup,
   CardInstance,
+  CalculatedManaState,
   GamePhase,
   GameStatus,
-  ManaState,
 } from "./game-state.js";
 import type {
   DomainEvent,
@@ -28,6 +28,8 @@ export type VisibleCardInstance = Pick<
 
 export type VisibleAttackGroup = Omit<AttackGroup, "cardIds"> & {
   cards: VisibleCardInstance[];
+  requiredMana: number;
+  currentPower: number;
 };
 
 export type PublicPlayerState = {
@@ -39,7 +41,7 @@ export type PublicPlayerState = {
   discardPile: VisibleCardInstance[];
   attackGroups: VisibleAttackGroup[];
   supportZone: VisibleCardInstance[];
-  mana: ManaState;
+  mana: Record<Attribute, CalculatedManaState>;
   activeEffects: ActiveEffect[];
   supportFinished: boolean;
 };

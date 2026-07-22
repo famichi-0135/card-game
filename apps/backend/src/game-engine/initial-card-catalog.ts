@@ -72,7 +72,7 @@ export const INITIAL_CARD_CATALOG_INPUT: CardCatalogInput = {
   definitions: [
     ...createFactionDefinitions("disaster"),
     ...createFactionDefinitions("countermeasure"),
-  ],
+  ].map(withPresentation),
 };
 
 const disasterStarterDeckDefinitionIds = createStarterDeckIds("disaster");
@@ -320,4 +320,57 @@ function createStarterDeckIds(faction: Faction): string[] {
     `${faction}-support-remove-group`,
     `${faction}-support-destroy-draw`,
   ];
+}
+
+function withPresentation(definition: CardDefinition): CardDefinition {
+  return {
+    ...definition,
+    presentation: {
+      rulesText: createRulesText(definition),
+      imageAssetId: null,
+    },
+  };
+}
+
+function createRulesText(definition: CardDefinition): string {
+  switch (definition.cardType) {
+    case "mana":
+      return "ゲーム開始時にみなもととして配置されるカードです。";
+    case "attack":
+      return `必要なみなもと ${definition.cost}。基本攻撃力 ${definition.basePower}。`;
+    case "support":
+      return `${createDurationText(definition.duration)}。${definition.effects
+        .map((effect) => {
+          switch (effect.type) {
+            case "modifyPower":
+              return "攻撃力を変更します。";
+            case "changeStamina":
+              return "スタミナを変更します。";
+            case "reduceMana":
+              return "みなもとを減らします。";
+            case "drawCards":
+              return "カードを引きます。";
+            case "removeAttackGroup":
+              return "攻撃グループを除去します。";
+            case "removeSupportCard":
+              return "サポートカードを除去します。";
+            case "custom":
+              return "固有の効果を解決します。";
+          }
+        })
+        .join(" ")}`;
+  }
+}
+
+function createDurationText(
+  duration: "instant" | "untilRoundEnd" | "permanent",
+): string {
+  switch (duration) {
+    case "instant":
+      return "使用後すぐに解決されます";
+    case "untilRoundEnd":
+      return "ラウンド終了まで効果が続きます";
+    case "permanent":
+      return "場にある間、効果が続きます";
+  }
 }

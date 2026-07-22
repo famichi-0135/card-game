@@ -9,10 +9,17 @@ import type {
   VisibleAttackGroup,
   VisibleCardInstance,
 } from "../contracts/index.js";
+import type { GameEngineContext } from "../contracts/engine.js";
+import {
+  calculateAttackGroupCost,
+  calculateMana,
+} from "../mana/calculate-mana.js";
+import { calculateGroupPower } from "../power/calculate-power.js";
 
 export function createPlayerView(
   state: GameState,
   viewerPlayerId: PlayerId,
+  context: GameEngineContext,
 ): PlayerGameView {
   const viewer = state.players[viewerPlayerId];
   if (viewer === undefined) {
@@ -48,12 +55,12 @@ export function createPlayerView(
     secondPlayerId: state.secondPlayerId,
     viewerPlayerId,
     self: {
-      ...createPublicPlayerState(state, viewer),
+      ...createPublicPlayerState(state, viewer, context),
       hand: viewer.hand.map((cardInstanceId) =>
         toVisibleCard(state, cardInstanceId),
       ),
     },
-    opponent: createPublicPlayerState(state, opponent),
+    opponent: createPublicPlayerState(state, opponent, context),
     lastRoundResult: state.lastRoundResult,
     winner: state.winner,
   };
@@ -62,6 +69,7 @@ export function createPlayerView(
 function createPublicPlayerState(
   state: GameState,
   player: PlayerState,
+  context: GameEngineContext,
 ): PublicPlayerState {
   return {
     playerId: player.playerId,
@@ -73,15 +81,15 @@ function createPublicPlayerState(
       toVisibleCard(state, cardInstanceId),
     ),
     attackGroups: player.battlefield.attackGroups.map((group) =>
-      toVisibleAttackGroup(state, group),
+      toVisibleAttackGroup(state, group, context),
     ),
     supportZone: player.battlefield.supportZone.map((support) =>
       toVisibleCard(state, support.cardInstanceId),
     ),
     mana: {
-      attributeA: { ...player.mana.attributeA },
-      attributeB: { ...player.mana.attributeB },
-      attributeC: { ...player.mana.attributeC },
+      attributeA: calculateMana(state, player.playerId, "attributeA", context),
+      attributeB: calculateMana(state, player.playerId, "attributeB", context),
+      attributeC: calculateMana(state, player.playerId, "attributeC", context),
     },
     activeEffects: state.activeEffects
       .filter((effect) => effect.ownerId === player.playerId)
@@ -93,12 +101,16 @@ function createPublicPlayerState(
 function toVisibleAttackGroup(
   state: GameState,
   group: GameState["players"][PlayerId]["battlefield"]["attackGroups"][number],
+  context: GameEngineContext,
 ): VisibleAttackGroup {
   return {
     groupId: group.groupId,
     ownerId: group.ownerId,
+    slotIndex: group.slotIndex,
     attribute: group.attribute,
     createdRound: group.createdRound,
+    requiredMana: calculateAttackGroupCost(state, group, context),
+    currentPower: calculateGroupPower(state, group.groupId, context),
     cards: group.cardIds.map((cardInstanceId) =>
       toVisibleCard(state, cardInstanceId),
     ),
