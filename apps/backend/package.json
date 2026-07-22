@@ -2,7 +2,7 @@
   "name": "@disastar/backend",
   "type": "module",
   "scripts": {
-    "dev": "wrangler dev",
+    "dev": "node scripts/setup-local-dev.mjs && wrangler d1 migrations apply DB --local && wrangler dev",
     "build": "wrangler deploy --dry-run",
     "lint": "eslint . --max-warnings 0",
     "check-types": "tsc --noEmit --pretty false && tsc --project test/tsconfig.json --pretty false",
@@ -16,7 +16,7 @@
     "db:migrate:remote": "wrangler d1 migrations apply DB --remote",
     "db:studio": "drizzle-kit studio",
     "deploy": "wrangler deploy --minify",
-    "cf-typegen": "wrangler types --env-interface CloudflareBindings"
+    "cf-typegen": "wrangler types --env-interface CloudflareBindings --env-file .dev.vars.example"
   },
   "dependencies": {
     "@disastar/contracts": "workspace:*",
