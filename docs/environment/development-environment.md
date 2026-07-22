@@ -6,7 +6,7 @@
 通常のローカル開発にCloudflareアカウントや本番用Secretは不要である。
 
 GitとGitHubの作業手順は[チーム開発ガイド](./team-development.md)、D1・Drizzle・
-Better Authの設計は[データベース・認証基盤](./database-and-auth.md)を参照する。
+Better Authの設計は[データベース・認証基盤](../backend/database-and-auth.md)を参照する。
 
 ## 2. リポジトリ構成
 
@@ -244,7 +244,7 @@ git diff
 - `CLOUDFLARE_D1_TOKEN`
 
 値はリポジトリへ保存しない。既存D1に対して最初から`db:migrate:remote`を実行せず、先に
-[データベース・認証基盤](./database-and-auth.md)の取り込み手順を確認する。
+[データベース・認証基盤](../backend/database-and-auth.md)の取り込み手順を確認する。
 
 ## 11. トラブルシューティング
 
