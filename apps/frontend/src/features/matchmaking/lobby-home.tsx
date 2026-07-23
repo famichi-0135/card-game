@@ -207,7 +207,15 @@ function LobbyLayout({
           <p className="text-sm font-semibold text-slate-700">
             DISASTAR CARD GAME
           </p>
-          {accountSlot}
+          <div className="flex items-center gap-3">
+            <Link
+              className="rounded border border-slate-300 bg-white px-3 py-2 text-sm font-medium text-slate-800 hover:bg-slate-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-slate-900"
+              to="/learn"
+            >
+              防災情報
+            </Link>
+            {accountSlot}
+          </div>
         </header>
         <div className="py-10" aria-label={title}>
           {children}

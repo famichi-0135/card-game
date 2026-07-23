@@ -23,6 +23,10 @@ import {
   ResetPasswordRoute,
   VerifyEmailRoute,
 } from "../features/auth/auth-routes.tsx";
+import {
+  LearnArticleRoute,
+  LearnIndexRoute,
+} from "../features/learn/learn-routes.tsx";
 import { MatchmakingHomeRoute } from "../features/matchmaking/lobby-home.tsx";
 import { MatchRoom } from "../features/matchmaking/match-room.tsx";
 import { createAuthPath } from "./return-to.ts";
@@ -32,6 +36,14 @@ export const router = createBrowserRouter([
   {
     path: "/",
     Component: MatchmakingHomeRoute,
+  },
+  {
+    path: "/learn",
+    Component: LearnIndexRoute,
+  },
+  {
+    path: "/learn/:slug",
+    Component: LearnArticleRoute,
   },
   {
     path: "/rooms/:matchId",
