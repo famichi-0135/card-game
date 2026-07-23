@@ -240,7 +240,13 @@ function createView(gameId: string, now: number): PlayerGameView {
       stamina: 21,
       handCount: 5,
       deckCount: 17,
-      discardPile: [],
+      discardPile: [
+        {
+          instanceId: "opponent-discard-barrier",
+          definitionId: "counter-barrier",
+          ownerId: "player-countermeasure",
+        },
+      ],
       attackGroups: [
         {
           groupId: "opponent-group-1",

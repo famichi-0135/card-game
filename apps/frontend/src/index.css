@@ -1,41 +1,18 @@
-:root {
-  color: #152420;
-  background: #e8eee9;
-  font-family: Inter, "Segoe UI", sans-serif;
-  font-synthesis: none;
-  text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
+@import "tailwindcss";
 
-* {
-  box-sizing: border-box;
-}
+@layer base {
+  html {
+    @apply min-h-dvh bg-slate-100;
+  }
 
-html,
-body,
-#root {
-  min-width: 100%;
-  min-height: 100%;
-  margin: 0;
-}
+  body {
+    @apply m-0 min-h-dvh bg-slate-100 font-sans text-slate-950 antialiased;
+  }
 
-body {
-  overflow: hidden;
-}
-
-button,
-input,
-textarea,
-select {
-  font: inherit;
-}
-
-button {
-  border: 0;
-}
-
-:focus-visible {
-  outline: 3px solid #d55a38;
-  outline-offset: 3px;
+  button,
+  input,
+  textarea,
+  select {
+    font: inherit;
+  }
 }
