@@ -192,7 +192,7 @@ export class MatchLobby extends DurableObject<CloudflareBindings> {
     if (match === null) {
       return { visible: false, error: { code: "MATCH_NOT_FOUND" } };
     }
-    return isParticipant(match, viewerPlayerId)
+    return match.status === "waiting" || isParticipant(match, viewerPlayerId)
       ? { visible: true, view: toMatchLobbyView(match) }
       : { visible: false, error: { code: "MATCH_ACCESS_FORBIDDEN" } };
   }

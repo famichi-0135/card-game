@@ -44,6 +44,14 @@ export function getLearnArticle(slug: string): LearnArticle | undefined {
   return learnArticles.find((article) => article.slug === slug);
 }
 
+export function getLearnArticles(
+  category: LearnCategory | null,
+): readonly LearnArticle[] {
+  return category === null
+    ? learnArticles
+    : learnArticles.filter((article) => article.category === category);
+}
+
 export function getLearnCategoryLabel(category: LearnCategory): string {
   return categoryLabels[category];
 }

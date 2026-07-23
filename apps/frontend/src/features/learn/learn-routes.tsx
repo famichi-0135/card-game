@@ -2,10 +2,10 @@ import { lazy, Suspense, type ReactNode } from "react";
 import { Link, useParams, useSearchParams } from "react-router";
 import {
   getLearnArticle,
+  getLearnArticles,
   getLearnCategoryLabel,
   isLearnCategory,
   LEARN_CATEGORIES,
-  learnArticles,
   type LearnArticle,
   type LearnCategory,
 } from "./learn-catalog.ts";
@@ -19,12 +19,7 @@ export function LearnIndexRoute() {
   const selectedCategory = isLearnCategory(requestedCategory)
     ? requestedCategory
     : null;
-  const articles =
-    selectedCategory === null
-      ? learnArticles
-      : learnArticles.filter(
-          (article) => article.category === selectedCategory,
-        );
+  const articles = getLearnArticles(selectedCategory);
 
   return (
     <LearnLayout>

@@ -1882,11 +1882,20 @@ export type GameWinner =
   | {
       type: "player";
       playerId: PlayerId;
-      reason: "stamina" | "deckOut" | "maxRoundStamina" | "maxRoundPower";
+      reason:
+        | "stamina"
+        | "deckOut"
+        | "maxRoundStamina"
+        | "maxRoundPower"
+        | "disconnectTimeout";
     }
   | {
       type: "draw";
-      reason: "bothStaminaZero" | "deckOutEqualStamina" | "maxRoundEqual";
+      reason:
+        | "bothStaminaZero"
+        | "deckOutEqualStamina"
+        | "maxRoundEqual"
+        | "bothDisconnected";
     };
 ```
 

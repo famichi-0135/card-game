@@ -170,6 +170,29 @@ describe("公開状態からの合法手判定", () => {
     });
   });
 
+  it("自己対象を許可するサポート効果では、手札の使用元カードも候補に含める", () => {
+    const actions = getAvailableGameActions({
+      view: createSupportPhaseView(),
+      catalog: createSelfTargetingSupportCatalog(),
+      now: 1_000,
+    });
+
+    expect(actions.handCards["support-card"]?.playSupport).toEqual({
+      available: true,
+      effectSelections: [
+        {
+          effectId: "remove-group",
+          stageIndex: 0,
+          required: true,
+          minTargets: 1,
+          maxTargets: 1,
+          selectionOrder: "independent",
+          candidates: [{ type: "supportCard", cardInstanceId: "support-card" }],
+        },
+      ],
+    });
+  });
+
   it("期限切れとカタログ不一致を安定した理由コードで返す", () => {
     const view = createSupportPhaseView();
     const catalog = createSupportCatalog();
@@ -391,6 +414,36 @@ function createSupportCatalog(): PublicCardCatalog {
               },
             },
           ],
+        },
+      },
+    },
+  };
+}
+
+function createSelfTargetingSupportCatalog(): PublicCardCatalog {
+  const catalog = createSupportCatalog();
+  const definition = catalog.definitions["support-1"];
+  if (definition === undefined) {
+    throw new Error("テスト用サポートカードが見つかりません。");
+  }
+
+  return {
+    ...catalog,
+    definitions: {
+      ...catalog.definitions,
+      [definition.id]: {
+        ...definition,
+        interaction: {
+          ...definition.interaction,
+          effects: definition.interaction.effects.map((effect) => ({
+            ...effect,
+            target: {
+              ...effect.target,
+              side: "self",
+              zones: ["supportCard"],
+              allowSourceCard: true,
+            },
+          })),
         },
       },
     },

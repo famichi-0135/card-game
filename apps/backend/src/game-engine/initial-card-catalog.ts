@@ -68,7 +68,7 @@ const supportNames: Record<Faction, readonly string[]> = {
 };
 
 export const INITIAL_CARD_CATALOG_INPUT: CardCatalogInput = {
-  version: "initial-catalog-v2-factions",
+  version: "initial-catalog-v3-presentation",
   definitions: [
     ...createFactionDefinitions("disaster"),
     ...createFactionDefinitions("countermeasure"),

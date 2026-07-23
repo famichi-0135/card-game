@@ -29,7 +29,7 @@ describe("初期カードカタログ", () => {
     );
 
     expect(gameEngineContext.cardCatalog.version).toBe(
-      "initial-catalog-v2-factions",
+      "initial-catalog-v3-presentation",
     );
     expect(disasterResult).toEqual({ valid: true });
     expect(countermeasureResult).toEqual({ valid: true });

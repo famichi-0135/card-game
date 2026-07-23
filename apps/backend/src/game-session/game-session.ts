@@ -301,7 +301,9 @@ export class GameSession extends DurableObject<CloudflareBindings> {
 
     await this.persist(nextSession);
     this.session = nextSession;
-    await this.syncCatalogRetention(nextSession);
+    if (shouldSyncCatalogRetention(session, nextSession)) {
+      await this.syncCatalogRetention(nextSession);
+    }
     await this.syncSessionAlarm(nextSession);
     if (result.accepted) {
       this.broadcastRealtimeUpdate(nextSession);
@@ -369,7 +371,9 @@ export class GameSession extends DurableObject<CloudflareBindings> {
     };
     await this.persist(nextSession);
     this.session = nextSession;
-    await this.syncCatalogRetention(nextSession);
+    if (shouldSyncCatalogRetention(session, nextSession)) {
+      await this.syncCatalogRetention(nextSession);
+    }
     await this.syncSessionAlarm(nextSession);
     this.broadcastRealtimeUpdate(nextSession);
   }
@@ -655,6 +659,17 @@ function getRetentionExpiresAt(
   session: StoredGameSession,
 ): number | null {
   return getGameSessionRetentionExpiresAt(state, session.retentionExpiresAt);
+}
+
+/** 初期化時以外は、再接続猶予の開始時だけカタログの保持期限を更新する。 */
+function shouldSyncCatalogRetention(
+  previous: StoredGameSession,
+  next: StoredGameSession,
+): boolean {
+  return (
+    getRetentionExpiresAt(previous.state, previous) !==
+    getRetentionExpiresAt(next.state, next)
+  );
 }
 
 function isRetentionExpired(session: StoredGameSession, now: number): boolean {
