@@ -48,6 +48,7 @@ export function GameBoardView({
   onCancelSupportPlay,
   onConfirmSupportPlay,
   onFinishPhase,
+  opponentOnline,
   onRetryCommand,
   onResynchronize,
   pendingSupportPlay,
@@ -64,6 +65,7 @@ export function GameBoardView({
   onCancelSupportPlay: () => void;
   onConfirmSupportPlay: (effectInputs: EffectInput[]) => void;
   onFinishPhase: () => void;
+  opponentOnline: boolean;
   onRetryCommand?: () => void;
   onResynchronize?: () => void;
   pendingSupportPlay: PendingSupportPlay | null;
@@ -106,6 +108,7 @@ export function GameBoardView({
             discardCount={view.opponent.discardPile.length}
             gameId={view.gameId}
             handCount={view.opponent.handCount}
+            opponentOnline={opponentOnline}
             stateVersion={view.stateVersion}
             onOpenDiscard={() =>
               openZoneDialog({

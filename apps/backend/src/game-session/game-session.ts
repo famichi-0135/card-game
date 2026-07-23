@@ -17,6 +17,7 @@ import type {
 } from "@disastar/game-engine/contracts";
 import type {
   AuthenticatedGameCommand,
+  GameRealtimeMessage,
   GameRealtimeUpdate,
   GameSnapshotResponse,
   SubmitGameCommandResponse,
@@ -36,6 +37,7 @@ const SESSION_STORAGE_KEY = "game-session-v2-factions";
 const AUTHENTICATED_PLAYER_ID_HEADER = "X-Disastar-Authenticated-Player-Id";
 
 type GameWebSocketAttachment = {
+  gameId: string;
   playerId: PlayerId;
 };
 
@@ -200,8 +202,12 @@ export class GameSession extends DurableObject<CloudflareBindings> {
     const pair = new WebSocketPair();
     const [client, server] = Object.values(pair);
     this.ctx.acceptWebSocket(server);
-    server.serializeAttachment({ playerId } satisfies GameWebSocketAttachment);
+    server.serializeAttachment({
+      gameId: session.state.gameId,
+      playerId,
+    } satisfies GameWebSocketAttachment);
     server.send(JSON.stringify(createRealtimeUpdate(session.state)));
+    this.broadcastPresence();
 
     return new Response(null, { status: 101, webSocket: client });
   }
@@ -366,20 +372,68 @@ export class GameSession extends DurableObject<CloudflareBindings> {
     webSocket.close(1008, "このWebSocketは更新通知の受信専用です。");
   }
 
+  webSocketClose(webSocket: WebSocket): void {
+    this.broadcastPresence(webSocket);
+  }
+
   webSocketError(webSocket: WebSocket): void {
     webSocket.close(1011, "WebSocket接続でエラーが発生しました。");
   }
 
   private broadcastRealtimeUpdate(session: StoredGameSession): void {
-    const message = JSON.stringify(createRealtimeUpdate(session.state));
+    this.broadcastRealtimeMessage(createRealtimeUpdate(session.state));
+  }
+
+  private broadcastPresence(excludedWebSocket?: WebSocket): void {
+    const connections = this.getRealtimeConnections(excludedWebSocket);
+    const gameId = connections[0]?.attachment.gameId;
+    if (gameId === undefined) {
+      return;
+    }
+
+    const onlinePlayerIds = [
+      ...new Set(connections.map(({ attachment }) => attachment.playerId)),
+    ].sort();
+    this.broadcastRealtimeMessage(
+      {
+        type: "GAME_PRESENCE_UPDATED",
+        gameId,
+        onlinePlayerIds,
+      },
+      connections,
+    );
+  }
+
+  private broadcastRealtimeMessage(
+    message: GameRealtimeMessage,
+    connections = this.getRealtimeConnections(),
+  ): void {
+    const serialized = JSON.stringify(message);
+    for (const { webSocket } of connections) {
+      webSocket.send(serialized);
+    }
+  }
+
+  private getRealtimeConnections(excludedWebSocket?: WebSocket): Array<{
+    webSocket: WebSocket;
+    attachment: GameWebSocketAttachment;
+  }> {
+    const connections: Array<{
+      webSocket: WebSocket;
+      attachment: GameWebSocketAttachment;
+    }> = [];
     for (const webSocket of this.ctx.getWebSockets()) {
+      if (webSocket === excludedWebSocket) {
+        continue;
+      }
       const attachment = webSocket.deserializeAttachment();
       if (!isGameWebSocketAttachment(attachment)) {
         webSocket.close(1008, "接続情報を検証できませんでした。");
         continue;
       }
-      webSocket.send(message);
+      connections.push({ webSocket, attachment });
     }
+    return connections;
   }
 
   private closeWebSockets(code: number, reason: string): void {
@@ -624,7 +678,11 @@ function createRealtimeUpdate(state: GameState): GameRealtimeUpdate {
 function isGameWebSocketAttachment(
   value: unknown,
 ): value is GameWebSocketAttachment {
-  return isRecord(value) && typeof value.playerId === "string";
+  return (
+    isRecord(value) &&
+    typeof value.gameId === "string" &&
+    typeof value.playerId === "string"
+  );
 }
 
 function assertAfterSequence(afterSequence: number): void {

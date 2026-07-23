@@ -102,6 +102,15 @@ export type GameRealtimeUpdate = {
   latestEventSequence: number;
 };
 
+/** WebSocket接続中の参加者だけを表す、一時的なプレゼンス通知。 */
+export type GameRealtimePresence = {
+  type: "GAME_PRESENCE_UPDATED";
+  gameId: string;
+  onlinePlayerIds: string[];
+};
+
+export type GameRealtimeMessage = GameRealtimeUpdate | GameRealtimePresence;
+
 /** バージョン固定された、表示専用のカードカタログ。 */
 export type PublicCardCatalogResponse = {
   catalog: PublicCardCatalog;

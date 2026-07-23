@@ -5,7 +5,13 @@ import type {
   PlayerVisibleEventEnvelope,
   PublicCardCatalog,
 } from "@disastar/game-engine";
-import { type ReactNode, useCallback, useEffect, useRef } from "react";
+import {
+  type ReactNode,
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 import { ApiClientError } from "../../app/api-client.ts";
 import type { GameConnectionState } from "./components/connection-status.tsx";
 import { GameBoardView } from "./game-board-view.tsx";
@@ -19,6 +25,7 @@ import { useGameBoardActions } from "./hooks/use-game-board-actions.ts";
 import { useOnlineStatus } from "./hooks/use-online-status.ts";
 import { usePublicEventFeed } from "./hooks/use-public-event-feed.ts";
 import { useGameRealtime } from "./hooks/use-game-realtime.ts";
+import { usePageVisibility } from "./hooks/use-page-visibility.ts";
 
 export function FixtureGameBoard({ fixture }: { fixture: GameBoardFixture }) {
   return (
@@ -43,15 +50,20 @@ export function GameBoard({
   const catalog = usePublicCardCatalog(snapshot.data?.view.cardCatalogVersion);
   const command = useGameCommand(gameId);
   const isOnline = useOnlineStatus();
+  const isPageVisible = usePageVisibility();
+  const [onlinePlayerIds, setOnlinePlayerIds] = useState<readonly string[]>([]);
   const resynchronize = snapshot.resynchronize;
   const resynchronizeFromRealtime = useCallback(() => {
     void resynchronize().catch(() => undefined);
   }, [resynchronize]);
   useGameRealtime({
-    enabled: isOnline && snapshot.data !== undefined,
+    enabled: isOnline && isPageVisible && snapshot.data !== undefined,
     gameId,
+    onPresence: setOnlinePlayerIds,
     onUpdate: resynchronizeFromRealtime,
   });
+
+  useEffect(() => setOnlinePlayerIds([]), [gameId]);
 
   if (snapshot.isPending) {
     return (
@@ -85,6 +97,9 @@ export function GameBoard({
         resynchronizationError: snapshot.resynchronizationError,
         snapshotError: snapshot.error,
       })}
+      opponentOnline={onlinePlayerIds.includes(
+        snapshot.data.view.opponent.playerId,
+      )}
       events={snapshot.data.events}
       latestEventSequence={snapshot.data.latestEventSequence}
       onCommand={command.submit}
@@ -104,6 +119,7 @@ function GameBoardContent({
   events = [],
   latestEventSequence = 0,
   onCommand,
+  opponentOnline = false,
   onRetryCommand,
   onResynchronize,
   preview = false,
@@ -117,6 +133,7 @@ function GameBoardContent({
   events?: readonly PlayerVisibleEventEnvelope[];
   latestEventSequence?: number;
   onCommand?: (command: GameCommand) => void;
+  opponentOnline?: boolean;
   onRetryCommand?: () => void;
   onResynchronize?: () => Promise<void>;
   preview?: boolean;
@@ -186,6 +203,7 @@ function GameBoardContent({
         onCancelSupportPlay={cancelSupportPlay}
         onConfirmSupportPlay={confirmSupportPlay}
         onFinishPhase={finishPhase}
+        opponentOnline={opponentOnline}
         onRetryCommand={onRetryCommand}
         onResynchronize={
           onResynchronize === undefined

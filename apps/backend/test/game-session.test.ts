@@ -101,6 +101,29 @@ describe("GameSession Durable Object", () => {
       latestEventSequence: expect.any(Number),
     });
 
+    const presenceAfterJoin = waitForWebSocketMessage(
+      webSocket,
+      (message) =>
+        isPresenceMessage(message) &&
+        message.onlinePlayerIds.length === 2 &&
+        message.onlinePlayerIds.includes("player-2"),
+    );
+    const secondConnection = await stub.fetch(
+      new Request("http://example.com/events", {
+        headers: {
+          Upgrade: "websocket",
+          "X-Disastar-Authenticated-Player-Id": "player-2",
+        },
+      }),
+    );
+    secondConnection.webSocket?.accept();
+
+    expect(await presenceAfterJoin).toEqual({
+      type: "GAME_PRESENCE_UPDATED",
+      gameId,
+      onlinePlayerIds: ["player-1", "player-2"],
+    });
+
     const snapshot = await stub.getSnapshot("player-1", 0);
     if (!snapshot.found) {
       throw new Error("接続後のゲーム状態を取得できませんでした。");
@@ -431,4 +454,37 @@ function createInitializeInput(
       },
     ],
   };
+}
+
+type PresenceMessage = {
+  type: "GAME_PRESENCE_UPDATED";
+  gameId: string;
+  onlinePlayerIds: string[];
+};
+
+function waitForWebSocketMessage(
+  webSocket: WebSocket,
+  matches: (message: unknown) => boolean,
+): Promise<unknown> {
+  return new Promise((resolve) => {
+    const listener = (event: MessageEvent) => {
+      const message = JSON.parse(String(event.data)) as unknown;
+      if (matches(message)) {
+        webSocket.removeEventListener("message", listener);
+        resolve(message);
+      }
+    };
+    webSocket.addEventListener("message", listener);
+  });
+}
+
+function isPresenceMessage(value: unknown): value is PresenceMessage {
+  return (
+    typeof value === "object" &&
+    value !== null &&
+    "type" in value &&
+    value.type === "GAME_PRESENCE_UPDATED" &&
+    "onlinePlayerIds" in value &&
+    Array.isArray(value.onlinePlayerIds)
+  );
 }

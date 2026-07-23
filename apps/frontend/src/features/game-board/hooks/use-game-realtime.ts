@@ -1,4 +1,7 @@
-import type { GameRealtimeUpdate } from "@disastar/contracts/game";
+import type {
+  GameRealtimeMessage,
+  GameRealtimeUpdate,
+} from "@disastar/contracts/game";
 import { useEffect, useRef } from "react";
 
 const RECONNECT_DELAYS_MS = [1_000, 2_000, 4_000, 8_000, 10_000] as const;
@@ -10,14 +13,18 @@ const RECONNECT_DELAYS_MS = [1_000, 2_000, 4_000, 8_000, 10_000] as const;
 export function useGameRealtime({
   enabled,
   gameId,
+  onPresence,
   onUpdate,
 }: {
   enabled: boolean;
   gameId: string;
+  onPresence: (onlinePlayerIds: readonly string[]) => void;
   onUpdate: (update: GameRealtimeUpdate) => void;
 }): void {
   const onUpdateRef = useRef(onUpdate);
   onUpdateRef.current = onUpdate;
+  const onPresenceRef = useRef(onPresence);
+  onPresenceRef.current = onPresence;
 
   useEffect(() => {
     if (!enabled || typeof WebSocket === "undefined") {
@@ -41,9 +48,12 @@ export function useGameRealtime({
         reconnectAttempt = 0;
       });
       socket.addEventListener("message", (event) => {
-        const update = parseGameRealtimeUpdate(event.data, gameId);
-        if (update !== null) {
-          onUpdateRef.current(update);
+        const message = parseGameRealtimeMessage(event.data, gameId);
+        if (message?.type === "GAME_UPDATED") {
+          onUpdateRef.current(message);
+        }
+        if (message?.type === "GAME_PRESENCE_UPDATED") {
+          onPresenceRef.current(message.onlinePlayerIds);
         }
       });
       socket.addEventListener("close", (event) => {
@@ -71,31 +81,43 @@ export function useGameRealtime({
   }, [enabled, gameId]);
 }
 
-function parseGameRealtimeUpdate(
+function parseGameRealtimeMessage(
   value: unknown,
   gameId: string,
-): GameRealtimeUpdate | null {
+): GameRealtimeMessage | null {
   if (typeof value !== "string") {
     return null;
   }
 
   try {
     const parsed: unknown = JSON.parse(value);
-    if (
-      !isRecord(parsed) ||
-      parsed.type !== "GAME_UPDATED" ||
-      parsed.gameId !== gameId ||
-      !isNonNegativeSafeInteger(parsed.stateVersion) ||
-      !isNonNegativeSafeInteger(parsed.latestEventSequence)
-    ) {
+    if (!isRecord(parsed) || parsed.gameId !== gameId) {
       return null;
     }
-    return {
-      type: "GAME_UPDATED",
-      gameId: parsed.gameId,
-      stateVersion: parsed.stateVersion,
-      latestEventSequence: parsed.latestEventSequence,
-    };
+    if (
+      parsed.type === "GAME_UPDATED" &&
+      isNonNegativeSafeInteger(parsed.stateVersion) &&
+      isNonNegativeSafeInteger(parsed.latestEventSequence)
+    ) {
+      return {
+        type: "GAME_UPDATED",
+        gameId: parsed.gameId,
+        stateVersion: parsed.stateVersion,
+        latestEventSequence: parsed.latestEventSequence,
+      };
+    }
+    if (
+      parsed.type === "GAME_PRESENCE_UPDATED" &&
+      Array.isArray(parsed.onlinePlayerIds) &&
+      parsed.onlinePlayerIds.every((playerId) => typeof playerId === "string")
+    ) {
+      return {
+        type: "GAME_PRESENCE_UPDATED",
+        gameId: parsed.gameId,
+        onlinePlayerIds: parsed.onlinePlayerIds,
+      };
+    }
+    return null;
   } catch {
     return null;
   }
