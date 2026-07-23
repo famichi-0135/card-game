@@ -677,7 +677,9 @@ function getDisconnectedPlayerIds(
   onlinePlayerIds: readonly PlayerId[],
 ): PlayerId[] {
   const onlinePlayerIdSet = new Set(onlinePlayerIds);
-  return state.playerOrder.filter((playerId) => !onlinePlayerIdSet.has(playerId));
+  return state.playerOrder.filter(
+    (playerId) => !onlinePlayerIdSet.has(playerId),
+  );
 }
 
 function createRealtimeUpdate(state: GameState): GameRealtimeUpdate {
