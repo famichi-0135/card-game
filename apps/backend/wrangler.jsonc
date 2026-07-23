@@ -54,6 +54,11 @@
   "env": {
     "staging": {
       "workers_dev": false,
+      "vars": {
+        "BETTER_AUTH_URL": "https://disastar-frontend-staging.tomop0513-maey.workers.dev",
+        "BETTER_AUTH_TRUSTED_ORIGINS": "https://disastar-frontend-staging.tomop0513-maey.workers.dev",
+        "GOOGLE_CLIENT_ID": "508140377650-4lh9mv75ub43uc97b45pbdvbqrdbpj50.apps.googleusercontent.com",
+      },
       "d1_databases": [
         {
           "binding": "DB",
