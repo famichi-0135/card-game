@@ -4,6 +4,7 @@ import type {
   AuthenticatedGameCommand,
   GameSnapshotResponse,
 } from "@disastar/contracts/game";
+import { initializeGame } from "@disastar/game-engine";
 import type { InitializeGameInput } from "@disastar/game-engine/contracts";
 import type {
   GetGameSnapshotResult,
@@ -12,11 +13,14 @@ import type {
 import {
   getGameSessionRetentionExpiresAt,
   migrateAttackGroupSlots,
+  migrateStoredGameSession,
 } from "../src/game-session/game-session.js";
 import {
   createCountermeasureStarterDeckDefinitionIds,
   createDisasterStarterDeckDefinitionIds,
+  gameEngineDependencies,
   gameEngineContext,
+  legacyV3GameEngineContext,
 } from "../src/game-engine/runtime.js";
 import { GAME_RECONNECT_GRACE_PERIOD_MS } from "../src/catalog-archive/catalog-archive.js";
 import { cloneCardCatalog } from "../src/catalog-archive/catalog-archive.js";
@@ -220,6 +224,35 @@ describe("GameSession Durable Object", () => {
       ),
     ).toEqual([0, 1]);
     expect(migrateAttackGroupSlots(state)).toBe(false);
+  });
+
+  it("engineContextを持たないv3保存済みセッションを復元する", () => {
+    const input = createInitializeInput("game-session-v3-migration");
+    const initialized = initializeGame(
+      input,
+      legacyV3GameEngineContext,
+      gameEngineDependencies,
+    );
+    if (!initialized.initialized) {
+      throw new Error(initialized.error.message);
+    }
+
+    const migrated = migrateStoredGameSession({
+      initializationInput: input,
+      state: initialized.state,
+      events: initialized.events,
+      commandResults: {},
+    });
+
+    expect(migrated.changed).toBe(true);
+    expect(migrated.session.engineContext).toMatchObject({
+      cardCatalog: {
+        version: "initial-catalog-v3-presentation",
+      },
+    });
+    expect(migrated.session.state.cardCatalogVersion).toBe(
+      "initial-catalog-v3-presentation",
+    );
   });
 
   it("同じ commandId の再送には最初の結果を返す", async () => {
