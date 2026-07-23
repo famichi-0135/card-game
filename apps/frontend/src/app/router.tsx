@@ -8,7 +8,7 @@ import { GameBoard } from "../features/game-board/game-board.tsx";
 import {
   FIXTURE_GAME_ID,
   createGameBoardFixture,
-} from "../features/game-board/game-board-fixture.ts";
+} from "../features/game-board/fixtures/game-board-fixture.ts";
 import { useSession } from "./session.ts";
 
 export const router = createBrowserRouter([
