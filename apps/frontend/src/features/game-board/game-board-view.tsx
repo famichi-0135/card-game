@@ -25,17 +25,7 @@ import { SupportZone } from "./components/support-zone.tsx";
 import { ZoneDialog, type ZoneDialogState } from "./components/zone-dialog.tsx";
 import type { PendingSupportPlay } from "./hooks/use-game-board-actions.ts";
 import type { PublicEventFeedItem } from "./hooks/use-public-event-feed.ts";
-
-const phaseLabels: Record<PlayerGameView["phase"], string> = {
-  initializing: "準備中",
-  firstPlayerPlacement: "あなたの配置",
-  secondPlayerPlacement: "相手の配置",
-  support: "サポート",
-  resolution: "解決",
-  cleanup: "整理",
-  refill: "補充",
-  finished: "終了",
-};
+import { getPhasePresentation } from "./phase-presentation.ts";
 
 export function GameBoardView({
   accountAction,
@@ -83,7 +73,7 @@ export function GameBoardView({
     isInteractive && isFinishablePhase(view.phase) && finishAction.available;
   const finishActionLabel =
     view.phase === "support" ? "サポート終了" : "配置終了";
-  const phaseInstruction = getPhaseInstruction(view.phase);
+  const phasePresentation = getPhasePresentation(view);
   const isFinished = view.status === "finished";
   const commandMessage = commandPending ? "操作を送信しています" : commandError;
   const handInstruction =
@@ -150,7 +140,7 @@ export function GameBoardView({
                 </div>
                 <div className="flex min-w-0 flex-wrap items-center justify-center gap-x-3 gap-y-1">
                   <span className="text-slate-500">現在のフェーズ</span>
-                  <strong>{phaseLabels[view.phase]}</strong>
+                  <strong>{phasePresentation.label}</strong>
                   <span className="rounded border border-slate-300 px-2 py-1 font-mono text-xs">
                     {formatSeconds(remainingSeconds)}
                   </span>
@@ -165,7 +155,7 @@ export function GameBoardView({
                     className="truncate text-slate-600"
                     role="status"
                   >
-                    {commandMessage ?? phaseInstruction}
+                    {commandMessage ?? phasePresentation.instruction}
                   </span>
                   {onRetryCommand === undefined ? null : (
                     <button
@@ -347,25 +337,4 @@ function isFinishablePhase(phase: PlayerGameView["phase"]): boolean {
     phase === "secondPlayerPlacement" ||
     phase === "support"
   );
-}
-
-function getPhaseInstruction(phase: PlayerGameView["phase"]): string {
-  switch (phase) {
-    case "firstPlayerPlacement":
-      return "攻撃カードを配置または連鎖できます";
-    case "secondPlayerPlacement":
-      return "相手が攻撃カードを配置しています";
-    case "support":
-      return "サポートカードを使用できます";
-    case "resolution":
-      return "カード効果を解決しています";
-    case "cleanup":
-      return "場を整理しています";
-    case "refill":
-      return "手札を補充しています";
-    case "finished":
-      return "ゲームは終了しました";
-    case "initializing":
-      return "ゲームを準備しています";
-  }
 }

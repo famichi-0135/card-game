@@ -1,23 +1,93 @@
 import type {
+  Attribute,
   CardCatalogInput,
   CardDefinition,
+  CardEffectDefinition,
   Faction,
+  TargetRule,
 } from "@disastar/game-engine/contracts";
 
 const attributes = ["attributeA", "attributeB", "attributeC"] as const;
-const attackAttributes = [
-  "attributeA",
-  "attributeA",
-  "attributeA",
-  "attributeB",
-  "attributeB",
-  "attributeB",
-  "attributeC",
-  "attributeC",
-  "attributeA",
-  "attributeB",
-  "attributeC",
-] as const;
+
+type AttackTemplate = {
+  attribute: Attribute;
+  cost: number;
+  basePower: number;
+  chainableAttackNumbers: readonly number[];
+};
+
+/**
+ * みなもとが各属性3枚までであるため、カード単体の必要みなもとも3以下に固定する。
+ * 1 -> 2 -> 3 の連鎖は、少ないみなもとでも段階的に盤面を育てられる基本線である。
+ */
+const attackTemplates: readonly AttackTemplate[] = [
+  {
+    attribute: "attributeA",
+    cost: 1,
+    basePower: 1,
+    chainableAttackNumbers: [2],
+  },
+  {
+    attribute: "attributeA",
+    cost: 2,
+    basePower: 2,
+    chainableAttackNumbers: [3],
+  },
+  {
+    attribute: "attributeA",
+    cost: 3,
+    basePower: 3,
+    chainableAttackNumbers: [],
+  },
+  {
+    attribute: "attributeB",
+    cost: 1,
+    basePower: 1,
+    chainableAttackNumbers: [5],
+  },
+  {
+    attribute: "attributeB",
+    cost: 2,
+    basePower: 2,
+    chainableAttackNumbers: [6],
+  },
+  {
+    attribute: "attributeB",
+    cost: 3,
+    basePower: 3,
+    chainableAttackNumbers: [],
+  },
+  {
+    attribute: "attributeC",
+    cost: 1,
+    basePower: 1,
+    chainableAttackNumbers: [8],
+  },
+  {
+    attribute: "attributeC",
+    cost: 2,
+    basePower: 2,
+    chainableAttackNumbers: [11],
+  },
+  {
+    attribute: "attributeA",
+    cost: 2,
+    basePower: 2,
+    chainableAttackNumbers: [3],
+  },
+  {
+    attribute: "attributeB",
+    cost: 2,
+    basePower: 2,
+    chainableAttackNumbers: [6],
+  },
+  {
+    attribute: "attributeC",
+    cost: 3,
+    basePower: 3,
+    chainableAttackNumbers: [],
+  },
+];
 
 const attackNames: Record<Faction, readonly string[]> = {
   disaster: [
@@ -48,27 +118,36 @@ const attackNames: Record<Faction, readonly string[]> = {
   ],
 };
 
+const manaNames: Record<Faction, readonly string[]> = {
+  disaster: ["熱のみなもと", "水のみなもと", "風のみなもと"],
+  countermeasure: ["備蓄のみなもと", "治水のみなもと", "避難のみなもと"],
+};
+
 const supportNames: Record<Faction, readonly string[]> = {
   disaster: [
     "ヒートアイランド増幅",
-    "ライフライン寸断",
+    "支援網の寸断",
     "水源汚染",
-    "災害の長期化",
+    "避難疲労",
     "避難路遮断",
-    "複合災害",
+    "情報混乱",
   ],
   countermeasure: [
     "地域連携",
     "緊急復旧",
-    "備蓄活用",
+    "資源再配分",
     "応急救護",
     "被害区域封鎖",
-    "復旧計画",
+    "防災情報収集",
   ],
 };
 
+const starterAttackNumbers = [
+  1, 1, 2, 2, 3, 4, 4, 5, 5, 6, 7, 7, 8, 8, 11,
+] as const;
+
 export const INITIAL_CARD_CATALOG_INPUT: CardCatalogInput = {
-  version: "initial-catalog-v3-presentation",
+  version: "initial-catalog-v4-starter-balance",
   definitions: [
     ...createFactionDefinitions("disaster"),
     ...createFactionDefinitions("countermeasure"),
@@ -97,41 +176,32 @@ function createFactionDefinitions(faction: Faction): CardDefinition[] {
   return [
     ...attributes.map((attribute, index) => ({
       id: `${faction}-mana-${index + 1}`,
-      name: `${faction === "disaster" ? "災害" : "対策"}のみなもと${index + 1}`,
+      name: manaNames[faction][index] ?? `みなもと${index + 1}`,
       faction,
       attribute,
       cardType: "mana" as const,
       manaAmount: 1 as const,
     })),
-    ...attackNames[faction].map((name, index) => ({
+    ...attackTemplates.map((template, index) => ({
       id: `${faction}-attack-${index + 1}`,
-      name,
+      name: attackNames[faction][index] ?? `攻撃カード${index + 1}`,
       faction,
-      attribute: attackAttributes[index] ?? "attributeA",
+      attribute: template.attribute,
       cardType: "attack" as const,
-      cost: (index % 3) + 1,
-      basePower: (index % 3) + 2,
-      chainableCardIds: createChainableCardIds(faction, index),
+      cost: template.cost,
+      basePower: template.basePower,
+      chainableCardIds: template.chainableAttackNumbers.map(
+        (number) => `${faction}-attack-${number}`,
+      ),
       effects: [],
     })),
     ...createSupportDefinitions(faction),
   ];
 }
 
-function createChainableCardIds(
-  faction: Faction,
-  zeroBasedIndex: number,
-): string[] {
-  const nextIndex = zeroBasedIndex + 2;
-  const currentAttribute = attackAttributes[zeroBasedIndex];
-  const nextAttribute = attackAttributes[zeroBasedIndex + 1];
-  return nextIndex <= 11 && currentAttribute === nextAttribute
-    ? [`${faction}-attack-${nextIndex}`]
-    : [];
-}
-
 function createSupportDefinitions(faction: Faction): CardDefinition[] {
   const names = supportNames[faction];
+  const isDisaster = faction === "disaster";
   return [
     {
       id: `${faction}-support-group-boost`,
@@ -139,7 +209,7 @@ function createSupportDefinitions(faction: Faction): CardDefinition[] {
       faction,
       attribute: "attributeA",
       cardType: "support",
-      cost: 2,
+      cost: 1,
       duration: "untilRoundEnd",
       effects: [
         {
@@ -148,15 +218,8 @@ function createSupportDefinitions(faction: Faction): CardDefinition[] {
           activationType: "continuous",
           scope: "groupPower",
           operation: "add",
-          value: 3,
-          targetRule: {
-            required: true,
-            minTargets: 1,
-            maxTargets: 1,
-            side: "self",
-            zones: ["attackGroup"],
-            allowSourceCard: false,
-          },
+          value: 1,
+          targetRule: singleTargetRule("self", "attackGroup"),
         },
       ],
     },
@@ -166,21 +229,14 @@ function createSupportDefinitions(faction: Faction): CardDefinition[] {
       faction,
       attribute: "attributeB",
       cardType: "support",
-      cost: 2,
+      cost: 1,
       duration: "instant",
       effects: [
         {
           effectId: "remove-opponent-support",
           type: "removeSupportCard",
           activationType: "onPlay",
-          targetRule: {
-            required: true,
-            minTargets: 1,
-            maxTargets: 1,
-            side: "opponent",
-            zones: ["supportCard"],
-            allowSourceCard: false,
-          },
+          targetRule: singleTargetRule("opponent", "supportCard"),
         },
       ],
     },
@@ -190,28 +246,21 @@ function createSupportDefinitions(faction: Faction): CardDefinition[] {
       faction,
       attribute: "attributeB",
       cardType: "support",
-      cost: 3,
+      cost: 2,
       duration: "instant",
       effects: [
         {
           effectId: "reduce-opponent-mana",
           type: "reduceMana",
           activationType: "onPlay",
-          amount: 2,
-          targetRule: {
-            required: true,
-            minTargets: 1,
-            maxTargets: 1,
-            side: "opponent",
-            zones: ["mana"],
-            allowSourceCard: false,
-          },
+          amount: 1,
+          targetRule: singleTargetRule("opponent", "mana"),
         },
       ],
     },
     {
       id: `${faction}-support-stamina`,
-      name: names[3] ?? "スタミナ回復",
+      name: names[3] ?? "スタミナ操作",
       faction,
       attribute: "attributeC",
       cardType: "support",
@@ -219,18 +268,16 @@ function createSupportDefinitions(faction: Faction): CardDefinition[] {
       duration: "instant",
       effects: [
         {
-          effectId: "restore-stamina",
+          effectId: isDisaster
+            ? "damage-opponent-stamina"
+            : "restore-self-stamina",
           type: "changeStamina",
           activationType: "onPlay",
-          amount: 2,
-          targetRule: {
-            required: true,
-            minTargets: 1,
-            maxTargets: 1,
-            side: "self",
-            zones: ["player"],
-            allowSourceCard: false,
-          },
+          amount: isDisaster ? -1 : 1,
+          targetRule: singleTargetRule(
+            isDisaster ? "opponent" : "self",
+            "player",
+          ),
         },
       ],
     },
@@ -240,79 +287,70 @@ function createSupportDefinitions(faction: Faction): CardDefinition[] {
       faction,
       attribute: "attributeC",
       cardType: "support",
-      cost: 4,
+      cost: 3,
       duration: "instant",
       effects: [
         {
           effectId: "remove-opponent-group",
           type: "removeAttackGroup",
           activationType: "onPlay",
-          targetRule: {
-            required: true,
-            minTargets: 1,
-            maxTargets: 1,
-            side: "opponent",
-            zones: ["attackGroup"],
-            allowSourceCard: false,
-          },
+          targetRule: singleTargetRule("opponent", "attackGroup"),
         },
       ],
     },
     {
+      // 既存保存済みデッキとの互換のためIDは維持する。
       id: `${faction}-support-destroy-draw`,
-      name: names[5] ?? "複合効果",
+      name: names[5] ?? "カードドロー",
       faction,
       attribute: "attributeA",
       cardType: "support",
-      cost: 5,
+      cost: 1,
       duration: "instant",
       effects: [
-        {
-          effectId: "remove-group",
-          type: "removeAttackGroup",
-          activationType: "onPlay",
-          targetRule: {
-            required: true,
-            minTargets: 1,
-            maxTargets: 1,
-            side: "opponent",
-            zones: ["attackGroup"],
-            allowSourceCard: false,
-          },
-        },
         {
           effectId: "draw-one",
           type: "drawCards",
           activationType: "onPlay",
           count: 1,
-          targetRule: {
-            required: false,
-            minTargets: 0,
-            maxTargets: 0,
-            side: "self",
-            zones: [],
-            allowSourceCard: false,
-          },
+          targetRule: noTargetRule(),
         },
       ],
     },
   ];
 }
 
+function singleTargetRule(
+  side: "self" | "opponent",
+  zone: "attackGroup" | "supportCard" | "player" | "mana",
+): TargetRule {
+  return {
+    required: true,
+    minTargets: 1,
+    maxTargets: 1,
+    side,
+    zones: [zone],
+    allowSourceCard: false,
+  };
+}
+
+function noTargetRule(): TargetRule {
+  return {
+    required: false,
+    minTargets: 0,
+    maxTargets: 0,
+    side: "self",
+    zones: [],
+    allowSourceCard: false,
+  };
+}
+
 function createStarterDeckIds(faction: Faction): string[] {
   return [
-    `${faction}-mana-1`,
-    `${faction}-mana-1`,
-    `${faction}-mana-1`,
-    `${faction}-mana-2`,
-    `${faction}-mana-2`,
-    `${faction}-mana-2`,
-    `${faction}-mana-3`,
-    `${faction}-mana-3`,
-    ...Array.from({ length: 8 }, (_, index) => [
-      `${faction}-attack-${index + 1}`,
-      `${faction}-attack-${index + 1}`,
-    ]).flat(),
+    ...attributes.flatMap((_, index) =>
+      Array.from({ length: 3 }, () => `${faction}-mana-${index + 1}`),
+    ),
+    ...starterAttackNumbers.map((number) => `${faction}-attack-${number}`),
     `${faction}-support-group-boost`,
     `${faction}-support-remove-support`,
     `${faction}-support-reduce-mana`,
@@ -335,31 +373,51 @@ function withPresentation(definition: CardDefinition): CardDefinition {
 function createRulesText(definition: CardDefinition): string {
   switch (definition.cardType) {
     case "mana":
-      return "ゲーム開始時にみなもととして配置されるカードです。";
+      return "引いた直後に対応属性のみなもと総量を1増やし、捨て札へ移動します。";
     case "attack":
       return `必要なみなもと ${definition.cost}。基本攻撃力 ${definition.basePower}。`;
     case "support":
       return `${createDurationText(definition.duration)}。${definition.effects
-        .map((effect) => {
-          switch (effect.type) {
-            case "modifyPower":
-              return "攻撃力を変更します。";
-            case "changeStamina":
-              return "スタミナを変更します。";
-            case "reduceMana":
-              return "みなもとを減らします。";
-            case "drawCards":
-              return "カードを引きます。";
-            case "removeAttackGroup":
-              return "攻撃グループを除去します。";
-            case "removeSupportCard":
-              return "サポートカードを除去します。";
-            case "custom":
-              return "固有の効果を解決します。";
-          }
-        })
+        .map(createEffectRulesText)
         .join(" ")}`;
   }
+}
+
+function createEffectRulesText(effect: CardEffectDefinition): string {
+  const targetLabel = createTargetLabel(effect.targetRule.side);
+  switch (effect.type) {
+    case "modifyPower":
+      return `${targetLabel}の攻撃グループの攻撃力を${formatSigned(effect.value)}。`;
+    case "changeStamina":
+      return `${targetLabel}のスタミナを${formatSigned(effect.amount)}。`;
+    case "reduceMana":
+      return `${targetLabel}のみなもとを${effect.amount}減らします。`;
+    case "drawCards":
+      return `カードを${effect.count}枚引きます。`;
+    case "removeAttackGroup":
+      return `${targetLabel}の攻撃グループを除去します。`;
+    case "removeSupportCard":
+      return `${targetLabel}のサポートカードを除去します。`;
+    case "custom":
+      return "固有の効果を解決します。";
+  }
+}
+
+function createTargetLabel(
+  side: CardEffectDefinition["targetRule"]["side"],
+): string {
+  switch (side) {
+    case "self":
+      return "自分";
+    case "opponent":
+      return "相手";
+    case "either":
+      return "選んだプレイヤー";
+  }
+}
+
+function formatSigned(value: number): string {
+  return value >= 0 ? `+${value}` : String(value);
 }
 
 function createDurationText(

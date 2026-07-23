@@ -29,7 +29,7 @@ describe("初期カードカタログ", () => {
     );
 
     expect(gameEngineContext.cardCatalog.version).toBe(
-      "initial-catalog-v3-presentation",
+      "initial-catalog-v4-starter-balance",
     );
     expect(disasterResult).toEqual({ valid: true });
     expect(countermeasureResult).toEqual({ valid: true });
@@ -56,10 +56,7 @@ describe("初期カードカタログ", () => {
       ],
     ).toMatchObject({
       cardType: "support",
-      effects: [
-        expect.objectContaining({ type: "removeAttackGroup" }),
-        expect.objectContaining({ type: "drawCards" }),
-      ],
+      effects: [expect.objectContaining({ type: "drawCards" })],
     });
   });
 });
