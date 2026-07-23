@@ -16,6 +16,7 @@
 ## Environment
 
 - [開発環境構築ガイド](./environment/development-environment.md): 必要なツール、初回セットアップ、ローカル起動、D1・認証・Cloudflare の設定手順。
+- [Staging 環境の構築・確認手順](./environment/staging-deployment.md): staging の Worker・D1 分離、Google OAuth 設定、2人対戦の受け入れ確認。
 - [チーム開発ガイド](./environment/team-development.md): Git と GitHub を初めて使うチーム向けの開発手順、ブランチ戦略、プルリクエスト運用。
 - [AI 開発運用ガイド](./environment/ai-development.md): Codex の実装・レビュー補助と、人間の承認を残す GitHub Actions 運用。
 

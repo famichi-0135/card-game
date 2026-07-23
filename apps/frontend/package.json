@@ -10,6 +10,9 @@
     "check-types": "tsc -b --pretty false",
     "preview": "pnpm run build && vite preview",
     "deploy": "pnpm run build && wrangler deploy",
+    "build:staging": "tsc -b && vite build --mode staging",
+    "deploy:staging": "pnpm run build:staging && wrangler deploy --keep-vars",
+    "deploy:staging:check": "pnpm run build:staging && wrangler deploy --dry-run",
     "cf-typegen": "wrangler types"
   },
   "dependencies": {

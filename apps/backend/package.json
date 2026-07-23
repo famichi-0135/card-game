@@ -14,8 +14,11 @@
     "db:pull": "drizzle-kit pull",
     "db:migrate:local": "wrangler d1 migrations apply DB --local",
     "db:migrate:remote": "wrangler d1 migrations apply DB --remote",
+    "db:migrate:staging": "wrangler d1 migrations apply DB --remote --env staging",
     "db:studio": "drizzle-kit studio",
     "deploy": "wrangler deploy --minify",
+    "deploy:staging": "wrangler deploy --env staging --minify --keep-vars",
+    "deploy:staging:check": "wrangler deploy --env staging --dry-run",
     "cf-typegen": "wrangler types --env-interface CloudflareBindings --env-file .dev.vars.example"
   },
   "dependencies": {
