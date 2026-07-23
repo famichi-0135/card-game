@@ -138,6 +138,8 @@ function getPlayerWinReason(
       return "最終ラウンドのスタミナが上回りました。";
     case "maxRoundPower":
       return "最終ラウンドの総パワーが上回りました。";
+    case "disconnectTimeout":
+      return "相手が制限時間までに対戦へ戻りませんでした。";
   }
 }
 
@@ -154,5 +156,7 @@ function getDrawReason(
       return "双方の山札が尽き、スタミナが同じでした。";
     case "maxRoundEqual":
       return "最終ラウンドのスタミナと総パワーが同じでした。";
+    case "bothDisconnected":
+      return "双方が制限時間までに対戦へ戻りませんでした。";
   }
 }

@@ -329,6 +329,85 @@ describe("効果なしのゲーム進行", () => {
     });
   });
 
+  it("操作担当者が期限までに復帰しない場合は切断敗北にする", () => {
+    const context = createTestContext();
+    const state = initializeForProgression(context);
+    const result = executeCommand(
+      state,
+      {
+        command: {
+          type: "HANDLE_DISCONNECT_TIMEOUT",
+          gameId: state.gameId,
+          phaseSequence: state.phaseSequence,
+          disconnectedPlayerIds: [state.firstPlayerId],
+        },
+        receivedAt: state.phaseDeadlineAt ?? 0,
+      },
+      context,
+      createDependencies(),
+    );
+
+    expect(result).toMatchObject({
+      accepted: true,
+      state: {
+        status: "finished",
+        phase: "finished",
+        winner: {
+          type: "player",
+          playerId: state.secondPlayerId,
+          reason: "disconnectTimeout",
+        },
+      },
+    });
+    if (result.accepted) {
+      expect(result.events.map((entry) => entry.event.type)).toContain(
+        "GAME_FINISHED",
+      );
+    }
+  });
+
+  it("サポートフェーズで両者が切断中なら引き分けにする", () => {
+    const context = createTestContext();
+    let state = initializeForProgression(context);
+    state = submit(
+      state,
+      state.firstPlayerId,
+      { type: "FINISH_PLACEMENT" },
+      "disconnect-finish-first",
+      context,
+    ).state;
+    state = submit(
+      state,
+      state.secondPlayerId,
+      { type: "FINISH_PLACEMENT" },
+      "disconnect-finish-second",
+      context,
+    ).state;
+
+    const result = executeCommand(
+      state,
+      {
+        command: {
+          type: "HANDLE_DISCONNECT_TIMEOUT",
+          gameId: state.gameId,
+          phaseSequence: state.phaseSequence,
+          disconnectedPlayerIds: [...state.playerOrder],
+        },
+        receivedAt: state.phaseDeadlineAt ?? 0,
+      },
+      context,
+      createDependencies(),
+    );
+
+    expect(result).toMatchObject({
+      accepted: true,
+      state: {
+        status: "finished",
+        winner: { type: "draw", reason: "bothDisconnected" },
+      },
+    });
+  });
+
   it("同じ固定デッキとseedから、効果なしで山札切れまで同じ対戦結果を再現する", () => {
     const first = runMatchToEnd();
     const second = runMatchToEnd();

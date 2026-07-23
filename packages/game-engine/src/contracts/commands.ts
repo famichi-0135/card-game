@@ -148,7 +148,20 @@ export type HandlePhaseTimeoutCommand = {
   phaseSequence: number;
 };
 
-export type SystemGameCommand = HandlePhaseTimeoutCommand;
+/**
+ * フェーズ期限時に、接続中でないプレイヤーをサーバーが申告する内部コマンド。
+ * エンジンは当該フェーズで操作責任を持つプレイヤーだけを敗北判定に使う。
+ */
+export type HandleDisconnectTimeoutCommand = {
+  type: "HANDLE_DISCONNECT_TIMEOUT";
+  gameId: GameId;
+  phaseSequence: number;
+  disconnectedPlayerIds: PlayerId[];
+};
+
+export type SystemGameCommand =
+  | HandlePhaseTimeoutCommand
+  | HandleDisconnectTimeoutCommand;
 
 export type ReceivedCommandEnvelope = {
   command: GameCommand | SystemGameCommand;

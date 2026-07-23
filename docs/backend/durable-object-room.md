@@ -24,7 +24,7 @@ GameSession Durable Object
 
 状態とコマンド結果は、応答する前にDO Storageへ書き込む。同じ`commandId`が再送された場合は、エンジンを再実行せず保存済みの最初の結果を返す。フェーズ期限がある間はDO Alarmを1つだけ設定し、アラームでは`HANDLE_PHASE_TIMEOUT`をエンジンへ渡す。ゲーム中の公開イベントを保持し、`afterSequence`による差分取得を可能にする。
 
-`GET /api/games/:gameId/events`は、認証済み参加者の接続だけを`GameSession.fetch`へ転送する。DOはWebSocket Hibernation APIで接続を受理し、接続ごとの`gameId`と`playerId`をattachmentとして保存する。接続・切断時には接続中の参加者 ID だけを`GAME_PRESENCE_UPDATED`として配信する。コマンド受理またはタイムアウト処理を永続化した後、接続中の参加者全員へ`GAME_UPDATED`（`stateVersion`と`latestEventSequence`のみ）を送る。ゲームの正規状態・公開イベント・コマンドはWebSocketで扱わず、クライアントは通知後にHTTPスナップショットを再取得する。終了後の保持期間が満了すると、接続を閉じてから状態を削除する。
+`GET /api/games/:gameId/events`は、認証済み参加者の接続だけを`GameSession.fetch`へ転送する。DOはWebSocket Hibernation APIで接続を受理し、接続ごとの`gameId`と`playerId`をattachmentとして保存する。接続・切断時には接続中の参加者 ID だけを`GAME_PRESENCE_UPDATED`として配信する。フェーズ期限に操作責任を持つプレイヤーが接続中でなければ、`HANDLE_DISCONNECT_TIMEOUT`によりそのプレイヤーを敗北にする。サポートフェーズで未終了の両者が不在なら引き分けとする。接続中なら既存の`HANDLE_PHASE_TIMEOUT`と同じフェーズ進行を行う。コマンド受理またはタイムアウト処理を永続化した後、接続中の参加者全員へ`GAME_UPDATED`（`stateVersion`と`latestEventSequence`のみ）を送る。ゲームの正規状態・公開イベント・コマンドはWebSocketで扱わず、クライアントは通知後にHTTPスナップショットを再取得する。終了後の保持期間が満了すると、接続を閉じてから状態を削除する。
 
 ゲーム状態に記録した`RulesetVersion`、`CardCatalogVersion`、`EngineSemanticsVersion`から、対応する不変の`GameEngineContext`を解決して`initialize`、`getSnapshot`、`submit`、`alarm`を実行する。最新の固定コンテキストを進行中ゲームへ直接適用してはならない。公開カードカタログも同じ`CardCatalogVersion`から投影する。
 
@@ -54,4 +54,4 @@ ID生成器は初期乱数seedをID文字列へそのまま含めない。不透
 
 ## 次の実装
 
-1. プレゼンスを利用した対戦切断の猶予・自動敗北ルールを決定する。
+1. 実環境の2クライアントで、切断・復帰・期限超過のWebSocket挙動をE2E確認する。

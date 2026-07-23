@@ -335,9 +335,15 @@ export class GameSession extends DurableObject<CloudflareBindings> {
       session.state,
       {
         command: {
-          type: "HANDLE_PHASE_TIMEOUT",
+          type: "HANDLE_DISCONNECT_TIMEOUT",
           gameId: session.state.gameId,
           phaseSequence: session.state.phaseSequence,
+          disconnectedPlayerIds: getDisconnectedPlayerIds(
+            session.state,
+            this.getRealtimeConnections().map(
+              ({ attachment }) => attachment.playerId,
+            ),
+          ),
         },
         receivedAt: Date.now(),
       },
@@ -664,6 +670,14 @@ function getCatalogArchive(environment: CloudflareBindings): CatalogArchiveRpc {
 
 function isParticipant(state: GameState, playerId: PlayerId): boolean {
   return state.players[playerId] !== undefined;
+}
+
+function getDisconnectedPlayerIds(
+  state: GameState,
+  onlinePlayerIds: readonly PlayerId[],
+): PlayerId[] {
+  const onlinePlayerIdSet = new Set(onlinePlayerIds);
+  return state.playerOrder.filter((playerId) => !onlinePlayerIdSet.has(playerId));
 }
 
 function createRealtimeUpdate(state: GameState): GameRealtimeUpdate {
