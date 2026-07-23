@@ -41,7 +41,7 @@ export function DraggableHandCard({
     <div ref={ref} className="group relative">
       <button
         ref={handleRef}
-        className={`grid h-36 w-28 grid-rows-[auto_1fr_auto_auto] rounded-md border bg-white p-2 text-left transition-opacity focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-slate-900 ${
+        className={`grid h-36 w-28 grid-rows-[auto_1fr_auto_auto] rounded-md border bg-white p-2 text-left transition-opacity motion-reduce:transition-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-slate-900 ${
           isDragging ? "opacity-40" : "opacity-100"
         } ${canDrag ? "cursor-grab active:cursor-grabbing" : "cursor-default"} ${
           canDrag ? "border-slate-400" : "border-slate-300"

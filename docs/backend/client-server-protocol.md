@@ -2,7 +2,7 @@
 
 ## 目的
 
-本書は、ゲームエンジンとクライアント・バックエンドの責務境界を定義する。HTTPとBetter Authによる現在の通信境界を定め、WebSocket、公開マッチング、観戦の具体方式は後続実装で決定する。
+本書は、ゲームエンジンとクライアント・バックエンドの責務境界を定義する。HTTP、Better Auth、更新通知用WebSocketによる現在の通信境界を定め、公開マッチングと観戦の具体方式は後続実装で決定する。
 
 依存方向は次に固定する。
 
@@ -62,10 +62,13 @@ apps/backend, apps/frontend
 | -------------------- | ----------------------------------------------- | --------------------------- |
 | スナップショット取得 | `GET /api/games/:gameId?afterSequence=<number>` | `GameSnapshotResponse`      |
 | コマンド送信         | `POST /api/games/:gameId/commands`              | `SubmitGameCommandResponse` |
+| 更新通知の購読       | `GET /api/games/:gameId/events`（WebSocket）    | `GameRealtimeUpdate`        |
 
 HTTPアダプターは、認証後かつDO呼び出し前にJSON本文と`afterSequence`を検証する。本文の`gameId`がパスと異なる場合は`400 GAME_ID_MISMATCH`、本文の`playerId`が認証結果と異なる場合は`403 AUTHENTICATED_PLAYER_MISMATCH`で拒否する。ゲームルール上の拒否は通信エラーではないため、`SubmitGameCommandResponse`の`accepted: false`を`200`で返す。
 
 未初期化または存在しないゲームは`404 GAME_NOT_FOUND`、認証済みプレイヤーがそのゲームの参加者でない場合は`403 GAME_ACCESS_FORBIDDEN`を返す。Durable Object内部の未初期化・参加者外アクセスを例外のままHTTP応答へ流さない。
+
+WebSocketは認証済み参加者だけが接続でき、クライアントからサーバーへのゲーム操作には使用しない。`GameRealtimeUpdate`は`gameId`、`stateVersion`、`latestEventSequence`だけを含む更新通知であり、`PlayerGameView`、カード情報、公開イベント本体を含めない。`GameRealtimePresence`は接続中参加者の`playerId`配列だけを含む一時的な通知で、保存もゲームルールへの入力もしない。受信側は状態更新通知を適用せず、HTTPスナップショットを再取得する。接続の切断・不正メッセージ・再接続失敗時にも、HTTPコマンド送信とスナップショット取得は継続して利用できる。
 
 ## 公開カードカタログ
 
@@ -96,15 +99,18 @@ HTTPアダプターは、認証後かつDO呼び出し前にJSON本文と`afterS
 
 保存済みデッキは認証済みプレイヤー本人だけが操作できる。リクエスト本文に`playerId`を含めず、Workerが認証結果から対象の`PlayerDecks`を決定する。`faction`と`cardDefinitionIds`は作成・置換時に現在のカードカタログとゲームルールで検証し、異なる陣営のカードを含む構成は`422 DECK_VALIDATION_FAILED`で拒否する。
 
-| 操作     | エンドポイント              | クライアント本文                       | 成功時の応答              |
-| -------- | --------------------------- | -------------------------------------- | ------------------------- |
-| 一覧取得 | `GET /api/decks`            | なし                                   | `{ decks: SavedDeck[] }`  |
-| 作成     | `POST /api/decks`           | `{ name, faction, cardDefinitionIds }` | `201 { deck: SavedDeck }` |
-| 取得     | `GET /api/decks/:deckId`    | なし                                   | `{ deck: SavedDeck }`     |
-| 置換     | `PUT /api/decks/:deckId`    | `{ name, faction, cardDefinitionIds }` | `{ deck: SavedDeck }`     |
-| 削除     | `DELETE /api/decks/:deckId` | なし                                   | `204`                     |
+| 操作                 | エンドポイント              | クライアント本文                       | 成功時の応答              |
+| -------------------- | --------------------------- | -------------------------------------- | ------------------------- |
+| 一覧取得             | `GET /api/decks`            | なし                                   | `{ decks: SavedDeck[] }`  |
+| 作成                 | `POST /api/decks`           | `{ name, faction, cardDefinitionIds }` | `201 { deck: SavedDeck }` |
+| スターターデッキ作成 | `POST /api/decks/starter`   | `{ faction }`                          | `201 { deck: SavedDeck }` |
+| 取得                 | `GET /api/decks/:deckId`    | なし                                   | `{ deck: SavedDeck }`     |
+| 置換                 | `PUT /api/decks/:deckId`    | `{ name, faction, cardDefinitionIds }` | `{ deck: SavedDeck }`     |
+| 削除                 | `DELETE /api/decks/:deckId` | なし                                   | `204`                     |
 
 対戦作成・参加時も、保存済みデッキを現在のルールで再検証する。削除済みまたは無効化されたデッキは`404 DECK_NOT_FOUND`として扱い、`MatchLobby`へ渡さない。
+
+スターターデッキ作成では、Workerが現在のカードカタログに対応する正規の30枚構成を生成して保存する。クライアントは陣営以外のカード定義ID、カード枚数、名前を指定しない。
 
 ## 順序と再同期
 
@@ -112,7 +118,7 @@ HTTPアダプターは、認証後かつDO呼び出し前にJSON本文と`afterS
 2. `phaseSequence`が古い操作は、遅延コマンドとして拒否する。
 3. `clientStateVersion`が現在より大きい操作は拒否する。現在より小さい場合は、最新状態に対してカード位置、対象、みなもと、フェーズを再検証する。
 4. クライアントがイベント連番の欠落を検出した場合は、差分適用を止めてスナップショットを取得する。
-5. HTTP 初期実装では、クライアントが可視中に`afterSequence`付きスナップショットを 2 秒ごとに取得する。WebSocket は後続で追加するが、DTO と再同期規則を変更しない。
+5. クライアントは可視中に`afterSequence`付きスナップショットを 2 秒ごとに取得する。WebSocketの`GAME_UPDATED`受信時も同じHTTP取得をただちに行うため、切断・再接続中のフォールバックはポーリングで担保する。
 6. POST の通信失敗時、クライアントは同じ`commandId`と同じ本文を再送する。スナップショットは特定コマンドの結果を返さないため、受理・拒否の判定に使わない。
 7. UI演出は公開イベントを使うが、確定した`PlayerGameView`の更新を待たせない。
 
@@ -120,7 +126,6 @@ HTTPアダプターは、認証後かつDO呼び出し前にJSON本文と`afterS
 
 次は本書の対象外とし、ゲームエンジンの状態遷移が完成した後に決定する。
 
-- WebSocket の接続休止、プレゼンス、再接続配信方式
 - 公開対戦、ランダムマッチ、観戦
 - エラー表示文言
 

@@ -22,7 +22,9 @@ GameSession Durable Object
 - `getSnapshot`: 閲覧者別の`PlayerGameView`と公開イベントを返す。未初期化時は`GAME_NOT_FOUND`、参加者外は`GAME_ACCESS_FORBIDDEN`を返す。
 - `submit`: 認証済みプレイヤーのコマンドを処理し、最初の結果を`commandId`単位で保存する。未初期化・参加者外・認証済みプレイヤー不一致は安定したエラー結果で返す。
 
-状態とコマンド結果は、応答する前にDO Storageへ書き込む。同じ`commandId`が再送された場合は、エンジンを再実行せず保存済みの最初の結果を返す。フェーズ期限がある間はDO Alarmを1つだけ設定し、アラームでは`HANDLE_PHASE_TIMEOUT`をエンジンへ渡す。HTTP 初期実装ではゲーム中の公開イベントを保持し、`afterSequence`による差分取得を可能にする。
+状態とコマンド結果は、応答する前にDO Storageへ書き込む。同じ`commandId`が再送された場合は、エンジンを再実行せず保存済みの最初の結果を返す。フェーズ期限がある間はDO Alarmを1つだけ設定し、アラームでは`HANDLE_PHASE_TIMEOUT`をエンジンへ渡す。ゲーム中の公開イベントを保持し、`afterSequence`による差分取得を可能にする。
+
+`GET /api/games/:gameId/events`は、認証済み参加者の接続だけを`GameSession.fetch`へ転送する。DOはWebSocket Hibernation APIで接続を受理し、接続ごとの`gameId`と`playerId`をattachmentとして保存する。接続・切断時には接続中の参加者 ID だけを`GAME_PRESENCE_UPDATED`として配信する。フェーズ期限に操作責任を持つプレイヤーが接続中でなければ、`HANDLE_DISCONNECT_TIMEOUT`によりそのプレイヤーを敗北にする。サポートフェーズで未終了の両者が不在なら引き分けとする。接続中なら既存の`HANDLE_PHASE_TIMEOUT`と同じフェーズ進行を行う。コマンド受理またはタイムアウト処理を永続化した後、接続中の参加者全員へ`GAME_UPDATED`（`stateVersion`と`latestEventSequence`のみ）を送る。ゲームの正規状態・公開イベント・コマンドはWebSocketで扱わず、クライアントは通知後にHTTPスナップショットを再取得する。終了後の保持期間が満了すると、接続を閉じてから状態を削除する。
 
 ゲーム状態に記録した`RulesetVersion`、`CardCatalogVersion`、`EngineSemanticsVersion`から、対応する不変の`GameEngineContext`を解決して`initialize`、`getSnapshot`、`submit`、`alarm`を実行する。最新の固定コンテキストを進行中ゲームへ直接適用してはならない。公開カードカタログも同じ`CardCatalogVersion`から投影する。
 
@@ -42,16 +44,6 @@ GameSession Durable Object
 
 マッチング層は、信頼済みの2人のプレイヤーとデッキを`GameSession.initialize`へ渡す。`MatchLobby`はゲームIDと初期乱数seedをWeb Cryptoで生成してから、開始中の入力を永続化する。クライアント入力から`gameId`やseedを受け取らない。対戦相手の選出、参加承諾、デッキ選択の認可はマッチング・認証層の責務であり、このサービスは担当しない。詳細は[対戦待機・開始の設計](./matchmaking.md)を参照する。
 
-## PartyKitの評価
-
-PartyKitはルームURL、接続管理、WebSocket配信を短く書けるため、WebSocket配信を始める段階では参考になる。ただし本プロジェクトでは直接導入しない。
-
-- 既存のHono Worker、将来の認証、永続化の責務をPartyKitの専用CLI・デプロイ経路へ寄せる必要がある。
-- この段階ではWebSocketをまだ採用せず、DOの部屋状態とエンジン連携をHTTP/RPCから検証する方針である。
-- Cloudflareの現行APIでは、Durable Objectのpublic methodをWorkerからRPCで呼べる。1ゲームセッションを1つのDOに対応させるだけなら追加ライブラリは不要である。
-
-PartyKitを採用するかは、WebSocketによるブロードキャスト、再接続、プレゼンスを実装するPRで再評価する。その際もゲーム状態の正本は`GameSession`と`@disastar/game-engine`に置く。
-
 ## 初期カードカタログ
 
 バックエンドは固定バージョン`initial-catalog-v2-factions`の初期カードカタログを使用する。攻撃カードは効果なし、サポートカードは基本効果を持ち、カタログ作成時に構造・陣営・参照・効果ライフサイクルを検証する。`createDisasterStarterDeckDefinitionIds`と`createCountermeasureStarterDeckDefinitionIds`は、各陣営に対して合法な30枚デッキを毎回新しい配列で返す。
@@ -62,4 +54,8 @@ ID生成器は初期乱数seedをID文字列へそのまま含めない。不透
 
 ## 次の実装
 
-1. WebSocket配信、接続休止、プレゼンスを追加する。
+1. 実環境の2クライアントで、ブラウザの切断・復帰時にもプレゼンス表示と再同期が期待どおりか確認する。
+
+## 統合テスト
+
+Worker 統合テストでは、2人の Better Auth ユーザーがメール確認・ログインを完了した後、異なる陣営のスターターデッキで招待対戦を開始する。双方のWebSocket接続、相手操作による更新通知とHTTP再同期、切断・再接続時のプレゼンス通知を確認する。期限超過による敗北・引き分けの状態遷移は、実時間の待機を避けるためゲームエンジンの単体テストで決定的に確認する。

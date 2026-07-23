@@ -32,6 +32,7 @@ type GameSessionRpc = {
   submit(
     authenticatedCommand: AuthenticatedGameCommand,
   ): Promise<SubmitGameCommandResult>;
+  fetch?(request: Request): Promise<Response>;
 };
 
 type GameSessionResolver = (
@@ -85,6 +86,30 @@ export function createGameApi({
     return result.found
       ? c.json(result.snapshot)
       : gameSessionError(c, result.error.code);
+  });
+
+  api.get("/:gameId/events", async (c) => {
+    if (c.req.header("Upgrade")?.toLowerCase() !== "websocket") {
+      return c.json(
+        {
+          error: { code: "WEBSOCKET_UPGRADE_REQUIRED" },
+        } satisfies GameHttpApiErrorResponse,
+        426,
+      );
+    }
+
+    const headers = new Headers(c.req.raw.headers);
+    headers.set(
+      "X-Disastar-Authenticated-Player-Id",
+      c.var.authenticatedPlayerId,
+    );
+    const session = getGameSession(c.req.param("gameId"), c.env);
+    if (session.fetch === undefined) {
+      throw new Error(
+        "GameSession Durable Object はWebSocketを処理できません。",
+      );
+    }
+    return await session.fetch(new Request(c.req.raw, { headers }));
   });
 
   api.post("/:gameId/commands", async (c) => {

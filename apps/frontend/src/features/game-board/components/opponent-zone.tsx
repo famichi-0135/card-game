@@ -3,6 +3,7 @@ export function OpponentZone({
   discardCount,
   gameId,
   handCount,
+  opponentOnline,
   stateVersion,
   onOpenDiscard,
 }: {
@@ -10,6 +11,7 @@ export function OpponentZone({
   discardCount: number;
   gameId: string;
   handCount: number;
+  opponentOnline: boolean;
   stateVersion: number;
   onOpenDiscard: () => void;
 }) {
@@ -24,6 +26,9 @@ export function OpponentZone({
           <p className="text-lg font-semibold tracking-wide">DISASTAR</p>
           <p className="text-xs text-slate-500">
             対戦 ID: {gameId} / 状態 v{stateVersion}
+          </p>
+          <p aria-live="polite" className="mt-1 text-xs text-slate-500">
+            相手: {opponentOnline ? "接続中" : "接続していません"}
           </p>
         </div>
         <div

@@ -17,6 +17,8 @@ import type {
 } from "@disastar/game-engine/contracts";
 import type {
   AuthenticatedGameCommand,
+  GameRealtimeMessage,
+  GameRealtimeUpdate,
   GameSnapshotResponse,
   SubmitGameCommandResponse,
 } from "@disastar/contracts/game";
@@ -32,6 +34,12 @@ import {
 } from "../catalog-archive/catalog-archive.js";
 
 const SESSION_STORAGE_KEY = "game-session-v2-factions";
+const AUTHENTICATED_PLAYER_ID_HEADER = "X-Disastar-Authenticated-Player-Id";
+
+type GameWebSocketAttachment = {
+  gameId: string;
+  playerId: PlayerId;
+};
 
 type StoredGameSession = {
   initializationInput: InitializeGameInput;
@@ -173,6 +181,37 @@ export class GameSession extends DurableObject<CloudflareBindings> {
     };
   }
 
+  async fetch(request: Request): Promise<Response> {
+    if (request.headers.get("Upgrade")?.toLowerCase() !== "websocket") {
+      return new Response("WebSocket upgrade required.", { status: 426 });
+    }
+
+    const playerId = request.headers.get(AUTHENTICATED_PLAYER_ID_HEADER);
+    if (playerId === null) {
+      return new Response("Authentication is required.", { status: 401 });
+    }
+
+    const session = await this.requireSessionOrNull();
+    if (session === null) {
+      return new Response("Game session was not found.", { status: 404 });
+    }
+    if (!isParticipant(session.state, playerId)) {
+      return new Response("Game access is forbidden.", { status: 403 });
+    }
+
+    const pair = new WebSocketPair();
+    const [client, server] = Object.values(pair);
+    this.ctx.acceptWebSocket(server);
+    server.serializeAttachment({
+      gameId: session.state.gameId,
+      playerId,
+    } satisfies GameWebSocketAttachment);
+    server.send(JSON.stringify(createRealtimeUpdate(session.state)));
+    this.broadcastPresence();
+
+    return new Response(null, { status: 101, webSocket: client });
+  }
+
   async submit(
     authenticatedCommand: AuthenticatedGameCommand,
   ): Promise<SubmitGameCommandResult> {
@@ -264,6 +303,9 @@ export class GameSession extends DurableObject<CloudflareBindings> {
     this.session = nextSession;
     await this.syncCatalogRetention(nextSession);
     await this.syncSessionAlarm(nextSession);
+    if (result.accepted) {
+      this.broadcastRealtimeUpdate(nextSession);
+    }
     return { submitted: true, response };
   }
 
@@ -276,6 +318,7 @@ export class GameSession extends DurableObject<CloudflareBindings> {
     const retentionExpiresAt = getRetentionExpiresAt(session.state, session);
     if (retentionExpiresAt !== null) {
       if (retentionExpiresAt <= Date.now()) {
+        this.closeWebSockets(1001, "ゲームの保持期間が終了しました。");
         await this.ctx.storage.delete(SESSION_STORAGE_KEY);
         await this.ctx.storage.deleteAlarm();
         this.session = null;
@@ -292,9 +335,15 @@ export class GameSession extends DurableObject<CloudflareBindings> {
       session.state,
       {
         command: {
-          type: "HANDLE_PHASE_TIMEOUT",
+          type: "HANDLE_DISCONNECT_TIMEOUT",
           gameId: session.state.gameId,
           phaseSequence: session.state.phaseSequence,
+          disconnectedPlayerIds: getDisconnectedPlayerIds(
+            session.state,
+            this.getRealtimeConnections().map(
+              ({ attachment }) => attachment.playerId,
+            ),
+          ),
         },
         receivedAt: Date.now(),
       },
@@ -322,6 +371,81 @@ export class GameSession extends DurableObject<CloudflareBindings> {
     this.session = nextSession;
     await this.syncCatalogRetention(nextSession);
     await this.syncSessionAlarm(nextSession);
+    this.broadcastRealtimeUpdate(nextSession);
+  }
+
+  webSocketMessage(webSocket: WebSocket): void {
+    webSocket.close(1008, "このWebSocketは更新通知の受信専用です。");
+  }
+
+  webSocketClose(webSocket: WebSocket): void {
+    this.broadcastPresence(webSocket);
+  }
+
+  webSocketError(webSocket: WebSocket): void {
+    webSocket.close(1011, "WebSocket接続でエラーが発生しました。");
+  }
+
+  private broadcastRealtimeUpdate(session: StoredGameSession): void {
+    this.broadcastRealtimeMessage(createRealtimeUpdate(session.state));
+  }
+
+  private broadcastPresence(excludedWebSocket?: WebSocket): void {
+    const connections = this.getRealtimeConnections(excludedWebSocket);
+    const gameId = connections[0]?.attachment.gameId;
+    if (gameId === undefined) {
+      return;
+    }
+
+    const onlinePlayerIds = [
+      ...new Set(connections.map(({ attachment }) => attachment.playerId)),
+    ].sort();
+    this.broadcastRealtimeMessage(
+      {
+        type: "GAME_PRESENCE_UPDATED",
+        gameId,
+        onlinePlayerIds,
+      },
+      connections,
+    );
+  }
+
+  private broadcastRealtimeMessage(
+    message: GameRealtimeMessage,
+    connections = this.getRealtimeConnections(),
+  ): void {
+    const serialized = JSON.stringify(message);
+    for (const { webSocket } of connections) {
+      webSocket.send(serialized);
+    }
+  }
+
+  private getRealtimeConnections(excludedWebSocket?: WebSocket): Array<{
+    webSocket: WebSocket;
+    attachment: GameWebSocketAttachment;
+  }> {
+    const connections: Array<{
+      webSocket: WebSocket;
+      attachment: GameWebSocketAttachment;
+    }> = [];
+    for (const webSocket of this.ctx.getWebSockets()) {
+      if (webSocket === excludedWebSocket) {
+        continue;
+      }
+      const attachment = webSocket.deserializeAttachment();
+      if (!isGameWebSocketAttachment(attachment)) {
+        webSocket.close(1008, "接続情報を検証できませんでした。");
+        continue;
+      }
+      connections.push({ webSocket, attachment });
+    }
+    return connections;
+  }
+
+  private closeWebSockets(code: number, reason: string): void {
+    for (const webSocket of this.ctx.getWebSockets()) {
+      webSocket.close(code, reason);
+    }
   }
 
   private async requireSessionOrNull(): Promise<StoredGameSession | null> {
@@ -546,6 +670,35 @@ function getCatalogArchive(environment: CloudflareBindings): CatalogArchiveRpc {
 
 function isParticipant(state: GameState, playerId: PlayerId): boolean {
   return state.players[playerId] !== undefined;
+}
+
+function getDisconnectedPlayerIds(
+  state: GameState,
+  onlinePlayerIds: readonly PlayerId[],
+): PlayerId[] {
+  const onlinePlayerIdSet = new Set(onlinePlayerIds);
+  return state.playerOrder.filter(
+    (playerId) => !onlinePlayerIdSet.has(playerId),
+  );
+}
+
+function createRealtimeUpdate(state: GameState): GameRealtimeUpdate {
+  return {
+    type: "GAME_UPDATED",
+    gameId: state.gameId,
+    stateVersion: state.stateVersion,
+    latestEventSequence: state.nextEventSequence - 1,
+  };
+}
+
+function isGameWebSocketAttachment(
+  value: unknown,
+): value is GameWebSocketAttachment {
+  return (
+    isRecord(value) &&
+    typeof value.gameId === "string" &&
+    typeof value.playerId === "string"
+  );
 }
 
 function assertAfterSequence(afterSequence: number): void {

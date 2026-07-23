@@ -24,6 +24,7 @@ export type CreateDeckRequest = {
 };
 
 export type ReplaceDeckRequest = CreateDeckRequest;
+export type CreateStarterDeckRequest = { faction: Faction };
 
 export type DeckRequestParseError = {
   code: "INVALID_DECK_REQUEST";
@@ -47,7 +48,32 @@ export function parseReplaceDeckRequest(
   return parseDeckRequest(input);
 }
 
+export function parseCreateStarterDeckRequest(
+  input: unknown,
+): ParseDeckRequestResult<CreateStarterDeckRequest> {
+  if (!isRecord(input)) {
+    return invalid(
+      "リクエスト本文はJSONオブジェクトでなければなりません。",
+      "",
+    );
+  }
+
+  const keys = Object.keys(input);
+  if (keys.length !== 1 || keys[0] !== "faction") {
+    return invalid("リクエスト本文にはfactionだけを含めてください。", "");
+  }
+  if (input.faction !== "disaster" && input.faction !== "countermeasure") {
+    return invalid(
+      "factionはdisasterまたはcountermeasureで指定してください。",
+      "/faction",
+    );
+  }
+
+  return { parsed: true, request: { faction: input.faction } };
+}
+
 export type CreateDeckResponse = { deck: SavedDeckView };
+export type CreateStarterDeckResponse = { deck: SavedDeckView };
 export type GetDeckResponse = { deck: SavedDeckView };
 export type ListDecksResponse = { decks: SavedDeckView[] };
 export type ReplaceDeckResponse = { deck: SavedDeckView };

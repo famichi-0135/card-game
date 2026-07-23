@@ -9,6 +9,7 @@ import type {
   FinishPlacementCommand,
   FinishSupportCommand,
   GameCommand,
+  HandleDisconnectTimeoutCommand,
   HandlePhaseTimeoutCommand,
   PlaceAttackCardCommand,
   PlaySupportCardCommand,
@@ -91,6 +92,14 @@ export function executeCommand(
 
   if (envelope.command.type === "HANDLE_PHASE_TIMEOUT") {
     return executeTimeout(
+      state,
+      envelope.command,
+      envelope.receivedAt,
+      context,
+    );
+  }
+  if (envelope.command.type === "HANDLE_DISCONNECT_TIMEOUT") {
+    return executeDisconnectTimeout(
       state,
       envelope.command,
       envelope.receivedAt,
@@ -680,6 +689,76 @@ function executeTimeout(
       ),
     );
   }
+}
+
+function executeDisconnectTimeout(
+  state: GameState,
+  command: HandleDisconnectTimeoutCommand,
+  receivedAt: number,
+  context: GameEngineContext,
+): ExecuteCommandResult {
+  if (
+    command.phaseSequence !== state.phaseSequence ||
+    state.status !== "active" ||
+    state.phaseDeadlineAt === null ||
+    receivedAt < state.phaseDeadlineAt
+  ) {
+    return { accepted: true, state, events: [] };
+  }
+
+  const requiredPlayerIds = getTimedPhasePlayerIds(state);
+  const disconnectedPlayerIds = requiredPlayerIds.filter((playerId) =>
+    command.disconnectedPlayerIds.includes(playerId),
+  );
+  if (disconnectedPlayerIds.length === 0) {
+    return executeTimeout(
+      state,
+      {
+        type: "HANDLE_PHASE_TIMEOUT",
+        gameId: command.gameId,
+        phaseSequence: command.phaseSequence,
+      },
+      receivedAt,
+      context,
+    );
+  }
+
+  const candidate = cloneGameState(state);
+  const events: DomainEvent[] = [];
+  const disconnectedPlayerId = disconnectedPlayerIds[0];
+  const winner: GameWinner =
+    disconnectedPlayerIds.length === 1 && disconnectedPlayerId !== undefined
+      ? {
+          type: "player",
+          playerId: getOpponentPlayerId(candidate, disconnectedPlayerId),
+          reason: "disconnectTimeout",
+        }
+      : { type: "draw", reason: "bothDisconnected" };
+  finishGame(candidate, winner, receivedAt, events);
+  return commit(state, candidate, events, receivedAt, context);
+}
+
+function getTimedPhasePlayerIds(state: GameState): PlayerId[] {
+  const placementPlayerId = getPlacementPlayerId(state);
+  if (placementPlayerId !== null) {
+    return [placementPlayerId];
+  }
+  if (state.phase === "support") {
+    return state.playerOrder.filter(
+      (playerId) => !state.supportFinishedBy.includes(playerId),
+    );
+  }
+  return [];
+}
+
+function getOpponentPlayerId(state: GameState, playerId: PlayerId): PlayerId {
+  const opponentPlayerId = state.playerOrder.find(
+    (candidate) => candidate !== playerId,
+  );
+  if (opponentPlayerId === undefined) {
+    throw new Error("切断したプレイヤーの対戦相手を特定できません。");
+  }
+  return opponentPlayerId;
 }
 
 function advancePlacementPhase(

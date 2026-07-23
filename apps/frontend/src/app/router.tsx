@@ -1,6 +1,8 @@
 import {
   createBrowserRouter,
   Link,
+  Navigate,
+  useLocation,
   useParams,
   useRouteError,
   useSearchParams,
@@ -13,12 +15,28 @@ import {
   FIXTURE_GAME_ID,
   createGameBoardFixture,
 } from "../features/game-board/fixtures/game-board-fixture.ts";
+import {
+  ForgotPasswordRoute,
+  LoginRoute,
+  LogoutButton,
+  RegisterRoute,
+  ResetPasswordRoute,
+  VerifyEmailRoute,
+} from "../features/auth/auth-routes.tsx";
+import { MatchmakingHomeRoute } from "../features/matchmaking/lobby-home.tsx";
+import { MatchRoom } from "../features/matchmaking/match-room.tsx";
+import { createAuthPath } from "./return-to.ts";
 import { useSession } from "./session.ts";
 
 export const router = createBrowserRouter([
   {
     path: "/",
-    Component: HomeRoute,
+    Component: MatchmakingHomeRoute,
+  },
+  {
+    path: "/rooms/:matchId",
+    Component: RoomRoute,
+    ErrorBoundary: RouteErrorBoundary,
   },
   {
     path: "/games/:gameId",
@@ -26,23 +44,30 @@ export const router = createBrowserRouter([
     ErrorBoundary: RouteErrorBoundary,
   },
   {
+    path: "/login",
+    Component: LoginRoute,
+  },
+  {
+    path: "/register",
+    Component: RegisterRoute,
+  },
+  {
+    path: "/verify-email",
+    Component: VerifyEmailRoute,
+  },
+  {
+    path: "/forgot-password",
+    Component: ForgotPasswordRoute,
+  },
+  {
+    path: "/reset-password",
+    Component: ResetPasswordRoute,
+  },
+  {
     path: "*",
     Component: NotFoundRoute,
   },
 ]);
-
-function HomeRoute() {
-  return (
-    <main className="route-message">
-      <p className="route-message__eyebrow">DISASTAR CARD GAME</p>
-      <h1>対戦画面</h1>
-      <p>盤面の静的プレビューを確認できます。</p>
-      <Link className="route-message__link" to={`/games/${FIXTURE_GAME_ID}`}>
-        デモ盤面を開く
-      </Link>
-    </main>
-  );
-}
 
 function GameRoute() {
   const { gameId } = useParams();
@@ -52,8 +77,11 @@ function GameRoute() {
   }
 
   if (gameId === FIXTURE_GAME_ID) {
+    const requestedScenario = searchParams.get("scenario");
     const scenario =
-      searchParams.get("scenario") === "support" ? "support" : "placement";
+      requestedScenario === "support" || requestedScenario === "finished"
+        ? requestedScenario
+        : "placement";
     return (
       <FixtureGameBoard fixture={createGameBoardFixture(gameId, scenario)} />
     );
@@ -62,8 +90,18 @@ function GameRoute() {
   return <AuthenticatedGameRoute gameId={gameId} />;
 }
 
+function RoomRoute() {
+  const { matchId } = useParams();
+  if (matchId === undefined) {
+    throw new Error("招待部屋 ID が指定されていません。");
+  }
+
+  return <AuthenticatedRoomRoute matchId={matchId} />;
+}
+
 function AuthenticatedGameRoute({ gameId }: { gameId: string }) {
   const session = useSession();
+  const location = useLocation();
 
   if (session.isPending) {
     return <RouteMessage title="認証状態を確認しています" />;
@@ -72,10 +110,39 @@ function AuthenticatedGameRoute({ gameId }: { gameId: string }) {
     return <RouteMessage title="認証状態を確認できませんでした" />;
   }
   if (session.data === null) {
-    return <RouteMessage title="対戦にはログインが必要です" />;
+    const returnTo = `${location.pathname}${location.search}${location.hash}`;
+    return <Navigate replace to={createAuthPath("/login", returnTo)} />;
   }
 
-  return <GameBoard gameId={gameId} />;
+  return (
+    <GameBoard
+      accountAction={
+        <LogoutButton
+          className="shrink-0 rounded border border-slate-300 px-3 py-2 text-sm hover:bg-slate-50 disabled:cursor-not-allowed disabled:border-slate-200 disabled:text-slate-400 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-slate-900"
+          confirmBeforeLogout
+        />
+      }
+      gameId={gameId}
+    />
+  );
+}
+
+function AuthenticatedRoomRoute({ matchId }: { matchId: string }) {
+  const session = useSession();
+  const location = useLocation();
+
+  if (session.isPending) {
+    return <RouteMessage title="認証状態を確認しています" />;
+  }
+  if (session.isError) {
+    return <RouteMessage title="認証状態を確認できませんでした" />;
+  }
+  if (session.data === null) {
+    const returnTo = `${location.pathname}${location.search}${location.hash}`;
+    return <Navigate replace to={createAuthPath("/login", returnTo)} />;
+  }
+
+  return <MatchRoom matchId={matchId} playerId={session.data.user.id} />;
 }
 
 function RouteErrorBoundary() {
@@ -102,13 +169,22 @@ function RouteMessage({
   description?: string;
 }) {
   return (
-    <main className="route-message">
-      <p className="route-message__eyebrow">DISASTAR CARD GAME</p>
-      <h1>{title}</h1>
-      {description === undefined ? null : <p>{description}</p>}
-      <Link className="route-message__link" to="/">
-        対戦画面の入口へ戻る
-      </Link>
+    <main className="grid min-h-dvh place-items-center bg-slate-100 p-6 text-slate-950">
+      <section className="w-full max-w-md rounded-md border border-slate-300 bg-white p-6 shadow-sm">
+        <p className="text-sm font-semibold text-slate-600">
+          DISASTAR CARD GAME
+        </p>
+        <h1 className="mt-4 text-xl font-semibold">{title}</h1>
+        {description === undefined ? null : (
+          <p className="mt-2 text-sm leading-6 text-slate-600">{description}</p>
+        )}
+        <Link
+          className="mt-6 inline-flex rounded border border-slate-800 bg-slate-900 px-4 py-2 text-sm font-medium text-white hover:bg-slate-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-slate-900"
+          to="/"
+        >
+          対戦画面の入口へ戻る
+        </Link>
+      </section>
     </main>
   );
 }
