@@ -345,6 +345,14 @@ HTTP 初期実装では、ページが可視かつゲームが終了していな
 
 CMS、利用者による投稿、リアルタイム災害速報は初期要件に含めない。
 
+### 7.5 初期実装
+
+- 記事は`apps/frontend/src/features/learn/content/`配下のMarkdownファイルとして管理する。
+- ファイル名を`slug`とし、一覧・詳細画面はビルド時に記事を読み込む。記事が存在しない`slug`は記事用404を表示する。
+- `title`、`summary`、`category`、`tags`、`sourceName`、`sourceUrl`、`reviewedAt`をfrontmatterで必須にする。`sourceUrl`はHTTPSの出典URLだけを許可する。
+- Markdown内の任意HTMLはレンダリングしない。外部出典へのリンクは新しいタブで開く。
+- 初期記事は災害情報、防災行動、防災サービスの各カテゴリを少なくとも1件ずつ含める。
+
 ## 8. トップ・部屋作成参加画面
 
 ### 8.1 目的
