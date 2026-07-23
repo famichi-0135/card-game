@@ -56,13 +56,16 @@ GameSession Durable Object -> @disastar/game-engine
 
 保存済みデッキは次のHTTPアダプターで操作する。本文の`cardDefinitionIds`は現在のゲームルールで検証し、違法なデッキは保存しない。すべての操作は認証済みプレイヤー自身の`PlayerDecks`だけを対象にする。
 
-| 操作     | エンドポイント              | クライアント本文                       |
-| -------- | --------------------------- | -------------------------------------- |
-| 一覧取得 | `GET /api/decks`            | なし                                   |
-| 作成     | `POST /api/decks`           | `{ name, faction, cardDefinitionIds }` |
-| 取得     | `GET /api/decks/:deckId`    | なし                                   |
-| 置換     | `PUT /api/decks/:deckId`    | `{ name, faction, cardDefinitionIds }` |
-| 削除     | `DELETE /api/decks/:deckId` | なし                                   |
+| 操作                 | エンドポイント              | クライアント本文                       |
+| -------------------- | --------------------------- | -------------------------------------- |
+| 一覧取得             | `GET /api/decks`            | なし                                   |
+| 作成                 | `POST /api/decks`           | `{ name, faction, cardDefinitionIds }` |
+| スターターデッキ作成 | `POST /api/decks/starter`   | `{ faction }`                          |
+| 取得                 | `GET /api/decks/:deckId`    | なし                                   |
+| 置換                 | `PUT /api/decks/:deckId`    | `{ name, faction, cardDefinitionIds }` |
+| 削除                 | `DELETE /api/decks/:deckId` | なし                                   |
+
+スターターデッキ作成は、クライアントがカード定義ID配列を指定せず、Workerが現在のカードカタログの正規30枚構成を生成する。フロントエンドはデッキ未作成時にこの操作だけを提示する。
 
 対戦アダプターは認証済み`PlayerId`と`deckId`から、所有権確認済みかつ現在も有効な陣営・カード定義ID配列を解決してから`MatchLobby`を呼ぶ。標準WorkerはBetter AuthのセッションからプレイヤーIDを確定する。
 

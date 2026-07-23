@@ -1,8 +1,10 @@
 import { Hono, type Context } from "hono";
 import {
   parseCreateDeckRequest,
+  parseCreateStarterDeckRequest,
   parseReplaceDeckRequest,
   type CreateDeckResponse,
+  type CreateStarterDeckResponse,
   type DeckApiErrorResponse,
   type GetDeckResponse,
   type ListDecksResponse,
@@ -13,7 +15,10 @@ import type {
   DeckValidationError,
   PlayerId,
 } from "@disastar/game-engine/contracts";
-import { gameEngineContext } from "../game-engine/runtime.js";
+import {
+  createStarterDeckDefinitionIds,
+  gameEngineContext,
+} from "../game-engine/runtime.js";
 import {
   getPlayerDecksInEnvironment,
   type PlayerDecksRpc,
@@ -90,6 +95,35 @@ export function createDeckApi({
       c.env,
     ).create({ ...parsed.request, createdAt: now() });
     return c.json({ deck } satisfies CreateDeckResponse, 201);
+  });
+
+  api.post("/starter", async (c) => {
+    const parsed = await parseRequest(c.req.raw, parseCreateStarterDeckRequest);
+    if (!parsed.parsed) {
+      return invalidRequest(c, parsed.errors);
+    }
+
+    const cardDefinitionIds = createStarterDeckDefinitionIds(
+      parsed.request.faction,
+    );
+    const invalidDeck = validateSubmittedDeck(
+      cardDefinitionIds,
+      parsed.request.faction,
+    );
+    if (invalidDeck !== null) {
+      return invalidDeckResponse(c, invalidDeck);
+    }
+
+    const deck = await getPlayerDecks(
+      c.var.authenticatedPlayerId,
+      c.env,
+    ).create({
+      name: createStarterDeckName(parsed.request.faction),
+      faction: parsed.request.faction,
+      cardDefinitionIds,
+      createdAt: now(),
+    });
+    return c.json({ deck } satisfies CreateStarterDeckResponse, 201);
   });
 
   api.get("/:deckId", async (c) => {
@@ -172,6 +206,12 @@ function validateSubmittedDeck(
     gameEngineContext.rules,
   );
   return validation.valid ? null : validation.errors;
+}
+
+function createStarterDeckName(faction: "disaster" | "countermeasure"): string {
+  return faction === "disaster"
+    ? "災害側スターターデッキ"
+    : "対策側スターターデッキ";
 }
 
 function invalidRequest(

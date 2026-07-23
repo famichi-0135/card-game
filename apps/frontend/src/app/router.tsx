@@ -23,13 +23,20 @@ import {
   ResetPasswordRoute,
   VerifyEmailRoute,
 } from "../features/auth/auth-routes.tsx";
+import { MatchmakingHomeRoute } from "../features/matchmaking/lobby-home.tsx";
+import { MatchRoom } from "../features/matchmaking/match-room.tsx";
 import { createAuthPath } from "./return-to.ts";
 import { useSession } from "./session.ts";
 
 export const router = createBrowserRouter([
   {
     path: "/",
-    Component: HomeRoute,
+    Component: MatchmakingHomeRoute,
+  },
+  {
+    path: "/rooms/:matchId",
+    Component: RoomRoute,
+    ErrorBoundary: RouteErrorBoundary,
   },
   {
     path: "/games/:gameId",
@@ -62,55 +69,6 @@ export const router = createBrowserRouter([
   },
 ]);
 
-function HomeRoute() {
-  const session = useSession();
-
-  return (
-    <main className="min-h-dvh bg-slate-100 p-6 text-slate-950">
-      <div className="mx-auto flex w-full max-w-5xl items-center justify-between gap-4 border-b border-slate-300 py-4">
-        <p className="text-sm font-semibold text-slate-700">
-          DISASTAR CARD GAME
-        </p>
-        <div className="flex items-center gap-3">
-          {session.data === null ? (
-            <>
-              <Link
-                className="rounded border border-slate-300 px-3 py-2 text-sm font-medium hover:bg-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-slate-900"
-                to="/login"
-              >
-                ログイン
-              </Link>
-              <Link
-                className="rounded border border-slate-800 bg-slate-900 px-3 py-2 text-sm font-medium text-white hover:bg-slate-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-slate-900"
-                to="/register"
-              >
-                登録
-              </Link>
-            </>
-          ) : session.data === undefined ? null : (
-            <LogoutButton className="rounded border border-slate-300 px-3 py-2 text-sm font-medium hover:bg-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-slate-900" />
-          )}
-        </div>
-      </div>
-      <section className="mx-auto grid w-full max-w-5xl gap-4 py-16">
-        <p className="text-sm font-medium text-slate-600">対戦準備</p>
-        <h1 className="text-3xl font-semibold">対戦画面</h1>
-        <p className="max-w-xl leading-7 text-slate-600">
-          対戦の作成・参加は次の実装スコープで追加します。現在は盤面表示と操作を確認できます。
-        </p>
-        <div>
-          <Link
-            className="inline-flex rounded border border-slate-800 bg-slate-900 px-4 py-2 text-sm font-medium text-white hover:bg-slate-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-slate-900"
-            to={`/games/${FIXTURE_GAME_ID}`}
-          >
-            デモ盤面を開く
-          </Link>
-        </div>
-      </section>
-    </main>
-  );
-}
-
 function GameRoute() {
   const { gameId } = useParams();
   const [searchParams] = useSearchParams();
@@ -130,6 +88,15 @@ function GameRoute() {
   }
 
   return <AuthenticatedGameRoute gameId={gameId} />;
+}
+
+function RoomRoute() {
+  const { matchId } = useParams();
+  if (matchId === undefined) {
+    throw new Error("招待部屋 ID が指定されていません。");
+  }
+
+  return <AuthenticatedRoomRoute matchId={matchId} />;
 }
 
 function AuthenticatedGameRoute({ gameId }: { gameId: string }) {
@@ -158,6 +125,24 @@ function AuthenticatedGameRoute({ gameId }: { gameId: string }) {
       gameId={gameId}
     />
   );
+}
+
+function AuthenticatedRoomRoute({ matchId }: { matchId: string }) {
+  const session = useSession();
+  const location = useLocation();
+
+  if (session.isPending) {
+    return <RouteMessage title="認証状態を確認しています" />;
+  }
+  if (session.isError) {
+    return <RouteMessage title="認証状態を確認できませんでした" />;
+  }
+  if (session.data === null) {
+    const returnTo = `${location.pathname}${location.search}${location.hash}`;
+    return <Navigate replace to={createAuthPath("/login", returnTo)} />;
+  }
+
+  return <MatchRoom matchId={matchId} playerId={session.data.user.id} />;
 }
 
 function RouteErrorBoundary() {

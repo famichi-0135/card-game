@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import {
   parseCreateDeckRequest,
+  parseCreateStarterDeckRequest,
   parseReplaceDeckRequest,
 } from "@disastar/contracts/deck";
 import type {
@@ -49,6 +50,19 @@ describe("保存済みデッキのリクエスト検証", () => {
       parseCreateDeckRequest({
         name: "炎デッキ",
         faction: "unknown",
+        cardDefinitionIds: validDeck,
+      }),
+    ).toMatchObject({ parsed: false });
+  });
+
+  it("スターターデッキ作成では陣営だけを受け付ける", () => {
+    expect(parseCreateStarterDeckRequest({ faction: "disaster" })).toEqual({
+      parsed: true,
+      request: { faction: "disaster" },
+    });
+    expect(
+      parseCreateStarterDeckRequest({
+        faction: "disaster",
         cardDefinitionIds: validDeck,
       }),
     ).toMatchObject({ parsed: false });
@@ -172,6 +186,50 @@ describe("保存済みデッキ HTTP API", () => {
     const deleteResponse = await request(api, "/deck-1", { method: "DELETE" });
     expect(deleteResponse.status).toBe(204);
     expect(decks.size).toBe(0);
+  });
+
+  it("スターターデッキをサーバー側の正規カード構成で作成する", async () => {
+    let created:
+      | {
+          name: string;
+          faction: Faction;
+          cardDefinitionIds: CardDefinitionId[];
+          createdAt: number;
+        }
+      | undefined;
+    const api = createDeckApi({
+      authenticate: async () => "player-1",
+      now: () => 1_000,
+      getPlayerDecks: () => ({
+        create: async (input) => {
+          created = input;
+          return { id: "starter-deck", ...input, updatedAt: input.createdAt };
+        },
+        get: async () => null,
+        list: async () => [],
+        replace: async () => null,
+        remove: async () => false,
+      }),
+    });
+
+    const response = await request(api, "/starter", {
+      method: "POST",
+      body: JSON.stringify({ faction: "disaster" }),
+    });
+
+    expect(response.status).toBe(201);
+    expect(await response.json()).toMatchObject({
+      deck: {
+        id: "starter-deck",
+        name: "災害側スターターデッキ",
+        faction: "disaster",
+      },
+    });
+    expect(created).toMatchObject({
+      faction: "disaster",
+      createdAt: 1_000,
+      cardDefinitionIds: createDisasterStarterDeckDefinitionIds(),
+    });
   });
 });
 
