@@ -8,13 +8,14 @@ import { createRuntimeAuth } from "../src/auth/runtime-auth.js";
 import {
   authTestBaseURL as baseURL,
   authTestTrustedOrigin as trustedOrigin,
+  createGoogleAuthTestSession,
   createAuthTestBindings,
 } from "./auth-test-bindings.js";
 
 describe("Better Auth HTTP統合", () => {
   it("許可済みOriginの認証プリフライトへCredential付きCORSを返す", async () => {
     const response = await createApp().request(
-      new Request(`${baseURL}/api/auth/sign-in/email`, {
+      new Request(`${baseURL}/api/auth/sign-in/social`, {
         method: "OPTIONS",
         headers: {
           origin: trustedOrigin,
@@ -37,7 +38,7 @@ describe("Better Auth HTTP統合", () => {
 
   it("未許可Originの認証プリフライトへOrigin許可を返さない", async () => {
     const response = await createApp().request(
-      new Request(`${baseURL}/api/auth/sign-in/email`, {
+      new Request(`${baseURL}/api/auth/sign-in/social`, {
         method: "OPTIONS",
         headers: {
           origin: "https://untrusted.example.test",
@@ -51,69 +52,13 @@ describe("Better Auth HTTP統合", () => {
     expect(response.headers.get("access-control-allow-origin")).toBeNull();
   });
 
-  it("Honoの認証ルートで登録し、セッションから既存APIを認証する", async () => {
+  it("Google OAuthセッションから既存APIを認証する", async () => {
     const app = createApp();
-    const sentEmails: EmailMessageBuilder[] = [];
-    const bindings = createAuthTestBindings(sentEmails);
-    const registrationContext = createExecutionContext();
-    const registration = await app.request(
-      new Request(`${baseURL}/api/auth/sign-up/email`, {
-        method: "POST",
-        headers: {
-          "cf-connecting-ip": "203.0.113.20",
-          "content-type": "application/json",
-          origin: trustedOrigin,
-        },
-        body: JSON.stringify({
-          name: "HTTP Auth User",
-          email: "http-auth@example.com",
-          password: "a-secure-test-password",
-        }),
-      }),
-      undefined,
-      bindings,
-      registrationContext,
-    );
-    await waitOnExecutionContext(registrationContext);
-
-    expect(registration.status).toBe(200);
-    expect(registration.headers.get("set-cookie")).toBeNull();
-    expect(sentEmails).toHaveLength(1);
-
-    const verificationURL = extractActionURL(sentEmails[0]?.text);
-    const verificationContext = createExecutionContext();
-    const verification = await app.request(
-      new Request(verificationURL, {
-        headers: { "cf-connecting-ip": "203.0.113.20" },
-      }),
-      undefined,
-      bindings,
-      verificationContext,
-    );
-    await waitOnExecutionContext(verificationContext);
-    expect(verification.status).toBe(302);
-
-    const signInContext = createExecutionContext();
-    const signIn = await app.request(
-      new Request(`${baseURL}/api/auth/sign-in/email`, {
-        method: "POST",
-        headers: {
-          "cf-connecting-ip": "203.0.113.20",
-          "content-type": "application/json",
-          origin: trustedOrigin,
-        },
-        body: JSON.stringify({
-          email: "http-auth@example.com",
-          password: "a-secure-test-password",
-        }),
-      }),
-      undefined,
-      bindings,
-      signInContext,
-    );
-    await waitOnExecutionContext(signInContext);
-    expect(signIn.status).toBe(200);
-    const cookie = getSessionCookie(signIn);
+    const bindings = createAuthTestBindings();
+    const { cookie } = await createGoogleAuthTestSession(bindings, {
+      email: "http-auth@example.com",
+      name: "HTTP Auth User",
+    });
 
     const sessionContext = createExecutionContext();
     const session = await app.request(
@@ -197,50 +142,34 @@ describe("Better Auth HTTP統合", () => {
     );
   });
 
-  it("送信元メールアドレスが欠けている場合は設定エラーにする", () => {
+  it("Google OAuthクライアントIDが欠けている場合は設定エラーにする", () => {
     const bindings = createAuthTestBindings();
     const invalidBindings = {
       ...bindings,
-      AUTH_EMAIL_FROM: "  ",
+      GOOGLE_CLIENT_ID: "  ",
     };
 
     expect(() => createRuntimeAuth(invalidBindings)).toThrowError(
-      "AUTH_EMAIL_FROM must not be empty",
+      "GOOGLE_CLIENT_ID must not be empty",
     );
   });
 
-  it("Email Service Bindingが欠けている場合は設定エラーにする", () => {
+  it("Google OAuthクライアントSecretが欠けている場合は設定エラーにする", () => {
     const bindings = createAuthTestBindings();
     const invalidBindings = {
       ...bindings,
-      EMAIL: undefined,
-    } as unknown as Parameters<typeof createRuntimeAuth>[0];
+      GOOGLE_CLIENT_SECRET: "  ",
+    };
 
     expect(() => createRuntimeAuth(invalidBindings)).toThrowError(
-      "EMAIL binding must provide send()",
+      "GOOGLE_CLIENT_SECRET must not be empty",
     );
   });
 });
-
-function getSessionCookie(response: Response): string {
-  const setCookie = response.headers.get("set-cookie");
-  if (setCookie === null) {
-    throw new Error("認証レスポンスにセッションCookieがありません。");
-  }
-  return setCookie.split(";", 1)[0] ?? "";
-}
 
 function authenticatedHeaders(cookie: string): HeadersInit {
   return {
     "cf-connecting-ip": "203.0.113.20",
     cookie,
   };
-}
-
-function extractActionURL(text: string | undefined): string {
-  const actionURL = text?.match(/https:\/\/[^\s]+/)?.[0];
-  if (actionURL === undefined) {
-    throw new Error("認証メールに操作URLがありません。");
-  }
-  return actionURL;
 }

@@ -64,9 +64,7 @@ export function createApp({
     }),
   );
   app.on(["GET", "POST"], "/api/auth/*", (c) =>
-    handleAuthRequest(c.req.raw, c.env, (task) => {
-      c.executionCtx.waitUntil(task);
-    }),
+    handleAuthRequest(c.req.raw, c.env),
   );
   app.route("/api/card-catalogs", createCardCatalogApi());
   app.route(

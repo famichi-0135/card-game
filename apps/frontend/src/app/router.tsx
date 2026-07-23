@@ -15,21 +15,14 @@ import {
   FIXTURE_GAME_ID,
   createGameBoardFixture,
 } from "../features/game-board/fixtures/game-board-fixture.ts";
-import {
-  ForgotPasswordRoute,
-  LoginRoute,
-  LogoutButton,
-  RegisterRoute,
-  ResetPasswordRoute,
-  VerifyEmailRoute,
-} from "../features/auth/auth-routes.tsx";
+import { LoginRoute, LogoutButton } from "../features/auth/auth-routes.tsx";
 import {
   LearnArticleRoute,
   LearnIndexRoute,
 } from "../features/learn/learn-routes.tsx";
 import { MatchmakingHomeRoute } from "../features/matchmaking/lobby-home.tsx";
 import { MatchRoom } from "../features/matchmaking/match-room.tsx";
-import { createAuthPath } from "./return-to.ts";
+import { createAuthPath, getSafeReturnTo } from "./return-to.ts";
 import { useSession } from "./session.ts";
 
 export const router = createBrowserRouter([
@@ -61,19 +54,19 @@ export const router = createBrowserRouter([
   },
   {
     path: "/register",
-    Component: RegisterRoute,
+    Component: LegacyAuthRoute,
   },
   {
     path: "/verify-email",
-    Component: VerifyEmailRoute,
+    Component: LegacyAuthRoute,
   },
   {
     path: "/forgot-password",
-    Component: ForgotPasswordRoute,
+    Component: LegacyAuthRoute,
   },
   {
     path: "/reset-password",
-    Component: ResetPasswordRoute,
+    Component: LegacyAuthRoute,
   },
   {
     path: "*",
@@ -171,6 +164,12 @@ function RouteErrorBoundary() {
 
 function NotFoundRoute() {
   return <RouteMessage title="ページが見つかりません" />;
+}
+
+function LegacyAuthRoute() {
+  const [searchParams] = useSearchParams();
+  const returnTo = getSafeReturnTo(searchParams.get("returnTo"));
+  return <Navigate replace to={createAuthPath("/login", returnTo)} />;
 }
 
 function RouteMessage({
