@@ -89,6 +89,19 @@ export type GameSnapshotResponse = {
   latestEventSequence: number;
 };
 
+/**
+ * WebSocketで配信する、HTTPスナップショット再取得用の更新通知。
+ *
+ * ゲームの正規状態や非公開情報は含めない。クライアントは受信後に認証付き
+ * HTTP APIから自分用のスナップショットを取得する。
+ */
+export type GameRealtimeUpdate = {
+  type: "GAME_UPDATED";
+  gameId: string;
+  stateVersion: number;
+  latestEventSequence: number;
+};
+
 /** バージョン固定された、表示専用のカードカタログ。 */
 export type PublicCardCatalogResponse = {
   catalog: PublicCardCatalog;
@@ -109,7 +122,8 @@ export type GameHttpApiErrorCode =
   | "AUTHENTICATED_PLAYER_MISMATCH"
   | "GAME_NOT_FOUND"
   | "GAME_ACCESS_FORBIDDEN"
-  | "COMMAND_ID_CONFLICT";
+  | "COMMAND_ID_CONFLICT"
+  | "WEBSOCKET_UPGRADE_REQUIRED";
 
 export type GameHttpApiErrorResponse = {
   error: {

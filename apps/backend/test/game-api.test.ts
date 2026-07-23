@@ -88,6 +88,60 @@ describe("ゲーム HTTP API", () => {
     ]);
   });
 
+  it("認証済みのWebSocket接続だけをプレイヤーID付きで Durable Object へ中継する", async () => {
+    let forwarded: Request | undefined;
+    const app = createGameApi({
+      authenticate: async () => "player-1",
+      getGameSession: () => ({
+        getSnapshot: async () =>
+          ({ found: true, snapshot }) satisfies GetGameSnapshotResult,
+        submit: async () =>
+          ({
+            submitted: true,
+            response: acceptedResponse,
+          }) satisfies SubmitGameCommandResult,
+        fetch: async (request) => {
+          forwarded = request;
+          return new Response(null, { status: 204 });
+        },
+      }),
+    });
+
+    const response = await app.fetch(
+      new Request("http://example.com/game-1/events", {
+        headers: { Upgrade: "websocket" },
+      }),
+      {} as CloudflareBindings,
+    );
+
+    expect(response.status).toBe(204);
+    expect(forwarded?.headers.get("Upgrade")).toBe("websocket");
+    expect(forwarded?.headers.get("X-Disastar-Authenticated-Player-Id")).toBe(
+      "player-1",
+    );
+  });
+
+  it("WebSocket upgrade以外のイベント購読リクエストを拒否する", async () => {
+    let resolved = false;
+    const app = createGameApi({
+      authenticate: async () => "player-1",
+      getGameSession: () => {
+        resolved = true;
+        throw new Error(
+          "Upgrade検証前に Durable Object を解決してはいけません。",
+        );
+      },
+    });
+
+    const response = await request(app, "/game-1/events");
+
+    expect(response.status).toBe(426);
+    expect(await response.json()).toEqual({
+      error: { code: "WEBSOCKET_UPGRADE_REQUIRED" },
+    });
+    expect(resolved).toBe(false);
+  });
+
   it("不正な本文と不正なイベント連番を Durable Object の前で拒否する", async () => {
     let resolved = false;
     const app = createGameApi({

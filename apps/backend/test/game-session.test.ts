@@ -70,6 +70,76 @@ describe("GameSession Durable Object", () => {
     );
   });
 
+  it("認証済み参加者へ更新通知用WebSocketを接続する", async () => {
+    const gameId = "game-session-realtime";
+    const stub = getGameSession(gameId);
+    await stub.initialize(createInitializeInput(gameId));
+
+    const response = await stub.fetch(
+      new Request("http://example.com/events", {
+        headers: {
+          Upgrade: "websocket",
+          "X-Disastar-Authenticated-Player-Id": "player-1",
+        },
+      }),
+    );
+
+    expect(response.status).toBe(101);
+    const webSocket = response.webSocket;
+    expect(webSocket).not.toBeNull();
+    if (webSocket === null) {
+      throw new Error("WebSocket接続を受け取れませんでした。");
+    }
+    webSocket.accept();
+    const update = await new Promise<unknown>((resolve) => {
+      webSocket.addEventListener("message", (event) => resolve(event.data));
+    });
+    expect(JSON.parse(String(update))).toEqual({
+      type: "GAME_UPDATED",
+      gameId,
+      stateVersion: expect.any(Number),
+      latestEventSequence: expect.any(Number),
+    });
+
+    const snapshot = await stub.getSnapshot("player-1", 0);
+    if (!snapshot.found) {
+      throw new Error("接続後のゲーム状態を取得できませんでした。");
+    }
+    const playerId = snapshot.snapshot.view.firstPlayerId;
+    const playerSnapshot = await stub.getSnapshot(playerId, 0);
+    if (!playerSnapshot.found) {
+      throw new Error("先手のゲーム状態を取得できませんでした。");
+    }
+    const nextUpdate = new Promise<unknown>((resolve) => {
+      webSocket.addEventListener("message", (event) => resolve(event.data), {
+        once: true,
+      });
+    });
+    const submitted = await stub.submit({
+      authenticatedPlayerId: playerId,
+      receivedAt: 1_000,
+      command: {
+        type: "FINISH_PLACEMENT",
+        commandId: "realtime-finish-placement",
+        gameId,
+        playerId,
+        phaseSequence: playerSnapshot.snapshot.view.phaseSequence,
+        clientStateVersion: playerSnapshot.snapshot.view.stateVersion,
+        issuedAt: 1_000,
+      },
+    });
+
+    expect(submitted).toMatchObject({
+      submitted: true,
+      response: { accepted: true },
+    });
+    expect(JSON.parse(String(await nextUpdate))).toMatchObject({
+      type: "GAME_UPDATED",
+      gameId,
+      stateVersion: playerSnapshot.snapshot.view.stateVersion + 1,
+    });
+  });
+
   it("初期化時のカードカタログをアーカイブへ無期限リースする", async () => {
     const gameId = "game-session-catalog-retention";
     const stub = getGameSession(gameId);
@@ -332,6 +402,7 @@ type GameSessionRpc = {
   submit(
     authenticatedCommand: AuthenticatedGameCommand,
   ): Promise<SubmitGameCommandResult>;
+  fetch(request: Request): Promise<Response>;
 };
 
 function getGameSession(gameId: string): GameSessionRpc {

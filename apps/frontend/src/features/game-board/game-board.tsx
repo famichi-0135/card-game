@@ -18,6 +18,7 @@ import {
 import { useGameBoardActions } from "./hooks/use-game-board-actions.ts";
 import { useOnlineStatus } from "./hooks/use-online-status.ts";
 import { usePublicEventFeed } from "./hooks/use-public-event-feed.ts";
+import { useGameRealtime } from "./hooks/use-game-realtime.ts";
 
 export function FixtureGameBoard({ fixture }: { fixture: GameBoardFixture }) {
   return (
@@ -42,6 +43,15 @@ export function GameBoard({
   const catalog = usePublicCardCatalog(snapshot.data?.view.cardCatalogVersion);
   const command = useGameCommand(gameId);
   const isOnline = useOnlineStatus();
+  const resynchronize = snapshot.resynchronize;
+  const resynchronizeFromRealtime = useCallback(() => {
+    void resynchronize().catch(() => undefined);
+  }, [resynchronize]);
+  useGameRealtime({
+    enabled: isOnline && snapshot.data !== undefined,
+    gameId,
+    onUpdate: resynchronizeFromRealtime,
+  });
 
   if (snapshot.isPending) {
     return (
