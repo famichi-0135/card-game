@@ -10,10 +10,17 @@ import {
   createDisasterStarterDeckDefinitionIds,
   createStarterDeckDefinitionIds,
 } from "./initial-card-catalog.js";
+import { LEGACY_V3_CARD_CATALOG_INPUT } from "./legacy-card-catalog.js";
 
 const ENGINE_SEMANTICS_VERSION = "engine-v2-factions";
 
 const catalogResult = createCardCatalog(INITIAL_CARD_CATALOG_INPUT, {
+  rules: GAME_RULES,
+  effectRegistry: {},
+  engineSemanticsVersion: ENGINE_SEMANTICS_VERSION,
+});
+
+const legacyV3CatalogResult = createCardCatalog(LEGACY_V3_CARD_CATALOG_INPUT, {
   rules: GAME_RULES,
   effectRegistry: {},
   engineSemanticsVersion: ENGINE_SEMANTICS_VERSION,
@@ -27,12 +34,48 @@ if (!catalogResult.valid) {
   );
 }
 
+if (!legacyV3CatalogResult.valid) {
+  throw new Error(
+    `旧カードカタログが不正です: ${legacyV3CatalogResult.errors
+      .map((error) => error.message)
+      .join(" / ")}`,
+  );
+}
+
 export const gameEngineContext: GameEngineContext = {
   rules: GAME_RULES,
   cardCatalog: catalogResult.catalog,
   effectRegistry: {},
   engineSemanticsVersion: ENGINE_SEMANTICS_VERSION,
 };
+
+/** engineContextを持たないv3保存済みセッションの移行専用コンテキスト。 */
+export const legacyV3GameEngineContext: GameEngineContext = {
+  rules: GAME_RULES,
+  cardCatalog: legacyV3CatalogResult.catalog,
+  effectRegistry: {},
+  engineSemanticsVersion: ENGINE_SEMANTICS_VERSION,
+};
+
+export function findGameEngineContextForVersions({
+  rulesetVersion,
+  cardCatalogVersion,
+  engineSemanticsVersion,
+}: Pick<GameEngineContext, "engineSemanticsVersion"> & {
+  rulesetVersion: string;
+  cardCatalogVersion: string;
+}): GameEngineContext | null {
+  for (const context of [gameEngineContext, legacyV3GameEngineContext]) {
+    if (
+      context.rules.version === rulesetVersion &&
+      context.cardCatalog.version === cardCatalogVersion &&
+      context.engineSemanticsVersion === engineSemanticsVersion
+    ) {
+      return context;
+    }
+  }
+  return null;
+}
 
 export const gameEngineDependencies: GameEngineDependencies = {
   random: {

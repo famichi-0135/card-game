@@ -23,6 +23,7 @@ import type {
   SubmitGameCommandResponse,
 } from "@disastar/contracts/game";
 import {
+  findGameEngineContextForVersions,
   gameEngineContext,
   gameEngineDependencies,
 } from "../game-engine/runtime.js";
@@ -41,7 +42,7 @@ type GameWebSocketAttachment = {
   playerId: PlayerId;
 };
 
-type StoredGameSession = {
+export type StoredGameSession = {
   initializationInput: InitializeGameInput;
   state: GameState;
   engineContext?: StoredGameEngineContext;
@@ -579,7 +580,7 @@ function getSessionEngineContext(
   return toGameEngineContext(getStoredEngineContext(session));
 }
 
-function migrateStoredGameSession(stored: StoredGameSession): {
+export function migrateStoredGameSession(stored: StoredGameSession): {
   session: StoredGameSession;
   changed: boolean;
 } {
@@ -587,18 +588,13 @@ function migrateStoredGameSession(stored: StoredGameSession): {
   let changed = migrateAttackGroupSlots(session.state);
 
   if (session.engineContext === undefined) {
-    const currentContext = cloneEngineContext(gameEngineContext);
-    if (
-      session.state.rulesetVersion !== currentContext.rules.version ||
-      session.state.cardCatalogVersion !== currentContext.cardCatalog.version ||
-      session.state.engineSemanticsVersion !==
-        currentContext.engineSemanticsVersion
-    ) {
+    const compatibleContext = findGameEngineContextForVersions(session.state);
+    if (compatibleContext === null) {
       throw new Error(
         "保存済みゲームのバージョン固定コンテキストを復元できません。",
       );
     }
-    session.engineContext = currentContext;
+    session.engineContext = cloneEngineContext(compatibleContext);
     changed = true;
   }
 
