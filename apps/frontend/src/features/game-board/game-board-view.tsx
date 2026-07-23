@@ -33,6 +33,7 @@ const phaseLabels: Record<PlayerGameView["phase"], string> = {
 export function GameBoardView({
   availableActions,
   catalog,
+  isInteractive,
   onCancelSupportPlay,
   onConfirmSupportPlay,
   onFinishPhase,
@@ -41,6 +42,7 @@ export function GameBoardView({
 }: {
   availableActions: AvailableGameActions;
   catalog: PublicCardCatalog;
+  isInteractive: boolean;
   onCancelSupportPlay: () => void;
   onConfirmSupportPlay: (effectInputs: EffectInput[]) => void;
   onFinishPhase: () => void;
@@ -55,7 +57,7 @@ export function GameBoardView({
       ? availableActions.finishSupport
       : availableActions.finishPlacement;
   const canFinishPhase =
-    isFinishablePhase(view.phase) && finishAction.available;
+    isInteractive && isFinishablePhase(view.phase) && finishAction.available;
   const finishActionLabel =
     view.phase === "support" ? "サポート終了" : "配置終了";
   const phaseInstruction = getPhaseInstruction(view.phase);
@@ -147,7 +149,7 @@ export function GameBoardView({
                 groups={view.self.attackGroups}
                 label="自分の攻撃グループ"
                 perspective="self"
-                availableActions={availableActions}
+                availableActions={isInteractive ? availableActions : undefined}
                 onOpenGroup={openAttackGroup}
               />
             </section>
@@ -172,9 +174,12 @@ export function GameBoardView({
                 }
               />
               <SupportZone
-                canPlaySupport={Object.values(availableActions.handCards).some(
-                  (actions) => actions.playSupport.available,
-                )}
+                canPlaySupport={
+                  isInteractive &&
+                  Object.values(availableActions.handCards).some(
+                    (actions) => actions.playSupport.available,
+                  )
+                }
                 count={view.self.supportZone.length}
                 onOpen={() =>
                   openZoneDialog({
@@ -204,7 +209,11 @@ export function GameBoardView({
                     key={card.instanceId}
                     card={card}
                     catalog={catalog}
-                    actions={availableActions.handCards[card.instanceId]}
+                    actions={
+                      isInteractive
+                        ? availableActions.handCards[card.instanceId]
+                        : undefined
+                    }
                   />
                 ))}
               </div>

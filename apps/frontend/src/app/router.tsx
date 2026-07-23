@@ -5,7 +5,10 @@ import {
   useRouteError,
   useSearchParams,
 } from "react-router";
-import { GameBoard } from "../features/game-board/game-board.tsx";
+import {
+  FixtureGameBoard,
+  GameBoard,
+} from "../features/game-board/game-board.tsx";
 import {
   FIXTURE_GAME_ID,
   createGameBoardFixture,
@@ -51,13 +54,15 @@ function GameRoute() {
   if (gameId === FIXTURE_GAME_ID) {
     const scenario =
       searchParams.get("scenario") === "support" ? "support" : "placement";
-    return <GameBoard fixture={createGameBoardFixture(gameId, scenario)} />;
+    return (
+      <FixtureGameBoard fixture={createGameBoardFixture(gameId, scenario)} />
+    );
   }
 
-  return <AuthenticatedGameRoute />;
+  return <AuthenticatedGameRoute gameId={gameId} />;
 }
 
-function AuthenticatedGameRoute() {
+function AuthenticatedGameRoute({ gameId }: { gameId: string }) {
   const session = useSession();
 
   if (session.isPending) {
@@ -70,7 +75,7 @@ function AuthenticatedGameRoute() {
     return <RouteMessage title="対戦にはログインが必要です" />;
   }
 
-  return <RouteMessage title="対戦データを接続しています" />;
+  return <GameBoard gameId={gameId} />;
 }
 
 function RouteErrorBoundary() {

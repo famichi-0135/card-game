@@ -35,10 +35,12 @@ export type PendingSupportPlay = {
 export function useGameBoardActions({
   catalog,
   onCommand,
+  preview,
   view,
 }: {
   catalog: PublicCardCatalog;
   onCommand?: (command: GameCommand) => void;
+  preview: boolean;
   view: PlayerGameView;
 }) {
   const [boardState, setBoardState] = useState<LocalBoardState>(() => ({
@@ -55,23 +57,26 @@ export function useGameBoardActions({
   const [pendingSupportPlay, setPendingSupportPlay] =
     useState<PendingSupportPlay | null>(null);
   const currentView = useMemo(
-    () => ({
-      ...view,
-      phase: boardState.phase,
-      phaseDeadlineAt: boardState.phaseDeadlineAt,
-      phaseSequence: boardState.phaseSequence,
-      stateVersion: boardState.stateVersion,
-      self: {
-        ...view.self,
-        attackGroups: boardState.attackGroups,
-        hand: boardState.hand,
-        handCount: boardState.hand.length,
-        mana: boardState.mana,
-        supportZone: boardState.supportZone,
-        supportFinished: boardState.supportFinished,
-      },
-    }),
-    [boardState, view],
+    () =>
+      preview
+        ? {
+            ...view,
+            phase: boardState.phase,
+            phaseDeadlineAt: boardState.phaseDeadlineAt,
+            phaseSequence: boardState.phaseSequence,
+            stateVersion: boardState.stateVersion,
+            self: {
+              ...view.self,
+              attackGroups: boardState.attackGroups,
+              hand: boardState.hand,
+              handCount: boardState.hand.length,
+              mana: boardState.mana,
+              supportZone: boardState.supportZone,
+              supportFinished: boardState.supportFinished,
+            },
+          }
+        : view,
+    [boardState, preview, view],
   );
   const availableActions = useMemo(
     () =>
@@ -89,6 +94,9 @@ export function useGameBoardActions({
     const targetSide = operation.target?.data.side as string | undefined;
 
     if (canceled || cardInstanceId === undefined || targetSide !== "self") {
+      return;
+    }
+    if (!preview && onCommand === undefined) {
       return;
     }
 
@@ -145,6 +153,9 @@ export function useGameBoardActions({
         onCommand(command);
         return;
       }
+      if (!preview) {
+        return;
+      }
 
       setBoardState((current) =>
         chainPreviewCard(
@@ -172,6 +183,9 @@ export function useGameBoardActions({
     );
     if (onCommand !== undefined) {
       onCommand(command);
+      return;
+    }
+    if (!preview) {
       return;
     }
 
@@ -226,6 +240,9 @@ export function useGameBoardActions({
       onCommand(command);
       return;
     }
+    if (!preview) {
+      return;
+    }
 
     setBoardState((current) => advancePreviewPhase(current));
   };
@@ -256,6 +273,9 @@ export function useGameBoardActions({
     setPendingSupportPlay(null);
     if (onCommand !== undefined) {
       onCommand(command);
+      return;
+    }
+    if (!preview) {
       return;
     }
 
