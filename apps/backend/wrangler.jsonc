@@ -13,12 +13,6 @@
       "migrations_dir": "drizzle",
     },
   ],
-  "send_email": [
-    {
-      "name": "EMAIL",
-      "allowed_sender_addresses": ["noreply@example.com"],
-    },
-  ],
   "durable_objects": {
     "bindings": [
       {

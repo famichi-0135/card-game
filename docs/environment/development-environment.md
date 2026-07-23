@@ -152,8 +152,10 @@ Backendの`dev`コマンドは、Worker起動前に次を自動実行する。
 | `BETTER_AUTH_SECRET`          | Better Authの署名用Secret                  |
 | `BETTER_AUTH_URL`             | クライアントから見える認証APIのオリジン    |
 | `BETTER_AUTH_TRUSTED_ORIGINS` | Cookie付き認証リクエストを許可するオリジン |
-| `AUTH_EMAIL_FROM`             | 認証メールの送信元                         |
-| `AUTH_EMAIL_FROM_NAME`        | 認証メールの送信者名                       |
+| `GOOGLE_CLIENT_ID`            | Google OAuthクライアントID                 |
+| `GOOGLE_CLIENT_SECRET`        | Google OAuthクライアントSecret             |
+
+Google OAuth をローカルで確認する場合、`BETTER_AUTH_URL`と`BETTER_AUTH_TRUSTED_ORIGINS`はともに`http://localhost:5173`とする。Google Cloud Consoleには`http://localhost:5173/api/auth/callback/google`を承認済みリダイレクトURIとして登録する。既存の`.dev.vars`は自動更新されないため、メール認証用のキーを残さず、上表のGoogle OAuth用キーへ手動で置き換える。
 
 Wranglerローカル環境ではCloudflare Edgeの`CF-Connecting-IP`が存在しないため、Better Authが
 クライアントIPを判定できない警告が出る場合がある。本番の信頼境界を弱めるため、警告を
@@ -229,12 +231,12 @@ git diff
 ## 10. Cloudflareのリモート環境を扱う場合
 
 ローカル開発だけなら、この節の設定は不要である。デプロイ、既存D1の取得、リモート
-マイグレーション、Email Serviceの設定は、リポジトリ管理者が内容を確認して実行する。
+マイグレーション、Google OAuthの設定は、リポジトリ管理者が内容を確認して実行する。
 
 1. Cloudflareアカウントへログインする。
 2. `apps/backend/wrangler.jsonc`のD1 `database_id`プレースホルダーを実環境に合わせる。
-3. Better Authとメール送信に必要な変数・SecretをCloudflare側へ設定する。
-4. Email Serviceの送信ドメインと`allowed_sender_addresses`を一致させる。
+3. Better AuthとGoogle OAuthに必要な変数・SecretをCloudflare側へ設定する。
+4. Google Cloud Consoleで、各公開オリジンの`/api/auth/callback/google`を承認済みリダイレクトURIとして登録する。
 5. Backendを先にデプロイし、その後Frontendをデプロイする。
 
 既存D1の取得にDrizzle Kitを使用する場合だけ、次をローカル環境変数として設定する。

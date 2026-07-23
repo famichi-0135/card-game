@@ -8,86 +8,29 @@ export class AuthApiError extends Error {
   }
 }
 
-type AuthUser = {
-  id: string;
-  name?: string | null;
+type GoogleSignInResponse = {
+  url?: string;
 };
 
-type SignInResponse = {
-  user: AuthUser;
-};
-
-export type SignUpInput = {
-  name: string;
-  email: string;
-  password: string;
-  returnTo: string;
-};
-
-export async function signInWithEmail({
-  email,
-  password,
-}: {
-  email: string;
-  password: string;
-}): Promise<SignInResponse> {
-  return await postAuth<SignInResponse>("/sign-in/email", { email, password });
-}
-
-export async function signUpWithEmail({
-  name,
-  email,
-  password,
-  returnTo,
-}: SignUpInput): Promise<void> {
-  await postAuth("/sign-up/email", {
-    name,
-    email,
-    password,
-    callbackURL: createFrontendURL("/verify-email", {
-      returnTo,
-      verified: "1",
-    }),
+export async function startGoogleSignIn(returnTo: string): Promise<void> {
+  const callbackURL = new URL(returnTo, window.location.origin).toString();
+  const errorCallbackURL = new URL("/login", window.location.origin);
+  errorCallbackURL.searchParams.set("oauthError", "1");
+  if (returnTo !== "/") {
+    errorCallbackURL.searchParams.set("returnTo", returnTo);
+  }
+  const response = await postAuth<GoogleSignInResponse>("/sign-in/social", {
+    provider: "google",
+    callbackURL,
+    errorCallbackURL: errorCallbackURL.toString(),
+    disableRedirect: true,
   });
-}
 
-export async function resendVerificationEmail({
-  email,
-  returnTo,
-}: {
-  email: string;
-  returnTo: string;
-}): Promise<void> {
-  await postAuth("/send-verification-email", {
-    email,
-    callbackURL: createFrontendURL("/verify-email", {
-      returnTo,
-      verified: "1",
-    }),
-  });
-}
+  if (typeof response.url !== "string") {
+    throw new Error("Google OAuthの認可URLが返されませんでした。");
+  }
 
-export async function requestPasswordReset({
-  email,
-  returnTo,
-}: {
-  email: string;
-  returnTo: string;
-}): Promise<void> {
-  await postAuth("/request-password-reset", {
-    email,
-    redirectTo: createFrontendURL("/reset-password", { returnTo }),
-  });
-}
-
-export async function resetPassword({
-  token,
-  password,
-}: {
-  token: string;
-  password: string;
-}): Promise<void> {
-  await postAuth("/reset-password", { token, newPassword: password });
+  window.location.assign(response.url);
 }
 
 export async function signOut(): Promise<void> {
@@ -110,17 +53,4 @@ async function postAuth<T = unknown>(path: string, body: object): Promise<T> {
   }
 
   return (await response.json()) as T;
-}
-
-function createFrontendURL(
-  path: string,
-  values: Record<string, string>,
-): string {
-  const url = new URL(path, window.location.origin);
-  for (const [key, value] of Object.entries(values)) {
-    if (value.length > 0) {
-      url.searchParams.set(key, value);
-    }
-  }
-  return url.toString();
 }

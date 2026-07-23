@@ -52,16 +52,18 @@ describe("D1・Drizzle・Better Auth 基盤", () => {
     ]);
   });
 
-  it("Better Authのメール登録をD1へ保存する", async () => {
+  it("Better AuthにGoogle OAuthプロバイダーを設定する", async () => {
     const auth = createAuth({
       database: env.DB,
       baseURL: "https://api.example.test",
+      googleClientId: "test-google-client-id",
+      googleClientSecret: "test-google-client-secret",
       secret: testSecret,
       trustedOrigins: ["https://app.example.test"],
     });
 
     const response = await auth.handler(
-      new Request("https://api.example.test/api/auth/sign-up/email", {
+      new Request("https://api.example.test/api/auth/sign-in/social", {
         method: "POST",
         headers: {
           "cf-connecting-ip": "203.0.113.10",
@@ -69,27 +71,17 @@ describe("D1・Drizzle・Better Auth 基盤", () => {
           origin: "https://app.example.test",
         },
         body: JSON.stringify({
-          name: "Auth User",
-          email: "auth@example.com",
-          password: "a-secure-test-password",
+          provider: "google",
+          disableRedirect: true,
         }),
       }),
     );
 
     expect(response.status).toBe(200);
-
-    const database = createRuntimeDatabase(env.DB);
-    const registeredUsers = await database
-      .select()
-      .from(user)
-      .where(eq(user.email, "auth@example.com"));
-
-    expect(registeredUsers).toHaveLength(1);
-    expect(registeredUsers[0]).toMatchObject({
-      name: "Auth User",
-      email: "auth@example.com",
-      emailVerified: false,
-    });
+    const result = (await response.json()) as { url: string };
+    expect(new URL(result.url).searchParams.get("client_id")).toBe(
+      "test-google-client-id",
+    );
   });
 
   it("短すぎる認証秘密鍵を拒否する", () => {
@@ -97,6 +89,8 @@ describe("D1・Drizzle・Better Auth 基盤", () => {
       createAuth({
         database: env.DB,
         baseURL: "https://api.example.test",
+        googleClientId: "test-google-client-id",
+        googleClientSecret: "test-google-client-secret",
         secret: "too-short",
         trustedOrigins: ["https://app.example.test"],
       }),

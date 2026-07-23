@@ -37,16 +37,10 @@ function GuestLobby({ authError = false }: { authError?: boolean }) {
       accountSlot={
         <div className="flex items-center gap-3">
           <Link
-            className="rounded border border-slate-300 px-3 py-2 text-sm font-medium hover:bg-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-slate-900"
+            className="rounded border border-slate-800 bg-slate-900 px-3 py-2 text-sm font-medium text-white hover:bg-slate-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-slate-900"
             to="/login"
           >
-            ログイン
-          </Link>
-          <Link
-            className="rounded border border-slate-800 bg-slate-900 px-3 py-2 text-sm font-medium text-white hover:bg-slate-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-slate-900"
-            to="/register"
-          >
-            登録
+            Googleでログイン
           </Link>
         </div>
       }

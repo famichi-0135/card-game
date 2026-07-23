@@ -17,31 +17,28 @@ import type {
   SubmitGameCommandResponse,
 } from "@disastar/contracts/game";
 import { createApp } from "../src/index.js";
+import type { BetterAuthEnvironment } from "../src/auth/runtime-auth.js";
 import {
   authTestBaseURL as baseURL,
   authTestTrustedOrigin as trustedOrigin,
+  createGoogleAuthTestSession,
   createAuthTestBindings,
 } from "./auth-test-bindings.js";
 
 describe("2人対戦 Worker 統合", () => {
   it("認証、招待、WebSocket通知、切断・再接続を同じWorker環境で完了する", async () => {
     const app = createApp();
-    const sentEmails: EmailMessageBuilder[] = [];
-    const bindings = createAuthTestBindings(sentEmails);
+    const bindings = createAuthTestBindings();
     const suffix = crypto.randomUUID();
-    const owner = await createVerifiedClient({
-      app,
+    const owner = await createGoogleClient({
       bindings,
       email: `owner-${suffix}@example.test`,
       name: "Owner",
-      sentEmails,
     });
-    const opponent = await createVerifiedClient({
-      app,
+    const opponent = await createGoogleClient({
       bindings,
       email: `opponent-${suffix}@example.test`,
       name: "Opponent",
-      sentEmails,
     });
 
     const ownerDeck = await createStarterDeck(
@@ -203,60 +200,16 @@ type Client = {
   playerId: string;
 };
 
-async function createVerifiedClient({
-  app,
+async function createGoogleClient({
   bindings,
   email,
   name,
-  sentEmails,
 }: {
-  app: ReturnType<typeof createApp>;
-  bindings: CloudflareBindings;
+  bindings: BetterAuthEnvironment;
   email: string;
   name: string;
-  sentEmails: EmailMessageBuilder[];
 }): Promise<Client> {
-  const registration = await request(
-    app,
-    bindings,
-    "/api/auth/sign-up/email",
-    undefined,
-    {
-      method: "POST",
-      body: { name, email, password: "a-secure-test-password" },
-    },
-  );
-  expect(registration.status).toBe(200);
-  const verificationURL = extractActionURL(sentEmails.at(-1)?.text);
-  const verificationContext = createExecutionContext();
-  const verification = await app.request(
-    new Request(verificationURL, { headers: requestHeaders() }),
-    undefined,
-    bindings,
-    verificationContext,
-  );
-  await waitOnExecutionContext(verificationContext);
-  expect(verification.status).toBe(302);
-
-  const signIn = await request(
-    app,
-    bindings,
-    "/api/auth/sign-in/email",
-    undefined,
-    {
-      method: "POST",
-      body: { email, password: "a-secure-test-password" },
-    },
-  );
-  expect(signIn.status).toBe(200);
-  const cookie = getSessionCookie(signIn);
-  const session = await requestJson<{ user: { id: string } }>(
-    app,
-    bindings,
-    "/api/auth/get-session",
-    cookie,
-  );
-  return { cookie, playerId: session.body.user.id };
+  return await createGoogleAuthTestSession(bindings, { email, name });
 }
 
 async function createStarterDeck(
@@ -357,22 +310,6 @@ function requestHeaders(cookie?: string): HeadersInit {
     origin: trustedOrigin,
     ...(cookie === undefined ? {} : { cookie }),
   };
-}
-
-function getSessionCookie(response: Response): string {
-  const setCookie = response.headers.get("set-cookie");
-  if (setCookie === null) {
-    throw new Error("認証レスポンスにセッションCookieがありません。");
-  }
-  return setCookie.split(";", 1)[0] ?? "";
-}
-
-function extractActionURL(text: string | undefined): string {
-  const actionURL = text?.match(/https:\/\/[^\s]+/)?.[0];
-  if (actionURL === undefined) {
-    throw new Error("認証メールに操作URLがありません。");
-  }
-  return actionURL;
 }
 
 function waitForMessage(
