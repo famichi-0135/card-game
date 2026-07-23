@@ -114,11 +114,20 @@ export function createDeckApi({
       return invalidDeckResponse(c, invalidDeck);
     }
 
-    const deck = await getPlayerDecks(
-      c.var.authenticatedPlayerId,
-      c.env,
-    ).create({
-      name: createStarterDeckName(parsed.request.faction),
+    const playerDecks = getPlayerDecks(c.var.authenticatedPlayerId, c.env);
+    const name = createStarterDeckName(parsed.request.faction);
+    const existing = (await playerDecks.list()).find(
+      (deck) =>
+        deck.name === name &&
+        deck.faction === parsed.request.faction &&
+        areSameCardDefinitionIds(deck.cardDefinitionIds, cardDefinitionIds),
+    );
+    if (existing !== undefined) {
+      return c.json({ deck: existing } satisfies CreateStarterDeckResponse);
+    }
+
+    const deck = await playerDecks.create({
+      name,
       faction: parsed.request.faction,
       cardDefinitionIds,
       createdAt: now(),
@@ -166,6 +175,16 @@ export function createDeckApi({
   });
 
   return api;
+}
+
+function areSameCardDefinitionIds(
+  left: readonly string[],
+  right: readonly string[],
+): boolean {
+  return (
+    left.length === right.length &&
+    left.every((definitionId, index) => definitionId === right[index])
+  );
 }
 
 async function parseRequest<T>(

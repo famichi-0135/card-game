@@ -1,15 +1,15 @@
-import type { SavedDeckView } from "@disastar/contracts/deck";
-import { type ReactNode, useEffect, useMemo, useState } from "react";
+import type { Faction } from "@disastar/game-engine/contracts";
+import { type ReactNode, useState } from "react";
 import { Link, Navigate, useNavigate } from "react-router";
 import { AuthStatus } from "../auth/auth-layout.tsx";
-import { DeckSelector } from "./components/deck-selector.tsx";
 import { createRoomPath } from "./match-id.ts";
 import {
   acceptMatch,
   cancelMatch,
+  createStarterDeck,
   getMatchmakingErrorMessage,
 } from "./matchmaking-api.ts";
-import { useMatchLobby, useSavedDecks } from "./hooks/use-matchmaking-data.ts";
+import { useMatchLobby } from "./hooks/use-matchmaking-data.ts";
 
 const factionLabels = {
   disaster: "災害側",
@@ -27,34 +27,12 @@ export function MatchRoom({
   const lobby = useMatchLobby(matchId);
   const match = lobby.data;
   const isOwner = match?.ownerPlayerId === playerId;
-  const decks = useSavedDecks(
-    match !== undefined && !isOwner && match.status === "waiting",
-  );
-  const availableDecks = useMemo(
-    () =>
-      match === undefined
-        ? []
-        : (decks.data ?? []).filter(
-            (deck) => deck.faction !== match.ownerFaction,
-          ),
-    [decks.data, match],
-  );
-  const [selectedDeckId, setSelectedDeckId] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [isAccepting, setIsAccepting] = useState(false);
   const [isCancelling, setIsCancelling] = useState(false);
   const [copyStatus, setCopyStatus] = useState<"idle" | "copied" | "failed">(
     "idle",
   );
-
-  useEffect(() => {
-    if (
-      selectedDeckId === null ||
-      !availableDecks.some((deck) => deck.id === selectedDeckId)
-    ) {
-      setSelectedDeckId(availableDecks[0]?.id ?? null);
-    }
-  }, [availableDecks, selectedDeckId]);
 
   if (lobby.isPending) {
     return <RoomLayout title="招待部屋を読み込んでいます" />;
@@ -83,14 +61,17 @@ export function MatchRoom({
   const invitationURL = createInvitationURL(matchId);
 
   async function handleAccept() {
-    if (selectedDeckId === null) {
+    if (match === undefined) {
       return;
     }
 
     setError(null);
     setIsAccepting(true);
     try {
-      const gameId = await acceptMatch(matchId, selectedDeckId);
+      const deck = await createStarterDeck(
+        getOpposingFaction(match.ownerFaction),
+      );
+      const gameId = await acceptMatch(matchId, deck.id);
       navigate(`/games/${encodeURIComponent(gameId)}`, { replace: true });
     } catch (requestError) {
       setError(
@@ -179,13 +160,9 @@ export function MatchRoom({
         />
       ) : (
         <OpponentJoinState
-          availableDecks={availableDecks}
-          decksLoading={decks.isPending}
-          decksUnavailable={decks.isError || decks.data === undefined}
+          faction={getOpposingFaction(match.ownerFaction)}
           isAccepting={isAccepting}
           onAccept={() => void handleAccept()}
-          onSelectDeck={setSelectedDeckId}
-          selectedDeckId={selectedDeckId}
         />
       )}
     </RoomLayout>
@@ -256,7 +233,7 @@ function OwnerWaitingState({
         <h2 className="text-lg font-semibold">対戦相手を待っています</h2>
         <p className="mt-1 text-sm leading-6 text-slate-600">
           招待 URL
-          を相手に共有してください。相手が異なる陣営のデッキを選ぶと対戦を開始します。
+          を相手に共有してください。相手が反対ロールで参加すると対戦を開始します。
         </p>
       </div>
       <button
@@ -272,65 +249,30 @@ function OwnerWaitingState({
 }
 
 function OpponentJoinState({
-  availableDecks,
-  decksLoading,
-  decksUnavailable,
+  faction,
   isAccepting,
   onAccept,
-  onSelectDeck,
-  selectedDeckId,
 }: {
-  availableDecks: readonly SavedDeckView[];
-  decksLoading: boolean;
-  decksUnavailable: boolean;
+  faction: Faction;
   isAccepting: boolean;
   onAccept: () => void;
-  onSelectDeck: (deckId: string) => void;
-  selectedDeckId: string | null;
 }) {
   return (
     <section className="grid max-w-xl gap-4 py-8">
       <div>
-        <h2 className="text-lg font-semibold">使用するデッキを選択</h2>
+        <h2 className="text-lg font-semibold">ロールを確認</h2>
         <p className="mt-1 text-sm leading-6 text-slate-600">
-          作成者とは異なる陣営のデッキを選んで参加します。
+          {factionLabels[faction]}の固定スターターデッキで参加します。
         </p>
       </div>
-      {decksLoading ? (
-        <p className="text-sm text-slate-600">
-          保存済みデッキを読み込んでいます。
-        </p>
-      ) : decksUnavailable ? (
-        <AuthStatus tone="error">
-          保存済みデッキを取得できませんでした。ページを更新してください。
-        </AuthStatus>
-      ) : availableDecks.length === 0 ? (
-        <div className="grid gap-3">
-          <p className="text-sm leading-6 text-slate-600">
-            参加できる陣営の保存済みデッキがありません。トップでスターターデッキを作成してください。
-          </p>
-          <Link className={secondaryButtonClassName} to="/">
-            対戦準備へ戻る
-          </Link>
-        </div>
-      ) : (
-        <>
-          <DeckSelector
-            decks={availableDecks}
-            disabled={isAccepting}
-            onSelect={onSelectDeck}
-            selectedDeckId={selectedDeckId}
-          />
-          <button
-            className={`${primaryButtonClassName} w-fit`}
-            disabled={selectedDeckId === null || isAccepting}
-            onClick={onAccept}
-            type="button"
-          >
-            {isAccepting ? "参加しています" : "このデッキで参加する"}
-          </button>
-        </>
-      )}
+      <button
+        className={`${primaryButtonClassName} w-fit`}
+        disabled={isAccepting}
+        onClick={onAccept}
+        type="button"
+      >
+        {isAccepting ? "参加しています" : `${factionLabels[faction]}で参加する`}
+      </button>
     </section>
   );
 }
@@ -359,6 +301,10 @@ function RoomLayout({
 
 function createInvitationURL(matchId: string): string {
   return new URL(createRoomPath(matchId), window.location.origin).toString();
+}
+
+function getOpposingFaction(faction: Faction): Faction {
+  return faction === "disaster" ? "countermeasure" : "disaster";
 }
 
 const primaryButtonClassName =

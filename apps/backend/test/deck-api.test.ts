@@ -231,6 +231,40 @@ describe("保存済みデッキ HTTP API", () => {
       cardDefinitionIds: createDisasterStarterDeckDefinitionIds(),
     });
   });
+
+  it("同じロールの正規スターターデッキを重複作成しない", async () => {
+    let created = false;
+    const existing = {
+      id: "existing-starter-deck",
+      name: "災害側スターターデッキ",
+      faction: "disaster" as const,
+      cardDefinitionIds: createDisasterStarterDeckDefinitionIds(),
+      createdAt: 1_000,
+      updatedAt: 1_000,
+    };
+    const api = createDeckApi({
+      authenticate: async () => "player-1",
+      getPlayerDecks: () => ({
+        create: async () => {
+          created = true;
+          throw new Error("既存スターターデッキを再作成してはいけません。");
+        },
+        get: async () => null,
+        list: async () => [existing],
+        replace: async () => null,
+        remove: async () => false,
+      }),
+    });
+
+    const response = await request(api, "/starter", {
+      method: "POST",
+      body: JSON.stringify({ faction: "disaster" }),
+    });
+
+    expect(response.status).toBe(200);
+    expect(await response.json()).toEqual({ deck: existing });
+    expect(created).toBe(false);
+  });
 });
 
 async function request(

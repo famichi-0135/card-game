@@ -65,7 +65,7 @@ GameSession Durable Object -> @disastar/game-engine
 | 置換                 | `PUT /api/decks/:deckId`    | `{ name, faction, cardDefinitionIds }` |
 | 削除                 | `DELETE /api/decks/:deckId` | なし                                   |
 
-スターターデッキ作成は、クライアントがカード定義ID配列を指定せず、Workerが現在のカードカタログの正規30枚構成を生成する。フロントエンドはデッキ未作成時にこの操作だけを提示する。
+スターターデッキ作成は、クライアントがカード定義ID配列を指定せず、Workerが現在のカードカタログの正規30枚構成を生成する。初期ローンチのフロントエンドはロール選択時にこのスターターデッキだけを自動作成・利用し、カード単位の編集や任意の保存済みデッキ選択を提供しない。
 
 対戦アダプターは認証済み`PlayerId`と`deckId`から、所有権確認済みかつ現在も有効な陣営・カード定義ID配列を解決してから`MatchLobby`を呼ぶ。標準WorkerはBetter AuthのセッションからプレイヤーIDを確定する。
 

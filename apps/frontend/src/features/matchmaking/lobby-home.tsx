@@ -1,13 +1,10 @@
-import type { SavedDeckView } from "@disastar/contracts/deck";
 import type { Faction } from "@disastar/game-engine/contracts";
-import { useQueryClient } from "@tanstack/react-query";
-import { type ReactNode, useEffect, useState } from "react";
+import { type ReactNode, useState } from "react";
 import { Link, useNavigate } from "react-router";
 import { createAuthPath } from "../../app/return-to.ts";
 import { useSession } from "../../app/session.ts";
 import { LogoutButton } from "../auth/auth-routes.tsx";
 import { AuthStatus } from "../auth/auth-layout.tsx";
-import { DeckSelector } from "./components/deck-selector.tsx";
 import { RoomJoinForm } from "./components/room-join-form.tsx";
 import { createRoomPath } from "./match-id.ts";
 import {
@@ -15,10 +12,6 @@ import {
   createStarterDeck,
   getMatchmakingErrorMessage,
 } from "./matchmaking-api.ts";
-import {
-  savedDecksQueryKey,
-  useSavedDecks,
-} from "./hooks/use-matchmaking-data.ts";
 
 export function MatchmakingHomeRoute() {
   const session = useSession();
@@ -68,7 +61,7 @@ function GuestLobby({ authError = false }: { authError?: boolean }) {
         <div>
           <h1 className="text-2xl font-semibold">招待対戦</h1>
           <p className="mt-2 text-sm leading-6 text-slate-600">
-            ログインしてデッキを選び、招待部屋を作成または参加します。
+            ログインしてロールを選び、招待部屋を作成または参加します。
           </p>
         </div>
         <button
@@ -104,56 +97,15 @@ function GuestLobby({ authError = false }: { authError?: boolean }) {
 
 function AuthenticatedLobby() {
   const navigate = useNavigate();
-  const queryClient = useQueryClient();
-  const decks = useSavedDecks();
-  const [selectedDeckId, setSelectedDeckId] = useState<string | null>(null);
-  const [isCreatingStarter, setIsCreatingStarter] = useState(false);
   const [isCreatingMatch, setIsCreatingMatch] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
-    if (decks.data === undefined) {
-      return;
-    }
-    if (
-      selectedDeckId === null ||
-      !decks.data.some((deck) => deck.id === selectedDeckId)
-    ) {
-      setSelectedDeckId(decks.data[0]?.id ?? null);
-    }
-  }, [decks.data, selectedDeckId]);
-
-  async function handleCreateStarterDeck(faction: Faction) {
-    setError(null);
-    setIsCreatingStarter(true);
-    try {
-      const deck = await createStarterDeck(faction);
-      queryClient.setQueryData<readonly SavedDeckView[]>(
-        savedDecksQueryKey,
-        (current) => [...(current ?? []), deck],
-      );
-      setSelectedDeckId(deck.id);
-    } catch (requestError) {
-      setError(
-        getMatchmakingErrorMessage(
-          requestError,
-          "スターターデッキを作成できませんでした。もう一度お試しください。",
-        ),
-      );
-    } finally {
-      setIsCreatingStarter(false);
-    }
-  }
-
-  async function handleCreateMatch() {
-    if (selectedDeckId === null) {
-      return;
-    }
-
+  async function handleCreateMatch(faction: Faction) {
     setError(null);
     setIsCreatingMatch(true);
     try {
-      const matchId = await createMatch(selectedDeckId);
+      const deck = await createStarterDeck(faction);
+      const matchId = await createMatch(deck.id);
       navigate(createRoomPath(matchId));
     } catch (requestError) {
       setError(
@@ -178,41 +130,14 @@ function AuthenticatedLobby() {
         <div>
           <h1 className="text-2xl font-semibold">招待対戦</h1>
           <p className="mt-2 text-sm leading-6 text-slate-600">
-            使用する保存済みデッキを選んで、対戦相手へ招待 URL を送ります。
+            ロールを選ぶと、対応する固定スターターデッキで招待部屋を作成します。
           </p>
         </div>
         {error === null ? null : <AuthStatus tone="error">{error}</AuthStatus>}
-        {decks.isPending ? (
-          <p className="text-sm text-slate-600">
-            保存済みデッキを読み込んでいます。
-          </p>
-        ) : decks.isError || decks.data === undefined ? (
-          <AuthStatus tone="error">
-            保存済みデッキを取得できませんでした。ページを更新してください。
-          </AuthStatus>
-        ) : decks.data.length === 0 ? (
-          <StarterDeckActions
-            disabled={isCreatingStarter}
-            onCreate={handleCreateStarterDeck}
-          />
-        ) : (
-          <div className="grid max-w-xl gap-3">
-            <DeckSelector
-              decks={decks.data}
-              disabled={isCreatingMatch}
-              onSelect={setSelectedDeckId}
-              selectedDeckId={selectedDeckId}
-            />
-            <button
-              className="w-fit rounded border border-slate-800 bg-slate-900 px-4 py-2 text-sm font-medium text-white hover:bg-slate-700 disabled:cursor-not-allowed disabled:border-slate-300 disabled:bg-slate-100 disabled:text-slate-400 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-slate-900"
-              disabled={selectedDeckId === null || isCreatingMatch}
-              onClick={() => void handleCreateMatch()}
-              type="button"
-            >
-              {isCreatingMatch ? "部屋を作成しています" : "部屋を作成する"}
-            </button>
-          </div>
-        )}
+        <RoleActions
+          disabled={isCreatingMatch}
+          onSelect={(faction) => void handleCreateMatch(faction)}
+        />
       </section>
       <section
         className="grid max-w-xl gap-4 py-8"
@@ -232,34 +157,34 @@ function AuthenticatedLobby() {
   );
 }
 
-function StarterDeckActions({
+function RoleActions({
   disabled,
-  onCreate,
+  onSelect,
 }: {
   disabled: boolean;
-  onCreate: (faction: Faction) => void;
+  onSelect: (faction: Faction) => void;
 }) {
   return (
     <div className="grid max-w-xl gap-3">
       <p className="text-sm leading-6 text-slate-600">
-        保存済みデッキがありません。スターターデッキを作成してください。
+        使用するロールを選んでください。カード構成はロールごとに固定です。
       </p>
       <div className="flex flex-wrap gap-3">
         <button
           className="rounded border border-slate-800 bg-slate-900 px-4 py-2 text-sm font-medium text-white hover:bg-slate-700 disabled:cursor-not-allowed disabled:border-slate-300 disabled:bg-slate-100 disabled:text-slate-400 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-slate-900"
           disabled={disabled}
-          onClick={() => void onCreate("disaster")}
+          onClick={() => onSelect("disaster")}
           type="button"
         >
-          災害側スターターデッキを作成
+          災害側で部屋を作成
         </button>
         <button
           className="rounded border border-slate-300 px-4 py-2 text-sm font-medium text-slate-800 hover:bg-slate-50 disabled:cursor-not-allowed disabled:border-slate-200 disabled:text-slate-400 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-slate-900"
           disabled={disabled}
-          onClick={() => void onCreate("countermeasure")}
+          onClick={() => onSelect("countermeasure")}
           type="button"
         >
-          対策側スターターデッキを作成
+          対策側で部屋を作成
         </button>
       </div>
     </div>
