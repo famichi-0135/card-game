@@ -2,6 +2,7 @@ import {
   getAvailableGameActions,
   type AvailableGameActions,
   type PlayerGameView,
+  type PlayerVisibleEventEnvelope,
   type PublicCardCatalog,
 } from "@disastar/game-engine";
 
@@ -9,6 +10,8 @@ export const FIXTURE_GAME_ID = "demo";
 
 export type GameBoardFixture = {
   catalog: PublicCardCatalog;
+  events: PlayerVisibleEventEnvelope[];
+  latestEventSequence: number;
   view: PlayerGameView;
   availableActions: AvailableGameActions;
 };
@@ -22,12 +25,55 @@ export function createGameBoardFixture(
   const now = Date.now();
   const catalog = createCatalog();
   const view = createView(gameId, now, scenario);
+  const events = createEvents(view, now);
 
   return {
     catalog,
+    events,
+    latestEventSequence: events[events.length - 1]?.sequence ?? 0,
     view,
     availableActions: getAvailableGameActions({ view, catalog, now }),
   };
+}
+
+function createEvents(
+  view: PlayerGameView,
+  now: number,
+): PlayerVisibleEventEnvelope[] {
+  return [
+    {
+      sequence: 21,
+      stateVersion: view.stateVersion - 2,
+      occurredAt: now - 5_000,
+      event: {
+        type: "CARD_DISCARDED",
+        playerId: view.self.playerId,
+        cardInstanceId: "discard-river",
+      },
+    },
+    {
+      sequence: 22,
+      stateVersion: view.stateVersion - 1,
+      occurredAt: now - 3_000,
+      event: {
+        type: "ATTACK_GROUP_CREATED",
+        playerId: view.opponent.playerId,
+        groupId: "opponent-group-1",
+        cardInstanceId: "opponent-barrier",
+      },
+    },
+    {
+      sequence: 23,
+      stateVersion: view.stateVersion,
+      occurredAt: now - 1_000,
+      event: {
+        type: "PHASE_CHANGED",
+        phase: view.phase,
+        phaseSequence: view.phaseSequence,
+        deadlineAt: view.phaseDeadlineAt,
+      },
+    },
+  ];
 }
 
 function createCatalog(): PublicCardCatalog {

@@ -7,6 +7,10 @@ import type {
 } from "@disastar/game-engine";
 import { useEffect, useState } from "react";
 import { AttackGroupRow } from "./components/attack-group-row.tsx";
+import {
+  ConnectionStatus,
+  type GameConnectionState,
+} from "./components/connection-status.tsx";
 import { DesktopOnlyNotice } from "./components/desktop-only-notice.tsx";
 import { DiscardZone } from "./components/discard-zone.tsx";
 import { DraggableHandCard } from "./components/hand-card.tsx";
@@ -14,10 +18,12 @@ import { ManaPanel } from "./components/mana-panel.tsx";
 import { OpponentZone } from "./components/opponent-zone.tsx";
 import { PhaseEndDialog } from "./components/phase-end-dialog.tsx";
 import { PlayerSummary } from "./components/player-summary.tsx";
+import { PublicEventFeed } from "./components/public-event-feed.tsx";
 import { SupportTargetDialog } from "./components/support-target-dialog.tsx";
 import { SupportZone } from "./components/support-zone.tsx";
 import { ZoneDialog, type ZoneDialogState } from "./components/zone-dialog.tsx";
 import type { PendingSupportPlay } from "./hooks/use-game-board-actions.ts";
+import type { PublicEventFeedItem } from "./hooks/use-public-event-feed.ts";
 
 const phaseLabels: Record<PlayerGameView["phase"], string> = {
   initializing: "準備中",
@@ -35,24 +41,30 @@ export function GameBoardView({
   catalog,
   commandError,
   commandPending,
+  connectionState,
   isInteractive,
   onCancelSupportPlay,
   onConfirmSupportPlay,
   onFinishPhase,
   onRetryCommand,
+  onResynchronize,
   pendingSupportPlay,
+  publicEvents,
   view,
 }: {
   availableActions: AvailableGameActions;
   catalog: PublicCardCatalog;
   commandError: string | null;
   commandPending: boolean;
+  connectionState: GameConnectionState;
   isInteractive: boolean;
   onCancelSupportPlay: () => void;
   onConfirmSupportPlay: (effectInputs: EffectInput[]) => void;
   onFinishPhase: () => void;
   onRetryCommand?: () => void;
+  onResynchronize?: () => void;
   pendingSupportPlay: PendingSupportPlay | null;
+  publicEvents: readonly PublicEventFeedItem[];
   view: PlayerGameView;
 }) {
   const [zoneDialog, setZoneDialog] = useState<ZoneDialogState | null>(null);
@@ -124,17 +136,21 @@ export function GameBoardView({
                 perspective="opponent"
               />
 
-              <section className="flex items-center justify-between gap-4 rounded-md border border-slate-300 px-4 py-3 text-sm">
+              <section className="grid grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-x-4 gap-y-2 rounded-md border border-slate-300 px-4 py-3 text-sm">
                 <div>
                   <span className="text-slate-500">ROUND </span>
                   <strong>{view.round}</strong>
                 </div>
-                <div className="flex items-center gap-3">
+                <div className="flex min-w-0 flex-wrap items-center justify-center gap-x-3 gap-y-1">
                   <span className="text-slate-500">現在のフェーズ</span>
                   <strong>{phaseLabels[view.phase]}</strong>
                   <span className="rounded border border-slate-300 px-2 py-1 font-mono text-xs">
                     {formatSeconds(remainingSeconds)}
                   </span>
+                  <ConnectionStatus
+                    onResynchronize={onResynchronize}
+                    state={connectionState}
+                  />
                 </div>
                 <div className="flex items-center gap-3">
                   <span
@@ -162,6 +178,7 @@ export function GameBoardView({
                     {finishActionLabel}
                   </button>
                 </div>
+                <PublicEventFeed events={publicEvents} />
               </section>
 
               <AttackGroupRow

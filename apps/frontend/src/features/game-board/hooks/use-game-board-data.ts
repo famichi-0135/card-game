@@ -10,24 +10,35 @@ import type {
   SubmitGameCommandResponse,
 } from "@disastar/contracts/game";
 import type { CardCatalogVersion } from "@disastar/game-engine/contracts";
+import { useCallback, useEffect, useState } from "react";
 import { ApiClientError, fetchApi } from "../../../app/api-client.ts";
 
 export function gameSnapshotQueryKey(gameId: string) {
   return ["games", gameId, "snapshot"] as const;
 }
 
+function fetchGameSnapshot(
+  gameId: string,
+  afterSequence: number,
+): Promise<GameSnapshotResponse> {
+  return fetchApi<GameSnapshotResponse>(
+    `/api/games/${encodeURIComponent(gameId)}?afterSequence=${afterSequence}`,
+  );
+}
+
 export function useGameSnapshot(gameId: string) {
   const queryClient = useQueryClient();
   const queryKey = gameSnapshotQueryKey(gameId);
+  const [isResynchronizing, setIsResynchronizing] = useState(false);
+  const [resynchronizationError, setResynchronizationError] =
+    useState<unknown>(null);
 
-  return useQuery({
+  const query = useQuery({
     queryKey,
     queryFn: async () => {
       const previous = queryClient.getQueryData<GameSnapshotResponse>(queryKey);
       const afterSequence = previous?.latestEventSequence ?? 0;
-      return fetchApi<GameSnapshotResponse>(
-        `/api/games/${encodeURIComponent(gameId)}?afterSequence=${afterSequence}`,
-      );
+      return fetchGameSnapshot(gameId, afterSequence);
     },
     refetchInterval: (query) =>
       query.state.data?.view.status === "finished" ? false : 2_000,
@@ -35,6 +46,36 @@ export function useGameSnapshot(gameId: string) {
     refetchOnWindowFocus: (query) =>
       query.state.data?.view.status === "finished" ? false : "always",
   });
+
+  useEffect(() => {
+    if (query.dataUpdatedAt > 0) {
+      setResynchronizationError(null);
+    }
+  }, [query.dataUpdatedAt]);
+
+  const resynchronize = useCallback(async () => {
+    setIsResynchronizing(true);
+    setResynchronizationError(null);
+    try {
+      await queryClient.cancelQueries({
+        queryKey: gameSnapshotQueryKey(gameId),
+      });
+      const snapshot = await fetchGameSnapshot(gameId, 0);
+      queryClient.setQueryData(gameSnapshotQueryKey(gameId), snapshot);
+    } catch (error) {
+      setResynchronizationError(error);
+      throw error;
+    } finally {
+      setIsResynchronizing(false);
+    }
+  }, [gameId, queryClient]);
+
+  return {
+    ...query,
+    isResynchronizing,
+    resynchronizationError,
+    resynchronize,
+  };
 }
 
 export function useGameCommand(gameId: string) {
