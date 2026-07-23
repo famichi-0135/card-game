@@ -24,7 +24,8 @@ export function DraggableHandCard({
   const canDrag =
     actions?.placeAttack.available === true ||
     actions?.chainAttack.available === true ||
-    actions?.playSupport.available === true;
+    actions?.playSupport.available === true ||
+    actions?.discard.available === true;
   const { ref, handleRef, isDragging } = useDraggable({
     id: `hand-card-${card.instanceId}`,
     type: "hand-card",
@@ -51,7 +52,9 @@ export function DraggableHandCard({
           canDrag
             ? actions?.playSupport.available
               ? "ドラッグしてサポートゾーンで使用"
-              : "ドラッグして攻撃グループへ配置または連鎖"
+              : actions?.discard.available
+                ? "ドラッグして攻撃グループへ配置、連鎖、または捨て札へ破棄"
+                : "ドラッグして攻撃グループへ配置または連鎖"
             : "このカードは現在のフェーズでは配置できません"
         }
       >

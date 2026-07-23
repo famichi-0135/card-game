@@ -17,6 +17,7 @@ import { useMemo, useState } from "react";
 
 type LocalBoardState = {
   attackGroups: VisibleAttackGroup[];
+  discardPile: VisibleCardInstance[];
   hand: VisibleCardInstance[];
   mana: PlayerGameView["self"]["mana"];
   phase: GamePhase;
@@ -45,6 +46,7 @@ export function useGameBoardActions({
 }) {
   const [boardState, setBoardState] = useState<LocalBoardState>(() => ({
     attackGroups: [...view.self.attackGroups],
+    discardPile: [...view.self.discardPile],
     hand: [...view.self.hand],
     mana: view.self.mana,
     phase: view.phase,
@@ -68,6 +70,7 @@ export function useGameBoardActions({
             self: {
               ...view.self,
               attackGroups: boardState.attackGroups,
+              discardPile: boardState.discardPile,
               hand: boardState.hand,
               handCount: boardState.hand.length,
               mana: boardState.mana,
@@ -125,6 +128,31 @@ export function useGameBoardActions({
         card,
         effectSelections: actions.playSupport.effectSelections,
       });
+      return;
+    }
+
+    if (targetKind === "discard-zone") {
+      if (!actions.discard.available) {
+        return;
+      }
+
+      const command = createDiscardHandCommand(currentView, cardInstanceId);
+      if (onCommand !== undefined) {
+        onCommand(command);
+        return;
+      }
+      if (!preview) {
+        return;
+      }
+
+      setBoardState((current) => ({
+        ...current,
+        discardPile: [...current.discardPile, card],
+        hand: current.hand.filter(
+          (candidate) => candidate.instanceId !== cardInstanceId,
+        ),
+        stateVersion: current.stateVersion + 1,
+      }));
       return;
     }
 
@@ -334,6 +362,17 @@ function createChainAttackCommand(
     cardInstanceId,
     targetGroupId,
     effectInputs: [],
+  };
+}
+
+function createDiscardHandCommand(
+  view: PlayerGameView,
+  cardInstanceId: string,
+): GameCommand {
+  return {
+    ...createBaseCommand(view),
+    type: "DISCARD_HAND_CARD",
+    cardInstanceId,
   };
 }
 

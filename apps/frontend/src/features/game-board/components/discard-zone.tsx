@@ -1,20 +1,20 @@
 import { useDroppable } from "@dnd-kit/react";
 
-export function SupportZone({
-  canPlaySupport,
+export function DiscardZone({
+  canDiscard,
   count,
   onOpen,
 }: {
-  canPlaySupport: boolean;
+  canDiscard: boolean;
   count: number;
   onOpen: () => void;
 }) {
   const { ref, isDropTarget } = useDroppable({
-    id: "support-zone",
-    type: "support-zone",
+    id: "discard-zone",
+    type: "discard-zone",
     accept: "hand-card",
-    disabled: !canPlaySupport,
-    data: { kind: "support-zone", side: "self" },
+    disabled: !canDiscard,
+    data: { kind: "discard-zone", side: "self" },
   });
 
   return (
@@ -26,16 +26,16 @@ export function SupportZone({
     >
       <button
         className={`w-full rounded-md border p-3 text-left hover:bg-slate-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-slate-900 ${
-          canPlaySupport ? "border-dashed border-slate-500" : "border-slate-300"
+          canDiscard ? "border-dashed border-slate-500" : "border-slate-300"
         }`}
         onClick={onOpen}
         type="button"
       >
-        <span className="block text-xs text-slate-500">サポート</span>
+        <span className="block text-xs text-slate-500">捨て札</span>
         <strong className="text-lg">{count}</strong>
         <span className="ml-1 text-xs">枚</span>
-        {canPlaySupport ? (
-          <span className="mt-1 block text-xs text-slate-500">ここへ使用</span>
+        {canDiscard ? (
+          <span className="mt-1 block text-xs text-slate-500">ここへ破棄</span>
         ) : null}
       </button>
     </div>

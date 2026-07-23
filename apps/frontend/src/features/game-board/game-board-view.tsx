@@ -8,6 +8,7 @@ import type {
 import { useEffect, useState } from "react";
 import { AttackGroupRow } from "./components/attack-group-row.tsx";
 import { DesktopOnlyNotice } from "./components/desktop-only-notice.tsx";
+import { DiscardZone } from "./components/discard-zone.tsx";
 import { DraggableHandCard } from "./components/hand-card.tsx";
 import { ManaPanel } from "./components/mana-panel.tsx";
 import { OpponentZone } from "./components/opponent-zone.tsx";
@@ -15,7 +16,6 @@ import { PhaseEndDialog } from "./components/phase-end-dialog.tsx";
 import { PlayerSummary } from "./components/player-summary.tsx";
 import { SupportTargetDialog } from "./components/support-target-dialog.tsx";
 import { SupportZone } from "./components/support-zone.tsx";
-import { ZoneButton } from "./components/zone-button.tsx";
 import { ZoneDialog, type ZoneDialogState } from "./components/zone-dialog.tsx";
 import type { PendingSupportPlay } from "./hooks/use-game-board-actions.ts";
 
@@ -33,19 +33,25 @@ const phaseLabels: Record<PlayerGameView["phase"], string> = {
 export function GameBoardView({
   availableActions,
   catalog,
+  commandError,
+  commandPending,
   isInteractive,
   onCancelSupportPlay,
   onConfirmSupportPlay,
   onFinishPhase,
+  onRetryCommand,
   pendingSupportPlay,
   view,
 }: {
   availableActions: AvailableGameActions;
   catalog: PublicCardCatalog;
+  commandError: string | null;
+  commandPending: boolean;
   isInteractive: boolean;
   onCancelSupportPlay: () => void;
   onConfirmSupportPlay: (effectInputs: EffectInput[]) => void;
   onFinishPhase: () => void;
+  onRetryCommand?: () => void;
   pendingSupportPlay: PendingSupportPlay | null;
   view: PlayerGameView;
 }) {
@@ -61,6 +67,7 @@ export function GameBoardView({
   const finishActionLabel =
     view.phase === "support" ? "サポート終了" : "配置終了";
   const phaseInstruction = getPhaseInstruction(view.phase);
+  const commandMessage = commandPending ? "操作を送信しています" : commandError;
   const handInstruction =
     view.phase === "support"
       ? "ドラッグしてサポートを使用"
@@ -130,9 +137,22 @@ export function GameBoardView({
                   </span>
                 </div>
                 <div className="flex items-center gap-3">
-                  <span className="truncate text-slate-600">
-                    {phaseInstruction}
+                  <span
+                    aria-live="polite"
+                    className="truncate text-slate-600"
+                    role="status"
+                  >
+                    {commandMessage ?? phaseInstruction}
                   </span>
+                  {onRetryCommand === undefined ? null : (
+                    <button
+                      className="shrink-0 rounded border border-slate-300 px-3 py-2 text-sm hover:bg-slate-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-slate-900"
+                      onClick={onRetryCommand}
+                      type="button"
+                    >
+                      再試行
+                    </button>
+                  )}
                   <button
                     className="shrink-0 rounded border border-slate-700 bg-slate-800 px-3 py-2 text-sm text-white enabled:hover:bg-slate-700 disabled:cursor-not-allowed disabled:border-slate-300 disabled:bg-slate-100 disabled:text-slate-400 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-slate-900"
                     disabled={!canFinishPhase}
@@ -162,10 +182,15 @@ export function GameBoardView({
               className="grid grid-cols-2 gap-2"
               aria-label="自分のカードゾーン"
             >
-              <ZoneButton
-                label="捨て札"
+              <DiscardZone
+                canDiscard={
+                  isInteractive &&
+                  Object.values(availableActions.handCards).some(
+                    (actions) => actions.discard.available,
+                  )
+                }
                 count={view.self.discardPile.length}
-                onClick={() =>
+                onOpen={() =>
                   openZoneDialog({
                     title: "自分の捨て札",
                     description: "このゲームで使用または破棄したカード",

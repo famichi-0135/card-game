@@ -8,6 +8,7 @@ import { ApiClientError } from "../../app/api-client.ts";
 import { GameBoardView } from "./game-board-view.tsx";
 import type { GameBoardFixture } from "./fixtures/game-board-fixture.ts";
 import {
+  useGameCommand,
   useGameSnapshot,
   usePublicCardCatalog,
 } from "./hooks/use-game-board-data.ts";
@@ -22,6 +23,7 @@ export function FixtureGameBoard({ fixture }: { fixture: GameBoardFixture }) {
 export function GameBoard({ gameId }: { gameId: string }) {
   const snapshot = useGameSnapshot(gameId);
   const catalog = usePublicCardCatalog(snapshot.data?.view.cardCatalogVersion);
+  const command = useGameCommand(gameId);
 
   if (snapshot.isPending) {
     return <GameBoardMessage title="対戦データを読み込んでいます" />;
@@ -42,6 +44,10 @@ export function GameBoard({ gameId }: { gameId: string }) {
   return (
     <GameBoardContent
       catalog={catalog.data.catalog}
+      commandError={command.errorMessage}
+      commandPending={command.isPending}
+      onCommand={command.submit}
+      onRetryCommand={command.canRetry ? command.retry : undefined}
       view={snapshot.data.view}
     />
   );
@@ -49,12 +55,18 @@ export function GameBoard({ gameId }: { gameId: string }) {
 
 function GameBoardContent({
   catalog,
+  commandError,
+  commandPending = false,
   onCommand,
+  onRetryCommand,
   preview = false,
   view,
 }: {
   catalog: PublicCardCatalog;
+  commandError?: string | null;
+  commandPending?: boolean;
   onCommand?: (command: GameCommand) => void;
+  onRetryCommand?: () => void;
   preview?: boolean;
   view: PlayerGameView;
 }) {
@@ -67,17 +79,20 @@ function GameBoardContent({
     handleDragEnd,
     pendingSupportPlay,
   } = useGameBoardActions({ catalog, onCommand, preview, view });
-  const isInteractive = preview || onCommand !== undefined;
+  const isInteractive = preview || (onCommand !== undefined && !commandPending);
 
   return (
     <DragDropProvider onDragEnd={handleDragEnd}>
       <GameBoardView
         availableActions={availableActions}
         catalog={catalog}
+        commandError={commandError ?? null}
+        commandPending={commandPending}
         isInteractive={isInteractive}
         onCancelSupportPlay={cancelSupportPlay}
         onConfirmSupportPlay={confirmSupportPlay}
         onFinishPhase={finishPhase}
+        onRetryCommand={onRetryCommand}
         pendingSupportPlay={pendingSupportPlay}
         view={currentView}
       />
