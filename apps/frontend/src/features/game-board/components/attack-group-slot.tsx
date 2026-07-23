@@ -11,6 +11,7 @@ export function AttackGroupSlot({
   catalog,
   group,
   slotIndex,
+  canChain,
   canPlace,
   isSelf,
   onOpenGroup,
@@ -18,6 +19,7 @@ export function AttackGroupSlot({
   catalog: PublicCardCatalog;
   group: VisibleAttackGroup | undefined;
   slotIndex: AttackGroupSlotIndex;
+  canChain: boolean;
   canPlace: boolean;
   isSelf: boolean;
   onOpenGroup?: (group: VisibleAttackGroup) => void;
@@ -26,8 +28,12 @@ export function AttackGroupSlot({
     id: `attack-slot-${slotIndex}`,
     type: "attack-slot",
     accept: "hand-card",
-    disabled: !canPlace,
-    data: { slotIndex, side: isSelf ? "self" : "opponent" },
+    disabled: !canPlace && !canChain,
+    data: {
+      slotIndex,
+      groupId: group?.groupId,
+      side: isSelf ? "self" : "opponent",
+    },
   });
 
   const content =
@@ -59,7 +65,7 @@ export function AttackGroupSlot({
       className={`relative min-h-0 rounded-md border p-2 ${
         isDropTarget
           ? "border-slate-900 bg-slate-100"
-          : canPlace
+          : canPlace || canChain
             ? "border-dashed border-slate-500 bg-white"
             : "border-slate-300 bg-slate-50"
       }`}
@@ -67,6 +73,11 @@ export function AttackGroupSlot({
       <span className="absolute left-2 top-1 text-[10px] text-slate-400">
         {String(slotIndex + 1).padStart(2, "0")}
       </span>
+      {canChain ? (
+        <span className="absolute right-2 top-1 text-[10px] text-slate-500">
+          連鎖可
+        </span>
+      ) : null}
       {group !== undefined && onOpenGroup !== undefined ? (
         <button
           className="h-full w-full focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-slate-900"

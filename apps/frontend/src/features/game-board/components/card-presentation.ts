@@ -1,4 +1,4 @@
-import type { Attribute } from "@disastar/game-engine";
+import type { Attribute, PublicCardCatalog } from "@disastar/game-engine";
 
 export const attributeLabels: Record<Attribute, string> = {
   attributeA: "属性A",
@@ -26,4 +26,18 @@ export function cardTypeMark(cardType: "mana" | "attack" | "support"): string {
     case "support":
       return "S";
   }
+}
+
+export function getChainableCardNames(
+  catalog: PublicCardCatalog,
+  definition: NonNullable<PublicCardCatalog["definitions"][string]>,
+): string[] {
+  return definition.interaction.chainableCardDefinitionIds.flatMap(
+    (definitionId) => {
+      const chainableDefinition = catalog.definitions[definitionId];
+      return chainableDefinition === undefined
+        ? []
+        : [chainableDefinition.name];
+    },
+  );
 }

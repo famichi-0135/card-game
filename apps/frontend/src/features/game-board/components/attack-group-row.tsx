@@ -40,12 +40,17 @@ export function AttackGroupRow({
             perspective === "self" &&
             hasPlacementCandidate(availableActions, slotIndex) &&
             group === undefined;
+          const canChain =
+            perspective === "self" &&
+            group !== undefined &&
+            hasChainCandidate(availableActions, group.groupId);
           return (
             <AttackGroupSlot
               key={slotIndex}
               catalog={catalog}
               group={group}
               slotIndex={slotIndex}
+              canChain={canChain}
               canPlace={canPlace}
               isSelf={perspective === "self"}
               onOpenGroup={onOpenGroup}
@@ -54,6 +59,20 @@ export function AttackGroupRow({
         })}
       </div>
     </section>
+  );
+}
+
+function hasChainCandidate(
+  availableActions: AvailableGameActions | undefined,
+  groupId: string,
+): boolean {
+  if (availableActions === undefined) {
+    return false;
+  }
+  return Object.values(availableActions.handCards).some(
+    (actions) =>
+      actions.chainAttack.available &&
+      actions.chainAttack.targetGroupIds.includes(groupId),
   );
 }
 

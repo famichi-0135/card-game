@@ -12,15 +12,25 @@ export function GameBoard({
   onCommand?: (command: GameCommand) => void;
 }) {
   const { catalog, view } = fixture;
-  const { availableActions, currentView, finishPhase, handleDragEnd } =
-    useGameBoardActions({ catalog, onCommand, view });
+  const {
+    availableActions,
+    cancelSupportPlay,
+    confirmSupportPlay,
+    currentView,
+    finishPhase,
+    handleDragEnd,
+    pendingSupportPlay,
+  } = useGameBoardActions({ catalog, onCommand, view });
 
   return (
     <DragDropProvider onDragEnd={handleDragEnd}>
       <GameBoardView
         availableActions={availableActions}
         catalog={catalog}
+        onCancelSupportPlay={cancelSupportPlay}
+        onConfirmSupportPlay={confirmSupportPlay}
         onFinishPhase={finishPhase}
+        pendingSupportPlay={pendingSupportPlay}
         view={currentView}
       />
     </DragDropProvider>

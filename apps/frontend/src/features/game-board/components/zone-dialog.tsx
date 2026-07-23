@@ -7,6 +7,7 @@ import {
   attributeLabels,
   cardTypeLabel,
   cardTypeMark,
+  getChainableCardNames,
 } from "./card-presentation.ts";
 
 export type ZoneDialogState = {
@@ -92,6 +93,7 @@ function ZoneCard({
   if (definition === undefined) {
     return null;
   }
+  const chainableCardNames = getChainableCardNames(catalog, definition);
 
   return (
     <article className="rounded-md border border-slate-300 p-3">
@@ -108,6 +110,14 @@ function ZoneCard({
       <p className="mt-3 text-xs leading-5 text-slate-600">
         {definition.rulesText}
       </p>
+      {definition.cardType === "attack" ? (
+        <p className="mt-3 border-t border-slate-200 pt-3 text-xs leading-5 text-slate-600">
+          <span className="text-slate-500">連鎖可能なカード: </span>
+          {chainableCardNames.length === 0
+            ? "なし"
+            : chainableCardNames.join("、")}
+        </p>
+      ) : null}
     </article>
   );
 }

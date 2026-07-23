@@ -13,10 +13,15 @@ export type GameBoardFixture = {
   availableActions: AvailableGameActions;
 };
 
-export function createGameBoardFixture(gameId: string): GameBoardFixture {
+export type GameBoardFixtureScenario = "placement" | "support";
+
+export function createGameBoardFixture(
+  gameId: string,
+  scenario: GameBoardFixtureScenario = "placement",
+): GameBoardFixture {
   const now = Date.now();
   const catalog = createCatalog();
-  const view = createView(gameId, now);
+  const view = createView(gameId, now, scenario);
 
   return {
     catalog,
@@ -151,16 +156,22 @@ function createCatalog(): PublicCardCatalog {
   };
 }
 
-function createView(gameId: string, now: number): PlayerGameView {
+function createView(
+  gameId: string,
+  now: number,
+  scenario: GameBoardFixtureScenario,
+): PlayerGameView {
+  const isSupportScenario = scenario === "support";
+
   return {
     gameId,
     rulesetVersion: "ruleset-v2-factions",
     cardCatalogVersion: "catalog-preview-v1",
-    stateVersion: 12,
+    stateVersion: isSupportScenario ? 14 : 12,
     status: "active",
     round: 3,
-    phase: "firstPlayerPlacement",
-    phaseSequence: 7,
+    phase: isSupportScenario ? "support" : "firstPlayerPlacement",
+    phaseSequence: isSupportScenario ? 9 : 7,
     phaseDeadlineAt: now + 78_000,
     firstPlayerId: "player-disaster",
     secondPlayerId: "player-countermeasure",
@@ -230,7 +241,7 @@ function createView(gameId: string, now: number): PlayerGameView {
           ownerId: "player-disaster",
         },
       ],
-      mana: createMana(6, 4, 3, 3, 2, 1),
+      mana: createMana(8, 4, 6, 1, 2, 1),
       activeEffects: [],
       supportFinished: false,
     },

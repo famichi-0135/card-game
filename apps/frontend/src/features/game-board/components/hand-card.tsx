@@ -8,6 +8,7 @@ import {
   attributeLabels,
   cardTypeLabel,
   cardTypeMark,
+  getChainableCardNames,
 } from "./card-presentation.ts";
 
 export function DraggableHandCard({
@@ -20,7 +21,10 @@ export function DraggableHandCard({
   actions: AvailableGameActions["handCards"][string] | undefined;
 }) {
   const definition = catalog.definitions[card.definitionId];
-  const canDrag = actions?.placeAttack.available === true;
+  const canDrag =
+    actions?.placeAttack.available === true ||
+    actions?.chainAttack.available === true ||
+    actions?.playSupport.available === true;
   const { ref, handleRef, isDragging } = useDraggable({
     id: `hand-card-${card.instanceId}`,
     type: "hand-card",
@@ -45,7 +49,9 @@ export function DraggableHandCard({
         aria-label={`${definition.name}。${getActionSummary(actions)}`}
         title={
           canDrag
-            ? "ドラッグして攻撃グループへ配置"
+            ? actions?.playSupport.available
+              ? "ドラッグしてサポートゾーンで使用"
+              : "ドラッグして攻撃グループへ配置または連鎖"
             : "このカードは現在のフェーズでは配置できません"
         }
       >
@@ -66,16 +72,20 @@ export function DraggableHandCard({
         </span>
       </button>
 
-      <CardHoverPreview definition={definition} />
+      <CardHoverPreview catalog={catalog} definition={definition} />
     </div>
   );
 }
 
 function CardHoverPreview({
+  catalog,
   definition,
 }: {
+  catalog: PublicCardCatalog;
   definition: NonNullable<PublicCardCatalog["definitions"][string]>;
 }) {
+  const chainableCardNames = getChainableCardNames(catalog, definition);
+
   return (
     <section
       className="pointer-events-none absolute bottom-[calc(100%+8px)] left-1/2 z-20 hidden w-64 -translate-x-1/2 rounded-md border border-slate-300 bg-white p-3 text-sm shadow-sm group-hover:block group-focus-within:block"
@@ -106,6 +116,14 @@ function CardHoverPreview({
       <p className="mt-3 text-xs leading-5 text-slate-600">
         {definition.rulesText}
       </p>
+      {definition.cardType === "attack" ? (
+        <p className="mt-3 border-t border-slate-200 pt-3 text-xs leading-5 text-slate-600">
+          <span className="text-slate-500">連鎖可能なカード: </span>
+          {chainableCardNames.length === 0
+            ? "なし"
+            : chainableCardNames.join("、")}
+        </p>
+      ) : null}
     </section>
   );
 }

@@ -3,6 +3,7 @@ import {
   Link,
   useParams,
   useRouteError,
+  useSearchParams,
 } from "react-router";
 import { GameBoard } from "../features/game-board/game-board.tsx";
 import {
@@ -42,12 +43,15 @@ function HomeRoute() {
 
 function GameRoute() {
   const { gameId } = useParams();
+  const [searchParams] = useSearchParams();
   if (gameId === undefined) {
     throw new Error("ゲームIDが指定されていません。");
   }
 
   if (gameId === FIXTURE_GAME_ID) {
-    return <GameBoard fixture={createGameBoardFixture(gameId)} />;
+    const scenario =
+      searchParams.get("scenario") === "support" ? "support" : "placement";
+    return <GameBoard fixture={createGameBoardFixture(gameId, scenario)} />;
   }
 
   return <AuthenticatedGameRoute />;

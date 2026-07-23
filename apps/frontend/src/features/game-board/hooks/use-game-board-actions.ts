@@ -2,7 +2,10 @@ import type { DragEndEvent } from "@dnd-kit/react";
 import {
   ATTACK_GROUP_SLOT_INDICES,
   getAvailableGameActions,
+  getAdditionalAttackGroupManaRequired,
   type AttackGroupSlotIndex,
+  type AvailableSupportEffectSelection,
+  type EffectInput,
   type GameCommand,
   type GamePhase,
   type PlayerGameView,
@@ -15,11 +18,18 @@ import { useMemo, useState } from "react";
 type LocalBoardState = {
   attackGroups: VisibleAttackGroup[];
   hand: VisibleCardInstance[];
+  mana: PlayerGameView["self"]["mana"];
   phase: GamePhase;
   phaseDeadlineAt: number | null;
   phaseSequence: number;
   stateVersion: number;
+  supportZone: VisibleCardInstance[];
   supportFinished: boolean;
+};
+
+export type PendingSupportPlay = {
+  card: VisibleCardInstance;
+  effectSelections: readonly AvailableSupportEffectSelection[];
 };
 
 export function useGameBoardActions({
@@ -34,12 +44,16 @@ export function useGameBoardActions({
   const [boardState, setBoardState] = useState<LocalBoardState>(() => ({
     attackGroups: [...view.self.attackGroups],
     hand: [...view.self.hand],
+    mana: view.self.mana,
     phase: view.phase,
     phaseDeadlineAt: view.phaseDeadlineAt,
     phaseSequence: view.phaseSequence,
     stateVersion: view.stateVersion,
+    supportZone: [...view.self.supportZone],
     supportFinished: view.self.supportFinished,
   }));
+  const [pendingSupportPlay, setPendingSupportPlay] =
+    useState<PendingSupportPlay | null>(null);
   const currentView = useMemo(
     () => ({
       ...view,
@@ -52,6 +66,8 @@ export function useGameBoardActions({
         attackGroups: boardState.attackGroups,
         hand: boardState.hand,
         handCount: boardState.hand.length,
+        mana: boardState.mana,
+        supportZone: boardState.supportZone,
         supportFinished: boardState.supportFinished,
       },
     }),
@@ -67,42 +83,100 @@ export function useGameBoardActions({
     const cardInstanceId = operation.source?.data.cardInstanceId as
       | string
       | undefined;
+    const targetKind = operation.target?.data.kind as string | undefined;
     const slotIndex = operation.target?.data.slotIndex as number | undefined;
+    const targetGroupId = operation.target?.data.groupId as string | undefined;
     const targetSide = operation.target?.data.side as string | undefined;
 
+    if (canceled || cardInstanceId === undefined || targetSide !== "self") {
+      return;
+    }
+
+    const card = currentView.self.hand.find(
+      (candidate) => candidate.instanceId === cardInstanceId,
+    );
+    if (card === undefined) {
+      return;
+    }
+    const definition = catalog.definitions[card.definitionId];
+    if (definition === undefined) {
+      return;
+    }
+
+    const actions = availableActions.handCards[cardInstanceId];
+    if (actions === undefined) {
+      return;
+    }
+
+    if (targetKind === "support-zone") {
+      if (!actions.playSupport.available) {
+        return;
+      }
+
+      setPendingSupportPlay({
+        card,
+        effectSelections: actions.playSupport.effectSelections,
+      });
+      return;
+    }
+
     if (
-      canceled ||
-      cardInstanceId === undefined ||
+      definition.cardType !== "attack" ||
       slotIndex === undefined ||
-      targetSide !== "self" ||
       !isAttackGroupSlotIndex(slotIndex)
     ) {
       return;
     }
 
-    const actions = availableActions.handCards[cardInstanceId];
+    if (targetGroupId !== undefined) {
+      if (
+        !actions.chainAttack.available ||
+        !actions.chainAttack.targetGroupIds.includes(targetGroupId)
+      ) {
+        return;
+      }
+
+      const command = createChainAttackCommand(
+        currentView,
+        cardInstanceId,
+        targetGroupId,
+      );
+      if (onCommand !== undefined) {
+        onCommand(command);
+        return;
+      }
+
+      setBoardState((current) =>
+        chainPreviewCard(
+          current,
+          card,
+          definition.cost ?? 0,
+          definition.basePower ?? 0,
+          targetGroupId,
+        ),
+      );
+      return;
+    }
+
     if (
-      actions === undefined ||
       !actions.placeAttack.available ||
       !actions.placeAttack.slotIndices.includes(slotIndex)
     ) {
       return;
     }
 
+    const command = createPlaceAttackCommand(
+      currentView,
+      cardInstanceId,
+      slotIndex,
+    );
+    if (onCommand !== undefined) {
+      onCommand(command);
+      return;
+    }
+
     setBoardState((current) => {
       if (current.attackGroups.some((group) => group.slotIndex === slotIndex)) {
-        return current;
-      }
-
-      const card = current.hand.find(
-        (candidate) => candidate.instanceId === cardInstanceId,
-      );
-      if (card === undefined) {
-        return current;
-      }
-
-      const definition = catalog.definitions[card.definitionId];
-      if (definition === undefined || definition.cardType !== "attack") {
         return current;
       }
 
@@ -124,6 +198,12 @@ export function useGameBoardActions({
             currentPower: definition.basePower ?? 0,
           },
         ],
+        mana: reserveMana(
+          current.mana,
+          definition.attribute,
+          definition.cost ?? 0,
+        ),
+        stateVersion: current.stateVersion + 1,
       };
     });
   };
@@ -150,22 +230,108 @@ export function useGameBoardActions({
     setBoardState((current) => advancePreviewPhase(current));
   };
 
-  return { availableActions, currentView, finishPhase, handleDragEnd };
+  const cancelSupportPlay = () => setPendingSupportPlay(null);
+
+  const confirmSupportPlay = (effectInputs: EffectInput[]) => {
+    const pending = pendingSupportPlay;
+    if (pending === null) {
+      return;
+    }
+
+    const actions = availableActions.handCards[pending.card.instanceId];
+    if (actions === undefined || !actions.playSupport.available) {
+      return;
+    }
+
+    const definition = catalog.definitions[pending.card.definitionId];
+    if (definition === undefined || definition.cardType !== "support") {
+      return;
+    }
+
+    const command = createPlaySupportCommand(
+      currentView,
+      pending.card.instanceId,
+      effectInputs,
+    );
+    setPendingSupportPlay(null);
+    if (onCommand !== undefined) {
+      onCommand(command);
+      return;
+    }
+
+    setBoardState((current) => ({
+      ...current,
+      hand: current.hand.filter(
+        (candidate) => candidate.instanceId !== pending.card.instanceId,
+      ),
+      mana: reserveMana(
+        current.mana,
+        definition.attribute,
+        definition.cost ?? 0,
+      ),
+      stateVersion: current.stateVersion + 1,
+      supportZone: [...current.supportZone, pending.card],
+    }));
+  };
+
+  return {
+    availableActions,
+    cancelSupportPlay,
+    confirmSupportPlay,
+    currentView,
+    finishPhase,
+    handleDragEnd,
+    pendingSupportPlay,
+  };
 }
 
 function isAttackGroupSlotIndex(value: number): value is AttackGroupSlotIndex {
   return ATTACK_GROUP_SLOT_INDICES.includes(value as AttackGroupSlotIndex);
 }
 
-function createFinishPhaseCommand(view: PlayerGameView): GameCommand | null {
-  const baseCommand = {
-    commandId: `preview-${crypto.randomUUID()}`,
-    gameId: view.gameId,
-    playerId: view.viewerPlayerId,
-    phaseSequence: view.phaseSequence,
-    clientStateVersion: view.stateVersion,
-    issuedAt: Date.now(),
+function createPlaceAttackCommand(
+  view: PlayerGameView,
+  cardInstanceId: string,
+  slotIndex: AttackGroupSlotIndex,
+): GameCommand {
+  return {
+    ...createBaseCommand(view),
+    type: "PLACE_ATTACK_CARD",
+    cardInstanceId,
+    slotIndex,
+    effectInputs: [],
   };
+}
+
+function createChainAttackCommand(
+  view: PlayerGameView,
+  cardInstanceId: string,
+  targetGroupId: string,
+): GameCommand {
+  return {
+    ...createBaseCommand(view),
+    type: "CHAIN_ATTACK_CARD",
+    cardInstanceId,
+    targetGroupId,
+    effectInputs: [],
+  };
+}
+
+function createPlaySupportCommand(
+  view: PlayerGameView,
+  cardInstanceId: string,
+  effectInputs: EffectInput[],
+): GameCommand {
+  return {
+    ...createBaseCommand(view),
+    type: "PLAY_SUPPORT_CARD",
+    cardInstanceId,
+    effectInputs,
+  };
+}
+
+function createFinishPhaseCommand(view: PlayerGameView): GameCommand | null {
+  const baseCommand = createBaseCommand(view);
 
   if (
     view.phase === "firstPlayerPlacement" ||
@@ -177,6 +343,71 @@ function createFinishPhaseCommand(view: PlayerGameView): GameCommand | null {
     return { ...baseCommand, type: "FINISH_SUPPORT" };
   }
   return null;
+}
+
+function createBaseCommand(view: PlayerGameView) {
+  return {
+    commandId: `preview-${crypto.randomUUID()}`,
+    gameId: view.gameId,
+    playerId: view.viewerPlayerId,
+    phaseSequence: view.phaseSequence,
+    clientStateVersion: view.stateVersion,
+    issuedAt: Date.now(),
+  };
+}
+
+function chainPreviewCard(
+  current: LocalBoardState,
+  card: VisibleCardInstance,
+  cardCost: number,
+  cardPower: number,
+  targetGroupId: string,
+): LocalBoardState {
+  const targetGroup = current.attackGroups.find(
+    (group) => group.groupId === targetGroupId,
+  );
+  if (targetGroup === undefined) {
+    return current;
+  }
+
+  const additionalMana = getAdditionalAttackGroupManaRequired(
+    targetGroup.requiredMana,
+    cardCost,
+  );
+  return {
+    ...current,
+    hand: current.hand.filter(
+      (candidate) => candidate.instanceId !== card.instanceId,
+    ),
+    attackGroups: current.attackGroups.map((group) =>
+      group.groupId === targetGroupId
+        ? {
+            ...group,
+            cards: [...group.cards, card],
+            currentPower: group.currentPower + cardPower,
+            requiredMana: group.requiredMana + additionalMana,
+          }
+        : group,
+    ),
+    mana: reserveMana(current.mana, targetGroup.attribute, additionalMana),
+    stateVersion: current.stateVersion + 1,
+  };
+}
+
+function reserveMana(
+  mana: PlayerGameView["self"]["mana"],
+  attribute: VisibleAttackGroup["attribute"],
+  amount: number,
+): PlayerGameView["self"]["mana"] {
+  const current = mana[attribute];
+  return {
+    ...mana,
+    [attribute]: {
+      ...current,
+      available: current.available - amount,
+      reserved: current.reserved + amount,
+    },
+  };
 }
 
 function advancePreviewPhase(current: LocalBoardState): LocalBoardState {

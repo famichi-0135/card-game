@@ -1,5 +1,6 @@
 import type {
   AvailableGameActions,
+  EffectInput,
   PlayerGameView,
   PublicCardCatalog,
   VisibleAttackGroup,
@@ -12,8 +13,11 @@ import { ManaPanel } from "./components/mana-panel.tsx";
 import { OpponentZone } from "./components/opponent-zone.tsx";
 import { PhaseEndDialog } from "./components/phase-end-dialog.tsx";
 import { PlayerSummary } from "./components/player-summary.tsx";
+import { SupportTargetDialog } from "./components/support-target-dialog.tsx";
+import { SupportZone } from "./components/support-zone.tsx";
 import { ZoneButton } from "./components/zone-button.tsx";
 import { ZoneDialog, type ZoneDialogState } from "./components/zone-dialog.tsx";
+import type { PendingSupportPlay } from "./hooks/use-game-board-actions.ts";
 
 const phaseLabels: Record<PlayerGameView["phase"], string> = {
   initializing: "準備中",
@@ -29,12 +33,18 @@ const phaseLabels: Record<PlayerGameView["phase"], string> = {
 export function GameBoardView({
   availableActions,
   catalog,
+  onCancelSupportPlay,
+  onConfirmSupportPlay,
   onFinishPhase,
+  pendingSupportPlay,
   view,
 }: {
   availableActions: AvailableGameActions;
   catalog: PublicCardCatalog;
+  onCancelSupportPlay: () => void;
+  onConfirmSupportPlay: (effectInputs: EffectInput[]) => void;
   onFinishPhase: () => void;
+  pendingSupportPlay: PendingSupportPlay | null;
   view: PlayerGameView;
 }) {
   const [zoneDialog, setZoneDialog] = useState<ZoneDialogState | null>(null);
@@ -48,6 +58,11 @@ export function GameBoardView({
     isFinishablePhase(view.phase) && finishAction.available;
   const finishActionLabel =
     view.phase === "support" ? "サポート終了" : "配置終了";
+  const phaseInstruction = getPhaseInstruction(view.phase);
+  const handInstruction =
+    view.phase === "support"
+      ? "ドラッグしてサポートを使用"
+      : "ドラッグして配置・連鎖";
 
   const openZoneDialog = (state: ZoneDialogState) => setZoneDialog(state);
   const openAttackGroup = (group: VisibleAttackGroup) =>
@@ -114,7 +129,7 @@ export function GameBoardView({
                 </div>
                 <div className="flex items-center gap-3">
                   <span className="truncate text-slate-600">
-                    配置フェーズが開始されました
+                    {phaseInstruction}
                   </span>
                   <button
                     className="shrink-0 rounded border border-slate-700 bg-slate-800 px-3 py-2 text-sm text-white enabled:hover:bg-slate-700 disabled:cursor-not-allowed disabled:border-slate-300 disabled:bg-slate-100 disabled:text-slate-400 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-slate-900"
@@ -156,10 +171,12 @@ export function GameBoardView({
                   })
                 }
               />
-              <ZoneButton
-                label="サポート"
+              <SupportZone
+                canPlaySupport={Object.values(availableActions.handCards).some(
+                  (actions) => actions.playSupport.available,
+                )}
                 count={view.self.supportZone.length}
-                onClick={() =>
+                onOpen={() =>
                   openZoneDialog({
                     title: "自分のサポートグループ",
                     description: "現在場に出ているサポートカード",
@@ -177,7 +194,9 @@ export function GameBoardView({
                     手札 {view.self.hand.length} 枚
                   </h1>
                 </div>
-                <span className="text-xs text-slate-500">ドラッグして配置</span>
+                <span className="text-xs text-slate-500">
+                  {handInstruction}
+                </span>
               </div>
               <div className="flex min-h-[148px] items-end justify-center gap-3">
                 {view.self.hand.map((card) => (
@@ -222,6 +241,18 @@ export function GameBoardView({
           }}
         />
       )}
+      {pendingSupportPlay === null ? null : (
+        <SupportTargetDialog
+          cardName={
+            catalog.definitions[pendingSupportPlay.card.definitionId]?.name ??
+            "サポートカード"
+          }
+          effectSelections={pendingSupportPlay.effectSelections}
+          onCancel={onCancelSupportPlay}
+          onConfirm={onConfirmSupportPlay}
+          view={view}
+        />
+      )}
     </>
   );
 }
@@ -251,4 +282,25 @@ function isFinishablePhase(phase: PlayerGameView["phase"]): boolean {
     phase === "secondPlayerPlacement" ||
     phase === "support"
   );
+}
+
+function getPhaseInstruction(phase: PlayerGameView["phase"]): string {
+  switch (phase) {
+    case "firstPlayerPlacement":
+      return "攻撃カードを配置または連鎖できます";
+    case "secondPlayerPlacement":
+      return "相手が攻撃カードを配置しています";
+    case "support":
+      return "サポートカードを使用できます";
+    case "resolution":
+      return "カード効果を解決しています";
+    case "cleanup":
+      return "場を整理しています";
+    case "refill":
+      return "手札を補充しています";
+    case "finished":
+      return "ゲームは終了しました";
+    case "initializing":
+      return "ゲームを準備しています";
+  }
 }
