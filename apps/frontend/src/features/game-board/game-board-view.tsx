@@ -180,7 +180,7 @@ export function GameBoardView({
                     {finishActionLabel}
                   </button>
                 </div>
-                <PublicEventFeed events={publicEvents} />
+                <PublicEventFeed events={publicEvents} gameId={view.gameId} />
               </section>
 
               <AttackGroupRow
