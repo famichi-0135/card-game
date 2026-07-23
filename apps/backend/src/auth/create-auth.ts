@@ -46,6 +46,9 @@ export function createAuthWithDatabase({
     baseURL,
     secret,
     trustedOrigins,
+    onAPIError: {
+      errorURL: `${baseURL}/login?oauthError=1`,
+    },
     database: drizzleAdapter(database, {
       provider: "sqlite",
       schema,
