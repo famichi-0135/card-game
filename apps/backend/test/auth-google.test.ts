@@ -83,4 +83,24 @@ describe("Better Auth Google OAuth", () => {
       code: "EMAIL_PASSWORD_SIGN_UP_DISABLED",
     });
   });
+
+  it("OAuth callbackの失敗時はアプリのログイン画面へ戻す", async () => {
+    const auth = createAuth({
+      database: env.DB,
+      baseURL,
+      googleClientId: authTestGoogleClientId,
+      googleClientSecret: "test-google-client-secret",
+      secret: testSecret,
+      trustedOrigins: [trustedOrigin],
+    });
+
+    const response = await auth.handler(
+      new Request(`${baseURL}/api/auth/callback/google`),
+    );
+
+    expect(response.status).toBe(302);
+    expect(response.headers.get("location")).toBe(
+      `${baseURL}/login?oauthError=1&error=state_not_found`,
+    );
+  });
 });
