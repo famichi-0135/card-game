@@ -58,7 +58,7 @@
         {
           "binding": "DB",
           "database_name": "disastar-card-game-staging",
-          "database_id": "replace-with-cloudflare-staging-d1-database-id",
+          "database_id": "dd817c3c-f936-48a4-b903-9a91a713e154",
           "migrations_dir": "drizzle",
         },
       ],
