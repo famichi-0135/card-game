@@ -5,7 +5,7 @@ import type {
   PlayerVisibleEventEnvelope,
   PublicCardCatalog,
 } from "@disastar/game-engine";
-import { useCallback, useEffect, useRef } from "react";
+import { type ReactNode, useCallback, useEffect, useRef } from "react";
 import { ApiClientError } from "../../app/api-client.ts";
 import type { GameConnectionState } from "./components/connection-status.tsx";
 import { GameBoardView } from "./game-board-view.tsx";
@@ -31,7 +31,13 @@ export function FixtureGameBoard({ fixture }: { fixture: GameBoardFixture }) {
   );
 }
 
-export function GameBoard({ gameId }: { gameId: string }) {
+export function GameBoard({
+  accountAction,
+  gameId,
+}: {
+  accountAction?: ReactNode;
+  gameId: string;
+}) {
   const snapshot = useGameSnapshot(gameId);
   const catalog = usePublicCardCatalog(snapshot.data?.view.cardCatalogVersion);
   const command = useGameCommand(gameId);
@@ -60,6 +66,7 @@ export function GameBoard({ gameId }: { gameId: string }) {
   return (
     <GameBoardContent
       catalog={catalog.data.catalog}
+      accountAction={accountAction}
       commandError={command.errorMessage}
       commandPending={command.isPending}
       connectionState={getConnectionState({
@@ -79,6 +86,7 @@ export function GameBoard({ gameId }: { gameId: string }) {
 }
 
 function GameBoardContent({
+  accountAction,
   catalog,
   commandError,
   commandPending = false,
@@ -91,6 +99,7 @@ function GameBoardContent({
   preview = false,
   view,
 }: {
+  accountAction?: ReactNode;
   catalog: PublicCardCatalog;
   commandError?: string | null;
   commandPending?: boolean;
@@ -157,6 +166,7 @@ function GameBoardContent({
   return (
     <DragDropProvider onDragEnd={handleDragEnd}>
       <GameBoardView
+        accountAction={accountAction}
         availableActions={availableActions}
         catalog={catalog}
         commandError={commandError ?? null}

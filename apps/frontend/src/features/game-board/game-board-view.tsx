@@ -5,7 +5,7 @@ import type {
   PublicCardCatalog,
   VisibleAttackGroup,
 } from "@disastar/game-engine";
-import { useEffect, useState } from "react";
+import { type ReactNode, useEffect, useState } from "react";
 import { AttackGroupRow } from "./components/attack-group-row.tsx";
 import {
   ConnectionStatus,
@@ -38,6 +38,7 @@ const phaseLabels: Record<PlayerGameView["phase"], string> = {
 };
 
 export function GameBoardView({
+  accountAction,
   availableActions,
   catalog,
   commandError,
@@ -53,6 +54,7 @@ export function GameBoardView({
   publicEvents,
   view,
 }: {
+  accountAction?: ReactNode;
   availableActions: AvailableGameActions;
   catalog: PublicCardCatalog;
   commandError: string | null;
@@ -179,6 +181,7 @@ export function GameBoardView({
                   >
                     {finishActionLabel}
                   </button>
+                  {accountAction}
                 </div>
                 <PublicEventFeed events={publicEvents} gameId={view.gameId} />
               </section>
