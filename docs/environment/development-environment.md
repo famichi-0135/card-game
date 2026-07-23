@@ -234,7 +234,7 @@ git diff
 マイグレーション、Google OAuthの設定は、リポジトリ管理者が内容を確認して実行する。
 
 1. Cloudflareアカウントへログインする。
-2. `apps/backend/wrangler.jsonc`のD1 `database_id`プレースホルダーを実環境に合わせる。
+2. staging / production の Worker、D1 database ID、Google OAuth callback を環境ごとに分離する。staging の具体的な手順は[Staging 環境の構築・確認手順](./staging-deployment.md)を参照する。
 3. Better AuthとGoogle OAuthに必要な変数・SecretをCloudflare側へ設定する。
 4. Google Cloud Consoleで、各公開オリジンの`/api/auth/callback/google`を承認済みリダイレクトURIとして登録する。
 5. Backendを先にデプロイし、その後Frontendをデプロイする。

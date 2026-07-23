@@ -51,6 +51,57 @@
       "new_sqlite_classes": ["CatalogArchive"],
     },
   ],
+  "env": {
+    "staging": {
+      "workers_dev": false,
+      "d1_databases": [
+        {
+          "binding": "DB",
+          "database_name": "disastar-card-game-staging",
+          "database_id": "replace-with-cloudflare-staging-d1-database-id",
+          "migrations_dir": "drizzle",
+        },
+      ],
+      "durable_objects": {
+        "bindings": [
+          {
+            "name": "GAME_SESSION",
+            "class_name": "GameSession",
+          },
+          {
+            "name": "CATALOG_ARCHIVE",
+            "class_name": "CatalogArchive",
+          },
+          {
+            "name": "MATCH_LOBBY",
+            "class_name": "MatchLobby",
+          },
+          {
+            "name": "PLAYER_DECKS",
+            "class_name": "PlayerDecks",
+          },
+        ],
+      },
+      "migrations": [
+        {
+          "tag": "v1-game-session",
+          "new_sqlite_classes": ["GameSession"],
+        },
+        {
+          "tag": "v2-match-lobby",
+          "new_sqlite_classes": ["MatchLobby"],
+        },
+        {
+          "tag": "v3-player-decks",
+          "new_sqlite_classes": ["PlayerDecks"],
+        },
+        {
+          "tag": "v4-catalog-archive",
+          "new_sqlite_classes": ["CatalogArchive"],
+        },
+      ],
+    },
+  },
   // "vars": {
   //   "MY_VAR": "my-variable"
   // },
