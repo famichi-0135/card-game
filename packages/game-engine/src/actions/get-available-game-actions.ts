@@ -113,7 +113,12 @@ function createHandCardActions(
     ),
     chainAttack: getAttackChain(view, catalog, definition, placementReason),
     discard: getDiscard(definition, placementReason),
-    playSupport: getSupportPlay(view, definition, supportReason),
+    playSupport: getSupportPlay(
+      view,
+      definition,
+      cardInstanceId,
+      supportReason,
+    ),
   };
 }
 
@@ -230,6 +235,7 @@ function getDiscard(
 function getSupportPlay(
   view: PlayerGameView,
   definition: PublicCardDefinition,
+  sourceCardInstanceId: CardInstanceId,
   supportReason: GameActionUnavailableReasonCode | null,
 ): AvailableSupportPlay {
   if (supportReason !== null) {
@@ -248,7 +254,7 @@ function getSupportPlay(
   }
 
   const effectSelections = definition.interaction.effects.map((effect, index) =>
-    createEffectSelection(view, effect, index),
+    createEffectSelection(view, effect, index, sourceCardInstanceId),
   );
   if (
     effectSelections.some(
@@ -267,6 +273,7 @@ function createEffectSelection(
   view: PlayerGameView,
   effect: PublicCardEffectInteraction,
   stageIndex: number,
+  sourceCardInstanceId: CardInstanceId,
 ): AvailableSupportEffectSelection {
   return {
     effectId: effect.effectId,
@@ -275,13 +282,14 @@ function createEffectSelection(
     minTargets: effect.target.minTargets,
     maxTargets: effect.target.maxTargets,
     selectionOrder: effect.target.selectionOrder,
-    candidates: getEffectTargetCandidates(view, effect),
+    candidates: getEffectTargetCandidates(view, effect, sourceCardInstanceId),
   };
 }
 
 function getEffectTargetCandidates(
   view: PlayerGameView,
   effect: PublicCardEffectInteraction,
+  sourceCardInstanceId: CardInstanceId,
 ): EffectTarget[] {
   const players = getPlayersForSide(view, effect.target.side);
   const candidates: EffectTarget[] = [];
@@ -314,6 +322,15 @@ function getEffectTargetCandidates(
               cardInstanceId: card.instanceId,
             })),
           );
+          if (
+            effect.target.allowSourceCard &&
+            effect.target.side !== "opponent"
+          ) {
+            candidates.push({
+              type: "supportCard",
+              cardInstanceId: sourceCardInstanceId,
+            });
+          }
           break;
         case "player":
           candidates.push({ type: "player", playerId: player.playerId });

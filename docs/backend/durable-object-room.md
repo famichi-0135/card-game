@@ -46,7 +46,7 @@ GameSession Durable Object
 
 ## 初期カードカタログ
 
-バックエンドは固定バージョン`initial-catalog-v2-factions`の初期カードカタログを使用する。攻撃カードは効果なし、サポートカードは基本効果を持ち、カタログ作成時に構造・陣営・参照・効果ライフサイクルを検証する。`createDisasterStarterDeckDefinitionIds`と`createCountermeasureStarterDeckDefinitionIds`は、各陣営に対して合法な30枚デッキを毎回新しい配列で返す。
+バックエンドは固定バージョン`initial-catalog-v3-presentation`の初期カードカタログを使用する。攻撃カードは効果なし、サポートカードは基本効果を持ち、カタログ作成時に構造・陣営・参照・効果ライフサイクルを検証する。`createDisasterStarterDeckDefinitionIds`と`createCountermeasureStarterDeckDefinitionIds`は、各陣営に対して合法な30枚デッキを毎回新しい配列で返す。
 
 陣営導入前の保存済みデッキ、待機部屋、ゲームセッションは所属陣営を復元できないため、開発段階の非互換データとして新しいDO Storageキーへ移行する。ゲームのルール・カタログ・エンジン意味バージョンも同時に更新し、旧状態へ新しい意味論を適用しない。
 

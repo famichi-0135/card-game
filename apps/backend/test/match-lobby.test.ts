@@ -100,7 +100,7 @@ describe("MatchLobby Durable Object", () => {
     });
   });
 
-  it("待機中の招待対戦を初期化し、参加者以外へは状態を公開しない", async () => {
+  it("待機中の招待対戦を初期化し、招待 URL を開いた認証済みユーザーへ待機状態を公開する", async () => {
     const lobby = getMatchLobby("match-lobby-waiting");
 
     await expect(
@@ -124,8 +124,15 @@ describe("MatchLobby Durable Object", () => {
       },
     });
     await expect(lobby.getView("player-3")).resolves.toEqual({
-      visible: false,
-      error: { code: "MATCH_ACCESS_FORBIDDEN" },
+      visible: true,
+      view: {
+        status: "waiting",
+        ownerPlayerId: "player-1",
+        ownerFaction: "disaster",
+        opponentPlayerId: null,
+        opponentFaction: null,
+        gameId: null,
+      },
     });
   });
 

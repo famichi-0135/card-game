@@ -25,7 +25,7 @@ export function AttackGroupSlot({
   onOpenGroup?: (group: VisibleAttackGroup) => void;
 }) {
   const { ref, isDropTarget } = useDroppable({
-    id: `attack-slot-${slotIndex}`,
+    id: `attack-slot-${isSelf ? "self" : "opponent"}-${slotIndex}`,
     type: "attack-slot",
     accept: "hand-card",
     disabled: !canPlace && !canChain,
