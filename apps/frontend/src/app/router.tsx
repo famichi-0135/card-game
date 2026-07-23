@@ -52,8 +52,11 @@ function GameRoute() {
   }
 
   if (gameId === FIXTURE_GAME_ID) {
+    const requestedScenario = searchParams.get("scenario");
     const scenario =
-      searchParams.get("scenario") === "support" ? "support" : "placement";
+      requestedScenario === "support" || requestedScenario === "finished"
+        ? requestedScenario
+        : "placement";
     return (
       <FixtureGameBoard fixture={createGameBoardFixture(gameId, scenario)} />
     );

@@ -148,10 +148,11 @@ function GameBoardContent({
   }, [connectionState, needsResynchronization, resynchronize]);
 
   const isInteractive =
-    preview ||
-    (onCommand !== undefined &&
-      !commandPending &&
-      connectionState === "connected");
+    view.status !== "finished" &&
+    (preview ||
+      (onCommand !== undefined &&
+        !commandPending &&
+        connectionState === "connected"));
 
   return (
     <DragDropProvider onDragEnd={handleDragEnd}>

@@ -16,7 +16,7 @@ export type GameBoardFixture = {
   availableActions: AvailableGameActions;
 };
 
-export type GameBoardFixtureScenario = "placement" | "support";
+export type GameBoardFixtureScenario = "placement" | "support" | "finished";
 
 export function createGameBoardFixture(
   gameId: string,
@@ -40,6 +40,16 @@ function createEvents(
   view: PlayerGameView,
   now: number,
 ): PlayerVisibleEventEnvelope[] {
+  const finalEvent: PlayerVisibleEventEnvelope["event"] =
+    view.status === "finished" && view.winner !== null
+      ? { type: "GAME_FINISHED", winner: view.winner }
+      : {
+          type: "PHASE_CHANGED",
+          phase: view.phase,
+          phaseSequence: view.phaseSequence,
+          deadlineAt: view.phaseDeadlineAt,
+        };
+
   return [
     {
       sequence: 21,
@@ -66,12 +76,7 @@ function createEvents(
       sequence: 23,
       stateVersion: view.stateVersion,
       occurredAt: now - 1_000,
-      event: {
-        type: "PHASE_CHANGED",
-        phase: view.phase,
-        phaseSequence: view.phaseSequence,
-        deadlineAt: view.phaseDeadlineAt,
-      },
+      event: finalEvent,
     },
   ];
 }
@@ -208,17 +213,22 @@ function createView(
   scenario: GameBoardFixtureScenario,
 ): PlayerGameView {
   const isSupportScenario = scenario === "support";
+  const isFinishedScenario = scenario === "finished";
 
   return {
     gameId,
     rulesetVersion: "ruleset-v2-factions",
     cardCatalogVersion: "catalog-preview-v1",
-    stateVersion: isSupportScenario ? 14 : 12,
-    status: "active",
-    round: 3,
-    phase: isSupportScenario ? "support" : "firstPlayerPlacement",
-    phaseSequence: isSupportScenario ? 9 : 7,
-    phaseDeadlineAt: now + 78_000,
+    stateVersion: isFinishedScenario ? 18 : isSupportScenario ? 14 : 12,
+    status: isFinishedScenario ? "finished" : "active",
+    round: isFinishedScenario ? 5 : 3,
+    phase: isFinishedScenario
+      ? "finished"
+      : isSupportScenario
+        ? "support"
+        : "firstPlayerPlacement",
+    phaseSequence: isFinishedScenario ? 12 : isSupportScenario ? 9 : 7,
+    phaseDeadlineAt: isFinishedScenario ? null : now + 78_000,
     firstPlayerId: "player-disaster",
     secondPlayerId: "player-countermeasure",
     viewerPlayerId: "player-disaster",
@@ -333,8 +343,34 @@ function createView(
       activeEffects: [],
       supportFinished: false,
     },
-    lastRoundResult: null,
-    winner: null,
+    lastRoundResult: isFinishedScenario
+      ? {
+          round: 5,
+          firstPlayerId: "player-disaster",
+          secondPlayerId: "player-countermeasure",
+          totalPowers: {
+            "player-disaster": 11,
+            "player-countermeasure": 8,
+          },
+          staminaBefore: {
+            "player-disaster": 18,
+            "player-countermeasure": 21,
+          },
+          staminaAfter: {
+            "player-disaster": 18,
+            "player-countermeasure": 21,
+          },
+          higherPowerPlayerId: "player-disaster",
+          nextFirstPlayerId: null,
+        }
+      : null,
+    winner: isFinishedScenario
+      ? {
+          type: "player",
+          playerId: "player-disaster",
+          reason: "maxRoundPower",
+        }
+      : null,
   };
 }
 

@@ -13,6 +13,7 @@ import {
 } from "./components/connection-status.tsx";
 import { DesktopOnlyNotice } from "./components/desktop-only-notice.tsx";
 import { DiscardZone } from "./components/discard-zone.tsx";
+import { GameResultDialog } from "./components/game-result-dialog.tsx";
 import { DraggableHandCard } from "./components/hand-card.tsx";
 import { ManaPanel } from "./components/mana-panel.tsx";
 import { OpponentZone } from "./components/opponent-zone.tsx";
@@ -79,6 +80,7 @@ export function GameBoardView({
   const finishActionLabel =
     view.phase === "support" ? "サポート終了" : "配置終了";
   const phaseInstruction = getPhaseInstruction(view.phase);
+  const isFinished = view.status === "finished";
   const commandMessage = commandPending ? "操作を送信しています" : commandError;
   const handInstruction =
     view.phase === "support"
@@ -275,34 +277,40 @@ export function GameBoardView({
       </main>
 
       <DesktopOnlyNotice />
-      {zoneDialog === null ? null : (
-        <ZoneDialog
-          catalog={catalog}
-          state={zoneDialog}
-          onClose={() => setZoneDialog(null)}
-        />
-      )}
-      {!isPhaseEndDialogOpen ? null : (
-        <PhaseEndDialog
-          actionLabel={finishActionLabel}
-          onCancel={() => setIsPhaseEndDialogOpen(false)}
-          onConfirm={() => {
-            onFinishPhase();
-            setIsPhaseEndDialogOpen(false);
-          }}
-        />
-      )}
-      {pendingSupportPlay === null ? null : (
-        <SupportTargetDialog
-          cardName={
-            catalog.definitions[pendingSupportPlay.card.definitionId]?.name ??
-            "サポートカード"
-          }
-          effectSelections={pendingSupportPlay.effectSelections}
-          onCancel={onCancelSupportPlay}
-          onConfirm={onConfirmSupportPlay}
-          view={view}
-        />
+      {isFinished ? (
+        <GameResultDialog view={view} />
+      ) : (
+        <>
+          {zoneDialog === null ? null : (
+            <ZoneDialog
+              catalog={catalog}
+              state={zoneDialog}
+              onClose={() => setZoneDialog(null)}
+            />
+          )}
+          {!isPhaseEndDialogOpen ? null : (
+            <PhaseEndDialog
+              actionLabel={finishActionLabel}
+              onCancel={() => setIsPhaseEndDialogOpen(false)}
+              onConfirm={() => {
+                onFinishPhase();
+                setIsPhaseEndDialogOpen(false);
+              }}
+            />
+          )}
+          {pendingSupportPlay === null ? null : (
+            <SupportTargetDialog
+              cardName={
+                catalog.definitions[pendingSupportPlay.card.definitionId]
+                  ?.name ?? "サポートカード"
+              }
+              effectSelections={pendingSupportPlay.effectSelections}
+              onCancel={onCancelSupportPlay}
+              onConfirm={onConfirmSupportPlay}
+              view={view}
+            />
+          )}
+        </>
       )}
     </>
   );
