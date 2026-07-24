@@ -1,21 +1,30 @@
 import type { PlayerGameView } from "@disastar/game-engine";
+import type { ReactNode } from "react";
 
 type BoardPlayer = PlayerGameView["self"] | PlayerGameView["opponent"];
 
 export function PlayerSummary({
   player,
   label,
-  onOpenDiscard,
+  status,
 }: {
   player: BoardPlayer;
   label: string;
-  onOpenDiscard: () => void;
+  status?: ReactNode;
 }) {
   return (
-    <aside className="flex min-h-0 flex-col justify-between rounded-md border border-slate-300 p-3">
-      <div>
-        <p className="text-xs font-medium text-slate-500">PLAYER</p>
-        <h2 className="mt-1 text-lg font-semibold">{label}</h2>
+    <section
+      aria-label={`${label}のステータス`}
+      className="flex min-h-0 flex-col justify-between rounded-md border border-slate-300 bg-white p-3"
+    >
+      <div className="flex items-start justify-between gap-3">
+        <div>
+          <p className="text-xs font-medium text-slate-500">PLAYER</p>
+          <h2 className="mt-1 text-lg font-semibold">{label}</h2>
+        </div>
+        {status === undefined ? null : (
+          <div className="text-right text-xs text-slate-500">{status}</div>
+        )}
       </div>
       <dl className="grid grid-cols-3 gap-2 text-center text-sm">
         <div>
@@ -31,13 +40,6 @@ export function PlayerSummary({
           <dd className="font-semibold">{player.handCount}</dd>
         </div>
       </dl>
-      <button
-        className="rounded border border-slate-300 px-3 py-2 text-left text-sm hover:bg-slate-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-slate-900"
-        onClick={onOpenDiscard}
-        type="button"
-      >
-        捨て札 {player.discardPile.length} 枚
-      </button>
-    </aside>
+    </section>
   );
 }

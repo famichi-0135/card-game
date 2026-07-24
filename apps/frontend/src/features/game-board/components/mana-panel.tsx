@@ -1,4 +1,5 @@
 import type { Attribute, PlayerGameView } from "@disastar/game-engine";
+import type { ReactNode } from "react";
 import { attributeLabels } from "./card-presentation.ts";
 
 const attributes: readonly Attribute[] = [
@@ -7,31 +8,47 @@ const attributes: readonly Attribute[] = [
   "attributeC",
 ];
 
-export function ManaPanel({ player }: { player: PlayerGameView["self"] }) {
+type BoardPlayer = PlayerGameView["self"] | PlayerGameView["opponent"];
+
+export function ManaPanel({
+  footer,
+  label,
+  player,
+}: {
+  footer?: ReactNode;
+  label: string;
+  player: BoardPlayer;
+}) {
   return (
-    <aside className="rounded-md border border-slate-300 p-3">
-      <p className="text-xs font-medium text-slate-500">MANA</p>
-      <dl className="mt-3 grid gap-3">
+    <section
+      aria-label={`${label}のみなもと`}
+      className="min-h-0 overflow-hidden rounded-md border border-slate-300 bg-white p-2"
+    >
+      <p className="text-xs font-medium text-slate-500">{label}のみなもと</p>
+      <dl className="mt-1 grid gap-0.5">
         {attributes.map((attribute) => {
           const mana = player.mana[attribute];
           return (
             <div
-              className="flex items-center justify-between gap-3"
+              className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-2"
               key={attribute}
             >
-              <div>
-                <dt className="text-sm">{attributeLabels[attribute]}</dt>
-                <dd className="text-xs text-slate-500">
+              <div className="min-w-0">
+                <dt className="truncate text-sm">
+                  {attributeLabels[attribute]}
+                </dt>
+                <dd className="whitespace-nowrap text-xs text-slate-500">
                   使用可 / {mana.total}
                 </dd>
               </div>
-              <strong className="rounded border border-slate-300 px-2 py-1 font-mono text-sm">
+              <strong className="shrink-0 rounded border border-slate-300 px-1.5 py-0.5 font-mono text-xs tabular-nums">
                 {mana.available}
               </strong>
             </div>
           );
         })}
       </dl>
-    </aside>
+      {footer === undefined ? null : <div className="mt-1">{footer}</div>}
+    </section>
   );
 }
