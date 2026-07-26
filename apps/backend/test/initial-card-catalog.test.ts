@@ -27,10 +27,10 @@ describe("初期スターターデッキ", () => {
     ).toEqual({ valid: true });
     expect(
       definitions.filter((definition) => definition.cardType === "mana"),
-    ).toHaveLength(9);
+    ).toHaveLength(12);
     expect(
       definitions.filter((definition) => definition.cardType === "attack"),
-    ).toHaveLength(15);
+    ).toHaveLength(12);
     expect(
       definitions.filter((definition) => definition.cardType === "support"),
     ).toHaveLength(6);
@@ -46,13 +46,25 @@ describe("初期スターターデッキ", () => {
             definition.cardType === "mana" &&
             definition.attribute === attribute,
         ),
-      ).toHaveLength(3);
+      ).toHaveLength(4);
     }
 
     const costs = definitions
       .filter((definition) => definition.cardType !== "mana")
       .map((definition) => definition.cost);
     expect(Math.max(...costs)).toBeLessThanOrEqual(3);
+    expect(
+      definitions
+        .filter((definition) => definition.cardType === "support")
+        .map((definition) => definition.id),
+    ).toEqual([
+      `${faction}-support-group-boost`,
+      `${faction}-support-remove-support`,
+      `${faction}-support-reduce-mana`,
+      `${faction}-support-stamina`,
+      `${faction}-support-remove-group`,
+      `${faction}-support-destroy-draw`,
+    ]);
   });
 
   it("各属性に段階的な1から3の連鎖軸を含む", () => {

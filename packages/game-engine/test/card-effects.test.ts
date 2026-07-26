@@ -935,7 +935,8 @@ function prepareSupportPhase(
   supportDefinitionId = "support-group-boost",
 ): GameState {
   const deck = createValidDeckDefinitionIds();
-  deck[4] = supportDefinitionId;
+  deck[3] = supportDefinitionId;
+  deck[24] = "attack-1";
   const initialized = initializeGame(
     createInitializationInput(deck),
     context,

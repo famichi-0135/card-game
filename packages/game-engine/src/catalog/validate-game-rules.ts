@@ -17,6 +17,7 @@ const nonNegativeIntegerFields = [
   "minManaCards",
   "maxManaCards",
   "minAttackCards",
+  "maxAttackCards",
   "maxSupportCards",
   "maxSameNamedAttackCards",
   "maxSameNamedSupportCards",
@@ -67,6 +68,14 @@ export function validateGameRules(
       code: "INVALID_RANGE",
       field: "minManaCards",
       message: "みなもとカードの最小枚数は最大枚数以下でなければなりません。",
+    });
+  }
+
+  if (rules.minAttackCards > rules.maxAttackCards) {
+    errors.push({
+      code: "INVALID_RANGE",
+      field: "minAttackCards",
+      message: "攻撃カードの最小枚数は最大枚数以下でなければなりません。",
     });
   }
 

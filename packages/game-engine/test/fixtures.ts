@@ -50,6 +50,33 @@ export function createTestCardCatalogInput(): CardCatalogInput {
       chainableCardIds: [],
       effects: [],
     })),
+    ...Array.from({ length: 6 }, (_, index) => ({
+      id: `support-${index + 1}`,
+      name: `災害サポートカード${index + 1}`,
+      faction: "disaster" as const,
+      attribute: attributes[
+        index % attributes.length
+      ] as (typeof attributes)[number],
+      cardType: "support" as const,
+      cost: 0,
+      duration: "instant" as const,
+      effects: [
+        {
+          effectId: `draw-card-${index + 1}`,
+          type: "drawCards" as const,
+          activationType: "onPlay" as const,
+          count: 1,
+          targetRule: {
+            required: false,
+            minTargets: 0,
+            maxTargets: 0,
+            side: "self" as const,
+            zones: [],
+            allowSourceCard: false,
+          },
+        },
+      ],
+    })),
   ];
 
   const countermeasureDefinitions = disasterDefinitions.map((definition) => ({
@@ -104,17 +131,22 @@ export function createValidDeckDefinitionIds(
     "mana-a",
     "mana-a",
     "mana-a",
-    "mana-b",
     "attack-1",
+    "mana-a",
+    "mana-b",
+    "mana-b",
     "mana-b",
     "mana-b",
     "mana-c",
     "mana-c",
+    "mana-c",
+    "mana-c",
     "attack-1",
-    ...Array.from({ length: 10 }, (_, index) => [
+    ...Array.from({ length: 5 }, (_, index) => [
       `attack-${index + 2}`,
       `attack-${index + 2}`,
     ]).flat(),
+    ...Array.from({ length: 6 }, (_, index) => `support-${index + 1}`),
   ];
   return faction === "disaster"
     ? disasterDeck
@@ -128,15 +160,20 @@ export function createAllManaOpeningDeckDefinitionIds(
     "mana-a",
     "mana-a",
     "mana-a",
+    "mana-a",
+    "mana-b",
     "mana-b",
     "mana-b",
     "mana-b",
     "mana-c",
     "mana-c",
-    ...Array.from({ length: 11 }, (_, index) => [
+    "mana-c",
+    "mana-c",
+    ...Array.from({ length: 6 }, (_, index) => [
       `attack-${index + 1}`,
       `attack-${index + 1}`,
     ]).flat(),
+    ...Array.from({ length: 6 }, (_, index) => `support-${index + 1}`),
   ];
   return faction === "disaster"
     ? disasterDeck

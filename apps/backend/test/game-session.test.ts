@@ -246,6 +246,12 @@ describe("GameSession Durable Object", () => {
 
     expect(migrated.changed).toBe(true);
     expect(migrated.session.engineContext).toMatchObject({
+      rules: {
+        version: "ruleset-v2-factions",
+        minManaCards: 8,
+        maxAttackCards: 30,
+        maxSupportCards: 7,
+      },
       cardCatalog: {
         version: "initial-catalog-v3-presentation",
       },

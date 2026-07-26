@@ -197,13 +197,14 @@ export type GameRules = {
   minManaCards: number;
   maxManaCards: number;
   minAttackCards: number;
+  maxAttackCards: number;
   maxSupportCards: number;
   maxSameNamedAttackCards: number;
   maxSameNamedSupportCards: number;
 };
 
 export const GAME_RULES: Readonly<GameRules> = {
-  version: "ruleset-v2-factions",
+  version: "ruleset-v3-starter-balance",
   playerCount: 2,
   deckSize: 30,
   initialStamina: 25,
@@ -213,10 +214,11 @@ export const GAME_RULES: Readonly<GameRules> = {
   placementTimeLimitMs: 90_000,
   supportTimeLimitMs: 60_000,
   maxRounds: 30,
-  minManaCards: 8,
-  maxManaCards: 12,
-  minAttackCards: 11,
-  maxSupportCards: 7,
+  minManaCards: 12,
+  maxManaCards: 15,
+  minAttackCards: 10,
+  maxAttackCards: 15,
+  maxSupportCards: 6,
   maxSameNamedAttackCards: 2,
   maxSameNamedSupportCards: 2,
 };

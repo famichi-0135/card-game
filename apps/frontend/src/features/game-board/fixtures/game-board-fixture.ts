@@ -217,7 +217,7 @@ function createView(
 
   return {
     gameId,
-    rulesetVersion: "ruleset-v2-factions",
+    rulesetVersion: "ruleset-v3-starter-balance",
     cardCatalogVersion: "catalog-preview-v1",
     stateVersion: isFinishedScenario ? 18 : isSupportScenario ? 14 : 12,
     status: isFinishedScenario ? "finished" : "active",
