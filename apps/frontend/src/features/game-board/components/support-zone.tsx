@@ -20,12 +20,12 @@ export function SupportZone({
   return (
     <div
       ref={ref}
-      className={`relative rounded-md ${
+      className={`relative h-full rounded-md ${
         isDropTarget ? "outline-2 outline-offset-2 outline-slate-900" : ""
       }`}
     >
       <button
-        className={`w-full rounded-md border p-3 text-left hover:bg-slate-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-slate-900 ${
+        className={`h-full w-full rounded-md border p-3 text-left hover:bg-slate-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-slate-900 ${
           canPlaySupport ? "border-dashed border-slate-500" : "border-slate-300"
         }`}
         onClick={onOpen}

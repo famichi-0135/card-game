@@ -21,30 +21,21 @@ export function PublicEventFeed({
   }
 
   return (
-    <>
-      <div className="col-span-3 flex min-h-5 min-w-0 items-center">
-        {activeEvent === null ? null : (
-          <output
-            aria-live="polite"
-            className="flex min-w-0 items-center border-l-2 border-slate-700 pl-2 text-sm font-medium text-slate-800 motion-safe:animate-pulse motion-reduce:animate-none"
-            role="status"
-          >
-            <span className="truncate" key={activeEvent.sequence}>
-              {activeEvent.message}
-            </span>
-          </output>
-        )}
-      </div>
+    <details className="min-w-0 rounded border border-slate-200 bg-slate-50 px-2 py-2">
+      <summary className="flex cursor-pointer list-none items-center gap-1 text-sm font-medium text-slate-700 marker:content-none">
+        <span className="shrink-0 text-xs text-slate-500">公開イベント</span>
+        <span className="truncate">
+          {activeEvent === null ? "履歴を表示" : activeEvent.message}
+        </span>
+      </summary>
       <ol
         aria-label="最近の公開イベント"
-        className="col-span-3 flex min-w-0 gap-4 overflow-hidden border-t border-slate-200 pt-2 text-xs text-slate-600"
+        className="mt-2 grid gap-1 border-t border-slate-200 pt-2 text-xs text-slate-600"
       >
         {events.map((event) => (
-          <li className="min-w-0 truncate" key={event.sequence}>
-            {event.message}
-          </li>
+          <li key={event.sequence}>{event.message}</li>
         ))}
       </ol>
-    </>
+    </details>
   );
 }
