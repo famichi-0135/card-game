@@ -17,7 +17,7 @@ type AttackTemplate = {
 };
 
 /**
- * みなもとが各属性3枚までであるため、カード単体の必要みなもとも3以下に固定する。
+ * みなもとが各属性4枚までであるため、カード単体の必要みなもとも3以下に固定する。
  * 1 -> 2 -> 3 の連鎖は、少ないみなもとでも段階的に盤面を育てられる基本線である。
  */
 const attackTemplates: readonly AttackTemplate[] = [
@@ -142,9 +142,7 @@ const supportNames: Record<Faction, readonly string[]> = {
   ],
 };
 
-const starterAttackNumbers = [
-  1, 1, 2, 2, 3, 4, 4, 5, 5, 6, 7, 7, 8, 8, 11,
-] as const;
+const starterAttackNumbers = [1, 2, 3, 9, 4, 5, 6, 10, 7, 7, 8, 11] as const;
 
 export const INITIAL_CARD_CATALOG_INPUT: CardCatalogInput = {
   version: "initial-catalog-v4-starter-balance",
@@ -348,7 +346,7 @@ function noTargetRule(): TargetRule {
 function createStarterDeckIds(faction: Faction): string[] {
   return [
     ...attributes.flatMap((_, index) =>
-      Array.from({ length: 3 }, () => `${faction}-mana-${index + 1}`),
+      Array.from({ length: 4 }, () => `${faction}-mana-${index + 1}`),
     ),
     ...starterAttackNumbers.map((number) => `${faction}-attack-${number}`),
     `${faction}-support-group-boost`,

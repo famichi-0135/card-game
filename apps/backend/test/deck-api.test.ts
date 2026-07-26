@@ -265,6 +265,44 @@ describe("保存済みデッキ HTTP API", () => {
     expect(await response.json()).toEqual({ deck: existing });
     expect(created).toBe(false);
   });
+
+  it("旧構成のスターターデッキがあっても現行構成を新規作成する", async () => {
+    const created: CardDefinitionId[][] = [];
+    const existing = {
+      id: "legacy-starter-deck",
+      name: "災害側スターターデッキ",
+      faction: "disaster" as const,
+      cardDefinitionIds: createLegacyDisasterStarterDeck(),
+      createdAt: 1_000,
+      updatedAt: 1_000,
+    };
+    const api = createDeckApi({
+      authenticate: async () => "player-1",
+      now: () => 2_000,
+      getPlayerDecks: () => ({
+        create: async (input) => {
+          created.push(input.cardDefinitionIds);
+          return {
+            id: "current-starter-deck",
+            ...input,
+            updatedAt: input.createdAt,
+          };
+        },
+        get: async () => null,
+        list: async () => [existing],
+        replace: async () => null,
+        remove: async () => false,
+      }),
+    });
+
+    const response = await request(api, "/starter", {
+      method: "POST",
+      body: JSON.stringify({ faction: "disaster" }),
+    });
+
+    expect(response.status).toBe(201);
+    expect(created).toEqual([createDisasterStarterDeckDefinitionIds()]);
+  });
 });
 
 async function request(
@@ -283,4 +321,21 @@ async function request(
 
 function createValidDeck(): CardDefinitionId[] {
   return createDisasterStarterDeckDefinitionIds();
+}
+
+function createLegacyDisasterStarterDeck(): CardDefinitionId[] {
+  return [
+    ...Array.from({ length: 3 }, () => "disaster-mana-1"),
+    ...Array.from({ length: 3 }, () => "disaster-mana-2"),
+    ...Array.from({ length: 3 }, () => "disaster-mana-3"),
+    ...[1, 1, 2, 2, 3, 4, 4, 5, 5, 6, 7, 7, 8, 8, 11].map(
+      (number) => `disaster-attack-${number}`,
+    ),
+    "disaster-support-group-boost",
+    "disaster-support-remove-support",
+    "disaster-support-reduce-mana",
+    "disaster-support-stamina",
+    "disaster-support-remove-group",
+    "disaster-support-destroy-draw",
+  ];
 }

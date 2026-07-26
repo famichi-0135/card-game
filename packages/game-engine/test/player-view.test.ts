@@ -91,13 +91,30 @@ describe("プレイヤー向け公開状態", () => {
     const context = createTestContext();
     const state = initializeState(context);
     const playerId = state.firstPlayerId;
-    const cardInstanceId = state.players[playerId]?.hand.find((candidate) => {
+    const player = state.players[playerId];
+    if (player === undefined) {
+      throw new Error("テスト用プレイヤーが見つかりません。");
+    }
+    let cardInstanceId = player.hand.find((candidate) => {
       const definitionId = state.cardInstances[candidate]?.definitionId;
       return (
         context.cardCatalog.definitions[definitionId ?? ""]?.cardType ===
         "attack"
       );
     });
+    if (cardInstanceId === undefined) {
+      const deckIndex = player.deck.findIndex((candidate) => {
+        const definitionId = state.cardInstances[candidate]?.definitionId;
+        return (
+          context.cardCatalog.definitions[definitionId ?? ""]?.cardType ===
+          "attack"
+        );
+      });
+      cardInstanceId = player.deck.splice(deckIndex, 1)[0];
+      if (cardInstanceId !== undefined) {
+        player.hand.push(cardInstanceId);
+      }
+    }
     if (cardInstanceId === undefined) {
       throw new Error("テスト用の攻撃カードが手札にありません。");
     }

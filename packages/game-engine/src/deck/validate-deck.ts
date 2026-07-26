@@ -79,10 +79,13 @@ export function validateDeck(
     });
   }
 
-  if (attackCards.length < rules.minAttackCards) {
+  if (
+    attackCards.length < rules.minAttackCards ||
+    attackCards.length > rules.maxAttackCards
+  ) {
     errors.push({
       code: "INVALID_CARD_TYPE_COUNT",
-      message: `攻撃カードは${rules.minAttackCards}枚以上必要です。`,
+      message: `攻撃カードは${rules.minAttackCards}枚以上${rules.maxAttackCards}枚以下でなければなりません。`,
     });
   }
 

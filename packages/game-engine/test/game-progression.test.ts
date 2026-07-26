@@ -197,7 +197,7 @@ describe("効果なしのゲーム進行", () => {
   });
 
   it("みなもと予約が不足する配置を拒否し、元の状態を変更しない", () => {
-    const context = createContextWithAttackCost(4);
+    const context = createContextWithAttackCost(5);
     const state = initializeForProgression(context);
     const playerId = state.firstPlayerId;
     const cardInstanceId = findCardInstanceId(state, playerId, "attack-1");
@@ -495,7 +495,7 @@ function initializeForProgression(context: GameEngineContext): GameState {
     createInitializationInput(),
     context,
     createDependencies(
-      createSequenceRandomGenerator(Array<number>(59).fill(0.999_999)),
+      createSequenceRandomGenerator(Array<number>(100).fill(0.999_999)),
     ),
   );
   if (!result.initialized) {

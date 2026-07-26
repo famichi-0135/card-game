@@ -170,6 +170,24 @@ describe("ゲームルール検証", () => {
       ]),
     });
   });
+
+  it("攻撃カードの最小枚数が最大枚数を超えるルールを拒否する", () => {
+    const result = validateGameRules({
+      ...GAME_RULES,
+      minAttackCards: 16,
+      maxAttackCards: 15,
+    });
+
+    expect(result).toMatchObject({
+      valid: false,
+      errors: expect.arrayContaining([
+        expect.objectContaining({
+          code: "INVALID_RANGE",
+          field: "minAttackCards",
+        }),
+      ]),
+    });
+  });
 });
 
 describe("デッキ検証", () => {
@@ -213,8 +231,10 @@ describe("デッキ検証", () => {
     }
 
     const missingAttributeManaDeck = createValidDeckDefinitionIds();
-    missingAttributeManaDeck[7] = "mana-a";
-    missingAttributeManaDeck[8] = "mana-a";
+    missingAttributeManaDeck[9] = "mana-a";
+    missingAttributeManaDeck[10] = "mana-a";
+    missingAttributeManaDeck[11] = "mana-a";
+    missingAttributeManaDeck[12] = "mana-a";
     const missingAttributeManaResult = validateDeck(
       missingAttributeManaDeck,
       "disaster",
@@ -259,6 +279,34 @@ describe("デッキ検証", () => {
       valid: false,
       errors: expect.arrayContaining([
         expect.objectContaining({ code: "FACTION_MISMATCH" }),
+      ]),
+    });
+  });
+
+  it("攻撃カードが上限を超えるデッキを拒否する", () => {
+    const attackHeavyDeck = [
+      ...Array.from({ length: 4 }, () => "mana-a"),
+      ...Array.from({ length: 4 }, () => "mana-b"),
+      ...Array.from({ length: 4 }, () => "mana-c"),
+      ...Array.from({ length: 9 }, (_, index) => [
+        `attack-${index + 1}`,
+        `attack-${index + 1}`,
+      ]).flat(),
+    ];
+    const result = validateDeck(
+      attackHeavyDeck,
+      "disaster",
+      createTestCatalog(),
+      createTestContext().rules,
+    );
+
+    expect(result).toMatchObject({
+      valid: false,
+      errors: expect.arrayContaining([
+        expect.objectContaining({
+          code: "INVALID_CARD_TYPE_COUNT",
+          message: "攻撃カードは10枚以上15枚以下でなければなりません。",
+        }),
       ]),
     });
   });
@@ -315,10 +363,10 @@ describe("ゲーム初期化", () => {
     expect(firstPlayer).toMatchObject({
       faction: "disaster",
       stamina: 25,
-      hand: ["cardInstance:seed-1:card:player-1:4"],
+      hand: ["cardInstance:seed-1:card:player-1:3"],
       mana: {
-        attributeA: { total: 3 },
-        attributeB: { total: 1 },
+        attributeA: { total: 4 },
+        attributeB: { total: 0 },
         attributeC: { total: 0 },
       },
     });
@@ -339,8 +387,8 @@ describe("ゲーム初期化", () => {
     ];
     expect(allCardIds).toHaveLength(60);
     expect(new Set(allCardIds)).toHaveLength(60);
-    expect(result.events).toHaveLength(9);
-    expect(result.state.nextEventSequence).toBe(10);
+    expect(result.events).toHaveLength(7);
+    expect(result.state.nextEventSequence).toBe(8);
   });
 
   it("同じ陣営のプレイヤー2人では初期化しない", () => {

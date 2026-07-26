@@ -1,4 +1,8 @@
-import { GAME_RULES, createCardCatalog } from "@disastar/game-engine";
+import {
+  GAME_RULES,
+  LEGACY_V2_GAME_RULES,
+  createCardCatalog,
+} from "@disastar/game-engine";
 import type {
   GameEngineContext,
   GameEngineDependencies,
@@ -21,7 +25,7 @@ const catalogResult = createCardCatalog(INITIAL_CARD_CATALOG_INPUT, {
 });
 
 const legacyV3CatalogResult = createCardCatalog(LEGACY_V3_CARD_CATALOG_INPUT, {
-  rules: GAME_RULES,
+  rules: LEGACY_V2_GAME_RULES,
   effectRegistry: {},
   engineSemanticsVersion: ENGINE_SEMANTICS_VERSION,
 });
@@ -51,7 +55,7 @@ export const gameEngineContext: GameEngineContext = {
 
 /** engineContextを持たないv3保存済みセッションの移行専用コンテキスト。 */
 export const legacyV3GameEngineContext: GameEngineContext = {
-  rules: GAME_RULES,
+  rules: LEGACY_V2_GAME_RULES,
   cardCatalog: legacyV3CatalogResult.catalog,
   effectRegistry: {},
   engineSemanticsVersion: ENGINE_SEMANTICS_VERSION,
