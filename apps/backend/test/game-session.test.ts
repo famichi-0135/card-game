@@ -317,7 +317,7 @@ describe("GameSession Durable Object", () => {
       expect.objectContaining({
         cardDefinitionId: "disaster-attack-8",
         cardName: "台風",
-        playerId: "player-1",
+        usedByPlayerIds: ["player-1"],
       }),
     ]);
   });
