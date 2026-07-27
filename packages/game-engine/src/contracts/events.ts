@@ -2,6 +2,7 @@ import type { Attribute } from "./card-definition.js";
 import type { ActiveEffect } from "./effects.js";
 import type {
   AttackGroupId,
+  CardDefinitionId,
   CardInstanceId,
   EffectId,
   EffectInstanceId,
@@ -78,12 +79,14 @@ export type GameProgressEvent =
       type: "ATTACK_GROUP_CREATED";
       playerId: PlayerId;
       groupId: AttackGroupId;
+      cardDefinitionId: CardDefinitionId;
       cardInstanceId: CardInstanceId;
     }
   | {
       type: "CARD_CHAINED";
       playerId: PlayerId;
       groupId: AttackGroupId;
+      cardDefinitionId: CardDefinitionId;
       cardInstanceId: CardInstanceId;
     }
   | {
@@ -95,6 +98,7 @@ export type GameProgressEvent =
   | {
       type: "SUPPORT_CARD_PLAYED";
       playerId: PlayerId;
+      cardDefinitionId: CardDefinitionId;
       cardInstanceId: CardInstanceId;
     }
   | {

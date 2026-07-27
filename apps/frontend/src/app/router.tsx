@@ -23,6 +23,7 @@ import {
 import { MatchmakingHomeRoute } from "../features/matchmaking/lobby-home.tsx";
 import { MatchRoom } from "../features/matchmaking/match-room.tsx";
 import { RuleGuideRoute } from "../features/rule/rule-guide-route.tsx";
+import { GameLearningPage } from "../features/game-learning/game-learning-page.tsx";
 import { createAuthPath, getSafeReturnTo } from "./return-to.ts";
 import { useSession } from "./session.ts";
 
@@ -46,6 +47,11 @@ export const router = createBrowserRouter([
   {
     path: "/rooms/:matchId",
     Component: RoomRoute,
+    ErrorBoundary: RouteErrorBoundary,
+  },
+  {
+    path: "/games/:gameId/learn",
+    Component: GameLearningRoute,
     ErrorBoundary: RouteErrorBoundary,
   },
   {
@@ -100,6 +106,15 @@ function GameRoute() {
   return <AuthenticatedGameRoute gameId={gameId} />;
 }
 
+function GameLearningRoute() {
+  const { gameId } = useParams();
+  if (gameId === undefined) {
+    throw new Error("ゲームIDが指定されていません。");
+  }
+
+  return <AuthenticatedGameLearningRoute gameId={gameId} />;
+}
+
 function RoomRoute() {
   const { matchId } = useParams();
   if (matchId === undefined) {
@@ -135,6 +150,24 @@ function AuthenticatedGameRoute({ gameId }: { gameId: string }) {
       gameId={gameId}
     />
   );
+}
+
+function AuthenticatedGameLearningRoute({ gameId }: { gameId: string }) {
+  const session = useSession();
+  const location = useLocation();
+
+  if (session.isPending) {
+    return <RouteMessage title="認証状態を確認しています" />;
+  }
+  if (session.isError) {
+    return <RouteMessage title="認証状態を確認できませんでした" />;
+  }
+  if (session.data === null) {
+    const returnTo = `${location.pathname}${location.search}${location.hash}`;
+    return <Navigate replace to={createAuthPath("/login", returnTo)} />;
+  }
+
+  return <GameLearningPage gameId={gameId} />;
 }
 
 function AuthenticatedRoomRoute({ matchId }: { matchId: string }) {

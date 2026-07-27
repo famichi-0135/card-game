@@ -1,9 +1,33 @@
 import type { PlayerGameView } from "@disastar/game-engine";
+import type { GameLearningContextResponse } from "@disastar/contracts/game";
+import {
+  learningArticles,
+  selectLearningArticles,
+} from "@disastar/learning-content";
 import { Link } from "react-router";
 
-export function GameResultDialog({ view }: { view: PlayerGameView }) {
+export function GameResultDialog({
+  learningContext,
+  view,
+}: {
+  learningContext?: {
+    data: GameLearningContextResponse | undefined;
+    isError: boolean;
+    isPending: boolean;
+  };
+  view: PlayerGameView;
+}) {
   const outcome = getOutcome(view);
   const finalRound = view.lastRoundResult?.round ?? view.round;
+  const articles =
+    learningContext?.data === undefined
+      ? []
+      : selectLearningArticles(
+          learningContext.data.selectedCards.map(
+            ({ cardDefinitionId }) => cardDefinitionId,
+          ),
+          learningArticles,
+        );
 
   return (
     <div className="fixed inset-0 z-[60] flex items-center justify-center bg-slate-950/20 p-6">
@@ -67,9 +91,36 @@ export function GameResultDialog({ view }: { view: PlayerGameView }) {
               </tbody>
             </table>
           </section>
+
+          {learningContext?.isPending ? (
+            <p className="mt-5 text-sm text-slate-600" role="status">
+              関連する防災情報を確認しています。
+            </p>
+          ) : null}
+          {learningContext?.isError ? (
+            <p className="mt-5 text-sm text-slate-600">
+              学習コンテンツを取得できませんでした。
+            </p>
+          ) : null}
+          {articles.length === 0 || learningContext?.isPending ? null : (
+            <section className="mt-5 border-t border-slate-200 pt-5">
+              <h3 className="text-sm font-semibold">この対戦から学ぶ</h3>
+              <p className="mt-1 text-sm leading-6 text-slate-600">
+                対戦で使用したカードに関連する防災情報を確認できます。
+              </p>
+            </section>
+          )}
         </div>
 
-        <footer className="flex justify-end border-t border-slate-200 p-4">
+        <footer className="flex flex-wrap justify-end gap-2 border-t border-slate-200 p-4">
+          {articles.length === 0 || learningContext?.isPending ? null : (
+            <Link
+              className="rounded border border-slate-300 bg-white px-3 py-2 text-sm text-slate-800 hover:bg-slate-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-slate-900"
+              to={`/games/${encodeURIComponent(view.gameId)}/learn`}
+            >
+              学習コンテンツを見る
+            </Link>
+          )}
           <Link
             className="rounded border border-slate-700 bg-slate-800 px-3 py-2 text-sm text-white hover:bg-slate-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-slate-900"
             to="/"

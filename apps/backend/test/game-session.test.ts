@@ -204,6 +204,16 @@ describe("GameSession Durable Object", () => {
         phaseStartedAt: finishedAt,
       }),
     ).toBe(finishedAt + GAME_RECONNECT_GRACE_PERIOD_MS);
+    expect(
+      getGameSessionRetentionExpiresAt(
+        {
+          status: "finished",
+          phaseStartedAt: finishedAt - 60_000,
+        },
+        null,
+        finishedAt,
+      ),
+    ).toBe(finishedAt + GAME_RECONNECT_GRACE_PERIOD_MS);
   });
 
   it("旧保存形式の攻撃グループへ作成順の固定スロットを割り当てる", () => {
@@ -259,6 +269,57 @@ describe("GameSession Durable Object", () => {
     expect(migrated.session.state.cardCatalogVersion).toBe(
       "initial-catalog-v3-presentation",
     );
+  });
+
+  it("旧イベントのカードインスタンスから終了済み対戦の学習カードを復元する", () => {
+    const input = createInitializeInput("game-session-learning-migration");
+    const initialized = initializeGame(
+      input,
+      gameEngineContext,
+      gameEngineDependencies,
+    );
+    if (!initialized.initialized) {
+      throw new Error(initialized.error.message);
+    }
+
+    const state = structuredClone(initialized.state);
+    state.status = "finished";
+    state.phase = "finished";
+    state.phaseDeadlineAt = null;
+    state.winner = { type: "draw", reason: "bothStaminaZero" };
+    state.cardInstances["legacy-learning-card"] = {
+      instanceId: "legacy-learning-card",
+      definitionId: "disaster-attack-8",
+      ownerId: "player-1",
+    };
+
+    const migrated = migrateStoredGameSession({
+      initializationInput: input,
+      state,
+      events: [
+        ...initialized.events,
+        {
+          sequence: state.nextEventSequence,
+          stateVersion: state.stateVersion,
+          occurredAt: 1_000,
+          event: {
+            type: "ATTACK_GROUP_CREATED",
+            playerId: "player-1",
+            groupId: "legacy-group",
+            cardInstanceId: "legacy-learning-card",
+          },
+        } as unknown as (typeof initialized.events)[number],
+      ],
+      commandResults: {},
+    });
+
+    expect(migrated.session.learningContext?.selectedCards).toEqual([
+      expect.objectContaining({
+        cardDefinitionId: "disaster-attack-8",
+        cardName: "台風",
+        usedByPlayerIds: ["player-1"],
+      }),
+    ]);
   });
 
   it("同じ commandId の再送には最初の結果を返す", async () => {

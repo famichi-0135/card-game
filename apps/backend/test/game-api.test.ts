@@ -6,6 +6,7 @@ import type {
 } from "@disastar/contracts/game";
 import { createGameApi } from "../src/game-api/create-game-api.js";
 import type {
+  GetGameLearningContextResult,
   GetGameSnapshotResult,
   SubmitGameCommandResult,
 } from "../src/game-session/game-session.js";
@@ -86,6 +87,83 @@ describe("ゲーム HTTP API", () => {
     expect(received).toEqual([
       { viewerPlayerId: "player-1", afterSequence: 2 },
     ]);
+  });
+
+  it("終了済み対戦の学習コンテキストを参加者へだけ返す", async () => {
+    const context = {
+      gameId: "game-1",
+      createdAt: 1_000,
+      selectedCards: [],
+    };
+    const app = createGameApi({
+      authenticate: async () => "player-1",
+      getGameSession: () => ({
+        getSnapshot: async () =>
+          ({ found: true, snapshot }) satisfies GetGameSnapshotResult,
+        getLearningContext: async (viewerPlayerId) => {
+          expect(viewerPlayerId).toBe("player-1");
+          return {
+            found: true,
+            context,
+          } satisfies GetGameLearningContextResult;
+        },
+        submit: async () =>
+          ({
+            submitted: true,
+            response: acceptedResponse,
+          }) satisfies SubmitGameCommandResult,
+      }),
+    });
+
+    const response = await request(app, "/game-1/learning-context");
+
+    expect(response.status).toBe(200);
+    expect(await response.json()).toEqual(context);
+  });
+
+  it("学習コンテキストの不存在・参加者外・ゲーム未終了を安定したHTTPエラーへ変換する", async () => {
+    const createApp = (
+      result: Extract<GetGameLearningContextResult, { found: false }>,
+    ) =>
+      createGameApi({
+        authenticate: async () => "player-1",
+        getGameSession: () => ({
+          getSnapshot: async () =>
+            ({ found: true, snapshot }) satisfies GetGameSnapshotResult,
+          getLearningContext: async () => result,
+          submit: async () =>
+            ({
+              submitted: true,
+              response: acceptedResponse,
+            }) satisfies SubmitGameCommandResult,
+        }),
+      });
+
+    const missing = await request(
+      createApp({ found: false, error: { code: "GAME_NOT_FOUND" } }),
+      "/missing/learning-context",
+    );
+    const forbidden = await request(
+      createApp({ found: false, error: { code: "GAME_ACCESS_FORBIDDEN" } }),
+      "/game-1/learning-context",
+    );
+    const unfinished = await request(
+      createApp({ found: false, error: { code: "GAME_NOT_FINISHED" } }),
+      "/game-1/learning-context",
+    );
+
+    expect(missing.status).toBe(404);
+    expect(await missing.json()).toEqual({
+      error: { code: "GAME_NOT_FOUND" },
+    });
+    expect(forbidden.status).toBe(403);
+    expect(await forbidden.json()).toEqual({
+      error: { code: "GAME_ACCESS_FORBIDDEN" },
+    });
+    expect(unfinished.status).toBe(409);
+    expect(await unfinished.json()).toEqual({
+      error: { code: "GAME_NOT_FINISHED" },
+    });
   });
 
   it("認証済みのWebSocket接続だけをプレイヤーID付きで Durable Object へ中継する", async () => {

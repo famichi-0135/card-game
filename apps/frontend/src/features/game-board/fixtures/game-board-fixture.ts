@@ -69,6 +69,7 @@ function createEvents(
         type: "ATTACK_GROUP_CREATED",
         playerId: view.opponent.playerId,
         groupId: "opponent-group-1",
+        cardDefinitionId: "countermeasure-attack-1",
         cardInstanceId: "opponent-barrier",
       },
     },
