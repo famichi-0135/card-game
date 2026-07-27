@@ -313,6 +313,7 @@ function placeAttackCard(
     type: "ATTACK_GROUP_CREATED",
     playerId: command.playerId,
     groupId,
+    cardDefinitionId: card.id,
     cardInstanceId: command.cardInstanceId,
   });
   return null;
@@ -400,6 +401,7 @@ function chainAttackCard(
     type: "CARD_CHAINED",
     playerId: command.playerId,
     groupId: group.groupId,
+    cardDefinitionId: card.id,
     cardInstanceId: command.cardInstanceId,
   });
   return null;
@@ -503,6 +505,7 @@ function playSupportCard(
   events.push({
     type: "SUPPORT_CARD_PLAYED",
     playerId: command.playerId,
+    cardDefinitionId: support.id,
     cardInstanceId: command.cardInstanceId,
   });
 

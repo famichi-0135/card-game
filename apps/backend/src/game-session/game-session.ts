@@ -19,6 +19,7 @@ import type {
   AuthenticatedGameCommand,
   GameRealtimeMessage,
   GameRealtimeUpdate,
+  GameLearningContextResponse,
   GameSnapshotResponse,
   SubmitGameCommandResponse,
 } from "@disastar/contracts/game";
@@ -33,6 +34,11 @@ import {
   type CatalogRetentionLease,
   type RetainCatalogResult,
 } from "../catalog-archive/catalog-archive.js";
+import {
+  createGameLearningContext,
+  type GameLearningContext,
+  type PlayedGameCard,
+} from "../game-learning/game-learning-context.js";
 
 const SESSION_STORAGE_KEY = "game-session-v2-factions";
 const AUTHENTICATED_PLAYER_ID_HEADER = "X-Disastar-Authenticated-Player-Id";
@@ -46,6 +52,7 @@ export type StoredGameSession = {
   initializationInput: InitializeGameInput;
   state: GameState;
   engineContext?: StoredGameEngineContext;
+  learningContext?: GameLearningContext | null;
   retentionExpiresAt?: number | null;
   events: GameEventEnvelope[];
   commandResults: Record<string, StoredCommandResult>;
@@ -73,6 +80,7 @@ export type InitializeGameSessionResult =
 export type GameSessionAccessErrorCode =
   | "GAME_NOT_FOUND"
   | "GAME_ACCESS_FORBIDDEN"
+  | "GAME_NOT_FINISHED"
   | "AUTHENTICATED_PLAYER_MISMATCH"
   | "COMMAND_ID_CONFLICT";
 
@@ -83,6 +91,10 @@ export type GetGameSnapshotResult =
 export type SubmitGameCommandResult =
   | { submitted: true; response: SubmitGameCommandResponse }
   | { submitted: false; error: { code: GameSessionAccessErrorCode } };
+
+export type GetGameLearningContextResult =
+  | { found: true; context: GameLearningContextResponse }
+  | { found: false; error: { code: GameSessionAccessErrorCode } };
 
 export class GameSession extends DurableObject<CloudflareBindings> {
   private session: StoredGameSession | null = null;
@@ -139,6 +151,7 @@ export class GameSession extends DurableObject<CloudflareBindings> {
       initializationInput: cloneInitializeInput(input),
       state: initialized.state,
       engineContext,
+      learningContext: null,
       retentionExpiresAt: null,
       events: initialized.events,
       commandResults: Object.create(null),
@@ -178,6 +191,33 @@ export class GameSession extends DurableObject<CloudflareBindings> {
             (event): event is NonNullable<typeof event> => event !== null,
           ),
         latestEventSequence: session.state.nextEventSequence - 1,
+      },
+    };
+  }
+
+  async getLearningContext(
+    viewerPlayerId: PlayerId,
+  ): Promise<GetGameLearningContextResult> {
+    const session = await this.requireSessionOrNull();
+    if (session === null) {
+      return { found: false, error: { code: "GAME_NOT_FOUND" } };
+    }
+    if (!isParticipant(session.state, viewerPlayerId)) {
+      return { found: false, error: { code: "GAME_ACCESS_FORBIDDEN" } };
+    }
+    if (session.state.status !== "finished") {
+      return { found: false, error: { code: "GAME_NOT_FINISHED" } };
+    }
+
+    const context =
+      session.learningContext ??
+      createLearningContextForSession(session, getGameFinishedAt(session));
+    return {
+      found: true,
+      context: {
+        gameId: context.gameId,
+        createdAt: context.createdAt,
+        selectedCards: context.selectedCards,
       },
     };
   }
@@ -282,14 +322,25 @@ export class GameSession extends DurableObject<CloudflareBindings> {
             getSessionEngineContext(session),
           ),
         };
+    const nextEvents = result.accepted
+      ? [...session.events, ...result.events]
+      : session.events;
     const nextSession: StoredGameSession = {
       initializationInput: session.initializationInput,
       state: result.state,
       engineContext: getStoredEngineContext(session),
-      retentionExpiresAt: getRetentionExpiresAt(result.state, session),
-      events: result.accepted
-        ? [...session.events, ...result.events]
-        : session.events,
+      learningContext: getNextLearningContext(
+        session,
+        result.state,
+        nextEvents,
+        authenticatedCommand.receivedAt,
+      ),
+      retentionExpiresAt: getNextRetentionExpiresAt(
+        session,
+        result.state,
+        authenticatedCommand.receivedAt,
+      ),
+      events: nextEvents,
       commandResults: {
         ...session.commandResults,
         [command.commandId]: {
@@ -367,7 +418,17 @@ export class GameSession extends DurableObject<CloudflareBindings> {
       ...session,
       state: result.state,
       engineContext: getStoredEngineContext(session),
-      retentionExpiresAt: getRetentionExpiresAt(result.state, session),
+      learningContext: getNextLearningContext(
+        session,
+        result.state,
+        [...session.events, ...result.events],
+        Date.now(),
+      ),
+      retentionExpiresAt: getNextRetentionExpiresAt(
+        session,
+        result.state,
+        Date.now(),
+      ),
       events: [...session.events, ...result.events],
     };
     await this.persist(nextSession);
@@ -599,7 +660,86 @@ export function migrateStoredGameSession(stored: StoredGameSession): {
   }
 
   getStoredEngineContext(session);
+  if (
+    session.state.status === "finished" &&
+    session.learningContext === undefined
+  ) {
+    session.learningContext = createLearningContextForSession(
+      session,
+      getGameFinishedAt(session),
+    );
+    changed = true;
+  }
   return { session, changed };
+}
+
+function getNextLearningContext(
+  session: StoredGameSession,
+  nextState: GameState,
+  nextEvents: readonly GameEventEnvelope[],
+  completedAt: number,
+): GameLearningContext | null {
+  if (nextState.status !== "finished") {
+    return null;
+  }
+  if (
+    session.learningContext !== null &&
+    session.learningContext !== undefined
+  ) {
+    return session.learningContext;
+  }
+
+  return createLearningContextForSession(
+    { ...session, state: nextState, events: [...nextEvents] },
+    completedAt,
+  );
+}
+
+function createLearningContextForSession(
+  session: StoredGameSession,
+  createdAt: number,
+): GameLearningContext {
+  const context = getSessionEngineContext(session);
+  const playedCards = session.events.flatMap((envelope) => {
+    const event = envelope.event;
+    if (
+      (event.type !== "ATTACK_GROUP_CREATED" &&
+        event.type !== "CARD_CHAINED" &&
+        event.type !== "SUPPORT_CARD_PLAYED") ||
+      typeof event.cardDefinitionId !== "string"
+    ) {
+      return [];
+    }
+    const cardName =
+      context.cardCatalog.definitions[event.cardDefinitionId]?.name;
+    return cardName === undefined
+      ? []
+      : [
+          {
+            cardDefinitionId: event.cardDefinitionId,
+            cardName,
+            playerId: event.playerId,
+            sequence: envelope.sequence,
+          } satisfies PlayedGameCard,
+        ];
+  });
+
+  return createGameLearningContext({
+    createdAt,
+    gameId: session.state.gameId,
+    playedCards,
+    playerIds: Object.keys(session.state.players),
+  });
+}
+
+function getGameFinishedAt(session: StoredGameSession): number {
+  for (let index = session.events.length - 1; index >= 0; index -= 1) {
+    const event = session.events[index];
+    if (event?.event.type === "GAME_FINISHED") {
+      return event.occurredAt;
+    }
+  }
+  return session.state.phaseStartedAt;
 }
 
 /** 保存済みの旧状態に、作成順で固定盤面スロットを割り当てる。 */
@@ -640,13 +780,25 @@ function isValidAttackGroupSlot(value: unknown): value is 0 | 1 | 2 | 3 | 4 {
 export function getGameSessionRetentionExpiresAt(
   state: Pick<GameState, "status" | "phaseStartedAt">,
   storedRetentionExpiresAt?: number | null,
+  finishedAt = state.phaseStartedAt,
 ): number | null {
   if (state.status !== "finished") {
     return null;
   }
   return (
-    storedRetentionExpiresAt ??
-    state.phaseStartedAt + GAME_RECONNECT_GRACE_PERIOD_MS
+    storedRetentionExpiresAt ?? finishedAt + GAME_RECONNECT_GRACE_PERIOD_MS
+  );
+}
+
+function getNextRetentionExpiresAt(
+  session: StoredGameSession,
+  nextState: GameState,
+  finishedAt: number,
+): number | null {
+  return getGameSessionRetentionExpiresAt(
+    nextState,
+    session.retentionExpiresAt,
+    finishedAt,
   );
 }
 

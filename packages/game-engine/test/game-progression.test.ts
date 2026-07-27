@@ -45,6 +45,9 @@ describe("効果なしのゲーム進行", () => {
     expect(placed.events.map((entry) => entry.event.type)).toEqual([
       "ATTACK_GROUP_CREATED",
     ]);
+    expect(placed.events[0]?.event).toMatchObject({
+      cardDefinitionId: "counter-attack-1",
+    });
     state = placed.state;
     const groupId = getPlayer(state, firstPlayerId).battlefield.attackGroups[0]
       ?.groupId;
@@ -68,6 +71,9 @@ describe("効果なしのゲーム進行", () => {
     expect(chained.events.map((entry) => entry.event.type)).toEqual([
       "CARD_CHAINED",
     ]);
+    expect(chained.events[0]?.event).toMatchObject({
+      cardDefinitionId: "counter-attack-1",
+    });
     state = chained.state;
 
     state = submit(

@@ -72,15 +72,20 @@ apps/backend, apps/frontend
 
 バックエンドはBetter AuthのセッションCookieからユーザーIDを取得し、`PlayerId`として次のHTTPアダプターへ渡す。セッションがない場合は`401 UNAUTHENTICATED`で拒否する。テストでは認証アダプターを差し替えられるが、標準WorkerはBetter Authを使用する。
 
-| 操作                 | エンドポイント                                  | 成功時の応答                |
-| -------------------- | ----------------------------------------------- | --------------------------- |
-| スナップショット取得 | `GET /api/games/:gameId?afterSequence=<number>` | `GameSnapshotResponse`      |
-| コマンド送信         | `POST /api/games/:gameId/commands`              | `SubmitGameCommandResponse` |
-| 更新通知の購読       | `GET /api/games/:gameId/events`（WebSocket）    | `GameRealtimeUpdate`        |
+| 操作                 | エンドポイント                                  | 成功時の応答                  |
+| -------------------- | ----------------------------------------------- | ----------------------------- |
+| スナップショット取得 | `GET /api/games/:gameId?afterSequence=<number>` | `GameSnapshotResponse`        |
+| コマンド送信         | `POST /api/games/:gameId/commands`              | `SubmitGameCommandResponse`   |
+| 学習コンテキスト取得 | `GET /api/games/:gameId/learning-context`       | `GameLearningContextResponse` |
+| 更新通知の購読       | `GET /api/games/:gameId/events`（WebSocket）    | `GameRealtimeUpdate`          |
 
 HTTPアダプターは、認証後かつDO呼び出し前にJSON本文と`afterSequence`を検証する。本文の`gameId`がパスと異なる場合は`400 GAME_ID_MISMATCH`、本文の`playerId`が認証結果と異なる場合は`403 AUTHENTICATED_PLAYER_MISMATCH`で拒否する。ゲームルール上の拒否は通信エラーではないため、`SubmitGameCommandResponse`の`accepted: false`を`200`で返す。
 
 未初期化または存在しないゲームは`404 GAME_NOT_FOUND`、認証済みプレイヤーがそのゲームの参加者でない場合は`403 GAME_ACCESS_FORBIDDEN`を返す。Durable Object内部の未初期化・参加者外アクセスを例外のままHTTP応答へ流さない。
+
+`GET /api/games/:gameId/learning-context`は、終了済み対戦の参加者だけが取得できる。ゲーム終了時に、受理済みの`ATTACK_GROUP_CREATED`、`CARD_CHAINED`、`SUPPORT_CARD_PLAYED`イベントからカード定義IDを抽出し、各プレイヤーにつき直近2種類までを学習コンテキストへ保存する。記事に関連しないカードだけを使用した場合も、空の`selectedCards`を持つ`200`応答を返す。ゲームが終了していなければ`409 GAME_NOT_FINISHED`、存在しないゲームまたは24時間の保持期限切れなら`404 GAME_NOT_FOUND`、参加者外なら`403 GAME_ACCESS_FORBIDDEN`とする。
+
+`GameLearningContextResponse`には、保存時刻、対戦ID、関連カードの定義ID・表示名・使用プレイヤーIDだけを含める。記事本文や非公開カード情報は含めない。記事との対応は`@disastar/learning-content`の公開済みインデックスをバックエンドとフロントエンドで共有し、APIは記事一覧を返さない。
 
 WebSocketは認証済み参加者だけが接続でき、クライアントからサーバーへのゲーム操作には使用しない。`GameRealtimeUpdate`は`gameId`、`stateVersion`、`latestEventSequence`だけを含む更新通知であり、`PlayerGameView`、カード情報、公開イベント本体を含めない。`GameRealtimePresence`は接続中参加者の`playerId`配列だけを含む一時的な通知で、保存もゲームルールへの入力もしない。受信側は状態更新通知を適用せず、HTTPスナップショットを再取得する。接続の切断・不正メッセージ・再接続失敗時にも、HTTPコマンド送信とスナップショット取得は継続して利用できる。
 

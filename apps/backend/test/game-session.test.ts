@@ -204,6 +204,16 @@ describe("GameSession Durable Object", () => {
         phaseStartedAt: finishedAt,
       }),
     ).toBe(finishedAt + GAME_RECONNECT_GRACE_PERIOD_MS);
+    expect(
+      getGameSessionRetentionExpiresAt(
+        {
+          status: "finished",
+          phaseStartedAt: finishedAt - 60_000,
+        },
+        null,
+        finishedAt,
+      ),
+    ).toBe(finishedAt + GAME_RECONNECT_GRACE_PERIOD_MS);
   });
 
   it("旧保存形式の攻撃グループへ作成順の固定スロットを割り当てる", () => {

@@ -16,10 +16,11 @@ GameSession Durable Object
 @disastar/game-engine
 ```
 
-`GameSession`の公開RPCは次の3つである。Workerは Better Auth のセッションからプレイヤーを確定してから、HTTP API経由で`getSnapshot`と`submit`を呼び出す。ローカル・本番ともに認証設定が不足している場合は API を有効な利用者として扱わず、設定不備を解消する。
+`GameSession`の公開RPCは次の4つである。Workerは Better Auth のセッションからプレイヤーを確定してから、HTTP API経由で`getSnapshot`、`getLearningContext`、`submit`を呼び出す。ローカル・本番ともに認証設定が不足している場合は API を有効な利用者として扱わず、設定不備を解消する。
 
 - `initialize`: 対戦状態と初期イベントを作成して永続化する。
 - `getSnapshot`: 閲覧者別の`PlayerGameView`と公開イベントを返す。未初期化時は`GAME_NOT_FOUND`、参加者外は`GAME_ACCESS_FORBIDDEN`を返す。
+- `getLearningContext`: 終了済み対戦の参加者へ、保存済みの関連カード情報を返す。進行中は`GAME_NOT_FINISHED`、未初期化・期限切れは`GAME_NOT_FOUND`、参加者外は`GAME_ACCESS_FORBIDDEN`を返す。
 - `submit`: 認証済みプレイヤーのコマンドを処理し、最初の結果を`commandId`単位で保存する。未初期化・参加者外・認証済みプレイヤー不一致は安定したエラー結果で返す。
 
 状態とコマンド結果は、応答する前にDO Storageへ書き込む。同じ`commandId`が再送された場合は、エンジンを再実行せず保存済みの最初の結果を返す。フェーズ期限がある間はDO Alarmを1つだけ設定し、アラームでは`HANDLE_PHASE_TIMEOUT`をエンジンへ渡す。ゲーム中の公開イベントを保持し、`afterSequence`による差分取得を可能にする。
@@ -36,9 +37,12 @@ GameSession Durable Object
 
 - `GameSession`の状態、閲覧者別スナップショットに必要なイベント、同一`commandId`の結果
 - ゲーム開始時のカードカタログ内容とカタログ版
+- 対戦終了時に生成した学習コンテキスト。関連カードが0件でも空のコンテキストを保存する
 - そのカタログを参照する他のゲームのリース情報
 
 終了時に`GameSession`と`CatalogArchive`の両方へ同じ失効時刻を保存し、Durable Object Alarmで削除する。カタログは、進行中または猶予中のリースが1つでもある限り削除してはならない。最後のリースが失効した時点でカタログを削除し、同じゲームの`GameSession`も削除する。期限後のスナップショット取得は`404 GAME_NOT_FOUND`、期限後のカタログ取得は`404 CARD_CATALOG_NOT_FOUND`とする。
+
+学習コンテキストの作成対象は、受理済みの攻撃配置、連鎖、サポート使用イベントだけとする。各参加者について、公開済み学習記事に関連するカードをイベント連番の新しい順に重複なく最大2種類選ぶ。表示用では両者の選択結果をカード定義ID単位で統合する。記事対応の正本は`@disastar/learning-content`であり、将来のD1移行やRepository抽象化は初期実装に含めない。
 
 同一の`CardCatalogVersion`に異なる内容を登録することは、`CARD_CATALOG_VERSION_CONFLICT`として拒否する。新しいカタログを公開する際は必ず新しい版を発行し、旧版を上書きしない。
 

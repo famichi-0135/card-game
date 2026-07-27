@@ -5,6 +5,7 @@ import type {
   PublicCardCatalog,
   VisibleAttackGroup,
 } from "@disastar/game-engine";
+import type { GameLearningContextResponse } from "@disastar/contracts/game";
 import { type ReactNode, useEffect, useState } from "react";
 import { CardField } from "./components/card-field.tsx";
 import { type GameConnectionState } from "./components/connection-status.tsx";
@@ -29,6 +30,7 @@ export function GameBoardView({
   commandPending,
   connectionState,
   isInteractive,
+  learningContext,
   onCancelSupportPlay,
   onConfirmSupportPlay,
   onFinishPhase,
@@ -46,6 +48,11 @@ export function GameBoardView({
   commandPending: boolean;
   connectionState: GameConnectionState;
   isInteractive: boolean;
+  learningContext?: {
+    data: GameLearningContextResponse | undefined;
+    isError: boolean;
+    isPending: boolean;
+  };
   onCancelSupportPlay: () => void;
   onConfirmSupportPlay: (effectInputs: EffectInput[]) => void;
   onFinishPhase: () => void;
@@ -163,7 +170,7 @@ export function GameBoardView({
 
       <DesktopOnlyNotice />
       {isFinished ? (
-        <GameResultDialog view={view} />
+        <GameResultDialog learningContext={learningContext} view={view} />
       ) : (
         <>
           {zoneDialog === null ? null : (

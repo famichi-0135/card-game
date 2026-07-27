@@ -6,6 +6,7 @@ import {
 } from "@disastar/contracts/game";
 import type { GameId, PlayerId } from "@disastar/game-engine/contracts";
 import type {
+  GetGameLearningContextResult,
   GetGameSnapshotResult,
   SubmitGameCommandResult,
 } from "../game-session/game-session.js";
@@ -29,6 +30,9 @@ type GameSessionRpc = {
     viewerPlayerId: PlayerId,
     afterSequence?: number,
   ): Promise<GetGameSnapshotResult>;
+  getLearningContext?(
+    viewerPlayerId: PlayerId,
+  ): Promise<GetGameLearningContextResult>;
   submit(
     authenticatedCommand: AuthenticatedGameCommand,
   ): Promise<SubmitGameCommandResult>;
@@ -85,6 +89,21 @@ export function createGameApi({
     ).getSnapshot(c.var.authenticatedPlayerId, afterSequence);
     return result.found
       ? c.json(result.snapshot)
+      : gameSessionError(c, result.error.code);
+  });
+
+  api.get("/:gameId/learning-context", async (c) => {
+    const session = getGameSession(c.req.param("gameId"), c.env);
+    if (session.getLearningContext === undefined) {
+      throw new Error(
+        "GameSession Durable Object は学習コンテキストを処理できません。",
+      );
+    }
+    const result = await session.getLearningContext(
+      c.var.authenticatedPlayerId,
+    );
+    return result.found
+      ? c.json(result.context)
       : gameSessionError(c, result.error.code);
   });
 
@@ -193,13 +212,14 @@ function gameSessionError(
   code:
     | "GAME_NOT_FOUND"
     | "GAME_ACCESS_FORBIDDEN"
+    | "GAME_NOT_FINISHED"
     | "AUTHENTICATED_PLAYER_MISMATCH"
     | "COMMAND_ID_CONFLICT",
 ): Response {
   const status =
     code === "GAME_NOT_FOUND"
       ? 404
-      : code === "COMMAND_ID_CONFLICT"
+      : code === "COMMAND_ID_CONFLICT" || code === "GAME_NOT_FINISHED"
         ? 409
         : 403;
   return context.json(

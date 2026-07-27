@@ -1,6 +1,7 @@
 import { parseGameCommand } from "@disastar/game-engine";
 import type {
   CommandId,
+  CardDefinitionId,
   GameCommand,
   GameCommandError,
   GameCommandParseError,
@@ -89,6 +90,20 @@ export type GameSnapshotResponse = {
   latestEventSequence: number;
 };
 
+/** 終了済み対戦から抽出した、学習記事との関連表示用カード。 */
+export type GameLearningSelectedCard = {
+  cardDefinitionId: CardDefinitionId;
+  cardName: string;
+  usedByPlayerIds: PlayerId[];
+};
+
+/** 対戦終了後24時間だけ参加者へ返す学習コンテキスト。 */
+export type GameLearningContextResponse = {
+  gameId: string;
+  createdAt: number;
+  selectedCards: GameLearningSelectedCard[];
+};
+
 /**
  * WebSocketで配信する、HTTPスナップショット再取得用の更新通知。
  *
@@ -131,6 +146,7 @@ export type GameHttpApiErrorCode =
   | "AUTHENTICATED_PLAYER_MISMATCH"
   | "GAME_NOT_FOUND"
   | "GAME_ACCESS_FORBIDDEN"
+  | "GAME_NOT_FINISHED"
   | "COMMAND_ID_CONFLICT"
   | "WEBSOCKET_UPGRADE_REQUIRED";
 

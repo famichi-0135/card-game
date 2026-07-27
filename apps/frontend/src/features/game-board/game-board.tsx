@@ -5,6 +5,7 @@ import type {
   PlayerVisibleEventEnvelope,
   PublicCardCatalog,
 } from "@disastar/game-engine";
+import type { GameLearningContextResponse } from "@disastar/contracts/game";
 import {
   type ReactNode,
   useCallback,
@@ -18,6 +19,7 @@ import { GameBoardView } from "./game-board-view.tsx";
 import type { GameBoardFixture } from "./fixtures/game-board-fixture.ts";
 import {
   useGameCommand,
+  useGameLearningContext,
   useGameSnapshot,
   usePublicCardCatalog,
 } from "./hooks/use-game-board-data.ts";
@@ -47,6 +49,10 @@ export function GameBoard({
   gameId: string;
 }) {
   const snapshot = useGameSnapshot(gameId);
+  const learningContext = useGameLearningContext(
+    gameId,
+    snapshot.data?.view.status === "finished",
+  );
   const catalog = usePublicCardCatalog(snapshot.data?.view.cardCatalogVersion);
   const command = useGameCommand(gameId);
   const isOnline = useOnlineStatus();
@@ -102,6 +108,11 @@ export function GameBoard({
       )}
       events={snapshot.data.events}
       latestEventSequence={snapshot.data.latestEventSequence}
+      learningContext={{
+        data: learningContext.data,
+        isError: learningContext.isError,
+        isPending: learningContext.isPending,
+      }}
       onCommand={command.submit}
       onRetryCommand={command.canRetry ? command.retry : undefined}
       onResynchronize={snapshot.resynchronize}
@@ -118,6 +129,7 @@ function GameBoardContent({
   connectionState = "connected",
   events = [],
   latestEventSequence = 0,
+  learningContext,
   onCommand,
   opponentOnline = false,
   onRetryCommand,
@@ -132,6 +144,11 @@ function GameBoardContent({
   connectionState?: GameConnectionState;
   events?: readonly PlayerVisibleEventEnvelope[];
   latestEventSequence?: number;
+  learningContext?: {
+    data: GameLearningContextResponse | undefined;
+    isError: boolean;
+    isPending: boolean;
+  };
   onCommand?: (command: GameCommand) => void;
   opponentOnline?: boolean;
   onRetryCommand?: () => void;
@@ -200,6 +217,7 @@ function GameBoardContent({
         commandPending={commandPending}
         connectionState={connectionState}
         isInteractive={isInteractive}
+        learningContext={learningContext}
         onCancelSupportPlay={cancelSupportPlay}
         onConfirmSupportPlay={confirmSupportPlay}
         onFinishPhase={finishPhase}

@@ -6,6 +6,7 @@ import type {
 } from "@disastar/game-engine";
 import type {
   GameSnapshotResponse,
+  GameLearningContextResponse,
   PublicCardCatalogResponse,
   SubmitGameCommandResponse,
 } from "@disastar/contracts/game";
@@ -76,6 +77,20 @@ export function useGameSnapshot(gameId: string) {
     resynchronizationError,
     resynchronize,
   };
+}
+
+export function useGameLearningContext(gameId: string, enabled: boolean) {
+  return useQuery({
+    queryKey: ["games", gameId, "learning-context"],
+    queryFn: () =>
+      fetchApi<GameLearningContextResponse>(
+        `/api/games/${encodeURIComponent(gameId)}/learning-context`,
+      ),
+    enabled,
+    retry: (failureCount, error) =>
+      !(error instanceof ApiClientError) && failureCount < 2,
+    staleTime: Number.POSITIVE_INFINITY,
+  });
 }
 
 export function useGameCommand(gameId: string) {
