@@ -1,6 +1,10 @@
 import { Hono } from "hono";
 import { cors } from "hono/cors";
 import { HEALTH_STATUS, type HealthResponse } from "@disastar/contracts/health";
+import type {
+  AuthenticatedSessionResponse,
+  SessionApiErrorResponse,
+} from "@disastar/contracts/session";
 import {
   createGameApi,
   type GameRequestAuthenticator,
@@ -18,6 +22,7 @@ import { resolveAuthorizedDeckInEnvironment } from "./player-decks/resolve-autho
 import { createCardCatalogApi } from "./card-catalog-api/create-card-catalog-api.js";
 import {
   authenticateBetterAuthRequest,
+  getAuthenticatedPlayerSession,
   handleBetterAuthRequest,
   parseTrustedOrigins,
   type BetterAuthEnvironment,
@@ -66,6 +71,21 @@ export function createApp({
   app.on(["GET", "POST"], "/api/auth/*", (c) =>
     handleAuthRequest(c.req.raw, c.env),
   );
+  app.get("/api/session", async (c) => {
+    const authenticatedSession = await getAuthenticatedPlayerSession(
+      c.req.raw,
+      c.env,
+    );
+    if (authenticatedSession === null) {
+      const response: SessionApiErrorResponse = {
+        error: { code: "UNAUTHENTICATED" },
+      };
+      return c.json(response, 401);
+    }
+
+    const response: AuthenticatedSessionResponse = authenticatedSession;
+    return c.json(response);
+  });
   app.route("/api/card-catalogs", createCardCatalogApi());
   app.route(
     "/api/games",

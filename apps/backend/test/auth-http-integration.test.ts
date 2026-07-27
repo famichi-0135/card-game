@@ -2,9 +2,12 @@ import {
   createExecutionContext,
   waitOnExecutionContext,
 } from "cloudflare:test";
+import { eq } from "drizzle-orm";
 import { describe, expect, it } from "vitest";
 import { createApp } from "../src/index.js";
 import { createRuntimeAuth } from "../src/auth/runtime-auth.js";
+import { createRuntimeDatabase } from "../src/db/runtime.js";
+import { user } from "../src/db/schema/auth.js";
 import {
   authTestBaseURL as baseURL,
   authTestTrustedOrigin as trustedOrigin,
@@ -55,7 +58,7 @@ describe("Better Auth HTTP統合", () => {
   it("Google OAuthセッションから既存APIを認証する", async () => {
     const app = createApp();
     const bindings = createAuthTestBindings();
-    const { cookie } = await createGoogleAuthTestSession(bindings, {
+    const { cookie, playerId } = await createGoogleAuthTestSession(bindings, {
       email: "http-auth@example.com",
       name: "HTTP Auth User",
     });
@@ -76,6 +79,36 @@ describe("Better Auth HTTP統合", () => {
         email: "http-auth@example.com",
         name: "HTTP Auth User",
       },
+    });
+
+    const playerSession = await app.request(
+      new Request(`${baseURL}/api/session`, {
+        headers: authenticatedHeaders(cookie),
+      }),
+      undefined,
+      bindings,
+    );
+    expect(playerSession.status).toBe(200);
+    await expect(playerSession.json()).resolves.toEqual({
+      isAnonymous: false,
+      playerId,
+      user: {
+        id: playerId,
+        name: "HTTP Auth User",
+      },
+    });
+
+    const repeatedPlayerSession = await app.request(
+      new Request(`${baseURL}/api/session`, {
+        headers: authenticatedHeaders(cookie),
+      }),
+      undefined,
+      bindings,
+    );
+    expect(repeatedPlayerSession.status).toBe(200);
+    await expect(repeatedPlayerSession.json()).resolves.toMatchObject({
+      isAnonymous: false,
+      playerId,
     });
 
     const decks = await app.request(
@@ -113,10 +146,64 @@ describe("Better Auth HTTP統合", () => {
     });
   });
 
+  it("匿名セッションを作成し、固定PlayerIdを返す", async () => {
+    const app = createApp();
+    const bindings = createAuthTestBindings();
+
+    const signInResponse = await app.request(
+      new Request(`${baseURL}/api/auth/sign-in/anonymous`, {
+        method: "POST",
+        headers: {
+          "cf-connecting-ip": "203.0.113.21",
+          "content-type": "application/json",
+          origin: trustedOrigin,
+        },
+      }),
+      undefined,
+      bindings,
+    );
+    expect(signInResponse.status).toBe(200);
+    const signInPayload = (await signInResponse.json()) as {
+      user: { id: string; name: string; isAnonymous: boolean };
+    };
+    expect(signInPayload.user.isAnonymous).toBe(true);
+    expect(signInPayload.user.name).toMatch(/^ゲスト-[a-f0-9]{8}$/);
+
+    const cookie = getSessionCookie(signInResponse);
+    const playerSession = await app.request(
+      new Request(`${baseURL}/api/session`, {
+        headers: authenticatedHeaders(cookie),
+      }),
+      undefined,
+      bindings,
+    );
+    expect(playerSession.status).toBe(200);
+    await expect(playerSession.json()).resolves.toEqual({
+      isAnonymous: true,
+      playerId: signInPayload.user.id,
+      user: {
+        id: signInPayload.user.id,
+        name: signInPayload.user.name,
+      },
+    });
+
+    const database = createRuntimeDatabase(bindings.DB);
+    await expect(
+      database.select().from(user).where(eq(user.id, signInPayload.user.id)),
+    ).resolves.toEqual([
+      expect.objectContaining({
+        emailVerified: false,
+        isAnonymous: true,
+        name: signInPayload.user.name,
+      }),
+    ]);
+  });
+
   it.each([
     "/api/decks",
     "/api/games/missing-game",
     "/api/matches/not-a-durable-object-id",
+    "/api/session",
   ])("セッションCookieがない%sリクエストを拒否する", async (path) => {
     const response = await createApp().request(
       new Request(`${baseURL}${path}`),
@@ -172,4 +259,13 @@ function authenticatedHeaders(cookie: string): HeadersInit {
     "cf-connecting-ip": "203.0.113.20",
     cookie,
   };
+}
+
+function getSessionCookie(response: Response): string {
+  const setCookie = response.headers.get("set-cookie");
+  if (setCookie === null) {
+    throw new Error("匿名ログインのセッションCookieが返されませんでした。");
+  }
+
+  return setCookie.split(";", 1)[0];
 }

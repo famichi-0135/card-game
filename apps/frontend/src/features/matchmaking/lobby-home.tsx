@@ -1,8 +1,10 @@
+import { useQueryClient } from "@tanstack/react-query";
 import type { Faction } from "@disastar/game-engine/contracts";
 import { type ReactNode, useState } from "react";
 import { Link, useNavigate } from "react-router";
 import { createAuthPath } from "../../app/return-to.ts";
 import { useSession } from "../../app/session.ts";
+import { AuthApiError, signInAnonymously } from "../auth/auth-api.ts";
 import { LogoutButton } from "../auth/auth-routes.tsx";
 import { AuthStatus } from "../auth/auth-layout.tsx";
 import { RoomJoinForm } from "./components/room-join-form.tsx";
@@ -26,11 +28,28 @@ export function MatchmakingHomeRoute() {
     return <GuestLobby />;
   }
 
-  return <AuthenticatedLobby />;
+  return <AuthenticatedLobby isAnonymous={session.data.isAnonymous} />;
 }
 
 function GuestLobby({ authError = false }: { authError?: boolean }) {
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
+  const [error, setError] = useState<string | null>(null);
+  const [isStartingGuestSession, setIsStartingGuestSession] = useState(false);
+
+  async function startGuestSession(returnTo: string) {
+    setError(null);
+    setIsStartingGuestSession(true);
+    try {
+      await signInAnonymously();
+      await queryClient.invalidateQueries({ queryKey: ["auth", "session"] });
+      navigate(returnTo);
+    } catch (requestError) {
+      setError(getGuestSignInErrorMessage(requestError));
+    } finally {
+      setIsStartingGuestSession(false);
+    }
+  }
 
   return (
     <LobbyLayout
@@ -55,15 +74,17 @@ function GuestLobby({ authError = false }: { authError?: boolean }) {
         <div>
           <h1 className="text-2xl font-semibold">招待対戦</h1>
           <p className="mt-2 text-sm leading-6 text-slate-600">
-            ログインしてロールを選び、招待部屋を作成または参加します。
+            ロールを選び、招待部屋を作成または参加します。
           </p>
         </div>
+        {error === null ? null : <AuthStatus tone="error">{error}</AuthStatus>}
         <button
           className="w-fit rounded border border-slate-800 bg-slate-900 px-4 py-2 text-sm font-medium text-white hover:bg-slate-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-slate-900"
-          onClick={() => navigate(createAuthPath("/login", "/"))}
+          disabled={isStartingGuestSession}
+          onClick={() => void startGuestSession("/")}
           type="button"
         >
-          部屋を作成する
+          {isStartingGuestSession ? "準備しています" : "ゲストとして始める"}
         </button>
       </section>
       <section
@@ -75,21 +96,19 @@ function GuestLobby({ authError = false }: { authError?: boolean }) {
             招待部屋に参加
           </h2>
           <p className="mt-1 text-sm text-slate-600">
-            部屋 ID または招待 URL
-            を入力すると、ログイン後にその部屋へ戻ります。
+            部屋 ID または招待 URL を入力して、ゲストとして参加できます。
           </p>
         </div>
         <RoomJoinForm
-          onJoin={(matchId) =>
-            navigate(createAuthPath("/login", createRoomPath(matchId)))
-          }
+          disabled={isStartingGuestSession}
+          onJoin={(matchId) => void startGuestSession(createRoomPath(matchId))}
         />
       </section>
     </LobbyLayout>
   );
 }
 
-function AuthenticatedLobby() {
+function AuthenticatedLobby({ isAnonymous }: { isAnonymous: boolean }) {
   const navigate = useNavigate();
   const [isCreatingMatch, setIsCreatingMatch] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -116,7 +135,17 @@ function AuthenticatedLobby() {
   return (
     <LobbyLayout
       accountSlot={
-        <LogoutButton className="rounded border border-slate-300 px-3 py-2 text-sm font-medium hover:bg-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-slate-900" />
+        <div className="flex items-center gap-3">
+          {isAnonymous ? (
+            <Link
+              className="rounded border border-slate-800 bg-slate-900 px-3 py-2 text-sm font-medium text-white hover:bg-slate-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-slate-900"
+              to={createAuthPath("/login", "/")}
+            >
+              Googleアカウントに引き継ぐ
+            </Link>
+          ) : null}
+          <LogoutButton className="rounded border border-slate-300 px-3 py-2 text-sm font-medium hover:bg-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-slate-900" />
+        </div>
       }
       title="対戦準備"
     >
@@ -149,6 +178,14 @@ function AuthenticatedLobby() {
       </section>
     </LobbyLayout>
   );
+}
+
+function getGuestSignInErrorMessage(error: unknown): string {
+  if (error instanceof AuthApiError && error.status === 429) {
+    return "短時間に多くの操作が行われました。時間をおいてからお試しください。";
+  }
+
+  return "ゲストとして開始できませんでした。接続状態を確認して、もう一度お試しください。";
 }
 
 function RoleActions({

@@ -5,6 +5,7 @@
   "type": "module",
   "exports": {
     "./health": "./src/health.ts",
+    "./session": "./src/session.ts",
     "./game": "./src/game.ts",
     "./match": "./src/match.ts",
     "./deck": "./src/deck.ts"

@@ -2,20 +2,21 @@
 
 ## 責務
 
-バックエンドの永続データは Cloudflare D1、スキーマとマイグレーションは Drizzle、認証は Better Auth を使用する。初期ローンチの認証プロバイダーは **Google OAuth のみ** とし、メール・パスワード認証、確認メール、パスワード再設定、Cloudflare Email Service は使用しない。
+バックエンドの永続データは Cloudflare D1、スキーマとマイグレーションは Drizzle、認証は Better Auth を使用する。初期ローンチでは **匿名ゲスト** と **Google OAuth** を提供し、メール・パスワード認証、確認メール、パスワード再設定、Cloudflare Email Service は使用しない。
 
 - `apps/backend/src/db/schema/`: Drizzle スキーマの正本
 - `apps/backend/drizzle/`: レビュー・適用する SQL マイグレーション
 - `apps/backend/src/db/runtime.ts`: Workers の `env.DB` から作る実行時 Drizzle
-- `apps/backend/src/auth/create-auth.ts`: Google OAuth を含む Better Auth 設定
-- `apps/backend/src/auth/runtime-auth.ts`: リクエストごとの Better Auth 生成とセッション認証
+- `apps/backend/src/auth/create-auth.ts`: Google OAuth、匿名ゲスト、アカウント引き継ぎを含む Better Auth 設定
+- `apps/backend/src/auth/runtime-auth.ts`: リクエストごとの Better Auth 生成、セッション認証、ゲーム用PlayerIdの解決
+- `apps/backend/src/player-identity/`: Better Auth利用者とゲーム用PlayerIdの対応表を解決する処理
 - `apps/backend/src/db/migration.ts`: Better Auth CLI がスキーマを検査するための Drizzle
 - `apps/backend/auth.cli.ts`: Better Auth CLI 専用設定
 - `apps/backend/drizzle.config.ts`: Drizzle Kit 専用設定
 
 CLI 用の疑似 D1 クライアントを Workers のリクエスト処理へ持ち込まない。実行時はリクエストの `CloudflareBindings.DB` から Drizzle を作る。
 
-## Google OAuth の運用仕様
+## Google OAuth と匿名ゲストの運用仕様
 
 ログイン画面は `POST /api/auth/sign-in/social` に `provider: "google"` を送信し、Better Auth が返す認可 URL へブラウザを遷移させる。初回ログイン時は Better Auth が Google の subject を `account` テーブルへ保存し、以後は同じ Google アカウントを同じアプリ利用者として扱う。
 
@@ -31,6 +32,12 @@ CLI 用の疑似 D1 クライアントを Workers のリクエスト処理へ持
 
 Google OAuth に失敗した場合、フロントエンドは認可エラーを表示してログイン画面へ留まる。対戦画面と待機部屋へ未ログインでアクセスした場合は、同一オリジン内に限定して検証した `returnTo` を付けて `/login` へ移動する。認証成功後はその URL へ戻る。
 
+匿名ゲストは `POST /api/auth/sign-in/anonymous` で作成する。Better AuthのAnonymousプラグインが一意な仮メールアドレス、`ゲスト-xxxxxxxx`形式の表示名、`user.is_anonymous = true`、セッションCookieを作成する。仮メールアドレスは画面・アプリAPI・ログへ返さない。ゲストはGoogle利用者と同じ対戦、待機部屋、保存済みデッキAPIを利用できるが、Cookieを失うとGoogleへ引き継ぐまで同じゲストとして復元できない。
+
+匿名ゲストがGoogleログインを開始すると、Anonymousプラグインの`onLinkAccount`で`player_identity.auth_user_id`を新しいGoogle利用者IDへ更新する。そのため、ゲストが作成したDurable Object、待機部屋、対戦、保存済みデッキの`PlayerId`は変わらない。引き継ぎ先のGoogle利用者がすでに別の`PlayerId`を持つ場合は認証を失敗として扱い、自動統合もデータ削除も行わない。通常の引き継ぎ後はBetter Authが匿名の`user`とセッションを削除する。
+
+`0001_curved_doctor_octopus.sql`は、導入前から存在するGoogle利用者を`auth_user_id = player_id`で`player_identity`へ登録する。これにより、導入前に作成されたDurable Object名、待機部屋、対戦、保存済みデッキも同じゲーム用PlayerIdで継続する。マイグレーションを適用せずにBackend Workerだけを先行デプロイしてはならない。
+
 ## ローカル作業
 
 ```sh
@@ -40,7 +47,7 @@ pnpm --filter @disastar/backend run db:migrate:local
 pnpm --filter @disastar/backend run test
 ```
 
-Better Auth の設定やプラグインを変更した場合は、`auth:schema` で認証スキーマを更新し、差分を確認してから `db:generate` を実行する。Google OAuth の追加は既存の `user`、`account`、`session` テーブルで表現できるため、想定どおり差分がなければ新しい D1 マイグレーションは作成しない。
+Better Auth の設定やプラグインを変更した場合は、`auth:schema` で認証スキーマを更新し、差分を確認してから `db:generate` を実行する。Google OAuth の追加は既存の `user`、`account`、`session` テーブルで表現できるが、Anonymousプラグインは`user.is_anonymous`を追加するため、対応するD1マイグレーションを必ずレビューして適用する。
 
 `.dev.vars.example`を`.dev.vars`へ複製し、32文字以上のランダムな`BETTER_AUTH_SECRET`を設定する。実際の値は commit しない。次の値は環境ごとに設定する。
 
@@ -56,7 +63,11 @@ Better Auth の設定やプラグインを変更した場合は、`auth:schema` 
 
 ローカルでは`BETTER_AUTH_URL`と`BETTER_AUTH_TRUSTED_ORIGINS`の両方に`http://localhost:5173`を設定する。Google callback は Frontend Worker の`/api/auth/callback/google`へ届き、そこから Backend へ転送されるため、セッション Cookie もブラウザが利用する Frontend オリジンに保存される。既存の`.dev.vars`は自動上書きされないため、メール認証から移行した開発環境ではキーを手動で置き換える。
 
-バックエンドは`GET`と`POST`の`/api/auth/*`をBetter Authへ渡す。ゲーム、対戦待機、保存済みデッキ API は、同じ Better Auth セッション Cookie からユーザー ID を取得し、`PlayerId`として使用する。セッションがない場合は`401 UNAUTHENTICATED`を返し、D1障害や認証設定不備を未認証として扱わない。
+バックエンドは`GET`と`POST`の`/api/auth/*`をBetter Authへ渡す。ゲーム、対戦待機、保存済みデッキ API は、同じ Better Auth セッション Cookie から認証利用者IDを取得し、`player_identity`で解決したゲーム用の固定`PlayerId`を使用する。既存のGoogle利用者は初回解決時に認証利用者IDと同じ`PlayerId`を保存するため、既存のDurable Object名、待機部屋、対戦、保存済みデッキを移行せずに継続できる。
+
+`GET /api/session`はブラウザ用の最小セッション確認APIであり、`{ user: { id, name }, playerId, isAnonymous }`だけを返す。メールアドレス、OAuthトークン、Better Auth内部のセッション情報は返さない。セッションがない場合は`401 { error: { code: "UNAUTHENTICATED" } }`を返す。`/api/auth/get-session`はBetter Authの内部APIとして扱い、アプリ画面から直接利用しない。
+
+`player_identity.auth_user_id`には外部キーを付けない。匿名利用者をGoogleアカウントへ引き継ぐ際にBetter Authが匿名の`user`行を削除しても、対応表の`playerId`と既存のゲームデータを維持するためである。アカウント引き継ぎ処理は、対応表の認証利用者IDだけを新しいGoogle利用者へ更新し、すでに別の`PlayerId`を持つGoogle利用者への自動統合は行わない。
 
 Better Authインスタンスは、リクエスト中のD1 Bindingと最新の環境設定から生成する。リクエスト固有のインスタンスや秘密情報をモジュールスコープへ保存しない。
 
@@ -68,8 +79,9 @@ Better Authインスタンスは、リクエスト中のD1 Bindingと最新の�
 2. Google Cloud Console で OAuth 2.0 の Web クライアントを作成し、各 `<origin>/api/auth/callback/google` を承認済みリダイレクト URI に追加する。
 3. 環境ごとの `BETTER_AUTH_URL` と `BETTER_AUTH_TRUSTED_ORIGINS` を Frontend 公開オリジンに設定する。
 4. 環境ごとの `BETTER_AUTH_SECRET`、`GOOGLE_CLIENT_ID`、`GOOGLE_CLIENT_SECRET` を Cloudflare の Secret として設定する。
-5. Backend を先にデプロイし、その後 Frontend をデプロイする。
-6. 管理下の Google アカウントでログイン、ログアウト、待機部屋への戻り先、対戦画面のセッション復元を手動確認する。
+5. SQLマイグレーションをレビューし、対象環境へ適用する。`player_identity`を追加する変更では、既存データの更新や削除は行わない。
+6. Backend を先にデプロイし、その後 Frontend をデプロイする。
+7. 管理下の Google アカウントでログイン、ログアウト、待機部屋への戻り先、対戦画面のセッション復元を手動確認する。匿名ゲストでの部屋作成・参加と、ゲストから未使用のGoogleアカウントへの引き継ぎも確認する。
 
 ## 既存 D1 の取り込み
 

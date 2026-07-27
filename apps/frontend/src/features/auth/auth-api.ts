@@ -33,6 +33,10 @@ export async function startGoogleSignIn(returnTo: string): Promise<void> {
   window.location.assign(response.url);
 }
 
+export async function signInAnonymously(): Promise<void> {
+  await postAuth("/sign-in/anonymous", {});
+}
+
 export async function signOut(): Promise<void> {
   await postAuth("/sign-out", {});
 }
