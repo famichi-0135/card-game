@@ -703,9 +703,9 @@ function createLearningContextForSession(
   const playedCards = session.events.flatMap((envelope) => {
     const event = envelope.event;
     if (
-      (event.type !== "ATTACK_GROUP_CREATED" &&
-        event.type !== "CARD_CHAINED" &&
-        event.type !== "SUPPORT_CARD_PLAYED")
+      event.type !== "ATTACK_GROUP_CREATED" &&
+      event.type !== "CARD_CHAINED" &&
+      event.type !== "SUPPORT_CARD_PLAYED"
     ) {
       return [];
     }
