@@ -99,4 +99,99 @@ describe("初期スターターデッキ", () => {
       }
     }
   });
+
+  it("防災素材に対応した名称と学習解説を公開する", () => {
+    const catalog = gameEngineContext.cardCatalog;
+    const expectedNames = {
+      disaster: {
+        mana: ["大地のみなもと", "水のみなもと", "空のみなもと"],
+        attack: [
+          "微小地震",
+          "直下型地震",
+          "海溝型巨大地震",
+          "大雨",
+          "河川の氾濫",
+          "巨大津波（防潮堤超過）",
+          "温帯低気圧",
+          "台風",
+          "液状化現象",
+          "河川遡上（かせんそじょう）",
+          "猛烈な偏西風",
+        ],
+        support: [
+          "猛烈な偏西風",
+          "ライフラインの寸断・途絶",
+          "建物の倒壊",
+          "地震火災",
+          "土石流",
+          "マグマ溜まりの圧力限界",
+        ],
+      },
+      countermeasure: {
+        mana: [
+          "備える力のみなもと",
+          "守る力のみなもと",
+          "つながる力のみなもと",
+        ],
+        attack: [
+          "ハザードマップの確認",
+          "家具の固定・転倒防止",
+          "建物の耐震改修",
+          "土のう・水のうの設置",
+          "堤防",
+          "防潮堤（津波防波堤）",
+          "防災行政無線",
+          "避難指示の発令",
+          "避難ルートの確認",
+          "地盤改良（液状化対策）",
+          "自助・共助・公助",
+        ],
+        support: [
+          "津波・地震避難訓練",
+          "自主防災組織・安否確認",
+          "非常用備蓄セット",
+          "トリアージ＆応急救護所",
+          "緊急安全確保（警戒レベル5）",
+          "仮設住宅の建設",
+        ],
+      },
+    } as const;
+
+    for (const faction of ["disaster", "countermeasure"] as const) {
+      expect(
+        [1, 2, 3].map(
+          (number) => catalog.definitions[`${faction}-mana-${number}`]?.name,
+        ),
+      ).toEqual(expectedNames[faction].mana);
+      expect(
+        Array.from(
+          { length: 11 },
+          (_, index) =>
+            catalog.definitions[`${faction}-attack-${index + 1}`]?.name,
+        ),
+      ).toEqual(expectedNames[faction].attack);
+      expect(
+        [
+          "group-boost",
+          "remove-support",
+          "reduce-mana",
+          "stamina",
+          "remove-group",
+          "destroy-draw",
+        ].map(
+          (suffix) => catalog.definitions[`${faction}-support-${suffix}`]?.name,
+        ),
+      ).toEqual(expectedNames[faction].support);
+    }
+
+    expect(
+      catalog.definitions["disaster-attack-5"]?.presentation?.rulesText,
+    ).toContain("河川が氾濫し水があふれ出すことがある");
+    expect(
+      catalog.definitions["countermeasure-support-destroy-draw"]?.presentation
+        ?.rulesText,
+    ).toContain(
+      "ゲーム上の効果: 使用後すぐに解決されます。カードを1枚引きます。",
+    );
+  });
 });
