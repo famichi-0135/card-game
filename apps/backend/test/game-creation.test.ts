@@ -29,7 +29,7 @@ describe("初期カードカタログ", () => {
     );
 
     expect(gameEngineContext.cardCatalog.version).toBe(
-      "initial-catalog-v4-starter-balance",
+      "initial-catalog-v5-learning-content",
     );
     expect(disasterResult).toEqual({ valid: true });
     expect(countermeasureResult).toEqual({ valid: true });

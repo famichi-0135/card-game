@@ -4,9 +4,9 @@ import type {
 } from "@disastar/game-engine";
 import { useEffect } from "react";
 import {
-  attributeLabels,
   cardTypeLabel,
   cardTypeMark,
+  getAttributeLabel,
   getChainableCardNames,
 } from "./card-presentation.ts";
 
@@ -105,9 +105,9 @@ function ZoneCard({
       </div>
       <p className="mt-1 text-xs text-slate-500">
         {cardTypeLabel(definition.cardType)} /{" "}
-        {attributeLabels[definition.attribute]}
+        {getAttributeLabel(definition.faction, definition.attribute)}
       </p>
-      <p className="mt-3 text-xs leading-5 text-slate-600">
+      <p className="mt-3 whitespace-pre-line text-xs leading-5 text-slate-600">
         {definition.rulesText}
       </p>
       {definition.cardType === "attack" ? (
