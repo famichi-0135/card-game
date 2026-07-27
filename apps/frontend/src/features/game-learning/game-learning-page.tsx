@@ -4,6 +4,7 @@ import {
 } from "@disastar/learning-content";
 import { Link } from "react-router";
 import { ApiClientError } from "../../app/api-client.ts";
+import { AccountMenu } from "../account/account-menu.tsx";
 import { useGameLearningContext } from "../game-board/hooks/use-game-board-data.ts";
 import { getLearnCategoryLabel } from "../learn/learn-catalog.ts";
 
@@ -45,12 +46,15 @@ export function GameLearningPage({ gameId }: { gameId: string }) {
           >
             DISASTAR CARD GAME
           </Link>
-          <Link
-            className="rounded border border-slate-300 bg-white px-3 py-2 text-sm font-medium text-slate-800 hover:bg-slate-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-slate-900"
-            to={`/games/${encodeURIComponent(gameId)}`}
-          >
-            対戦結果へ戻る
-          </Link>
+          <div className="flex flex-wrap items-center gap-2">
+            <Link
+              className="rounded border border-slate-300 bg-white px-3 py-2 text-sm font-medium text-slate-800 hover:bg-slate-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-slate-900"
+              to={`/games/${encodeURIComponent(gameId)}`}
+            >
+              対戦結果へ戻る
+            </Link>
+            <AccountMenu />
+          </div>
         </header>
 
         <section className="border-b border-slate-300 py-8">

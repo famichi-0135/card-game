@@ -24,6 +24,7 @@ import { MatchmakingHomeRoute } from "../features/matchmaking/lobby-home.tsx";
 import { MatchRoom } from "../features/matchmaking/match-room.tsx";
 import { RuleGuideRoute } from "../features/rule/rule-guide-route.tsx";
 import { GameLearningPage } from "../features/game-learning/game-learning-page.tsx";
+import { MyPage } from "../features/account/my-page.tsx";
 import { createAuthPath, getSafeReturnTo } from "./return-to.ts";
 import { useSession } from "./session.ts";
 
@@ -43,6 +44,10 @@ export const router = createBrowserRouter([
   {
     path: "/rule",
     Component: RuleGuideRoute,
+  },
+  {
+    path: "/mypage",
+    Component: AuthenticatedMyPageRoute,
   },
   {
     path: "/rooms/:matchId",
@@ -150,6 +155,24 @@ function AuthenticatedGameRoute({ gameId }: { gameId: string }) {
       gameId={gameId}
     />
   );
+}
+
+function AuthenticatedMyPageRoute() {
+  const session = useSession();
+  const location = useLocation();
+
+  if (session.isPending) {
+    return <RouteMessage title="認証状態を確認しています" />;
+  }
+  if (session.isError) {
+    return <RouteMessage title="認証状態を確認できませんでした" />;
+  }
+  if (session.data === null) {
+    const returnTo = `${location.pathname}${location.search}${location.hash}`;
+    return <Navigate replace to={createAuthPath("/login", returnTo)} />;
+  }
+
+  return <MyPage session={session.data} />;
 }
 
 function AuthenticatedGameLearningRoute({ gameId }: { gameId: string }) {

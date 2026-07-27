@@ -41,6 +41,10 @@ export async function signOut(): Promise<void> {
   await postAuth("/sign-out", {});
 }
 
+export async function deleteAccount(): Promise<void> {
+  await postAuth("/delete-user", {});
+}
+
 async function postAuth<T = unknown>(path: string, body: object): Promise<T> {
   const response = await fetch(`/api/auth${path}`, {
     method: "POST",

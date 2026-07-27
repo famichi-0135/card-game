@@ -60,6 +60,7 @@ describe("Better Auth HTTP統合", () => {
     const bindings = createAuthTestBindings();
     const { cookie, playerId } = await createGoogleAuthTestSession(bindings, {
       email: "http-auth@example.com",
+      image: "https://example.test/avatar.png",
       name: "HTTP Auth User",
     });
 
@@ -94,6 +95,7 @@ describe("Better Auth HTTP統合", () => {
       playerId,
       user: {
         id: playerId,
+        image: "https://example.test/avatar.png",
         name: "HTTP Auth User",
       },
     });
@@ -183,6 +185,7 @@ describe("Better Auth HTTP統合", () => {
       playerId: signInPayload.user.id,
       user: {
         id: signInPayload.user.id,
+        image: null,
         name: signInPayload.user.name,
       },
     });
@@ -197,6 +200,62 @@ describe("Better Auth HTTP統合", () => {
         name: signInPayload.user.name,
       }),
     ]);
+  });
+
+  it("アカウント削除で認証ユーザーとセッションを無効化する", async () => {
+    const app = createApp();
+    const bindings = createAuthTestBindings();
+
+    const signInResponse = await app.request(
+      new Request(`${baseURL}/api/auth/sign-in/anonymous`, {
+        method: "POST",
+        headers: {
+          "cf-connecting-ip": "203.0.113.22",
+          "content-type": "application/json",
+          origin: trustedOrigin,
+        },
+      }),
+      undefined,
+      bindings,
+    );
+    expect(signInResponse.status).toBe(200);
+    const signInPayload = (await signInResponse.json()) as {
+      user: { id: string };
+    };
+    const cookie = getSessionCookie(signInResponse);
+
+    const deleteResponse = await app.request(
+      new Request(`${baseURL}/api/auth/delete-user`, {
+        method: "POST",
+        headers: {
+          ...authenticatedHeaders(cookie),
+          "content-type": "application/json",
+          origin: trustedOrigin,
+        },
+        body: JSON.stringify({}),
+      }),
+      undefined,
+      bindings,
+    );
+    expect(deleteResponse.status).toBe(200);
+    await expect(deleteResponse.json()).resolves.toEqual({
+      success: true,
+      message: "User deleted",
+    });
+
+    const deletedSession = await app.request(
+      new Request(`${baseURL}/api/session`, {
+        headers: authenticatedHeaders(cookie),
+      }),
+      undefined,
+      bindings,
+    );
+    expect(deletedSession.status).toBe(401);
+
+    const database = createRuntimeDatabase(bindings.DB);
+    await expect(
+      database.select().from(user).where(eq(user.id, signInPayload.user.id)),
+    ).resolves.toEqual([]);
   });
 
   it.each([

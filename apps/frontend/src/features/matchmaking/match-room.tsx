@@ -1,6 +1,7 @@
 import type { Faction } from "@disastar/game-engine/contracts";
 import { type ReactNode, useState } from "react";
 import { Link, Navigate, useNavigate } from "react-router";
+import { AccountMenu } from "../account/account-menu.tsx";
 import { AuthStatus } from "../auth/auth-layout.tsx";
 import { createRoomPath } from "./match-id.ts";
 import {
@@ -287,11 +288,14 @@ function RoomLayout({
   return (
     <main className="min-h-dvh bg-slate-100 p-6 text-slate-950">
       <div className="mx-auto grid w-full max-w-3xl gap-6 py-10">
-        <header className="border-b border-slate-300 pb-4">
-          <p className="text-sm font-semibold text-slate-700">
-            DISASTAR CARD GAME
-          </p>
-          <p className="mt-2 text-sm text-slate-600">{title}</p>
+        <header className="flex items-start justify-between gap-4 border-b border-slate-300 pb-4">
+          <div>
+            <p className="text-sm font-semibold text-slate-700">
+              DISASTAR CARD GAME
+            </p>
+            <p className="mt-2 text-sm text-slate-600">{title}</p>
+          </div>
+          <AccountMenu />
         </header>
         {children}
       </div>

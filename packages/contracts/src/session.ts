@@ -6,6 +6,7 @@ export type AuthenticatedSessionResponse = {
   playerId: PlayerId;
   user: {
     id: string;
+    image: string | null;
     name: string;
   };
 };

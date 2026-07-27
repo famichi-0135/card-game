@@ -39,6 +39,7 @@ export type AuthenticatedPlayerSession = {
   playerId: PlayerId;
   user: {
     id: string;
+    image: string | null;
     name: string;
   };
 };
@@ -60,6 +61,7 @@ export async function getAuthenticatedPlayerSession(
     playerId: await resolvePlayerIdForAuthUser(environment.DB, result.user.id),
     user: {
       id: result.user.id,
+      image: result.user.image ?? null,
       name: result.user.name,
     },
   };

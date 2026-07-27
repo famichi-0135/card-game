@@ -1,4 +1,5 @@
 import { Link } from "react-router";
+import { AccountMenu } from "../account/account-menu.tsx";
 import {
   RULE_GUIDE_SECTIONS,
   RULE_GUIDE_SETTINGS,
@@ -17,20 +18,23 @@ export function RuleGuideRoute() {
           >
             DISASTAR CARD GAME
           </Link>
-          <nav aria-label="関連ページ" className="flex flex-wrap gap-2">
-            <Link
-              className="rounded border border-slate-300 bg-white px-3 py-2 text-sm font-medium text-slate-800 hover:bg-slate-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-slate-900"
-              to="/learn"
-            >
-              防災情報
-            </Link>
-            <Link
-              className="rounded border border-slate-800 bg-slate-900 px-3 py-2 text-sm font-medium text-white hover:bg-slate-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-slate-900"
-              to="/"
-            >
-              対戦準備へ
-            </Link>
-          </nav>
+          <div className="flex flex-wrap items-center gap-2">
+            <nav aria-label="関連ページ" className="flex flex-wrap gap-2">
+              <Link
+                className="rounded border border-slate-300 bg-white px-3 py-2 text-sm font-medium text-slate-800 hover:bg-slate-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-slate-900"
+                to="/learn"
+              >
+                防災情報
+              </Link>
+              <Link
+                className="rounded border border-slate-800 bg-slate-900 px-3 py-2 text-sm font-medium text-white hover:bg-slate-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-slate-900"
+                to="/"
+              >
+                対戦準備へ
+              </Link>
+            </nav>
+            <AccountMenu />
+          </div>
         </header>
 
         <div className="py-10">

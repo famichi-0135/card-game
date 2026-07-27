@@ -1,6 +1,7 @@
 import { betterAuth } from "better-auth/minimal";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import { anonymous } from "better-auth/plugins/anonymous";
+import { mapAnonymousAccountLinkError } from "./account-link-error.js";
 import type { RuntimeDatabase } from "../db/runtime.js";
 import { createRuntimeDatabase } from "../db/runtime.js";
 import * as schema from "../db/schema/index.js";
@@ -63,15 +64,24 @@ export function createAuthWithDatabase({
         scope: ["openid", "email", "profile"],
       },
     },
+    user: {
+      deleteUser: {
+        enabled: true,
+      },
+    },
     plugins: [
       anonymous({
         emailDomainName: "anonymous.disastar.invalid",
         generateName: () => `ゲスト-${crypto.randomUUID().slice(0, 8)}`,
         onLinkAccount: async ({ anonymousUser, newUser }) => {
-          await linkAnonymousPlayerIdentityInDatabase(database, {
-            anonymousAuthUserId: anonymousUser.user.id,
-            newAuthUserId: newUser.user.id,
-          });
+          try {
+            await linkAnonymousPlayerIdentityInDatabase(database, {
+              anonymousAuthUserId: anonymousUser.user.id,
+              newAuthUserId: newUser.user.id,
+            });
+          } catch (error) {
+            throw mapAnonymousAccountLinkError(error);
+          }
         },
       }),
     ],

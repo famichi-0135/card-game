@@ -34,7 +34,7 @@ Google OAuth に失敗した場合、フロントエンドは認可エラーを�
 
 匿名ゲストは `POST /api/auth/sign-in/anonymous` で作成する。Better AuthのAnonymousプラグインが一意な仮メールアドレス、`ゲスト-xxxxxxxx`形式の表示名、`user.is_anonymous = true`、セッションCookieを作成する。仮メールアドレスは画面・アプリAPI・ログへ返さない。ゲストはGoogle利用者と同じ対戦、待機部屋、保存済みデッキAPIを利用できるが、Cookieを失うとGoogleへ引き継ぐまで同じゲストとして復元できない。
 
-匿名ゲストがGoogleログインを開始すると、Anonymousプラグインの`onLinkAccount`で`player_identity.auth_user_id`を新しいGoogle利用者IDへ更新する。そのため、ゲストが作成したDurable Object、待機部屋、対戦、保存済みデッキの`PlayerId`は変わらない。引き継ぎ先のGoogle利用者がすでに別の`PlayerId`を持つ場合は認証を失敗として扱い、自動統合もデータ削除も行わない。通常の引き継ぎ後はBetter Authが匿名の`user`とセッションを削除する。
+匿名ゲストがGoogleログインを開始すると、Anonymousプラグインの`onLinkAccount`で`player_identity.auth_user_id`を新しいGoogle利用者IDへ更新する。そのため、ゲストが作成したDurable Object、待機部屋、対戦、保存済みデッキの`PlayerId`は変わらない。引き継ぎ先のGoogle利用者がすでに別の`PlayerId`を持つ場合は`409 { code: "ACCOUNT_LINK_CONFLICT" }`として認証を失敗させ、自動統合もデータ削除も行わない。Frontend Workerはこのコールバック応答だけを`/login?oauthError=1&error=ACCOUNT_LINK_CONFLICT`へリダイレクトし、競合時に新しく発行されたセッションCookieをブラウザへ転送しない。これにより、元のゲストセッションを保持したまま別のGoogleアカウントを選び直せる。通常の引き継ぎ後はBetter Authが匿名の`user`とセッションを削除する。
 
 `0001_curved_doctor_octopus.sql`は、導入前から存在するGoogle利用者を`auth_user_id = player_id`で`player_identity`へ登録する。これにより、導入前に作成されたDurable Object名、待機部屋、対戦、保存済みデッキも同じゲーム用PlayerIdで継続する。マイグレーションを適用せずにBackend Workerだけを先行デプロイしてはならない。
 
@@ -65,9 +65,17 @@ Better Auth の設定やプラグインを変更した場合は、`auth:schema` 
 
 バックエンドは`GET`と`POST`の`/api/auth/*`をBetter Authへ渡す。ゲーム、対戦待機、保存済みデッキ API は、同じ Better Auth セッション Cookie から認証利用者IDを取得し、`player_identity`で解決したゲーム用の固定`PlayerId`を使用する。既存のGoogle利用者は初回解決時に認証利用者IDと同じ`PlayerId`を保存するため、既存のDurable Object名、待機部屋、対戦、保存済みデッキを移行せずに継続できる。
 
-`GET /api/session`はブラウザ用の最小セッション確認APIであり、`{ user: { id, name }, playerId, isAnonymous }`だけを返す。メールアドレス、OAuthトークン、Better Auth内部のセッション情報は返さない。セッションがない場合は`401 { error: { code: "UNAUTHENTICATED" } }`を返す。`/api/auth/get-session`はBetter Authの内部APIとして扱い、アプリ画面から直接利用しない。
+`GET /api/session`はブラウザ用の最小セッション確認APIであり、`{ user: { id, name, image }, playerId, isAnonymous }`だけを返す。`image`はGoogleプロフィール画像のURLまたは`null`であり、ヘッダーとマイページのアバター表示だけに使用する。メールアドレス、OAuthトークン、Better Auth内部のセッション情報は返さない。セッションがない場合は`401 { error: { code: "UNAUTHENTICATED" } }`を返す。`/api/auth/get-session`はBetter Authの内部APIとして扱い、アプリ画面から直接利用しない。
 
 `player_identity.auth_user_id`には外部キーを付けない。匿名利用者をGoogleアカウントへ引き継ぐ際にBetter Authが匿名の`user`行を削除しても、対応表の`playerId`と既存のゲームデータを維持するためである。アカウント引き継ぎ処理は、対応表の認証利用者IDだけを新しいGoogle利用者へ更新し、すでに別の`PlayerId`を持つGoogle利用者への自動統合は行わない。
+
+## アカウント削除
+
+`POST /api/auth/delete-user`を有効にし、Google利用者と匿名ゲストの両方がマイページから削除を要求できるようにする。Better Authの通常削除を使い、`user`、`account`、`session`を削除する。`account`と`session`は`user`への外部キーを`ON DELETE CASCADE`で持つ。
+
+削除は最近認証したセッションだけで受け付ける。セッションが古くBetter Authが`400`を返した場合、フロントエンドはログアウト後にGoogleで再ログインするよう案内する。確認メールは初期ローンチでは使用しない。
+
+`player_identity`、Durable Objectの対戦状態、待機部屋、対戦履歴、学習コンテキストは削除しない。これらは参加記録とゲーム終了後の再接続猶予の整合性のため保持する。認証利用者の対応表は残るが、削除済みの認証アカウントでは復元・参照できない。新しいGoogleログインは新しい認証利用者として扱い、過去の`PlayerId`へ自動的に再接続しない。
 
 Better Authインスタンスは、リクエスト中のD1 Bindingと最新の環境設定から生成する。リクエスト固有のインスタンスや秘密情報をモジュールスコープへ保存しない。
 
@@ -81,7 +89,7 @@ Better Authインスタンスは、リクエスト中のD1 Bindingと最新の�
 4. 環境ごとの `BETTER_AUTH_SECRET`、`GOOGLE_CLIENT_ID`、`GOOGLE_CLIENT_SECRET` を Cloudflare の Secret として設定する。
 5. SQLマイグレーションをレビューし、対象環境へ適用する。`player_identity`を追加する変更では、既存データの更新や削除は行わない。
 6. Backend を先にデプロイし、その後 Frontend をデプロイする。
-7. 管理下の Google アカウントでログイン、ログアウト、待機部屋への戻り先、対戦画面のセッション復元を手動確認する。匿名ゲストでの部屋作成・参加と、ゲストから未使用のGoogleアカウントへの引き継ぎも確認する。
+7. 管理下の Google アカウントでログイン、ログアウト、待機部屋への戻り先、対戦画面のセッション復元、アカウント削除を手動確認する。匿名ゲストでの部屋作成・参加、ゲストから未使用のGoogleアカウントへの引き継ぎ、既存のGoogleアカウントを選んだ場合にゲストセッションを維持したままログイン画面へ戻ることも確認する。
 
 ## 既存 D1 の取り込み
 
