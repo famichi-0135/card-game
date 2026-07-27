@@ -227,12 +227,20 @@ function LearnLayout({ children }: { children: ReactNode }) {
           >
             DISASTAR CARD GAME
           </Link>
-          <Link
-            className="rounded border border-slate-300 bg-white px-3 py-2 text-sm font-medium text-slate-800 hover:bg-slate-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-slate-900"
-            to="/"
-          >
-            対戦準備へ
-          </Link>
+          <nav aria-label="関連ページ" className="flex flex-wrap gap-2">
+            <Link
+              className="rounded border border-slate-300 bg-white px-3 py-2 text-sm font-medium text-slate-800 hover:bg-slate-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-slate-900"
+              to="/rule"
+            >
+              遊び方
+            </Link>
+            <Link
+              className="rounded border border-slate-300 bg-white px-3 py-2 text-sm font-medium text-slate-800 hover:bg-slate-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-slate-900"
+              to="/"
+            >
+              対戦準備へ
+            </Link>
+          </nav>
         </header>
         <div className="py-10">{children}</div>
       </div>

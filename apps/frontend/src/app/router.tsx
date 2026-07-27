@@ -22,6 +22,7 @@ import {
 } from "../features/learn/learn-routes.tsx";
 import { MatchmakingHomeRoute } from "../features/matchmaking/lobby-home.tsx";
 import { MatchRoom } from "../features/matchmaking/match-room.tsx";
+import { RuleGuideRoute } from "../features/rule/rule-guide-route.tsx";
 import { createAuthPath, getSafeReturnTo } from "./return-to.ts";
 import { useSession } from "./session.ts";
 
@@ -37,6 +38,10 @@ export const router = createBrowserRouter([
   {
     path: "/learn/:slug",
     Component: LearnArticleRoute,
+  },
+  {
+    path: "/rule",
+    Component: RuleGuideRoute,
   },
   {
     path: "/rooms/:matchId",
