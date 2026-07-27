@@ -5,9 +5,9 @@ import type {
   VisibleCardInstance,
 } from "@disastar/game-engine";
 import {
-  attributeLabels,
   cardTypeLabel,
   cardTypeMark,
+  getAttributeLabel,
   getChainableCardNames,
 } from "./card-presentation.ts";
 
@@ -68,7 +68,7 @@ export function DraggableHandCard({
       >
         <span className="text-[10px] text-slate-500">
           {cardTypeLabel(definition.cardType)} /{" "}
-          {attributeLabels[definition.attribute]}
+          {getAttributeLabel(definition.faction, definition.attribute)}
         </span>
         <span
           className="flex items-center justify-center text-3xl"
@@ -106,7 +106,7 @@ function CardHoverPreview({
         <div>
           <p className="text-xs text-slate-500">
             {cardTypeLabel(definition.cardType)} /{" "}
-            {attributeLabels[definition.attribute]}
+            {getAttributeLabel(definition.faction, definition.attribute)}
           </p>
           <strong>{definition.name}</strong>
         </div>
@@ -124,7 +124,7 @@ function CardHoverPreview({
           <dd className="font-semibold">{definition.basePower ?? "-"}</dd>
         </div>
       </dl>
-      <p className="mt-3 text-xs leading-5 text-slate-600">
+      <p className="mt-3 whitespace-pre-line text-xs leading-5 text-slate-600">
         {definition.rulesText}
       </p>
       {definition.cardType === "attack" ? (

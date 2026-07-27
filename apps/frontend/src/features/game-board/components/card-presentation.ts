@@ -1,10 +1,28 @@
-import type { Attribute, PublicCardCatalog } from "@disastar/game-engine";
+import type {
+  Attribute,
+  Faction,
+  PublicCardCatalog,
+} from "@disastar/game-engine";
 
-export const attributeLabels: Record<Attribute, string> = {
-  attributeA: "属性A",
-  attributeB: "属性B",
-  attributeC: "属性C",
+const attributeLabels: Record<Faction, Record<Attribute, string>> = {
+  disaster: {
+    attributeA: "大地",
+    attributeB: "水",
+    attributeC: "空",
+  },
+  countermeasure: {
+    attributeA: "備える力",
+    attributeB: "守る力",
+    attributeC: "つながる力",
+  },
 };
+
+export function getAttributeLabel(
+  faction: Faction,
+  attribute: Attribute,
+): string {
+  return attributeLabels[faction][attribute];
+}
 
 export function cardTypeLabel(cardType: "mana" | "attack" | "support"): string {
   switch (cardType) {

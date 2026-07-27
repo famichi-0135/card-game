@@ -1,6 +1,6 @@
 import type { Attribute, PlayerGameView } from "@disastar/game-engine";
 import type { ReactNode } from "react";
-import { attributeLabels } from "./card-presentation.ts";
+import { getAttributeLabel } from "./card-presentation.ts";
 
 const attributes: readonly Attribute[] = [
   "attributeA",
@@ -35,7 +35,7 @@ export function ManaPanel({
             >
               <div className="min-w-0">
                 <dt className="truncate text-sm">
-                  {attributeLabels[attribute]}
+                  {getAttributeLabel(player.faction, attribute)}
                 </dt>
                 <dd className="whitespace-nowrap text-xs text-slate-500">
                   使用可 / {mana.total}

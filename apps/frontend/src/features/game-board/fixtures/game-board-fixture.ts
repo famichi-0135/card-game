@@ -83,17 +83,18 @@ function createEvents(
 
 function createCatalog(): PublicCardCatalog {
   return {
-    version: "catalog-preview-v1",
+    version: "catalog-preview-v2-learning-content",
     definitions: {
       "attack-flood": {
         id: "attack-flood",
-        name: "河川の氾濫",
+        name: "直下型地震",
         faction: "disaster",
         attribute: "attributeA",
         cardType: "attack",
         cost: 2,
         basePower: 4,
-        rulesText: "河川の氾濫を起こし、地域に影響を与える。",
+        rulesText:
+          "陸域の活断層がズレることで発生する地震です。震源が浅いため、都市部の真下で起きると局所的に激しい揺れとなります。\n\nゲーム上の効果: 必要なみなもと 2。基本攻撃力 4。",
         imageAssetId: null,
         interaction: {
           chainableCardDefinitionIds: ["attack-storm"],
@@ -102,13 +103,14 @@ function createCatalog(): PublicCardCatalog {
       },
       "attack-storm": {
         id: "attack-storm",
-        name: "暴風雨",
+        name: "海溝型巨大地震",
         faction: "disaster",
         attribute: "attributeA",
         cardType: "attack",
         cost: 3,
         basePower: 5,
-        rulesText: "暴風雨を連鎖させ、被害を拡大する。",
+        rulesText:
+          "海のプレートが陸のプレートの下に沈み込む境界で起きる超巨大地震です。広い範囲に強い揺れをもたらします。\n\nゲーム上の効果: 必要なみなもと 3。基本攻撃力 5。",
         imageAssetId: null,
         interaction: {
           chainableCardDefinitionIds: ["attack-flood"],
@@ -117,13 +119,14 @@ function createCatalog(): PublicCardCatalog {
       },
       "attack-earthquake": {
         id: "attack-earthquake",
-        name: "地震",
+        name: "河川の氾濫",
         faction: "disaster",
         attribute: "attributeB",
         cardType: "attack",
         cost: 4,
         basePower: 6,
-        rulesText: "強い揺れにより、建物とライフラインへ影響を与える。",
+        rulesText:
+          "集中豪雨や台風で多量の雨が河川に流れ込むと、河川が氾濫し水があふれ出すことがあります。\n\nゲーム上の効果: 必要なみなもと 4。基本攻撃力 6。",
         imageAssetId: null,
         interaction: {
           chainableCardDefinitionIds: [],
@@ -132,13 +135,14 @@ function createCatalog(): PublicCardCatalog {
       },
       "support-evacuation": {
         id: "support-evacuation",
-        name: "避難所開設",
+        name: "猛烈な偏西風",
         faction: "disaster",
         attribute: "attributeC",
         cardType: "support",
         cost: 1,
         duration: "untilRoundEnd",
-        rulesText: "避難所を開設し、対象の攻撃グループへ対応する。",
+        rulesText:
+          "日本の上空を流れる強い西風が、噴出した火山灰を東側の都市部へと運びます。\n\nゲーム上の効果: 使用後、対象の攻撃グループを選択します。",
         imageAssetId: null,
         interaction: {
           chainableCardDefinitionIds: [],
@@ -161,12 +165,13 @@ function createCatalog(): PublicCardCatalog {
       },
       "mana-river": {
         id: "mana-river",
-        name: "河川資源",
+        name: "大地のみなもと",
         faction: "disaster",
         attribute: "attributeA",
         cardType: "mana",
         manaAmount: 1,
-        rulesText: "属性Aのみなもとを増やす。",
+        rulesText:
+          "地震、土砂災害、火山噴火など、大地の変動から生まれる災害の力です。\n\nゲーム上の効果: 引いた直後に対応属性のみなもと総量を1増やし、捨て札へ移動します。",
         imageAssetId: null,
         interaction: {
           chainableCardDefinitionIds: [],
@@ -175,13 +180,14 @@ function createCatalog(): PublicCardCatalog {
       },
       "counter-barrier": {
         id: "counter-barrier",
-        name: "水防堤",
+        name: "家具の固定・転倒防止",
         faction: "countermeasure",
         attribute: "attributeA",
         cardType: "attack",
         cost: 2,
         basePower: 3,
-        rulesText: "水害に備える防御線を構築する。",
+        rulesText:
+          "L字金具や突っ張り棒でタンスや本棚を固定し、大地震でのケガや避難経路の遮断を防ぎます。\n\nゲーム上の効果: 必要なみなもと 2。基本攻撃力 3。",
         imageAssetId: null,
         interaction: {
           chainableCardDefinitionIds: [],
@@ -190,13 +196,14 @@ function createCatalog(): PublicCardCatalog {
       },
       "counter-alert": {
         id: "counter-alert",
-        name: "避難情報",
+        name: "緊急安全確保（警戒レベル5）",
         faction: "countermeasure",
         attribute: "attributeC",
         cardType: "support",
         cost: 1,
         duration: "instant",
-        rulesText: "避難情報を発令し、地域へ注意を促す。",
+        rulesText:
+          "災害が発生または切迫している状況で、命を守る最善の行動を即座に促す最終警告です。\n\nゲーム上の効果: 使用後すぐに解決されます。",
         imageAssetId: null,
         interaction: {
           chainableCardDefinitionIds: [],
@@ -218,7 +225,7 @@ function createView(
   return {
     gameId,
     rulesetVersion: "ruleset-v3-starter-balance",
-    cardCatalogVersion: "catalog-preview-v1",
+    cardCatalogVersion: "catalog-preview-v2-learning-content",
     stateVersion: isFinishedScenario ? 18 : isSupportScenario ? 14 : 12,
     status: isFinishedScenario ? "finished" : "active",
     round: isFinishedScenario ? 5 : 3,

@@ -24,6 +24,9 @@ describe("ゲームボードのデスクトップレイアウト", () => {
       'aria-label="自分の手札" class="min-w-0 overflow-visible"',
     );
     expect(markup).toContain('aria-label="自分の山札"');
+    expect(markup).toContain("大地");
+    expect(markup).toContain("備える力");
+    expect(markup).toContain("河川の氾濫");
     const statusStart = markup.indexOf('data-board-region="player-status"');
     const fieldStart = markup.indexOf('data-board-region="card-field"');
     const playerStatusMarkup = markup.slice(statusStart, fieldStart);
