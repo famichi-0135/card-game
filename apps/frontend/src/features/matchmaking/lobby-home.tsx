@@ -2,11 +2,11 @@ import { useQueryClient } from "@tanstack/react-query";
 import type { Faction } from "@disastar/game-engine/contracts";
 import { type ReactNode, useState } from "react";
 import { Link, useNavigate } from "react-router";
-import { createAuthPath } from "../../app/return-to.ts";
 import { useSession } from "../../app/session.ts";
 import { AuthApiError, signInAnonymously } from "../auth/auth-api.ts";
-import { LogoutButton } from "../auth/auth-routes.tsx";
+import { authSessionQueryKey } from "../auth/auth-routes.tsx";
 import { AuthStatus } from "../auth/auth-layout.tsx";
+import { AccountMenu } from "../account/account-menu.tsx";
 import { RoomJoinForm } from "./components/room-join-form.tsx";
 import { createRoomPath } from "./match-id.ts";
 import {
@@ -28,7 +28,7 @@ export function MatchmakingHomeRoute() {
     return <GuestLobby />;
   }
 
-  return <AuthenticatedLobby isAnonymous={session.data.isAnonymous} />;
+  return <AuthenticatedLobby />;
 }
 
 function GuestLobby({ authError = false }: { authError?: boolean }) {
@@ -42,7 +42,7 @@ function GuestLobby({ authError = false }: { authError?: boolean }) {
     setIsStartingGuestSession(true);
     try {
       await signInAnonymously();
-      await queryClient.invalidateQueries({ queryKey: ["auth", "session"] });
+      await queryClient.invalidateQueries({ queryKey: authSessionQueryKey });
       navigate(returnTo);
     } catch (requestError) {
       setError(getGuestSignInErrorMessage(requestError));
@@ -108,7 +108,7 @@ function GuestLobby({ authError = false }: { authError?: boolean }) {
   );
 }
 
-function AuthenticatedLobby({ isAnonymous }: { isAnonymous: boolean }) {
+function AuthenticatedLobby() {
   const navigate = useNavigate();
   const [isCreatingMatch, setIsCreatingMatch] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -133,22 +133,7 @@ function AuthenticatedLobby({ isAnonymous }: { isAnonymous: boolean }) {
   }
 
   return (
-    <LobbyLayout
-      accountSlot={
-        <div className="flex items-center gap-3">
-          {isAnonymous ? (
-            <Link
-              className="rounded border border-slate-800 bg-slate-900 px-3 py-2 text-sm font-medium text-white hover:bg-slate-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-slate-900"
-              to={createAuthPath("/login", "/")}
-            >
-              Googleアカウントに引き継ぐ
-            </Link>
-          ) : null}
-          <LogoutButton className="rounded border border-slate-300 px-3 py-2 text-sm font-medium hover:bg-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-slate-900" />
-        </div>
-      }
-      title="対戦準備"
-    >
+    <LobbyLayout accountSlot={<AccountMenu />} title="対戦準備">
       <section className="grid gap-4 border-b border-slate-300 pb-8">
         <div>
           <h1 className="text-2xl font-semibold">招待対戦</h1>

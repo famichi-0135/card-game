@@ -1,9 +1,11 @@
 import { env } from "cloudflare:test";
 import { eq } from "drizzle-orm";
 import { describe, expect, it } from "vitest";
+import { mapAnonymousAccountLinkError } from "../src/auth/account-link-error.js";
 import { createAuth } from "../src/auth/create-auth.js";
 import { createRuntimeDatabase } from "../src/db/runtime.js";
 import { user } from "../src/db/schema/auth.js";
+import { PlayerIdentityLinkConflictError } from "../src/player-identity/resolve-player-id.js";
 
 const testSecret = "test-only-better-auth-secret-32-chars";
 
@@ -97,5 +99,16 @@ describe("D1・Drizzle・Better Auth 基盤", () => {
         trustedOrigins: ["https://app.example.test"],
       }),
     ).toThrowError("BETTER_AUTH_SECRET must be at least 32 characters");
+  });
+
+  it("ゲスト引継ぎ先のプレイヤー競合をOAuthで処理可能なエラーへ変換する", () => {
+    expect(
+      mapAnonymousAccountLinkError(new PlayerIdentityLinkConflictError()),
+    ).toMatchObject({
+      statusCode: 409,
+      body: {
+        code: "ACCOUNT_LINK_CONFLICT",
+      },
+    });
   });
 });

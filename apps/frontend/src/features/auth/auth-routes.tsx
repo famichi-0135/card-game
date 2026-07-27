@@ -15,7 +15,7 @@ import {
   authPrimaryButtonClassName,
 } from "./auth-layout.tsx";
 
-const sessionQueryKey = ["auth", "session"] as const;
+export const authSessionQueryKey = ["auth", "session"] as const;
 
 export function LoginRoute() {
   const [searchParams] = useSearchParams();
@@ -28,6 +28,7 @@ export function LoginRoute() {
   const returnTo = getSafeReturnTo(searchParams.get("returnTo"));
   const oauthError =
     searchParams.get("oauthError") === "1" || searchParams.has("error");
+  const oauthErrorMessage = getOAuthErrorMessage(searchParams.get("error"));
 
   const isAnonymous = session.data?.isAnonymous === true;
 
@@ -53,7 +54,7 @@ export function LoginRoute() {
     setIsStartingGuestSession(true);
     try {
       await signInAnonymously();
-      await queryClient.invalidateQueries({ queryKey: sessionQueryKey });
+      await queryClient.invalidateQueries({ queryKey: authSessionQueryKey });
       navigate(returnTo, { replace: true });
     } catch (requestError) {
       setError(
@@ -75,9 +76,7 @@ export function LoginRoute() {
     >
       <div className="grid gap-4">
         {oauthError ? (
-          <AuthStatus tone="error">
-            Googleでのログインを完了できませんでした。もう一度お試しください。
-          </AuthStatus>
+          <AuthStatus tone="error">{oauthErrorMessage}</AuthStatus>
         ) : null}
         {error === null ? null : <AuthStatus tone="error">{error}</AuthStatus>}
         <button
@@ -131,7 +130,7 @@ export function LogoutButton({
     setIsSubmitting(true);
     try {
       await signOut();
-      queryClient.setQueryData(sessionQueryKey, null);
+      queryClient.setQueryData(authSessionQueryKey, null);
       navigate("/", { replace: true });
     } catch (requestError) {
       setError(
@@ -164,10 +163,18 @@ export function LogoutButton({
   );
 }
 
-function getAuthErrorMessage(prefix: string, error: unknown): string {
+export function getAuthErrorMessage(prefix: string, error: unknown): string {
   if (error instanceof AuthApiError && error.status === 429) {
     return "短時間に多くの操作が行われました。時間をおいて再試行してください。";
   }
 
   return `${prefix}接続状態を確認して、もう一度お試しください。`;
+}
+
+function getOAuthErrorMessage(errorCode: string | null): string {
+  if (errorCode === "ACCOUNT_LINK_CONFLICT") {
+    return "このGoogleアカウントには別のゲームデータが保存されているため、ゲストデータを引き継げません。ゲストとして続けるか、別のGoogleアカウントを選択してください。";
+  }
+
+  return "Googleでのログインを完了できませんでした。もう一度お試しください。";
 }

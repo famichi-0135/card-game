@@ -23,7 +23,7 @@ export function createAuthTestBindings(): BetterAuthEnvironment {
 
 export async function createGoogleAuthTestSession(
   bindings: BetterAuthEnvironment,
-  values: { email: string; name: string },
+  values: { email: string; image?: string | null; name: string },
 ): Promise<{ cookie: string; playerId: string }> {
   const database = createRuntimeDatabase(bindings.DB);
   const playerId = crypto.randomUUID();
@@ -35,6 +35,7 @@ export async function createGoogleAuthTestSession(
     name: values.name,
     email: values.email,
     emailVerified: true,
+    image: values.image ?? null,
     createdAt: now,
     updatedAt: now,
   });
