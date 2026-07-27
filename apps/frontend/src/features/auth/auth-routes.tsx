@@ -3,7 +3,12 @@ import { useState } from "react";
 import { Navigate, useNavigate, useSearchParams } from "react-router";
 import { getSafeReturnTo } from "../../app/return-to.ts";
 import { useSession } from "../../app/session.ts";
-import { AuthApiError, signOut, startGoogleSignIn } from "./auth-api.ts";
+import {
+  AuthApiError,
+  signInAnonymously,
+  signOut,
+  startGoogleSignIn,
+} from "./auth-api.ts";
 import {
   AuthLayout,
   AuthStatus,
@@ -14,14 +19,19 @@ const sessionQueryKey = ["auth", "session"] as const;
 
 export function LoginRoute() {
   const [searchParams] = useSearchParams();
+  const navigate = useNavigate();
+  const queryClient = useQueryClient();
   const session = useSession();
   const [error, setError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isStartingGuestSession, setIsStartingGuestSession] = useState(false);
   const returnTo = getSafeReturnTo(searchParams.get("returnTo"));
   const oauthError =
     searchParams.get("oauthError") === "1" || searchParams.has("error");
 
-  if (session.data !== null && session.data !== undefined) {
+  const isAnonymous = session.data?.isAnonymous === true;
+
+  if (session.data !== null && session.data !== undefined && !isAnonymous) {
     return <Navigate replace to={returnTo} />;
   }
 
@@ -38,10 +48,30 @@ export function LoginRoute() {
     }
   }
 
+  async function handleAnonymousSignIn() {
+    setError(null);
+    setIsStartingGuestSession(true);
+    try {
+      await signInAnonymously();
+      await queryClient.invalidateQueries({ queryKey: sessionQueryKey });
+      navigate(returnTo, { replace: true });
+    } catch (requestError) {
+      setError(
+        getAuthErrorMessage("ゲストとして開始できませんでした。", requestError),
+      );
+    } finally {
+      setIsStartingGuestSession(false);
+    }
+  }
+
   return (
     <AuthLayout
-      title="ログイン"
-      description="Googleアカウントでログインして対戦を始めます。"
+      title={isAnonymous ? "アカウントを引き継ぐ" : "ログイン"}
+      description={
+        isAnonymous
+          ? "Googleアカウントへゲームの進行状況を引き継ぎます。"
+          : "Googleアカウントでログインして対戦を始めます。"
+      }
     >
       <div className="grid gap-4">
         {oauthError ? (
@@ -52,12 +82,26 @@ export function LoginRoute() {
         {error === null ? null : <AuthStatus tone="error">{error}</AuthStatus>}
         <button
           className={authPrimaryButtonClassName}
-          disabled={isSubmitting}
+          disabled={isSubmitting || isStartingGuestSession}
           onClick={() => void handleGoogleSignIn()}
           type="button"
         >
-          {isSubmitting ? "Googleへ移動しています" : "Googleでログイン"}
+          {isSubmitting
+            ? "Googleへ移動しています"
+            : isAnonymous
+              ? "Googleアカウントに引き継ぐ"
+              : "Googleでログイン"}
         </button>
+        {isAnonymous ? null : (
+          <button
+            className="rounded border border-slate-300 px-4 py-2 text-sm font-medium text-slate-800 hover:bg-slate-50 disabled:cursor-not-allowed disabled:border-slate-200 disabled:text-slate-400 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-slate-900"
+            disabled={isSubmitting || isStartingGuestSession}
+            onClick={() => void handleAnonymousSignIn()}
+            type="button"
+          >
+            {isStartingGuestSession ? "準備しています" : "ゲストとして始める"}
+          </button>
+        )}
       </div>
     </AuthLayout>
   );

@@ -1,16 +1,10 @@
 import { useQuery } from "@tanstack/react-query";
+import type { AuthenticatedSessionResponse } from "@disastar/contracts/session";
 import { ApiClientError, fetchApi } from "./api-client.ts";
 
-type SessionResponse = {
-  user: {
-    id: string;
-    name?: string | null;
-  };
-};
-
-async function getSession(): Promise<SessionResponse | null> {
+async function getSession(): Promise<AuthenticatedSessionResponse | null> {
   try {
-    return await fetchApi<SessionResponse>("/api/auth/get-session");
+    return await fetchApi<AuthenticatedSessionResponse>("/api/session");
   } catch (error) {
     if (error instanceof ApiClientError && error.status === 401) {
       return null;

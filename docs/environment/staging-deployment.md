@@ -2,7 +2,7 @@
 
 ## 目的
 
-本書は、production と完全に分離した staging 環境を構築し、Google OAuth と2人対戦を実ブラウザで確認するための手順である。staging は次のリソースを使用する。
+本書は、production と完全に分離した staging 環境を構築し、匿名ゲスト、Google OAuth、2人対戦を実ブラウザで確認するための手順である。staging は次のリソースを使用する。
 
 - Backend Worker: `disastar-backend-staging`
 - Frontend Worker: `disastar-frontend-staging`
@@ -47,6 +47,8 @@ pnpm --filter @disastar/backend run deploy:staging
 ```
 
 `deploy:staging` は `--env staging` を使うため、Backend Worker と Durable Object は staging 専用として作成される。`--keep-vars` により Cloudflare Dashboard で設定した変数・Secret を消さない。
+
+匿名ゲスト機能を含むリリースでは、`db:migrate:staging`を完了してからBackendをデプロイする。`player_identity`の作成と既存Google利用者の逆算登録を含むため、Backendだけを先行デプロイしてはならない。
 
 ### 3. Frontend を公開して staging origin を確定する
 
@@ -110,14 +112,16 @@ pnpm run test
 
 ## Staging 受け入れ確認
 
-テスト用 Google アカウント 2 つで、次を確認する。
+テスト用Googleアカウントと、Cookieが独立したブラウザプロファイルを使い、次を確認する。
 
-1. `/login` から Google OAuth でログインし、ログアウト後に再ログインできる。
-2. 未ログインで開いた待機部屋・対戦画面が、ログイン後に同じ URL へ戻る。
-3. それぞれ異なるロールを選び、部屋作成、招待 URL での参加、対戦開始まで到達できる。
-4. 手札の攻撃カード配置・連鎖・破棄、サポート対象選択、フェーズ終了確認が正規状態へ反映される。不正なドロップではコマンドを送らない。
-5. 一方のブラウザを閉じて再度開き、WebSocket のプレゼンスと HTTP 再同期が復旧する。操作責任を持つプレイヤーが制限時間を超えて戻らない場合は敗北になる。
-6. 終了後24時間以内に同じ利用者で対戦 URL を開き、終了状態と公開イベントを再取得できる。
+1. `/login`からGoogle OAuthでログインし、ログアウト後に再ログインできる。
+2. トップで匿名ゲストを開始し、部屋を作成または招待URLで部屋へ参加できる。
+3. ゲストが作成した部屋または対戦の途中でGoogleアカウントへ引き継ぎ、更新後も同じPlayerIdの所有者として部屋・対戦・保存済みデッキを利用できる。
+4. 未ログインで開いた待機部屋・対戦画面が、Googleログインまたはゲスト開始後に同じURLへ戻る。
+5. それぞれ異なるロールを選び、部屋作成、招待URLでの参加、対戦開始まで到達できる。
+6. 手札の攻撃カード配置・連鎖・破棄、サポート対象選択、フェーズ終了確認が正規状態へ反映される。不正なドロップではコマンドを送らない。
+7. 一方のブラウザを閉じて再度開き、WebSocket のプレゼンスと HTTP 再同期が復旧する。操作責任を持つプレイヤーが制限時間を超えて戻らない場合は敗北になる。
+8. 終了後24時間以内に同じ利用者で対戦URLを開き、終了状態と公開イベントを再取得できる。
 
 失敗時は Secret や Cookie を添付せず、再現手順、時刻、画面のエラーコード、Worker の request ID だけを記録する。
 

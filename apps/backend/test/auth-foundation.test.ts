@@ -16,6 +16,7 @@ describe("D1・Drizzle・Better Auth 基盤", () => {
     expect(result.results.map(({ name }) => name)).toEqual(
       expect.arrayContaining([
         "account",
+        "player_identity",
         "rate_limit",
         "session",
         "user",
@@ -45,6 +46,7 @@ describe("D1・Drizzle・Better Auth 基盤", () => {
         name: "Database User",
         email: "database@example.com",
         emailVerified: false,
+        isAnonymous: false,
         image: null,
         createdAt,
         updatedAt: createdAt,

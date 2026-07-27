@@ -155,7 +155,7 @@ Backendの`dev`コマンドは、Worker起動前に次を自動実行する。
 | `GOOGLE_CLIENT_ID`            | Google OAuthクライアントID                 |
 | `GOOGLE_CLIENT_SECRET`        | Google OAuthクライアントSecret             |
 
-Google OAuth をローカルで確認する場合、`BETTER_AUTH_URL`と`BETTER_AUTH_TRUSTED_ORIGINS`はともに`http://localhost:5173`とする。Google Cloud Consoleには`http://localhost:5173/api/auth/callback/google`を承認済みリダイレクトURIとして登録する。既存の`.dev.vars`は自動更新されないため、メール認証用のキーを残さず、上表のGoogle OAuth用キーへ手動で置き換える。
+匿名ゲストの開始だけを確認する場合、Google Cloud Consoleの設定は不要である。Google OAuthもローカルで確認する場合、`BETTER_AUTH_URL`と`BETTER_AUTH_TRUSTED_ORIGINS`はともに`http://localhost:5173`とする。Google Cloud Consoleには`http://localhost:5173/api/auth/callback/google`を承認済みリダイレクトURIとして登録する。既存の`.dev.vars`は自動更新されないため、メール認証用のキーを残さず、上表のGoogle OAuth用キーへ手動で置き換える。
 
 Wranglerローカル環境ではCloudflare Edgeの`CF-Connecting-IP`が存在しないため、Better Authが
 クライアントIPを判定できない警告が出る場合がある。本番の信頼境界を弱めるため、警告を
@@ -231,11 +231,11 @@ git diff
 ## 10. Cloudflareのリモート環境を扱う場合
 
 ローカル開発だけなら、この節の設定は不要である。デプロイ、既存D1の取得、リモート
-マイグレーション、Google OAuthの設定は、リポジトリ管理者が内容を確認して実行する。
+マイグレーション、Google OAuth、匿名ゲストからのアカウント引き継ぎに関わる設定は、リポジトリ管理者が内容を確認して実行する。
 
 1. Cloudflareアカウントへログインする。
 2. staging / production の Worker、D1 database ID、Google OAuth callback を環境ごとに分離する。staging の具体的な手順は[Staging 環境の構築・確認手順](./staging-deployment.md)を参照する。
-3. Better AuthとGoogle OAuthに必要な変数・SecretをCloudflare側へ設定する。
+3. Better AuthとGoogle OAuthに必要な変数・SecretをCloudflare側へ設定する。匿名ゲストに追加のSecretは不要である。
 4. Google Cloud Consoleで、各公開オリジンの`/api/auth/callback/google`を承認済みリダイレクトURIとして登録する。
 5. Backendを先にデプロイし、その後Frontendをデプロイする。
 

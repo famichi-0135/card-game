@@ -147,7 +147,7 @@ function AuthenticatedRoomRoute({ matchId }: { matchId: string }) {
     return <Navigate replace to={createAuthPath("/login", returnTo)} />;
   }
 
-  return <MatchRoom matchId={matchId} playerId={session.data.user.id} />;
+  return <MatchRoom matchId={matchId} playerId={session.data.playerId} />;
 }
 
 function RouteErrorBoundary() {

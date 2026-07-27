@@ -1,8 +1,10 @@
 import { betterAuth } from "better-auth/minimal";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
+import { anonymous } from "better-auth/plugins/anonymous";
 import type { RuntimeDatabase } from "../db/runtime.js";
 import { createRuntimeDatabase } from "../db/runtime.js";
 import * as schema from "../db/schema/index.js";
+import { linkAnonymousPlayerIdentityInDatabase } from "../player-identity/resolve-player-id.js";
 const minimumSecretLength = 32;
 
 export type CreateAuthInput = {
@@ -61,6 +63,18 @@ export function createAuthWithDatabase({
         scope: ["openid", "email", "profile"],
       },
     },
+    plugins: [
+      anonymous({
+        emailDomainName: "anonymous.disastar.invalid",
+        generateName: () => `ゲスト-${crypto.randomUUID().slice(0, 8)}`,
+        onLinkAccount: async ({ anonymousUser, newUser }) => {
+          await linkAnonymousPlayerIdentityInDatabase(database, {
+            anonymousAuthUserId: anonymousUser.user.id,
+            newAuthUserId: newUser.user.id,
+          });
+        },
+      }),
+    ],
     rateLimit: {
       enabled: true,
       storage: "database",

@@ -1,5 +1,6 @@
 import type { PlayerId } from "@disastar/game-engine/contracts";
 import { createAuth } from "./create-auth.js";
+import { resolvePlayerIdForAuthUser } from "../player-identity/resolve-player-id.js";
 import type { BetterAuthEnvironment } from "./request-authenticator.js";
 
 export type { BetterAuthEnvironment } from "./request-authenticator.js";
@@ -33,14 +34,46 @@ export function handleBetterAuthRequest(
   return createRuntimeAuth(environment).handler(request);
 }
 
+export type AuthenticatedPlayerSession = {
+  isAnonymous: boolean;
+  playerId: PlayerId;
+  user: {
+    id: string;
+    name: string;
+  };
+};
+
+export async function getAuthenticatedPlayerSession(
+  request: Request,
+  environment: BetterAuthEnvironment,
+): Promise<AuthenticatedPlayerSession | null> {
+  const result = await createRuntimeAuth(environment).api.getSession({
+    headers: request.headers,
+  });
+
+  if (result === null) {
+    return null;
+  }
+
+  return {
+    isAnonymous: Boolean(result.user.isAnonymous),
+    playerId: await resolvePlayerIdForAuthUser(environment.DB, result.user.id),
+    user: {
+      id: result.user.id,
+      name: result.user.name,
+    },
+  };
+}
+
 export async function authenticateBetterAuthRequest(
   request: Request,
   environment: BetterAuthEnvironment,
 ): Promise<PlayerId | null> {
-  const result = await createRuntimeAuth(environment).api.getSession({
-    headers: request.headers,
-  });
-  return result?.user.id ?? null;
+  const authenticatedSession = await getAuthenticatedPlayerSession(
+    request,
+    environment,
+  );
+  return authenticatedSession?.playerId ?? null;
 }
 
 export function parseTrustedOrigins(value: string): string[] {

@@ -14,7 +14,7 @@ const remoteCredentials =
 
 export default defineConfig({
   dialect: "sqlite",
-  schema: "./src/db/schema/auth.ts",
+  schema: ["./src/db/schema/auth.ts", "./src/db/schema/player-identity.ts"],
   out: "./drizzle",
   ...remoteCredentials,
 });

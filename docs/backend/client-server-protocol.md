@@ -16,6 +16,20 @@ apps/backend, apps/frontend
 
 `@disastar/game-engine`はゲームルール、状態遷移、カード効果の正本であり、通信やインフラストラクチャへ依存しない。`@disastar/contracts`は通信DTOだけを定義し、ゲーム状態やカード効果を再定義しない。
 
+## 認証済み利用者の識別
+
+ブラウザは`GET /api/session`で認証状態を確認する。認証済みの場合の応答は`AuthenticatedSessionResponse`であり、表示用の`user.id`と、ゲーム・対戦待機・保存済みデッキの所有者照合に使う固定`playerId`を区別する。
+
+```json
+{
+  "user": { "id": "better-auth-user-id", "name": "表示名" },
+  "playerId": "stable-game-player-id",
+  "isAnonymous": false
+}
+```
+
+`isAnonymous`が`true`なら、利用者はゲストセッションである。クライアントはゲームコマンドおよび待機部屋の所有者判定に`playerId`を使う。最終的な認可は常にバックエンドがセッションCookieから解決した`PlayerId`で行い、ブラウザが送る識別子を信頼しない。未認証の場合は`401 { error: { code: "UNAUTHENTICATED" } }`を返す。
+
 ## クライアントから送る操作
 
 クライアントは`SubmitGameCommandRequest`を送る。操作本体の`GameCommand`は次を必ず含む。
