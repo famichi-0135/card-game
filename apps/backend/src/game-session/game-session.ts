@@ -705,18 +705,25 @@ function createLearningContextForSession(
     if (
       (event.type !== "ATTACK_GROUP_CREATED" &&
         event.type !== "CARD_CHAINED" &&
-        event.type !== "SUPPORT_CARD_PLAYED") ||
-      typeof event.cardDefinitionId !== "string"
+        event.type !== "SUPPORT_CARD_PLAYED")
     ) {
       return [];
     }
-    const cardName =
-      context.cardCatalog.definitions[event.cardDefinitionId]?.name;
+
+    const cardDefinitionId =
+      typeof event.cardDefinitionId === "string"
+        ? event.cardDefinitionId
+        : session.state.cardInstances[event.cardInstanceId]?.definitionId;
+    if (cardDefinitionId === undefined) {
+      return [];
+    }
+
+    const cardName = context.cardCatalog.definitions[cardDefinitionId]?.name;
     return cardName === undefined
       ? []
       : [
           {
-            cardDefinitionId: event.cardDefinitionId,
+            cardDefinitionId,
             cardName,
             playerId: event.playerId,
             sequence: envelope.sequence,

@@ -1,6 +1,7 @@
 import {
   LEARNING_CATEGORIES,
-  learningArticles,
+  getPublishedLearningArticles,
+  learningArticles as allLearningArticles,
   type LearningArticle,
   type LearningCategory,
 } from "@disastar/learning-content";
@@ -15,7 +16,7 @@ const categoryLabels: Record<LearnCategory, string> = {
   "preparedness-service": "防災サービス",
 };
 
-export const learnArticles = learningArticles;
+export const learnArticles = getPublishedLearningArticles(allLearningArticles);
 
 export function getLearnArticle(slug: string): LearnArticle | undefined {
   return learnArticles.find((article) => article.slug === slug);

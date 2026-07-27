@@ -5,4 +5,7 @@ export {
   type MatchedLearningArticle,
 } from "./article-types.js";
 export { learningArticles } from "./learning-articles.js";
-export { selectLearningArticles } from "./select-learning-articles.js";
+export {
+  getPublishedLearningArticles,
+  selectLearningArticles,
+} from "./select-learning-articles.js";

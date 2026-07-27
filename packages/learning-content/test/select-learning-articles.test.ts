@@ -1,5 +1,9 @@
 import { describe, expect, it } from "vitest";
-import { selectLearningArticles, type LearningArticle } from "../src/index.js";
+import {
+  getPublishedLearningArticles,
+  selectLearningArticles,
+  type LearningArticle,
+} from "../src/index.js";
 
 const articles: readonly LearningArticle[] = [
   {
@@ -47,6 +51,13 @@ const articles: readonly LearningArticle[] = [
 ];
 
 describe("対戦後の学習記事抽出", () => {
+  it("公開済みの記事だけをカタログとして返す", () => {
+    expect(getPublishedLearningArticles(articles)).toEqual([
+      articles[0],
+      articles[1],
+    ]);
+  });
+
   it("選択カードに関連する公開記事だけを、最初に一致したカード順で一度ずつ返す", () => {
     expect(
       selectLearningArticles(
