@@ -45,6 +45,14 @@ const UNAVAILABLE_REASON_MESSAGES: Record<GameBoardActionErrorCode, string> = {
   EFFECT_TARGET_UNAVAILABLE: "効果の対象が存在しません。",
   INVALID_TARGET: "選択された対象は無効です。",
 };
+
+export function notifyGameBoardActionError(reason: GameBoardActionErrorCode) {
+  toast.add({
+    title: "配置できません",
+    description: UNAVAILABLE_REASON_MESSAGES[reason],
+    type: "error",
+  });
+}
 import { useOnlineStatus } from "./hooks/use-online-status.ts";
 import { usePublicEventFeed } from "./hooks/use-public-event-feed.ts";
 import { useGameRealtime } from "./hooks/use-game-realtime.ts";
@@ -191,13 +199,7 @@ function GameBoardContent({
     onCommand,
     preview,
     view,
-    onActionError: (reason) => {
-      toast.add({
-        title: "配置できません",
-        description: UNAVAILABLE_REASON_MESSAGES[reason],
-        type: "error",
-      });
-    },
+    onActionError: notifyGameBoardActionError,
   });
   const {
     acknowledgeResynchronization,

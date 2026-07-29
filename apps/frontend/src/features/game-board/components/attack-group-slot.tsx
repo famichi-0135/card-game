@@ -27,6 +27,7 @@ export function AttackGroupSlot({
   const { ref, isDropTarget } = useDroppable({
     id: `attack-slot-${isSelf ? "self" : "opponent"}-${slotIndex}`,
     type: "attack-slot",
+    disabled: !isSelf,
     accept: "hand-card",
     data: {
       slotIndex,
