@@ -8,12 +8,17 @@ import {
   type EffectInput,
   type GameCommand,
   type GamePhase,
+  type GameActionUnavailableReasonCode,
   type PlayerGameView,
   type PublicCardCatalog,
   type VisibleAttackGroup,
   type VisibleCardInstance,
 } from "@disastar/game-engine";
 import { useMemo, useState } from "react";
+
+export type GameBoardActionErrorCode =
+  | GameActionUnavailableReasonCode
+  | "INVALID_TARGET";
 
 type LocalBoardState = {
   attackGroups: VisibleAttackGroup[];
@@ -35,11 +40,13 @@ export type PendingSupportPlay = {
 
 export function useGameBoardActions({
   catalog,
+  onActionError,
   onCommand,
   preview,
   view,
 }: {
   catalog: PublicCardCatalog;
+  onActionError?: (reason: GameBoardActionErrorCode) => void;
   onCommand?: (command: GameCommand) => void;
   preview: boolean;
   view: PlayerGameView;
@@ -121,6 +128,7 @@ export function useGameBoardActions({
 
     if (targetKind === "support-zone") {
       if (!actions.playSupport.available) {
+        onActionError?.(actions.playSupport.unavailableReason);
         return;
       }
 
@@ -133,6 +141,7 @@ export function useGameBoardActions({
 
     if (targetKind === "discard-zone") {
       if (!actions.discard.available) {
+        onActionError?.(actions.discard.unavailableReason);
         return;
       }
 
@@ -156,19 +165,22 @@ export function useGameBoardActions({
       return;
     }
 
-    if (
-      definition.cardType !== "attack" ||
-      slotIndex === undefined ||
-      !isAttackGroupSlotIndex(slotIndex)
-    ) {
+    if (slotIndex !== undefined && isAttackGroupSlotIndex(slotIndex)) {
+      if (definition.cardType !== "attack") {
+        onActionError?.("INVALID_CARD_TYPE");
+        return;
+      }
+    } else {
       return;
     }
 
     if (targetGroupId !== undefined) {
-      if (
-        !actions.chainAttack.available ||
-        !actions.chainAttack.targetGroupIds.includes(targetGroupId)
-      ) {
+      if (!actions.chainAttack.available) {
+        onActionError?.(actions.chainAttack.unavailableReason);
+        return;
+      }
+      if (!actions.chainAttack.targetGroupIds.includes(targetGroupId)) {
+        onActionError?.("INVALID_TARGET");
         return;
       }
 
@@ -197,10 +209,12 @@ export function useGameBoardActions({
       return;
     }
 
-    if (
-      !actions.placeAttack.available ||
-      !actions.placeAttack.slotIndices.includes(slotIndex)
-    ) {
+    if (!actions.placeAttack.available) {
+      onActionError?.(actions.placeAttack.unavailableReason);
+      return;
+    }
+    if (!actions.placeAttack.slotIndices.includes(slotIndex)) {
+      onActionError?.("INVALID_TARGET");
       return;
     }
 

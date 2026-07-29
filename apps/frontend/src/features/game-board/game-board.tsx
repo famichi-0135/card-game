@@ -23,7 +23,28 @@ import {
   useGameSnapshot,
   usePublicCardCatalog,
 } from "./hooks/use-game-board-data.ts";
-import { useGameBoardActions } from "./hooks/use-game-board-actions.ts";
+import {
+  useGameBoardActions,
+  type GameBoardActionErrorCode,
+} from "./hooks/use-game-board-actions.ts";
+import { toast } from "@/components/ui/toast";
+
+const UNAVAILABLE_REASON_MESSAGES: Record<GameBoardActionErrorCode, string> = {
+  GAME_NOT_ACTIVE: "ゲームは現在進行中ではありません。",
+  CARD_CATALOG_VERSION_MISMATCH: "カードデータが一致しません。",
+  CARD_DEFINITION_NOT_FOUND: "カードデータが見つかりません。",
+  PHASE_DEADLINE_EXPIRED: "制限時間を過ぎております。",
+  INVALID_PHASE: "現在のフェーズでは配置できません。",
+  NOT_CURRENT_PLAYER: "あなたのターンではありません。",
+  INVALID_CARD_TYPE: "このゾーンには配置できないカードです。",
+  ATTACK_GROUP_LIMIT_REACHED: "これ以上配置できません。",
+  ATTACK_GROUP_SLOT_UNAVAILABLE: "このスロットには配置できません。",
+  INSUFFICIENT_MANA: "マナが足りません。",
+  CHAIN_NOT_ALLOWED: "このカードに連鎖（重ねがけ）することはできません。",
+  SUPPORT_ALREADY_FINISHED: "サポートフェーズはすでに終了しております。",
+  EFFECT_TARGET_UNAVAILABLE: "効果の対象が存在しません。",
+  INVALID_TARGET: "選択された対象は無効です。",
+};
 import { useOnlineStatus } from "./hooks/use-online-status.ts";
 import { usePublicEventFeed } from "./hooks/use-public-event-feed.ts";
 import { useGameRealtime } from "./hooks/use-game-realtime.ts";
@@ -165,7 +186,19 @@ function GameBoardContent({
     finishPhase,
     handleDragEnd,
     pendingSupportPlay,
-  } = useGameBoardActions({ catalog, onCommand, preview, view });
+  } = useGameBoardActions({
+    catalog,
+    onCommand,
+    preview,
+    view,
+    onActionError: (reason) => {
+      toast.add({
+        title: "配置できません",
+        description: UNAVAILABLE_REASON_MESSAGES[reason],
+        type: "error",
+      });
+    },
+  });
   const {
     acknowledgeResynchronization,
     items: publicEvents,
