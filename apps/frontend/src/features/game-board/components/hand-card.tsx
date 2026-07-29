@@ -21,19 +21,7 @@ export function DraggableHandCard({
   actions: AvailableGameActions["handCards"][string] | undefined;
 }) {
   const definition = catalog.definitions[card.definitionId];
-  const canDrag =
-    actions?.placeAttack.available === true ||
-    actions?.placeAttack.unavailableReason === "INSUFFICIENT_MANA" ||
-    actions?.placeAttack.unavailableReason ===
-      "ATTACK_GROUP_SLOT_UNAVAILABLE" ||
-    actions?.placeAttack.unavailableReason === "ATTACK_GROUP_LIMIT_REACHED" ||
-    actions?.chainAttack.available === true ||
-    actions?.chainAttack.unavailableReason === "INSUFFICIENT_MANA" ||
-    actions?.chainAttack.unavailableReason === "CHAIN_NOT_ALLOWED" ||
-    actions?.playSupport.available === true ||
-    actions?.playSupport.unavailableReason === "INSUFFICIENT_MANA" ||
-    actions?.playSupport.unavailableReason === "EFFECT_TARGET_UNAVAILABLE" ||
-    actions?.discard.available === true;
+  const canDrag = isHandCardDraggable(actions);
   const { ref, handleRef, isDragging } = useDraggable({
     id: `hand-card-${card.instanceId}`,
     type: "hand-card",
@@ -85,6 +73,18 @@ export function DraggableHandCard({
 
       <CardHoverPreview catalog={catalog} definition={definition} />
     </div>
+  );
+}
+
+export function isHandCardDraggable(
+  actions: AvailableGameActions["handCards"][string] | undefined,
+): boolean {
+  return (
+    actions !== undefined &&
+    (actions.placeAttack.available ||
+      actions.chainAttack.available ||
+      actions.discard.available ||
+      actions.playSupport.available)
   );
 }
 

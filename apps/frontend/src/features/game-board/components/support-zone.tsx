@@ -13,7 +13,6 @@ export function SupportZone({
     id: "support-zone",
     type: "support-zone",
     accept: "hand-card",
-    disabled: !canPlaySupport,
     data: { kind: "support-zone", side: "self" },
   });
 
@@ -21,7 +20,9 @@ export function SupportZone({
     <div
       ref={ref}
       className={`relative h-full rounded-md ${
-        isDropTarget ? "outline-2 outline-offset-2 outline-slate-900" : ""
+        isDropTarget && canPlaySupport
+          ? "outline-2 outline-offset-2 outline-slate-900"
+          : ""
       }`}
     >
       <button

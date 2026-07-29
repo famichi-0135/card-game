@@ -27,8 +27,8 @@ export function AttackGroupSlot({
   const { ref, isDropTarget } = useDroppable({
     id: `attack-slot-${isSelf ? "self" : "opponent"}-${slotIndex}`,
     type: "attack-slot",
+    disabled: !isSelf,
     accept: "hand-card",
-    disabled: !canPlace && !canChain,
     data: {
       slotIndex,
       groupId: group?.groupId,
@@ -63,7 +63,7 @@ export function AttackGroupSlot({
     <div
       ref={ref}
       className={`relative min-h-0 rounded-md border p-2 ${
-        isDropTarget
+        isDropTarget && (canPlace || canChain)
           ? "border-slate-900 bg-slate-100"
           : canPlace || canChain
             ? "border-dashed border-slate-500 bg-white"

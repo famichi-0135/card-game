@@ -13,7 +13,6 @@ export function DiscardZone({
     id: "discard-zone",
     type: "discard-zone",
     accept: "hand-card",
-    disabled: !canDiscard,
     data: { kind: "discard-zone", side: "self" },
   });
 
@@ -21,7 +20,9 @@ export function DiscardZone({
     <div
       ref={ref}
       className={`relative h-full rounded-md ${
-        isDropTarget ? "outline-2 outline-offset-2 outline-slate-900" : ""
+        isDropTarget && canDiscard
+          ? "outline-2 outline-offset-2 outline-slate-900"
+          : ""
       }`}
     >
       <button
