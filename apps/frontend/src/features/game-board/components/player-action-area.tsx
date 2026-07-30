@@ -13,7 +13,10 @@ export function PlayerActionArea({
   isInteractive,
   onOpenDiscard,
   onOpenSupport,
+  onSelectCard,
+  onSelectCardTarget,
   phaseInstruction,
+  selectedCardInstanceId,
   self,
 }: {
   availableActions: AvailableGameActions;
@@ -21,7 +24,10 @@ export function PlayerActionArea({
   isInteractive: boolean;
   onOpenDiscard: () => void;
   onOpenSupport: () => void;
+  onSelectCard?: (cardInstanceId: string) => void;
+  onSelectCardTarget?: (target: "discard-zone" | "support-zone") => boolean;
   phaseInstruction: string;
+  selectedCardInstanceId?: string | null;
   self: PlayerGameView["self"];
 }) {
   const canDiscard =
@@ -45,14 +51,18 @@ export function PlayerActionArea({
         <DiscardZone
           canDiscard={canDiscard}
           count={self.discardPile.length}
+          hasSelectedCard={selectedCardInstanceId != null}
           onOpen={onOpenDiscard}
+          onSelectTarget={() => onSelectCardTarget?.("discard-zone") ?? false}
         />
       </section>
       <section aria-label="自分のサポートゾーン" className="min-w-0">
         <SupportZone
           canPlaySupport={canPlaySupport}
           count={self.supportZone.length}
+          hasSelectedCard={selectedCardInstanceId != null}
           onOpen={onOpenSupport}
+          onSelectTarget={() => onSelectCardTarget?.("support-zone") ?? false}
         />
       </section>
       <div className="flex min-w-0 flex-col justify-between py-1">
@@ -63,6 +73,11 @@ export function PlayerActionArea({
           </h1>
         </div>
         <span className="text-xs text-slate-500">{phaseInstruction}</span>
+        {selectedCardInstanceId == null ? null : (
+          <span className="text-xs font-medium text-slate-700" role="status">
+            選択中のカード: {getCardName(selectedCardInstanceId, self, catalog)}
+          </span>
+        )}
       </div>
       <section aria-label="自分の手札" className="min-w-0 overflow-visible">
         <div className="flex h-full items-stretch justify-center gap-3 px-1">
@@ -76,6 +91,8 @@ export function PlayerActionArea({
               }
               card={card}
               catalog={catalog}
+              isSelected={selectedCardInstanceId === card.instanceId}
+              onSelect={isInteractive ? onSelectCard : undefined}
             />
           ))}
         </div>
@@ -91,4 +108,17 @@ export function PlayerActionArea({
       </section>
     </section>
   );
+}
+
+function getCardName(
+  cardInstanceId: string,
+  self: PlayerGameView["self"],
+  catalog: PublicCardCatalog,
+): string {
+  const card = self.hand.find(
+    (candidate) => candidate.instanceId === cardInstanceId,
+  );
+  return card === undefined
+    ? "カード"
+    : (catalog.definitions[card.definitionId]?.name ?? "カード");
 }

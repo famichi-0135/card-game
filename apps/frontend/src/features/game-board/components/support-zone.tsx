@@ -3,10 +3,14 @@ import { useDroppable } from "@dnd-kit/react";
 export function SupportZone({
   canPlaySupport,
   count,
+  hasSelectedCard = false,
+  onSelectTarget,
   onOpen,
 }: {
   canPlaySupport: boolean;
   count: number;
+  hasSelectedCard?: boolean;
+  onSelectTarget?: () => boolean;
   onOpen: () => void;
 }) {
   const { ref, isDropTarget } = useDroppable({
@@ -26,10 +30,17 @@ export function SupportZone({
       }`}
     >
       <button
+        aria-label={
+          hasSelectedCard ? "サポート。選択中のカードをここで使用" : "サポート"
+        }
         className={`h-full w-full rounded-md border p-3 text-left hover:bg-slate-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-slate-900 ${
           canPlaySupport ? "border-dashed border-slate-500" : "border-slate-300"
         }`}
-        onClick={onOpen}
+        onClick={() => {
+          if (!onSelectTarget?.()) {
+            onOpen();
+          }
+        }}
         type="button"
       >
         <span className="block text-xs text-slate-500">サポート</span>

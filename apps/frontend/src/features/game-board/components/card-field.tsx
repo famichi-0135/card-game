@@ -5,17 +5,22 @@ import type {
   VisibleAttackGroup,
 } from "@disastar/game-engine";
 import { AttackGroupRow } from "./attack-group-row.tsx";
+import type { GameBoardCardTarget } from "../hooks/use-game-board-actions.ts";
 
 export function CardField({
   availableActions,
   catalog,
+  hasSelectedCard = false,
   onOpenSelfGroup,
+  onSelectTarget,
   opponentGroups,
   selfGroups,
 }: {
   availableActions?: AvailableGameActions;
   catalog: PublicCardCatalog;
+  hasSelectedCard?: boolean;
   onOpenSelfGroup: (group: VisibleAttackGroup) => void;
+  onSelectTarget?: (target: GameBoardCardTarget) => boolean;
   opponentGroups: PlayerGameView["opponent"]["attackGroups"];
   selfGroups: PlayerGameView["self"]["attackGroups"];
 }) {
@@ -27,6 +32,7 @@ export function CardField({
     >
       <AttackGroupRow
         catalog={catalog}
+        hasSelectedCard={hasSelectedCard}
         groups={opponentGroups}
         label="相手の攻撃グループ"
         perspective="opponent"
@@ -34,9 +40,11 @@ export function CardField({
       <AttackGroupRow
         availableActions={availableActions}
         catalog={catalog}
+        hasSelectedCard={hasSelectedCard}
         groups={selfGroups}
         label="自分の攻撃グループ"
         onOpenGroup={onOpenSelfGroup}
+        onSelectTarget={onSelectTarget}
         perspective="self"
       />
     </section>

@@ -6,6 +6,7 @@ import type {
   VisibleCardInstance,
 } from "@disastar/game-engine";
 import { cardTypeMark } from "./card-presentation.ts";
+import type { GameBoardCardTarget } from "../hooks/use-game-board-actions.ts";
 
 export function AttackGroupSlot({
   catalog,
@@ -13,7 +14,9 @@ export function AttackGroupSlot({
   slotIndex,
   canChain,
   canPlace,
+  hasSelectedCard,
   isSelf,
+  onSelectTarget,
   onOpenGroup,
 }: {
   catalog: PublicCardCatalog;
@@ -21,7 +24,9 @@ export function AttackGroupSlot({
   slotIndex: AttackGroupSlotIndex;
   canChain: boolean;
   canPlace: boolean;
+  hasSelectedCard?: boolean;
   isSelf: boolean;
+  onSelectTarget?: (target: GameBoardCardTarget) => boolean;
   onOpenGroup?: (group: VisibleAttackGroup) => void;
 }) {
   const { ref, isDropTarget } = useDroppable({
@@ -59,6 +64,21 @@ export function AttackGroupSlot({
       </div>
     );
 
+  const target: GameBoardCardTarget = {
+    kind: "attack-slot",
+    groupId: group?.groupId,
+    slotIndex,
+  };
+  const handleClick = () => {
+    if (onSelectTarget?.(target)) {
+      return;
+    }
+    if (group !== undefined) {
+      onOpenGroup?.(group);
+    }
+  };
+  const canSelectTarget = isSelf && onSelectTarget !== undefined;
+
   return (
     <div
       ref={ref}
@@ -78,10 +98,20 @@ export function AttackGroupSlot({
           連鎖可
         </span>
       ) : null}
-      {group !== undefined && onOpenGroup !== undefined ? (
+      {canSelectTarget || (group !== undefined && onOpenGroup !== undefined) ? (
         <button
+          aria-label={
+            "攻撃グループ枠 " +
+            (slotIndex + 1) +
+            "。" +
+            (canSelectTarget
+              ? hasSelectedCard === true
+                ? "選択中のカードをここへ操作"
+                : "カードを選択してから操作"
+              : "詳細を開く")
+          }
           className="h-full w-full focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-slate-900"
-          onClick={() => onOpenGroup(group)}
+          onClick={handleClick}
           type="button"
         >
           {content}

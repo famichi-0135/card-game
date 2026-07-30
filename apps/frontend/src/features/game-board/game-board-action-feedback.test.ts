@@ -92,6 +92,59 @@ describe("ゲーム盤面の無効操作フィードバック", () => {
     });
   });
 
+  it("実ゲームの操作では、受理応答が届くまで盤面のカード・みなもと・フェーズを変更しない", () => {
+    const fixture = createGameBoardFixture("no-optimistic-update");
+    const onActionError = vi.fn();
+    const onCommand = vi.fn<(command: GameCommand) => void>();
+    const handleDragEnd = renderDragHandler({
+      catalog: fixture.catalog,
+      onActionError,
+      onCommand,
+      view: fixture.view,
+    });
+    const handBefore = fixture.view.self.hand;
+    const manaBefore = fixture.view.self.mana;
+    const phaseBefore = fixture.view.phase;
+
+    handleDragEnd({
+      canceled: false,
+      operation: {
+        source: { data: { cardInstanceId: "hand-flood" } },
+        target: { data: { side: "self", slotIndex: 0 } },
+      },
+    } as unknown as DragEndEvent);
+
+    expect(onActionError).not.toHaveBeenCalled();
+    expect(onCommand).toHaveBeenCalledWith(
+      expect.objectContaining({
+        cardInstanceId: "hand-flood",
+        type: "PLACE_ATTACK_CARD",
+      }),
+    );
+    expect(fixture.view.self.hand).toBe(handBefore);
+    expect(fixture.view.self.mana).toBe(manaBefore);
+    expect(fixture.view.phase).toBe(phaseBefore);
+  });
+
+  it("操作候補のない手札をキーボード選択しても、選択状態にせず理由を通知する", () => {
+    const fixture = createGameBoardFixture("keyboard-unavailable");
+    const onActionError = vi.fn();
+    const selectCard = renderCardSelector({
+      catalog: fixture.catalog,
+      onActionError,
+      onCommand: vi.fn(),
+      view: {
+        ...fixture.view,
+        phase: "secondPlayerPlacement",
+        phaseSequence: fixture.view.phaseSequence + 1,
+      },
+    });
+
+    selectCard("hand-flood");
+
+    expect(onActionError).toHaveBeenCalledWith("NOT_CURRENT_PLAYER");
+  });
+
   it.each([
     ["INVALID_TARGET", "選択された対象は無効です。"],
     ["CHAIN_NOT_ALLOWED", "このカードに連鎖（重ねがけ）することはできません。"],
@@ -176,4 +229,37 @@ function renderDragHandler({
     throw new Error("ドラッグ操作を初期化できませんでした。");
   }
   return handleDragEnd;
+}
+
+function renderCardSelector({
+  catalog,
+  onActionError,
+  onCommand,
+  view,
+}: {
+  catalog: PublicCardCatalog;
+  onActionError: (reason: GameBoardActionErrorCode) => void;
+  onCommand: (command: GameCommand) => void;
+  view: PlayerGameView;
+}): (cardInstanceId: string) => void {
+  let selectCard: ((cardInstanceId: string) => void) | undefined;
+
+  function ActionHarness() {
+    const actions = useGameBoardActions({
+      catalog,
+      onActionError,
+      onCommand,
+      preview: false,
+      view,
+    });
+    selectCard = actions.selectCard;
+    return null;
+  }
+
+  renderToStaticMarkup(createElement(ActionHarness));
+
+  if (selectCard === undefined) {
+    throw new Error("キーボード操作を初期化できませんでした。");
+  }
+  return selectCard;
 }
