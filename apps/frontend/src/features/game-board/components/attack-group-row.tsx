@@ -6,6 +6,7 @@ import {
   type VisibleAttackGroup,
 } from "@disastar/game-engine";
 import { AttackGroupSlot } from "./attack-group-slot.tsx";
+import type { GameBoardCardTarget } from "../hooks/use-game-board-actions.ts";
 
 export function AttackGroupRow({
   catalog,
@@ -13,6 +14,8 @@ export function AttackGroupRow({
   label,
   perspective,
   availableActions,
+  hasSelectedCard = false,
+  onSelectTarget,
   onOpenGroup,
 }: {
   catalog: PublicCardCatalog;
@@ -20,6 +23,8 @@ export function AttackGroupRow({
   label: string;
   perspective: "self" | "opponent";
   availableActions?: AvailableGameActions;
+  hasSelectedCard?: boolean;
+  onSelectTarget?: (target: GameBoardCardTarget) => boolean;
   onOpenGroup?: (group: VisibleAttackGroup) => void;
 }) {
   return (
@@ -52,7 +57,11 @@ export function AttackGroupRow({
               slotIndex={slotIndex}
               canChain={canChain}
               canPlace={canPlace}
+              hasSelectedCard={hasSelectedCard}
               isSelf={perspective === "self"}
+              onSelectTarget={
+                perspective === "self" ? onSelectTarget : undefined
+              }
               onOpenGroup={onOpenGroup}
             />
           );

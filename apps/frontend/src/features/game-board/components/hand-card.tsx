@@ -14,10 +14,14 @@ import {
 export function DraggableHandCard({
   card,
   catalog,
+  isSelected = false,
+  onSelect,
   actions,
 }: {
   card: VisibleCardInstance;
   catalog: PublicCardCatalog;
+  isSelected?: boolean;
+  onSelect?: (cardInstanceId: string) => void;
   actions: AvailableGameActions["handCards"][string] | undefined;
 }) {
   const definition = catalog.definitions[card.definitionId];
@@ -40,17 +44,23 @@ export function DraggableHandCard({
         className={`grid h-36 w-28 grid-rows-[auto_1fr_auto_auto] rounded-md border bg-white p-2 text-left transition-opacity motion-reduce:transition-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-slate-900 ${
           isDragging ? "opacity-40" : "opacity-100"
         } ${canDrag ? "cursor-grab active:cursor-grabbing" : "cursor-default"} ${
-          canDrag ? "border-slate-400" : "border-slate-300"
+          isSelected
+            ? "border-slate-900 bg-slate-100 ring-2 ring-slate-900"
+            : canDrag
+              ? "border-slate-400"
+              : "border-slate-300"
         }`}
+        aria-pressed={isSelected}
         type="button"
         aria-label={`${definition.name}。${getActionSummary(actions)}`}
+        onClick={() => onSelect?.(card.instanceId)}
         title={
           canDrag
             ? actions?.playSupport.available
-              ? "ドラッグしてサポートゾーンで使用"
+              ? "クリックまたはEnterで選択してから、サポートゾーンで使用"
               : actions?.discard.available
-                ? "ドラッグして攻撃グループへ配置、連鎖、または捨て札へ破棄"
-                : "ドラッグして攻撃グループへ配置または連鎖"
+                ? "クリックまたはEnterで選択してから、攻撃グループへ配置、連鎖、または捨て札へ破棄"
+                : "クリックまたはEnterで選択してから、攻撃グループへ配置または連鎖"
             : "このカードは現在のフェーズでは配置できません"
         }
       >

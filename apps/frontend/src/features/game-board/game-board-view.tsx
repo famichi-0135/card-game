@@ -19,6 +19,7 @@ import { ResourceColumn } from "./components/resource-column.tsx";
 import { SupportTargetDialog } from "./components/support-target-dialog.tsx";
 import { ZoneDialog, type ZoneDialogState } from "./components/zone-dialog.tsx";
 import type { PendingSupportPlay } from "./hooks/use-game-board-actions.ts";
+import type { GameBoardCardTarget } from "./hooks/use-game-board-actions.ts";
 import type { PublicEventFeedItem } from "./hooks/use-public-event-feed.ts";
 import { getPhasePresentation } from "./phase-presentation.ts";
 
@@ -32,13 +33,17 @@ export function GameBoardView({
   isInteractive,
   learningContext,
   onCancelSupportPlay,
+  onCancelSelectedCard,
   onConfirmSupportPlay,
   onFinishPhase,
+  onSelectCard,
+  onSelectCardTarget,
   opponentOnline,
   onRetryCommand,
   onResynchronize,
   pendingSupportPlay,
   publicEvents,
+  selectedCardInstanceId,
   view,
 }: {
   accountAction?: ReactNode;
@@ -54,13 +59,17 @@ export function GameBoardView({
     isPending: boolean;
   };
   onCancelSupportPlay: () => void;
+  onCancelSelectedCard: () => void;
   onConfirmSupportPlay: (effectInputs: EffectInput[]) => void;
   onFinishPhase: () => void;
+  onSelectCard?: (cardInstanceId: string) => void;
+  onSelectCardTarget?: (target: GameBoardCardTarget) => boolean;
   opponentOnline: boolean;
   onRetryCommand?: () => void;
   onResynchronize?: () => void;
   pendingSupportPlay: PendingSupportPlay | null;
   publicEvents: readonly PublicEventFeedItem[];
+  selectedCardInstanceId: string | null;
   view: PlayerGameView;
 }) {
   const [zoneDialog, setZoneDialog] = useState<ZoneDialogState | null>(null);
@@ -90,6 +99,30 @@ export function GameBoardView({
       cards: group.cards,
     });
 
+  useEffect(() => {
+    if (
+      selectedCardInstanceId === null ||
+      isPhaseEndDialogOpen ||
+      pendingSupportPlay !== null
+    ) {
+      return;
+    }
+
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        onCancelSelectedCard();
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [
+    isPhaseEndDialogOpen,
+    onCancelSelectedCard,
+    pendingSupportPlay,
+    selectedCardInstanceId,
+  ]);
+
   return (
     <>
       <main className="h-dvh min-w-[1180px] overflow-hidden bg-slate-100 p-4 max-[1179px]:hidden max-[719px]:hidden">
@@ -97,6 +130,11 @@ export function GameBoardView({
           <GameProgressBar
             accountAction={accountAction}
             canFinishPhase={canFinishPhase}
+            canResynchronize={
+              !commandPending &&
+              commandError !== null &&
+              onResynchronize !== undefined
+            }
             commandMessage={commandMessage}
             connectionState={connectionState}
             finishActionLabel={finishActionLabel}
@@ -126,7 +164,9 @@ export function GameBoardView({
             <CardField
               availableActions={isInteractive ? availableActions : undefined}
               catalog={catalog}
+              hasSelectedCard={selectedCardInstanceId !== null}
               onOpenSelfGroup={openAttackGroup}
+              onSelectTarget={isInteractive ? onSelectCardTarget : undefined}
               opponentGroups={view.opponent.attackGroups}
               selfGroups={view.self.attackGroups}
             />
@@ -162,7 +202,14 @@ export function GameBoardView({
                 cards: view.self.supportZone,
               })
             }
+            onSelectCard={isInteractive ? onSelectCard : undefined}
+            onSelectCardTarget={
+              isInteractive
+                ? (target) => onSelectCardTarget?.({ kind: target }) ?? false
+                : undefined
+            }
             phaseInstruction={handInstruction}
+            selectedCardInstanceId={selectedCardInstanceId}
             self={view.self}
           />
         </div>

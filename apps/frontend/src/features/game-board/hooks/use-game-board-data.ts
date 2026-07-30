@@ -18,6 +18,42 @@ export function gameSnapshotQueryKey(gameId: string) {
   return ["games", gameId, "snapshot"] as const;
 }
 
+export function createGameCommandRequest(gameId: string, command: GameCommand) {
+  return {
+    path: `/api/games/${encodeURIComponent(gameId)}/commands`,
+    init: {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ command }),
+    } satisfies RequestInit,
+  };
+}
+
+/**
+ * HTTP の完了順はゲーム状態の新旧を表さないため、古い応答でキャッシュを戻さない。
+ * 同じ状態ではイベント連番も比較し、演出用の差分を巻き戻さない。
+ */
+export function mergeGameSnapshot(
+  current: GameSnapshotResponse | undefined,
+  incoming: GameSnapshotResponse,
+): GameSnapshotResponse {
+  if (current === undefined) {
+    return incoming;
+  }
+
+  if (incoming.view.stateVersion < current.view.stateVersion) {
+    return current;
+  }
+  if (
+    incoming.view.stateVersion === current.view.stateVersion &&
+    incoming.latestEventSequence <= current.latestEventSequence
+  ) {
+    return current;
+  }
+
+  return incoming;
+}
+
 function fetchGameSnapshot(
   gameId: string,
   afterSequence: number,
@@ -39,7 +75,11 @@ export function useGameSnapshot(gameId: string) {
     queryFn: async () => {
       const previous = queryClient.getQueryData<GameSnapshotResponse>(queryKey);
       const afterSequence = previous?.latestEventSequence ?? 0;
-      return fetchGameSnapshot(gameId, afterSequence);
+      const snapshot = await fetchGameSnapshot(gameId, afterSequence);
+      return mergeGameSnapshot(
+        queryClient.getQueryData<GameSnapshotResponse>(queryKey),
+        snapshot,
+      );
     },
     refetchInterval: (query) =>
       query.state.data?.view.status === "finished" ? false : 2_000,
@@ -62,7 +102,10 @@ export function useGameSnapshot(gameId: string) {
         queryKey: gameSnapshotQueryKey(gameId),
       });
       const snapshot = await fetchGameSnapshot(gameId, 0);
-      queryClient.setQueryData(gameSnapshotQueryKey(gameId), snapshot);
+      queryClient.setQueryData<GameSnapshotResponse>(
+        gameSnapshotQueryKey(gameId),
+        (current) => mergeGameSnapshot(current, snapshot),
+      );
     } catch (error) {
       setResynchronizationError(error);
       throw error;
@@ -97,28 +140,19 @@ export function useGameCommand(gameId: string) {
   const queryClient = useQueryClient();
   const queryKey = gameSnapshotQueryKey(gameId);
   const mutation = useMutation({
-    mutationFn: (command: GameCommand) =>
-      fetchApi<SubmitGameCommandResponse>(
-        `/api/games/${encodeURIComponent(gameId)}/commands`,
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ command }),
-        },
-      ),
+    mutationFn: (command: GameCommand) => {
+      const request = createGameCommandRequest(gameId, command);
+      return fetchApi<SubmitGameCommandResponse>(request.path, request.init);
+    },
     retry: (failureCount, error) =>
       !(error instanceof ApiClientError) && failureCount < 2,
     onSuccess: (response) => {
-      queryClient.setQueryData<GameSnapshotResponse>(queryKey, (current) => ({
-        view: response.view,
-        events: response.accepted ? response.events : [],
-        latestEventSequence: Math.max(
-          current?.latestEventSequence ?? 0,
-          ...(response.accepted
-            ? response.events.map((event) => event.sequence)
-            : []),
+      queryClient.setQueryData<GameSnapshotResponse>(queryKey, (current) =>
+        mergeGameSnapshot(
+          current,
+          snapshotFromCommandResponse(current, response),
         ),
-      }));
+      );
     },
     onError: () => {
       void queryClient.invalidateQueries({ queryKey });
@@ -144,6 +178,22 @@ export function useGameCommand(gameId: string) {
     },
     submit: mutation.mutate,
     canRetry: mutation.error !== null && mutation.variables !== undefined,
+  };
+}
+
+function snapshotFromCommandResponse(
+  current: GameSnapshotResponse | undefined,
+  response: SubmitGameCommandResponse,
+): GameSnapshotResponse {
+  const events = response.accepted ? response.events : [];
+
+  return {
+    view: response.view,
+    events,
+    latestEventSequence: Math.max(
+      current?.latestEventSequence ?? 0,
+      ...events.map((event) => event.sequence),
+    ),
   };
 }
 

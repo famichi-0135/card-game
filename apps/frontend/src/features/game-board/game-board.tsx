@@ -189,11 +189,15 @@ function GameBoardContent({
   const {
     availableActions,
     cancelSupportPlay,
+    cancelSelectedCard,
     confirmSupportPlay,
     currentView,
+    executeSelectedCardTarget,
     finishPhase,
     handleDragEnd,
     pendingSupportPlay,
+    selectCard,
+    selectedCardInstanceId,
   } = useGameBoardActions({
     catalog,
     onCommand,
@@ -254,8 +258,13 @@ function GameBoardContent({
         isInteractive={isInteractive}
         learningContext={learningContext}
         onCancelSupportPlay={cancelSupportPlay}
+        onCancelSelectedCard={cancelSelectedCard}
         onConfirmSupportPlay={confirmSupportPlay}
         onFinishPhase={finishPhase}
+        onSelectCard={isInteractive ? selectCard : undefined}
+        onSelectCardTarget={
+          isInteractive ? executeSelectedCardTarget : undefined
+        }
         opponentOnline={opponentOnline}
         onRetryCommand={onRetryCommand}
         onResynchronize={
@@ -265,6 +274,7 @@ function GameBoardContent({
         }
         pendingSupportPlay={pendingSupportPlay}
         publicEvents={publicEvents}
+        selectedCardInstanceId={selectedCardInstanceId}
         view={currentView}
       />
     </DragDropProvider>

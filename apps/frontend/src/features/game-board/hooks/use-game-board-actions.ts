@@ -4,6 +4,7 @@ import {
   getAvailableGameActions,
   getAdditionalAttackGroupManaRequired,
   type AttackGroupSlotIndex,
+  type AvailableGameActions,
   type AvailableSupportEffectSelection,
   type EffectInput,
   type GameCommand,
@@ -14,7 +15,7 @@ import {
   type VisibleAttackGroup,
   type VisibleCardInstance,
 } from "@disastar/game-engine";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 export type GameBoardActionErrorCode =
   | GameActionUnavailableReasonCode
@@ -37,6 +38,15 @@ export type PendingSupportPlay = {
   card: VisibleCardInstance;
   effectSelections: readonly AvailableSupportEffectSelection[];
 };
+
+export type GameBoardCardTarget =
+  | {
+      kind: "attack-slot";
+      groupId: string | undefined;
+      slotIndex: AttackGroupSlotIndex;
+    }
+  | { kind: "discard-zone" }
+  | { kind: "support-zone" };
 
 export function useGameBoardActions({
   catalog,
@@ -65,6 +75,9 @@ export function useGameBoardActions({
   }));
   const [pendingSupportPlay, setPendingSupportPlay] =
     useState<PendingSupportPlay | null>(null);
+  const [selectedCardInstanceId, setSelectedCardInstanceId] = useState<
+    string | null
+  >(null);
   const currentView = useMemo(
     () =>
       preview
@@ -94,64 +107,82 @@ export function useGameBoardActions({
     [catalog, currentView],
   );
 
-  const handleDragEnd = ({ canceled, operation }: DragEndEvent) => {
-    const cardInstanceId = operation.source?.data.cardInstanceId as
-      | string
-      | undefined;
-    const targetKind = operation.target?.data.kind as string | undefined;
-    const slotIndex = operation.target?.data.slotIndex as number | undefined;
-    const targetGroupId = operation.target?.data.groupId as string | undefined;
-    const targetSide = operation.target?.data.side as string | undefined;
+  useEffect(() => {
+    setPendingSupportPlay(null);
+    setSelectedCardInstanceId(null);
+  }, [view.stateVersion]);
 
-    if (canceled || cardInstanceId === undefined || targetSide !== "self") {
+  const selectCard = (cardInstanceId: string) => {
+    if (
+      !currentView.self.hand.some((card) => card.instanceId === cardInstanceId)
+    ) {
       return;
     }
-    if (!preview && onCommand === undefined) {
+    const actions = availableActions.handCards[cardInstanceId];
+    if (actions === undefined) {
       return;
+    }
+    if (!hasAvailableCardAction(actions)) {
+      onActionError?.(getFirstUnavailableReason(actions));
+      return;
+    }
+    setSelectedCardInstanceId((current) =>
+      current === cardInstanceId ? null : cardInstanceId,
+    );
+  };
+
+  const cancelSelectedCard = () => setSelectedCardInstanceId(null);
+
+  const executeCardTarget = (
+    cardInstanceId: string,
+    target: GameBoardCardTarget,
+  ): boolean => {
+    if (!preview && onCommand === undefined) {
+      return false;
     }
 
     const card = currentView.self.hand.find(
       (candidate) => candidate.instanceId === cardInstanceId,
     );
     if (card === undefined) {
-      return;
+      return false;
     }
     const definition = catalog.definitions[card.definitionId];
     if (definition === undefined) {
-      return;
+      return false;
     }
 
     const actions = availableActions.handCards[cardInstanceId];
     if (actions === undefined) {
-      return;
+      return false;
     }
 
-    if (targetKind === "support-zone") {
+    if (target.kind === "support-zone") {
       if (!actions.playSupport.available) {
         onActionError?.(actions.playSupport.unavailableReason);
-        return;
+        return false;
       }
 
       setPendingSupportPlay({
         card,
         effectSelections: actions.playSupport.effectSelections,
       });
-      return;
+      return true;
     }
 
-    if (targetKind === "discard-zone") {
+    if (target.kind === "discard-zone") {
       if (!actions.discard.available) {
         onActionError?.(actions.discard.unavailableReason);
-        return;
+        return false;
       }
 
       const command = createDiscardHandCommand(currentView, cardInstanceId);
       if (onCommand !== undefined) {
         onCommand(command);
-        return;
+        return true;
       }
       if (!preview) {
-        return;
+        return false;
       }
 
       setBoardState((current) => ({
@@ -162,26 +193,23 @@ export function useGameBoardActions({
         ),
         stateVersion: current.stateVersion + 1,
       }));
-      return;
+      return true;
     }
 
-    if (slotIndex !== undefined && isAttackGroupSlotIndex(slotIndex)) {
-      if (definition.cardType !== "attack") {
-        onActionError?.("INVALID_CARD_TYPE");
-        return;
-      }
-    } else {
-      return;
+    if (definition.cardType !== "attack") {
+      onActionError?.("INVALID_CARD_TYPE");
+      return false;
     }
 
+    const targetGroupId = target.groupId;
     if (targetGroupId !== undefined) {
       if (!actions.chainAttack.available) {
         onActionError?.(actions.chainAttack.unavailableReason);
-        return;
+        return false;
       }
       if (!actions.chainAttack.targetGroupIds.includes(targetGroupId)) {
         onActionError?.("INVALID_TARGET");
-        return;
+        return false;
       }
 
       const command = createChainAttackCommand(
@@ -191,10 +219,10 @@ export function useGameBoardActions({
       );
       if (onCommand !== undefined) {
         onCommand(command);
-        return;
+        return true;
       }
       if (!preview) {
-        return;
+        return false;
       }
 
       setBoardState((current) =>
@@ -206,33 +234,37 @@ export function useGameBoardActions({
           targetGroupId,
         ),
       );
-      return;
+      return true;
     }
 
     if (!actions.placeAttack.available) {
       onActionError?.(actions.placeAttack.unavailableReason);
-      return;
+      return false;
     }
-    if (!actions.placeAttack.slotIndices.includes(slotIndex)) {
+    if (!actions.placeAttack.slotIndices.includes(target.slotIndex)) {
       onActionError?.("INVALID_TARGET");
-      return;
+      return false;
     }
 
     const command = createPlaceAttackCommand(
       currentView,
       cardInstanceId,
-      slotIndex,
+      target.slotIndex,
     );
     if (onCommand !== undefined) {
       onCommand(command);
-      return;
+      return true;
     }
     if (!preview) {
-      return;
+      return false;
     }
 
     setBoardState((current) => {
-      if (current.attackGroups.some((group) => group.slotIndex === slotIndex)) {
+      if (
+        current.attackGroups.some(
+          (group) => group.slotIndex === target.slotIndex,
+        )
+      ) {
         return current;
       }
 
@@ -244,9 +276,9 @@ export function useGameBoardActions({
         attackGroups: [
           ...current.attackGroups,
           {
-            groupId: `preview-group-${slotIndex}-${card.instanceId}`,
+            groupId: `preview-group-${target.slotIndex}-${card.instanceId}`,
             ownerId: view.self.playerId,
-            slotIndex,
+            slotIndex: target.slotIndex,
             attribute: definition.attribute,
             createdRound: view.round,
             cards: [card],
@@ -261,6 +293,51 @@ export function useGameBoardActions({
         ),
         stateVersion: current.stateVersion + 1,
       };
+    });
+    return true;
+  };
+
+  const executeSelectedCardTarget = (target: GameBoardCardTarget): boolean => {
+    if (selectedCardInstanceId === null) {
+      return false;
+    }
+
+    const completed = executeCardTarget(selectedCardInstanceId, target);
+    if (completed) {
+      setSelectedCardInstanceId(null);
+    }
+    return completed;
+  };
+
+  const handleDragEnd = ({ canceled, operation }: DragEndEvent) => {
+    const cardInstanceId = operation.source?.data.cardInstanceId as
+      | string
+      | undefined;
+    const targetKind = operation.target?.data.kind as string | undefined;
+    const slotIndex = operation.target?.data.slotIndex as number | undefined;
+    const targetGroupId = operation.target?.data.groupId as string | undefined;
+    const targetSide = operation.target?.data.side as string | undefined;
+
+    if (canceled || cardInstanceId === undefined || targetSide !== "self") {
+      return;
+    }
+    if (targetKind === "support-zone") {
+      executeCardTarget(cardInstanceId, { kind: "support-zone" });
+      return;
+    }
+
+    if (targetKind === "discard-zone") {
+      executeCardTarget(cardInstanceId, { kind: "discard-zone" });
+      return;
+    }
+
+    if (slotIndex === undefined || !isAttackGroupSlotIndex(slotIndex)) {
+      return;
+    }
+    executeCardTarget(cardInstanceId, {
+      kind: "attack-slot",
+      groupId: targetGroupId,
+      slotIndex,
     });
   };
 
@@ -339,12 +416,45 @@ export function useGameBoardActions({
   return {
     availableActions,
     cancelSupportPlay,
+    cancelSelectedCard,
     confirmSupportPlay,
     currentView,
+    executeSelectedCardTarget,
     finishPhase,
     handleDragEnd,
     pendingSupportPlay,
+    selectCard,
+    selectedCardInstanceId,
   };
+}
+
+function hasAvailableCardAction(
+  actions: AvailableGameActions["handCards"][string],
+): boolean {
+  return (
+    actions.placeAttack.available ||
+    actions.chainAttack.available ||
+    actions.discard.available ||
+    actions.playSupport.available
+  );
+}
+
+function getFirstUnavailableReason(
+  actions: AvailableGameActions["handCards"][string],
+): GameBoardActionErrorCode {
+  if (!actions.placeAttack.available) {
+    return actions.placeAttack.unavailableReason;
+  }
+  if (!actions.chainAttack.available) {
+    return actions.chainAttack.unavailableReason;
+  }
+  if (!actions.discard.available) {
+    return actions.discard.unavailableReason;
+  }
+  if (!actions.playSupport.available) {
+    return actions.playSupport.unavailableReason;
+  }
+  return "INVALID_TARGET";
 }
 
 function isAttackGroupSlotIndex(value: number): value is AttackGroupSlotIndex {

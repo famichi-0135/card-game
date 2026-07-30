@@ -9,6 +9,7 @@ import type { PublicEventFeedItem } from "../hooks/use-public-event-feed.ts";
 export function GameProgressBar({
   accountAction,
   canFinishPhase,
+  canResynchronize,
   commandMessage,
   connectionState,
   finishActionLabel,
@@ -25,6 +26,7 @@ export function GameProgressBar({
 }: {
   accountAction?: ReactNode;
   canFinishPhase: boolean;
+  canResynchronize: boolean;
   commandMessage: string | null;
   connectionState: GameConnectionState;
   finishActionLabel: string;
@@ -86,6 +88,15 @@ export function GameProgressBar({
             type="button"
           >
             再試行
+          </button>
+        )}
+        {!canResynchronize || onResynchronize === undefined ? null : (
+          <button
+            className="shrink-0 rounded border border-slate-300 px-3 py-2 text-sm hover:bg-slate-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-slate-900"
+            onClick={onResynchronize}
+            type="button"
+          >
+            盤面を再同期
           </button>
         )}
       </div>
