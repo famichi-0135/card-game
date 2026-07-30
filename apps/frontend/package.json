@@ -5,6 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
+    "dev:e2e": "vite --host 127.0.0.1 --port 4173 --strictPort",
     "build": "tsc -b && vite build",
     "lint": "eslint . --max-warnings 0",
     "check-types": "tsc -b --pretty false",

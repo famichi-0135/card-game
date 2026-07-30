@@ -1,3 +1,9 @@
 import { config } from "@disastar/eslint-config/base";
 
-export default [...config, { ignores: ["worker-configuration.d.ts"] }];
+export default [
+  { ignores: ["worker-configuration.d.ts"] },
+  ...config,
+  {
+    languageOptions: { globals: { process: "readonly" } },
+  },
+];
