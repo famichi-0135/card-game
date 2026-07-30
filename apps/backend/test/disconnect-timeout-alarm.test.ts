@@ -1,5 +1,9 @@
-import { env, runDurableObjectAlarm } from "cloudflare:test";
-import { afterEach, describe, expect, it, vi } from "vitest";
+import {
+  env,
+  runDurableObjectAlarm,
+  runInDurableObject,
+} from "cloudflare:test";
+import { describe, expect, it } from "vitest";
 import type { InitializeGameInput } from "@disastar/game-engine/contracts";
 import type { GetGameSnapshotResult } from "../src/game-session/game-session.js";
 import {
@@ -8,14 +12,7 @@ import {
 } from "../src/game-engine/runtime.js";
 
 describe("GameSession の切断タイムアウトAlarm", () => {
-  afterEach(() => {
-    vi.useRealTimers();
-  });
-
   it("Alarm時点で操作担当者だけが未接続なら、接続中の相手を勝者にする", async () => {
-    vi.useFakeTimers();
-    vi.setSystemTime(new Date("2026-07-30T00:00:00.000Z"));
-
     const gameId = "disconnect-timeout-alarm";
     const session = getGameSession(gameId);
     await expect(
@@ -26,8 +23,7 @@ describe("GameSession の切断タイムアウトAlarm", () => {
     const activePlayerId = initialSnapshot.view.firstPlayerId;
     const connectedPlayerId =
       activePlayerId === "player-1" ? "player-2" : "player-1";
-    const phaseDeadlineAt = initialSnapshot.view.phaseDeadlineAt;
-    if (phaseDeadlineAt === null) {
+    if (initialSnapshot.view.phaseDeadlineAt === null) {
       throw new Error("進行中ゲームにはフェーズ期限が必要です。");
     }
 
@@ -42,7 +38,7 @@ describe("GameSession の切断タイムアウトAlarm", () => {
     expect(connection.status).toBe(101);
     connection.webSocket?.accept();
 
-    vi.setSystemTime(phaseDeadlineAt);
+    await expirePhaseAlarm(session);
     await expect(
       runDurableObjectAlarm(session as unknown as DurableObjectStub),
     ).resolves.toBe(true);
@@ -74,6 +70,28 @@ function getGameSession(gameId: string): GameSessionRpc {
     getByName(name: string): GameSessionRpc;
   };
   return gameSessions.getByName(gameId);
+}
+
+/**
+ * WorkersランタイムへVitestの偽時計は伝播しないため、期限済み状態とAlarmを
+ * 同時に用意する。公開APIでは作れない期限境界を、実際のAlarmハンドラーで検証する。
+ */
+async function expirePhaseAlarm(session: GameSessionRpc): Promise<void> {
+  await runInDurableObject(
+    session as unknown as DurableObjectStub,
+    async (instance, state) => {
+      const internals = instance as unknown as {
+        session: { state: { phaseDeadlineAt: number | null } } | null;
+      };
+      if (internals.session === null) {
+        throw new Error("初期化済みゲームセッションが見つかりません。");
+      }
+
+      internals.session.state.phaseDeadlineAt = Date.now();
+      await state.storage.put("game-session-v2-factions", internals.session);
+      await state.storage.setAlarm(Date.now() + 60_000);
+    },
+  );
 }
 
 async function requireSnapshot(session: GameSessionRpc, playerId: string) {
