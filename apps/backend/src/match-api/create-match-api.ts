@@ -5,6 +5,7 @@ import {
   type AcceptMatchResponse,
   type CancelMatchResponse,
   type CreateMatchResponse,
+  type ListPublicMatchesResponse,
   type MatchApiErrorCode,
   type MatchApiErrorResponse,
   type MatchLobbyView,
@@ -16,12 +17,17 @@ import type {
 } from "@disastar/game-engine/contracts";
 import {
   createMatchLobbyInEnvironment,
+  MATCH_LOBBY_WAIT_DURATION_MS,
   type CreateMatchLobbyInput,
   type CreateMatchLobbyResult,
   type GetMatchLobbyViewResult,
   type MatchLobbyAcceptResult,
   type MatchLobbyCancelResult,
 } from "../match-lobby/match-lobby.js";
+import {
+  createPublicMatchLobbyIndex,
+  type PublicMatchLobbyIndex,
+} from "../match-lobby/public-match-lobby-index.js";
 import type {
   BetterAuthEnvironment,
   RequestAuthenticator,
@@ -47,6 +53,17 @@ export type AuthorizedDeckResolver = (
 
 type MatchLobbyRpc = {
   getView(viewerPlayerId: PlayerId): Promise<GetMatchLobbyViewResult>;
+  getPublicSummary?(): Promise<
+    | {
+        available: true;
+        summary: {
+          ownerFaction: Faction;
+          createdAt: number;
+          expiresAt: number;
+        };
+      }
+    | { available: false }
+  >;
   accept(input: {
     playerId: PlayerId;
     faction: Faction;
@@ -71,6 +88,7 @@ export type MatchApiDependencies = {
   resolveAuthorizedDeck: AuthorizedDeckResolver;
   getMatchLobby?: MatchLobbyResolver;
   createMatchLobby?: MatchLobbyCreator;
+  publicMatchLobbyIndex?: PublicMatchLobbyIndex;
   now?: () => number;
 };
 
@@ -79,6 +97,7 @@ export function createMatchApi({
   resolveAuthorizedDeck,
   getMatchLobby = resolveMatchLobby,
   createMatchLobby = createMatchLobbyInEnvironment,
+  publicMatchLobbyIndex,
   now = Date.now,
 }: MatchApiDependencies): Hono<MatchApiEnvironment> {
   const api = new Hono<MatchApiEnvironment>();
@@ -115,22 +134,80 @@ export function createMatchApi({
       return matchError(c, "DECK_NOT_FOUND", 404);
     }
 
+    const createdAt = now();
     const created = await createMatchLobby(
       {
         ownerPlayerId: c.var.authenticatedPlayerId,
         ownerFaction: deck.faction,
         ownerDeckDefinitionIds: deck.cardDefinitionIds,
+        visibility: parsed.request.visibility,
       },
       c.env,
-      now,
+      () => createdAt,
     );
     if (!created.created) {
       return matchError(c, "MATCH_CREATION_FAILED", 500);
+    }
+    if (parsed.request.visibility === "public") {
+      const index = getPublicMatchLobbyIndex(c.env, publicMatchLobbyIndex);
+      try {
+        await index.publish({
+          matchId: created.matchId,
+          ownerPlayerId: c.var.authenticatedPlayerId,
+          ownerFaction: deck.faction,
+          createdAt,
+          expiresAt: createdAt + MATCH_LOBBY_WAIT_DURATION_MS,
+        });
+      } catch {
+        await cancelCreatedLobby(
+          created.matchId,
+          c.var.authenticatedPlayerId,
+          c.env,
+          getMatchLobby,
+        );
+        return matchError(c, "MATCH_CREATION_FAILED", 500);
+      }
     }
     return c.json(
       { matchId: created.matchId } satisfies CreateMatchResponse,
       201,
     );
+  });
+
+  api.get("/", async (c) => {
+    const index = getPublicMatchLobbyIndex(c.env, publicMatchLobbyIndex);
+    const entries = await index.list(now());
+    const matches = await Promise.all(
+      entries.map(async (entry) => {
+        const lobby = tryResolveMatchLobby(entry.matchId, c.env, getMatchLobby);
+        if (lobby === null) {
+          await removePublicLobby(index, entry.matchId);
+          return null;
+        }
+        const result = await lobby.getPublicSummary?.();
+        if (
+          result === undefined ||
+          !result.available ||
+          result.summary.ownerFaction !== entry.ownerFaction ||
+          result.summary.createdAt !== entry.createdAt ||
+          result.summary.expiresAt !== entry.expiresAt
+        ) {
+          await removePublicLobby(index, entry.matchId);
+          return null;
+        }
+        return {
+          matchId: entry.matchId,
+          ownerFaction: result.summary.ownerFaction,
+          createdAt: result.summary.createdAt,
+          expiresAt: result.summary.expiresAt,
+          isOwner: entry.ownerPlayerId === c.var.authenticatedPlayerId,
+        };
+      }),
+    );
+
+    return c.json({
+      matches: matches.filter((match) => match !== null),
+    } satisfies ListPublicMatchesResponse);
   });
 
   api.get("/:matchId", async (c) => {
@@ -185,18 +262,23 @@ export function createMatchApi({
       faction: deck.faction,
       deckDefinitionIds: deck.cardDefinitionIds,
     });
-    return result.accepted
-      ? c.json({
-          accepted: true,
-          gameId: result.gameId,
-        } satisfies AcceptMatchResponse)
-      : c.json(
-          {
-            accepted: false,
-            error: { code: result.error.code },
-          } satisfies AcceptMatchResponse,
-          statusForMatchError(result.error.code),
-        );
+    if (result.accepted) {
+      await removePublicLobby(
+        getPublicMatchLobbyIndex(c.env, publicMatchLobbyIndex),
+        c.req.param("matchId"),
+      );
+      return c.json({
+        accepted: true,
+        gameId: result.gameId,
+      } satisfies AcceptMatchResponse);
+    }
+    return c.json(
+      {
+        accepted: false,
+        error: { code: result.error.code },
+      } satisfies AcceptMatchResponse,
+      statusForMatchError(result.error.code),
+    );
   });
 
   api.post("/:matchId/cancel", async (c) => {
@@ -209,15 +291,20 @@ export function createMatchApi({
       return matchError(c, "MATCH_NOT_FOUND", 404);
     }
     const result = await lobby.cancel(c.var.authenticatedPlayerId);
-    return result.cancelled
-      ? c.json({ cancelled: true } satisfies CancelMatchResponse)
-      : c.json(
-          {
-            cancelled: false,
-            error: { code: result.error.code },
-          } satisfies CancelMatchResponse,
-          statusForMatchError(result.error.code),
-        );
+    if (result.cancelled) {
+      await removePublicLobby(
+        getPublicMatchLobbyIndex(c.env, publicMatchLobbyIndex),
+        c.req.param("matchId"),
+      );
+      return c.json({ cancelled: true } satisfies CancelMatchResponse);
+    }
+    return c.json(
+      {
+        cancelled: false,
+        error: { code: result.error.code },
+      } satisfies CancelMatchResponse,
+      statusForMatchError(result.error.code),
+    );
   });
 
   return api;
@@ -241,6 +328,41 @@ function tryResolveMatchLobby(
     return resolver(matchId, environment);
   } catch {
     return null;
+  }
+}
+
+function getPublicMatchLobbyIndex(
+  environment: CloudflareBindings,
+  providedIndex: PublicMatchLobbyIndex | undefined,
+): PublicMatchLobbyIndex {
+  return providedIndex ?? createPublicMatchLobbyIndex(environment.DB);
+}
+
+async function cancelCreatedLobby(
+  matchId: string,
+  playerId: PlayerId,
+  environment: CloudflareBindings,
+  resolver: MatchLobbyResolver,
+): Promise<void> {
+  const lobby = tryResolveMatchLobby(matchId, environment, resolver);
+  if (lobby === null) {
+    return;
+  }
+  try {
+    await lobby.cancel(playerId);
+  } catch {
+    // D1登録に失敗した公開部屋は一覧に載らない。取消は補償処理として最善で試みる。
+  }
+}
+
+async function removePublicLobby(
+  index: PublicMatchLobbyIndex,
+  matchId: string,
+): Promise<void> {
+  try {
+    await index.remove(matchId);
+  } catch {
+    // D1索引が遅れても、MatchLobbyの状態再検証で参加済み・取消済みの部屋は返さない。
   }
 }
 

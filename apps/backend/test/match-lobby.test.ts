@@ -17,6 +17,8 @@ type MatchLobbyRpc = {
     ownerFaction: Faction;
     ownerDeckDefinitionIds: CardDefinitionId[];
     createdAt: number;
+    expiresAt?: number;
+    visibility?: "invite" | "public";
   }): Promise<{ initialized: true } | { initialized: false }>;
   getView(viewerPlayerId: string): Promise<
     | {
@@ -34,6 +36,17 @@ type MatchLobbyRpc = {
         visible: false;
         error: { code: "MATCH_ACCESS_FORBIDDEN" | "MATCH_NOT_FOUND" };
       }
+  >;
+  getPublicSummary(): Promise<
+    | {
+        available: true;
+        summary: {
+          ownerFaction: Faction;
+          createdAt: number;
+          expiresAt: number;
+        };
+      }
+    | { available: false }
   >;
   accept(input: {
     playerId: string;
@@ -82,7 +95,7 @@ describe("MatchLobby Durable Object", () => {
         ownerDeckDefinitionIds: createDeck(),
       },
       env,
-      () => 1_000,
+      () => Date.now(),
     );
 
     expect(result).toMatchObject({
@@ -133,6 +146,52 @@ describe("MatchLobby Durable Object", () => {
         opponentFaction: null,
         gameId: null,
       },
+    });
+  });
+
+  it("公開待機部屋だけを作成者の識別子なしで一覧候補として返す", async () => {
+    const lobby = getMatchLobby("match-lobby-public");
+    const createdAt = Date.now();
+    const expiresAt = createdAt + 30 * 60 * 1_000;
+
+    await lobby.initialize({
+      ownerPlayerId: "player-1",
+      ownerFaction: "disaster",
+      ownerDeckDefinitionIds: createDeck(),
+      visibility: "public",
+      createdAt,
+      expiresAt,
+    });
+
+    await expect(lobby.getPublicSummary()).resolves.toEqual({
+      available: true,
+      summary: {
+        ownerFaction: "disaster",
+        createdAt,
+        expiresAt,
+      },
+    });
+  });
+
+  it("待機期限を過ぎた部屋を参加・公開候補から外す", async () => {
+    const lobby = getMatchLobby("match-lobby-expired");
+    const expiresAt = Date.now() - 1;
+
+    await lobby.initialize({
+      ownerPlayerId: "player-1",
+      ownerFaction: "disaster",
+      ownerDeckDefinitionIds: createDeck(),
+      visibility: "public",
+      createdAt: expiresAt - 1,
+      expiresAt,
+    });
+
+    await expect(lobby.getPublicSummary()).resolves.toEqual({
+      available: false,
+    });
+    await expect(lobby.getView("player-1")).resolves.toMatchObject({
+      visible: true,
+      view: { status: "cancelled" },
     });
   });
 

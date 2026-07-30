@@ -1,7 +1,8 @@
 import { useQuery } from "@tanstack/react-query";
-import { getMatch, listDecks } from "../matchmaking-api.ts";
+import { getMatch, listDecks, listPublicMatches } from "../matchmaking-api.ts";
 
 export const savedDecksQueryKey = ["decks"] as const;
+export const publicMatchesQueryKey = ["matches", "public"] as const;
 
 export function matchLobbyQueryKey(matchId: string) {
   return ["matches", matchId] as const;
@@ -23,5 +24,14 @@ export function useMatchLobby(matchId: string) {
       const status = query.state.data?.status;
       return status === "started" || status === "cancelled" ? false : 2_000;
     },
+  });
+}
+
+export function usePublicMatchLobbies(enabled = true) {
+  return useQuery({
+    queryKey: publicMatchesQueryKey,
+    queryFn: listPublicMatches,
+    enabled,
+    refetchInterval: 5_000,
   });
 }

@@ -1,5 +1,5 @@
 import type { Faction } from "@disastar/game-engine/contracts";
-import { type ReactNode, useState } from "react";
+import { type ReactNode, useEffect, useRef, useState } from "react";
 import { Link, Navigate, useNavigate } from "react-router";
 import { AccountMenu } from "../account/account-menu.tsx";
 import { AuthStatus } from "../auth/auth-layout.tsx";
@@ -7,6 +7,7 @@ import { createRoomPath } from "./match-id.ts";
 import {
   acceptMatch,
   cancelMatch,
+  cancelMatchOnPageExit,
   createStarterDeck,
   getMatchmakingErrorMessage,
 } from "./matchmaking-api.ts";
@@ -28,6 +29,10 @@ export function MatchRoom({
   const lobby = useMatchLobby(matchId);
   const match = lobby.data;
   const isOwner = match?.ownerPlayerId === playerId;
+  useCancelMatchOnLeave({
+    enabled: isOwner && match?.status === "waiting",
+    matchId,
+  });
   const [error, setError] = useState<string | null>(null);
   const [isAccepting, setIsAccepting] = useState(false);
   const [isCancelling, setIsCancelling] = useState(false);
@@ -309,6 +314,44 @@ function createInvitationURL(matchId: string): string {
 
 function getOpposingFaction(faction: Faction): Faction {
   return faction === "disaster" ? "countermeasure" : "disaster";
+}
+
+function useCancelMatchOnLeave({
+  enabled,
+  matchId,
+}: {
+  enabled: boolean;
+  matchId: string;
+}) {
+  const enabledRef = useRef(enabled);
+  const cancellationSentRef = useRef(false);
+  const pendingCancellationRef = useRef<number | null>(null);
+  enabledRef.current = enabled;
+
+  useEffect(() => {
+    if (!enabled) {
+      return;
+    }
+    if (pendingCancellationRef.current !== null) {
+      window.clearTimeout(pendingCancellationRef.current);
+      pendingCancellationRef.current = null;
+    }
+
+    function cancelOnLeave() {
+      if (!enabledRef.current || cancellationSentRef.current) {
+        return;
+      }
+      cancellationSentRef.current = true;
+      cancelMatchOnPageExit(matchId);
+    }
+
+    window.addEventListener("pagehide", cancelOnLeave);
+    return () => {
+      window.removeEventListener("pagehide", cancelOnLeave);
+      // Strict Modeの検証用再実行では、直後のeffectがこの送信を取り消す。
+      pendingCancellationRef.current = window.setTimeout(cancelOnLeave, 0);
+    };
+  }, [enabled, matchId]);
 }
 
 const primaryButtonClassName =

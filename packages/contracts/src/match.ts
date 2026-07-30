@@ -9,6 +9,9 @@ export type { DeckId } from "./deck.js";
 
 export type MatchLobbyStatus = "waiting" | "starting" | "started" | "cancelled";
 
+/** 作成者以外が待機部屋を見つける方法。 */
+export type MatchVisibility = "invite" | "public";
+
 /** 参加者にだけ返す、招待式対戦待機部屋の公開状態。 */
 export type MatchLobbyView = {
   status: MatchLobbyStatus;
@@ -19,8 +22,31 @@ export type MatchLobbyView = {
   gameId: GameId | null;
 };
 
-export type CreateMatchRequest = { deckId: DeckId };
+export type CreateMatchRequest = {
+  deckId: DeckId;
+  /** 未指定時は従来どおり招待専用で作成する。 */
+  visibility?: MatchVisibility;
+};
+
+/** 入力を検証して既定値を補完した後の、作成処理向けリクエスト。 */
+export type ParsedCreateMatchRequest = {
+  deckId: DeckId;
+  visibility: MatchVisibility;
+};
 export type AcceptMatchRequest = { deckId: DeckId };
+
+/** 作成者の識別子を含まない、公開待機部屋一覧用のDTO。 */
+export type PublicMatchLobbySummary = {
+  matchId: string;
+  ownerFaction: Faction;
+  createdAt: number;
+  expiresAt: number;
+  isOwner: boolean;
+};
+
+export type ListPublicMatchesResponse = {
+  matches: PublicMatchLobbySummary[];
+};
 
 export type MatchRequestParseError = {
   code: "INVALID_MATCH_REQUEST";
@@ -34,8 +60,44 @@ export type ParseMatchRequestResult<T> =
 
 export function parseCreateMatchRequest(
   input: unknown,
-): ParseMatchRequestResult<CreateMatchRequest> {
-  return parseDeckRequest(input);
+): ParseMatchRequestResult<ParsedCreateMatchRequest> {
+  if (!isRecord(input)) {
+    return invalid(
+      "リクエスト本文はJSONオブジェクトでなければなりません。",
+      "",
+    );
+  }
+  const keys = Object.keys(input);
+  if (
+    keys.some((key) => key !== "deckId" && key !== "visibility") ||
+    !keys.includes("deckId")
+  ) {
+    return invalid(
+      "リクエスト本文にはdeckIdと任意のvisibilityだけを含めてください。",
+      "",
+    );
+  }
+  if (typeof input.deckId !== "string" || input.deckId.trim().length === 0) {
+    return invalid("deckIdは空でない文字列で指定してください。", "/deckId");
+  }
+  if (
+    input.visibility !== undefined &&
+    input.visibility !== "invite" &&
+    input.visibility !== "public"
+  ) {
+    return invalid(
+      "visibilityはinviteまたはpublicで指定してください。",
+      "/visibility",
+    );
+  }
+
+  return {
+    parsed: true,
+    request: {
+      deckId: input.deckId,
+      visibility: input.visibility ?? "invite",
+    },
+  };
 }
 
 export function parseAcceptMatchRequest(

@@ -23,11 +23,20 @@ const waitingMatch: MatchLobbyView = {
 };
 
 describe("対戦待機リクエストの検証", () => {
-  it("作成・参加リクエストではdeckIdだけを受け付ける", () => {
+  it("作成リクエストは公開範囲を受け付け、未指定時は招待専用にする", () => {
     expect(parseCreateMatchRequest({ deckId: "deck-1" })).toEqual({
       parsed: true,
-      request: { deckId: "deck-1" },
+      request: { deckId: "deck-1", visibility: "invite" },
     });
+    expect(
+      parseCreateMatchRequest({ deckId: "deck-1", visibility: "public" }),
+    ).toEqual({
+      parsed: true,
+      request: { deckId: "deck-1", visibility: "public" },
+    });
+    expect(
+      parseCreateMatchRequest({ deckId: "deck-1", visibility: "private" }),
+    ).toMatchObject({ parsed: false });
     expect(parseAcceptMatchRequest({ deckId: "deck-2" })).toEqual({
       parsed: true,
       request: { deckId: "deck-2" },
@@ -116,8 +125,115 @@ describe("対戦待機 HTTP API", () => {
         ownerPlayerId: "player-1",
         ownerFaction: "disaster",
         ownerDeckDefinitionIds: deckDefinitionIds,
+        visibility: "invite",
       },
     ]);
+  });
+
+  it("公開指定で作成した待機部屋を一覧インデックスへ登録する", async () => {
+    const published: Array<{
+      matchId: string;
+      ownerPlayerId: string;
+      ownerFaction: Faction;
+      createdAt: number;
+      expiresAt: number;
+    }> = [];
+    const api = createMatchApi({
+      authenticate: async () => "player-1",
+      resolveAuthorizedDeck: async () => authorizedDeck(),
+      createMatchLobby: async () => ({
+        created: true,
+        matchId: "match-public",
+        createdAt: 1_000,
+        expiresAt: 1_801_000,
+      }),
+      publicMatchLobbyIndex: {
+        publish: async (entry) => {
+          published.push(entry);
+        },
+        list: async () => [],
+        remove: async () => {},
+      },
+      now: () => 1_000,
+    });
+
+    const response = await request(api, "/", {
+      method: "POST",
+      body: JSON.stringify({ deckId: "deck-1", visibility: "public" }),
+    });
+
+    expect(response.status).toBe(201);
+    expect(published).toEqual([
+      {
+        matchId: "match-public",
+        ownerPlayerId: "player-1",
+        ownerFaction: "disaster",
+        createdAt: 1_000,
+        expiresAt: 1_801_000,
+      },
+    ]);
+  });
+
+  it("公開待機部屋を再検証して一覧へ返し、作成者名を公開しない", async () => {
+    const removed: string[] = [];
+    const api = createMatchApi({
+      authenticate: async () => "player-2",
+      resolveAuthorizedDeck: async () => authorizedDeck(),
+      getMatchLobby: (matchId) => ({
+        getView: async () => ({ visible: true as const, view: waitingMatch }),
+        getPublicSummary: async () =>
+          matchId === "match-available"
+            ? {
+                available: true as const,
+                summary: {
+                  ownerFaction: "disaster" as const,
+                  createdAt: 1_000,
+                  expiresAt: 1_801_000,
+                },
+              }
+            : { available: false as const },
+        accept: async () => ({ accepted: true as const, gameId: "game-1" }),
+        cancel: async () => ({ cancelled: true as const }),
+      }),
+      publicMatchLobbyIndex: {
+        publish: async () => {},
+        list: async () => [
+          {
+            matchId: "match-available",
+            ownerPlayerId: "player-1",
+            ownerFaction: "disaster",
+            createdAt: 1_000,
+            expiresAt: 1_801_000,
+          },
+          {
+            matchId: "match-stale",
+            ownerPlayerId: "player-3",
+            ownerFaction: "countermeasure",
+            createdAt: 500,
+            expiresAt: 1_800_500,
+          },
+        ],
+        remove: async (matchId) => {
+          removed.push(matchId);
+        },
+      },
+    });
+
+    const response = await request(api, "/");
+
+    expect(response.status).toBe(200);
+    expect(await response.json()).toEqual({
+      matches: [
+        {
+          matchId: "match-available",
+          ownerFaction: "disaster",
+          createdAt: 1_000,
+          expiresAt: 1_801_000,
+          isOwner: false,
+        },
+      ],
+    });
+    expect(removed).toEqual(["match-stale"]);
   });
 
   it("参加者だけが待機状態を取得できる", async () => {
@@ -148,6 +264,7 @@ describe("対戦待機 HTTP API", () => {
       faction: Faction;
       deckDefinitionIds: CardDefinitionId[];
     }> = [];
+    const removed: string[] = [];
     const api = createMatchApi({
       authenticate: async () => "player-2",
       resolveAuthorizedDeck: async (playerId, deckId) => {
@@ -168,6 +285,13 @@ describe("対戦待機 HTTP API", () => {
           cancel: async () => ({ cancelled: true as const }),
         };
       },
+      publicMatchLobbyIndex: {
+        publish: async () => {},
+        list: async () => [],
+        remove: async (matchId) => {
+          removed.push(matchId);
+        },
+      },
     });
 
     const response = await request(api, "/match-1/accept", {
@@ -187,6 +311,7 @@ describe("対戦待機 HTTP API", () => {
         deckDefinitionIds,
       },
     ]);
+    expect(removed).toEqual(["match-1"]);
   });
 
   it("ゲーム作成失敗時に内部初期化エラーをHTTPレスポンスへ公開しない", async () => {
@@ -246,6 +371,7 @@ describe("対戦待機 HTTP API", () => {
 
   it("取消は認証済み作成者として待機部屋へ中継する", async () => {
     const cancelledBy: string[] = [];
+    const removed: string[] = [];
     const api = createMatchApi({
       authenticate: async () => "player-1",
       resolveAuthorizedDeck: async () => authorizedDeck(),
@@ -257,6 +383,13 @@ describe("対戦待機 HTTP API", () => {
           return { cancelled: true as const };
         },
       }),
+      publicMatchLobbyIndex: {
+        publish: async () => {},
+        list: async () => [],
+        remove: async (matchId) => {
+          removed.push(matchId);
+        },
+      },
     });
 
     const response = await request(api, "/match-1/cancel", {
@@ -266,6 +399,7 @@ describe("対戦待機 HTTP API", () => {
     expect(response.status).toBe(200);
     expect(await response.json()).toEqual({ cancelled: true });
     expect(cancelledBy).toEqual(["player-1"]);
+    expect(removed).toEqual(["match-1"]);
   });
 });
 

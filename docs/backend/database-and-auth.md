@@ -10,6 +10,7 @@
 - `apps/backend/src/auth/create-auth.ts`: Google OAuth、匿名ゲスト、アカウント引き継ぎを含む Better Auth 設定
 - `apps/backend/src/auth/runtime-auth.ts`: リクエストごとの Better Auth 生成、セッション認証、ゲーム用PlayerIdの解決
 - `apps/backend/src/player-identity/`: Better Auth利用者とゲーム用PlayerIdの対応表を解決する処理
+- `apps/backend/src/match-lobby/public-match-lobby-index.ts`: 公開待機部屋を検索するD1インデックス
 - `apps/backend/src/db/migration.ts`: Better Auth CLI がスキーマを検査するための Drizzle
 - `apps/backend/auth.cli.ts`: Better Auth CLI 専用設定
 - `apps/backend/drizzle.config.ts`: Drizzle Kit 専用設定
@@ -87,9 +88,9 @@ Better Authインスタンスは、リクエスト中のD1 Bindingと最新の�
 2. Google Cloud Console で OAuth 2.0 の Web クライアントを作成し、各 `<origin>/api/auth/callback/google` を承認済みリダイレクト URI に追加する。
 3. 環境ごとの `BETTER_AUTH_URL` と `BETTER_AUTH_TRUSTED_ORIGINS` を Frontend 公開オリジンに設定する。
 4. 環境ごとの `BETTER_AUTH_SECRET`、`GOOGLE_CLIENT_ID`、`GOOGLE_CLIENT_SECRET` を Cloudflare の Secret として設定する。
-5. SQLマイグレーションをレビューし、対象環境へ適用する。`player_identity`を追加する変更では、既存データの更新や削除は行わない。
+5. SQLマイグレーションをレビューし、対象環境へ適用する。`player_identity`を追加する変更では、既存データの更新や削除は行わない。`public_match_lobby`は公開待機部屋の検索候補だけを保存し、対戦の正本にはしない。
 6. Backend を先にデプロイし、その後 Frontend をデプロイする。
-7. 管理下の Google アカウントでログイン、ログアウト、待機部屋への戻り先、対戦画面のセッション復元、アカウント削除を手動確認する。匿名ゲストでの部屋作成・参加、ゲストから未使用のGoogleアカウントへの引き継ぎ、既存のGoogleアカウントを選んだ場合にゲストセッションを維持したままログイン画面へ戻ることも確認する。
+7. 管理下の Google アカウントでログイン、ログアウト、待機部屋への戻り先、対戦画面のセッション復元、アカウント削除を手動確認する。公開部屋の作成・一覧表示・一覧からの参加、作成者の画面離脱による取消、30分後の参加拒否も確認する。匿名ゲストでの部屋作成・参加、ゲストから未使用のGoogleアカウントへの引き継ぎ、既存のGoogleアカウントを選んだ場合にゲストセッションを維持したままログイン画面へ戻ることも確認する。
 
 ## 既存 D1 の取り込み
 

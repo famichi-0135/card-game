@@ -7,8 +7,11 @@ import type {
 import type {
   AcceptMatchResponse,
   CreateMatchResponse,
+  ListPublicMatchesResponse,
   MatchApiErrorCode,
   MatchLobbyView,
+  MatchVisibility,
+  PublicMatchLobbySummary,
 } from "@disastar/contracts/match";
 import type { Faction } from "@disastar/game-engine/contracts";
 
@@ -42,15 +45,26 @@ export async function createStarterDeck(
   return response.deck;
 }
 
-export async function createMatch(deckId: string): Promise<string> {
+export async function createMatch(
+  deckId: string,
+  visibility: MatchVisibility = "invite",
+): Promise<string> {
   const response = await fetchMatchmakingApi<CreateMatchResponse>(
     "/api/matches",
     {
       method: "POST",
-      body: JSON.stringify({ deckId }),
+      body: JSON.stringify({ deckId, visibility }),
     },
   );
   return response.matchId;
+}
+
+export async function listPublicMatches(): Promise<
+  readonly PublicMatchLobbySummary[]
+> {
+  const response =
+    await fetchMatchmakingApi<ListPublicMatchesResponse>("/api/matches");
+  return response.matches;
 }
 
 export async function getMatch(matchId: string): Promise<MatchLobbyView> {
@@ -87,6 +101,18 @@ export async function cancelMatch(matchId: string): Promise<void> {
   if (!response.cancelled) {
     throw new MatchmakingApiError(409, "MATCH_NOT_CANCELLABLE");
   }
+}
+
+/** ページ離脱時に待機部屋を最善で取り消す。 */
+export function cancelMatchOnPageExit(matchId: string): void {
+  void fetch(`/api/matches/${encodeURIComponent(matchId)}/cancel`, {
+    method: "POST",
+    credentials: "include",
+    keepalive: true,
+    headers: { Accept: "application/json" },
+  }).catch(() => {
+    // ブラウザ終了時は送信できないことがある。サーバー側の30分期限が最終保証となる。
+  });
 }
 
 export function getMatchmakingErrorMessage(
