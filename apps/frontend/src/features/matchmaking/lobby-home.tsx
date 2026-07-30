@@ -8,6 +8,8 @@ import { authSessionQueryKey } from "../auth/auth-routes.tsx";
 import { AuthStatus } from "../auth/auth-layout.tsx";
 import { AccountMenu } from "../account/account-menu.tsx";
 import { RoomJoinForm } from "./components/room-join-form.tsx";
+import { PublicRoomList } from "./components/public-room-list.tsx";
+import { usePublicMatchLobbies } from "./hooks/use-matchmaking-data.ts";
 import { createRoomPath } from "./match-id.ts";
 import {
   createMatch,
@@ -110,15 +112,19 @@ function GuestLobby({ authError = false }: { authError?: boolean }) {
 
 function AuthenticatedLobby() {
   const navigate = useNavigate();
+  const publicLobbies = usePublicMatchLobbies();
   const [isCreatingMatch, setIsCreatingMatch] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  async function handleCreateMatch(faction: Faction) {
+  async function handleCreateMatch(
+    faction: Faction,
+    visibility: "invite" | "public",
+  ) {
     setError(null);
     setIsCreatingMatch(true);
     try {
       const deck = await createStarterDeck(faction);
-      const matchId = await createMatch(deck.id);
+      const matchId = await createMatch(deck.id, visibility);
       navigate(createRoomPath(matchId));
     } catch (requestError) {
       setError(
@@ -136,17 +142,34 @@ function AuthenticatedLobby() {
     <LobbyLayout accountSlot={<AccountMenu />} title="対戦準備">
       <section className="grid gap-4 border-b border-slate-300 pb-8">
         <div>
-          <h1 className="text-2xl font-semibold">招待対戦</h1>
+          <h1 className="text-2xl font-semibold">対戦部屋を作成</h1>
           <p className="mt-2 text-sm leading-6 text-slate-600">
-            ロールを選ぶと、対応する固定スターターデッキで招待部屋を作成します。
+            ロールを選び、招待 URL
+            のみで共有するか、部屋一覧へ公開するかを選択します。
           </p>
         </div>
         {error === null ? null : <AuthStatus tone="error">{error}</AuthStatus>}
         <RoleActions
           disabled={isCreatingMatch}
-          onSelect={(faction) => void handleCreateMatch(faction)}
+          onSelect={(faction, visibility) =>
+            void handleCreateMatch(faction, visibility)
+          }
         />
       </section>
+      <PublicRoomList
+        error={
+          publicLobbies.isError
+            ? getMatchmakingErrorMessage(
+                publicLobbies.error,
+                "公開部屋を取得できませんでした。更新してもう一度お試しください。",
+              )
+            : null
+        }
+        isLoading={publicLobbies.isPending}
+        matches={publicLobbies.data ?? []}
+        onRefresh={() => void publicLobbies.refetch()}
+        onSelect={(matchId) => navigate(createRoomPath(matchId))}
+      />
       <section
         className="grid max-w-xl gap-4 py-8"
         aria-labelledby="member-join-title"
@@ -178,30 +201,56 @@ function RoleActions({
   onSelect,
 }: {
   disabled: boolean;
-  onSelect: (faction: Faction) => void;
+  onSelect: (faction: Faction, visibility: "invite" | "public") => void;
 }) {
   return (
     <div className="grid max-w-xl gap-3">
       <p className="text-sm leading-6 text-slate-600">
         使用するロールを選んでください。カード構成はロールごとに固定です。
       </p>
-      <div className="flex flex-wrap gap-3">
-        <button
-          className="rounded border border-slate-800 bg-slate-900 px-4 py-2 text-sm font-medium text-white hover:bg-slate-700 disabled:cursor-not-allowed disabled:border-slate-300 disabled:bg-slate-100 disabled:text-slate-400 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-slate-900"
-          disabled={disabled}
-          onClick={() => onSelect("disaster")}
-          type="button"
-        >
-          災害側で部屋を作成
-        </button>
-        <button
-          className="rounded border border-slate-300 px-4 py-2 text-sm font-medium text-slate-800 hover:bg-slate-50 disabled:cursor-not-allowed disabled:border-slate-200 disabled:text-slate-400 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-slate-900"
-          disabled={disabled}
-          onClick={() => onSelect("countermeasure")}
-          type="button"
-        >
-          対策側で部屋を作成
-        </button>
+      <div className="grid gap-3 sm:grid-cols-2">
+        <div className="grid gap-2 rounded border border-slate-300 bg-white p-3">
+          <p className="text-sm font-medium text-slate-800">招待のみ</p>
+          <div className="flex flex-wrap gap-2">
+            <button
+              className="rounded border border-slate-800 bg-slate-900 px-3 py-2 text-sm font-medium text-white hover:bg-slate-700 disabled:cursor-not-allowed disabled:border-slate-300 disabled:bg-slate-100 disabled:text-slate-400 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-slate-900"
+              disabled={disabled}
+              onClick={() => onSelect("disaster", "invite")}
+              type="button"
+            >
+              災害側
+            </button>
+            <button
+              className="rounded border border-slate-300 px-3 py-2 text-sm font-medium text-slate-800 hover:bg-slate-50 disabled:cursor-not-allowed disabled:border-slate-200 disabled:text-slate-400 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-slate-900"
+              disabled={disabled}
+              onClick={() => onSelect("countermeasure", "invite")}
+              type="button"
+            >
+              対策側
+            </button>
+          </div>
+        </div>
+        <div className="grid gap-2 rounded border border-slate-300 bg-white p-3">
+          <p className="text-sm font-medium text-slate-800">一覧に公開</p>
+          <div className="flex flex-wrap gap-2">
+            <button
+              className="rounded border border-slate-800 bg-slate-900 px-3 py-2 text-sm font-medium text-white hover:bg-slate-700 disabled:cursor-not-allowed disabled:border-slate-300 disabled:bg-slate-100 disabled:text-slate-400 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-slate-900"
+              disabled={disabled}
+              onClick={() => onSelect("disaster", "public")}
+              type="button"
+            >
+              災害側
+            </button>
+            <button
+              className="rounded border border-slate-300 px-3 py-2 text-sm font-medium text-slate-800 hover:bg-slate-50 disabled:cursor-not-allowed disabled:border-slate-200 disabled:text-slate-400 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-slate-900"
+              disabled={disabled}
+              onClick={() => onSelect("countermeasure", "public")}
+              type="button"
+            >
+              対策側
+            </button>
+          </div>
+        </div>
       </div>
     </div>
   );

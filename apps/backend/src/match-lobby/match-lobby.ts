@@ -1,5 +1,8 @@
 import { DurableObject } from "cloudflare:workers";
-import type { MatchLobbyView as MatchLobbyViewDto } from "@disastar/contracts/match";
+import type {
+  MatchLobbyView as MatchLobbyViewDto,
+  MatchVisibility,
+} from "@disastar/contracts/match";
 import type {
   CardDefinitionId,
   Faction,
@@ -12,12 +15,16 @@ import { initializeGameSessionInEnvironment } from "../game-creation/create-game
 
 const LOBBY_STORAGE_KEY = "match-lobby-v2-factions";
 
+export const MATCH_LOBBY_WAIT_DURATION_MS = 30 * 60 * 1_000;
+
 type WaitingMatch = {
   status: "waiting";
   ownerPlayerId: PlayerId;
   ownerFaction: Faction;
   ownerDeckDefinitionIds: CardDefinitionId[];
   createdAt: number;
+  expiresAt: number;
+  visibility: MatchVisibility;
 };
 
 type StartingMatch = {
@@ -29,6 +36,8 @@ type StartingMatch = {
   opponentFaction: Faction;
   opponentDeckDefinitionIds: CardDefinitionId[];
   createdAt: number;
+  expiresAt: number;
+  visibility: MatchVisibility;
   gameInput: InitializeGameInput;
 };
 
@@ -54,6 +63,21 @@ type MatchLobbyState =
   | StartingMatch
   | StartedMatch
   | CancelledMatch;
+
+type LegacyWaitingMatch = Omit<WaitingMatch, "expiresAt" | "visibility"> & {
+  expiresAt?: number;
+  visibility?: MatchVisibility;
+};
+
+type LegacyStartingMatch = Omit<StartingMatch, "expiresAt" | "visibility"> & {
+  expiresAt?: number;
+  visibility?: MatchVisibility;
+};
+
+type StoredMatchLobbyState =
+  | MatchLobbyState
+  | LegacyWaitingMatch
+  | LegacyStartingMatch;
 
 export type MatchLobbyView = MatchLobbyViewDto;
 
@@ -101,6 +125,8 @@ type MatchLobbyInitializer = {
     ownerFaction: Faction;
     ownerDeckDefinitionIds: CardDefinitionId[];
     createdAt: number;
+    expiresAt: number;
+    visibility: MatchVisibility;
   }): Promise<MatchLobbyInitializationResult>;
 };
 
@@ -108,6 +134,7 @@ export type CreateMatchLobbyInput = {
   ownerPlayerId: PlayerId;
   ownerFaction: Faction;
   ownerDeckDefinitionIds: CardDefinitionId[];
+  visibility?: MatchVisibility;
 };
 
 export type CreateMatchLobbyResult =
@@ -115,8 +142,8 @@ export type CreateMatchLobbyResult =
   | { created: false; error: { code: "MATCH_LOBBY_INITIALIZATION_FAILED" } };
 
 /**
- * Workerから招待式の待機部屋を作成する。
- * Durable Objectの一意IDをそのまま招待識別子にするため、グローバルな待機部屋索引は持たない。
+ * Workerから待機部屋を作成する。
+ * Durable Objectの一意IDを招待識別子にし、公開部屋だけはD1検索インデックスへ別途登録する。
  */
 export async function createMatchLobbyInEnvironment(
   input: CreateMatchLobbyInput,
@@ -124,13 +151,16 @@ export async function createMatchLobbyInEnvironment(
   now: () => number = Date.now,
 ): Promise<CreateMatchLobbyResult> {
   const id = environment.MATCH_LOBBY.newUniqueId();
+  const createdAt = now();
   const initialized = await (
     environment.MATCH_LOBBY.get(id) as unknown as MatchLobbyInitializer
   ).initialize({
     ownerPlayerId: input.ownerPlayerId,
     ownerFaction: input.ownerFaction,
     ownerDeckDefinitionIds: input.ownerDeckDefinitionIds,
-    createdAt: now(),
+    visibility: input.visibility ?? "invite",
+    createdAt,
+    expiresAt: createdAt + MATCH_LOBBY_WAIT_DURATION_MS,
   });
 
   return initialized.initialized
@@ -152,9 +182,16 @@ export class MatchLobby extends DurableObject<CloudflareBindings> {
   constructor(ctx: DurableObjectState, env: CloudflareBindings) {
     super(ctx, env);
     this.loadMatch = this.ctx.blockConcurrencyWhile(async () => {
-      this.match =
-        (await this.ctx.storage.get<MatchLobbyState>(LOBBY_STORAGE_KEY)) ??
-        null;
+      const stored =
+        await this.ctx.storage.get<StoredMatchLobbyState>(LOBBY_STORAGE_KEY);
+      const match = migrateStoredMatch(stored, Date.now());
+      if (match !== null && match !== stored) {
+        await this.persist(match);
+        if (match.status === "waiting") {
+          await this.ctx.storage.setAlarm(match.expiresAt);
+        }
+      }
+      this.match = match;
     });
   }
 
@@ -163,6 +200,8 @@ export class MatchLobby extends DurableObject<CloudflareBindings> {
     ownerFaction: Faction;
     ownerDeckDefinitionIds: CardDefinitionId[];
     createdAt: number;
+    expiresAt?: number;
+    visibility?: MatchVisibility;
   }): Promise<MatchLobbyInitializationResult> {
     await this.loadMatch;
     if (this.match !== null) {
@@ -174,6 +213,14 @@ export class MatchLobby extends DurableObject<CloudflareBindings> {
     assertNonEmptyIdentifier(input.ownerPlayerId, "作成者のプレイヤーID");
     assertFaction(input.ownerFaction);
     assertTimestamp(input.createdAt);
+    const expiresAt =
+      input.expiresAt ?? Date.now() + MATCH_LOBBY_WAIT_DURATION_MS;
+    const visibility = input.visibility ?? "invite";
+    assertTimestamp(expiresAt);
+    if (expiresAt <= input.createdAt) {
+      throw new RangeError("待機期限は作成時刻より後で指定してください。");
+    }
+    assertVisibility(visibility);
 
     const match: WaitingMatch = {
       status: "waiting",
@@ -181,8 +228,11 @@ export class MatchLobby extends DurableObject<CloudflareBindings> {
       ownerFaction: input.ownerFaction,
       ownerDeckDefinitionIds: [...input.ownerDeckDefinitionIds],
       createdAt: input.createdAt,
+      expiresAt,
+      visibility,
     };
     await this.persist(match);
+    await this.ctx.storage.setAlarm(expiresAt);
     this.match = match;
     return { initialized: true };
   }
@@ -195,6 +245,36 @@ export class MatchLobby extends DurableObject<CloudflareBindings> {
     return match.status === "waiting" || isParticipant(match, viewerPlayerId)
       ? { visible: true, view: toMatchLobbyView(match) }
       : { visible: false, error: { code: "MATCH_ACCESS_FORBIDDEN" } };
+  }
+
+  async getPublicSummary(): Promise<
+    | {
+        available: true;
+        summary: {
+          ownerFaction: Faction;
+          createdAt: number;
+          expiresAt: number;
+        };
+      }
+    | { available: false }
+  > {
+    const match = await this.getMatch();
+    if (
+      match === null ||
+      match.status !== "waiting" ||
+      match.visibility !== "public"
+    ) {
+      return { available: false };
+    }
+
+    return {
+      available: true,
+      summary: {
+        ownerFaction: match.ownerFaction,
+        createdAt: match.createdAt,
+        expiresAt: match.expiresAt,
+      },
+    };
   }
 
   async accept(input: {
@@ -246,6 +326,8 @@ export class MatchLobby extends DurableObject<CloudflareBindings> {
       opponentFaction: input.faction,
       opponentDeckDefinitionIds: [...input.deckDefinitionIds],
       createdAt: match.createdAt,
+      expiresAt: match.expiresAt,
+      visibility: match.visibility,
       gameInput: {
         gameId: `game-${crypto.randomUUID()}`,
         randomSeed: crypto.randomUUID(),
@@ -293,8 +375,13 @@ export class MatchLobby extends DurableObject<CloudflareBindings> {
       createdAt: match.createdAt,
     };
     await this.persist(cancelled);
+    await this.ctx.storage.deleteAlarm();
     this.match = cancelled;
     return { cancelled: true };
+  }
+
+  async alarm(): Promise<void> {
+    await this.getMatch();
   }
 
   private async completeStart(
@@ -311,6 +398,8 @@ export class MatchLobby extends DurableObject<CloudflareBindings> {
         ownerFaction: match.ownerFaction,
         ownerDeckDefinitionIds: match.ownerDeckDefinitionIds,
         createdAt: match.createdAt,
+        expiresAt: match.expiresAt,
+        visibility: match.visibility,
       };
       await this.persist(waiting);
       this.match = waiting;
@@ -333,12 +422,28 @@ export class MatchLobby extends DurableObject<CloudflareBindings> {
       createdAt: match.createdAt,
     };
     await this.persist(started);
+    await this.ctx.storage.deleteAlarm();
     this.match = started;
     return { accepted: true, gameId: started.gameId };
   }
 
   private async getMatch(): Promise<MatchLobbyState | null> {
     await this.loadMatch;
+    if (
+      this.match !== null &&
+      this.match.status === "waiting" &&
+      Date.now() >= this.match.expiresAt
+    ) {
+      const cancelled: CancelledMatch = {
+        status: "cancelled",
+        ownerPlayerId: this.match.ownerPlayerId,
+        ownerFaction: this.match.ownerFaction,
+        createdAt: this.match.createdAt,
+      };
+      await this.persist(cancelled);
+      await this.ctx.storage.deleteAlarm();
+      this.match = cancelled;
+    }
     return this.match;
   }
 
@@ -406,4 +511,40 @@ function assertFaction(value: Faction): void {
       "陣営はdisasterまたはcountermeasureで指定してください。",
     );
   }
+}
+
+function assertVisibility(value: MatchVisibility): void {
+  if (value !== "invite" && value !== "public") {
+    throw new RangeError("公開範囲はinviteまたはpublicで指定してください。");
+  }
+}
+
+function migrateStoredMatch(
+  stored: StoredMatchLobbyState | undefined,
+  now: number,
+): MatchLobbyState | null {
+  if (stored === undefined) {
+    return null;
+  }
+  if (stored.status === "waiting" || stored.status === "starting") {
+    const expiresAt = stored.expiresAt;
+    const visibility = stored.visibility;
+    if (
+      !Number.isSafeInteger(expiresAt) ||
+      expiresAt === undefined ||
+      (visibility !== "invite" && visibility !== "public")
+    ) {
+      return {
+        ...stored,
+        expiresAt: now + MATCH_LOBBY_WAIT_DURATION_MS,
+        visibility: "invite",
+      };
+    }
+    return {
+      ...stored,
+      expiresAt,
+      visibility,
+    };
+  }
+  return stored;
 }
