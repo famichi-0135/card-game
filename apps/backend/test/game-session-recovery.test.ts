@@ -1,4 +1,9 @@
-import { env, evictDurableObject } from "cloudflare:test";
+import {
+  env,
+  evictDurableObject,
+  runDurableObjectAlarm,
+  runInDurableObject,
+} from "cloudflare:test";
 import { describe, expect, it } from "vitest";
 import type { AuthenticatedGameCommand } from "@disastar/contracts/game";
 import type {
@@ -112,6 +117,53 @@ describe("GameSession の並行実行と状態復元", () => {
       phase: "secondPlayerPlacement",
       stateVersion: initial.view.stateVersion + 1,
     });
+  });
+
+  it("期限ちょうどの通常操作とAlarmが競合しても、直列化された結果だけを確定する", async () => {
+    const gameId = "game-session-deadline-race";
+    const session = getGameSession(gameId);
+    await initialize(session, gameId);
+
+    const initial = await requireSnapshot(session, "player-1");
+    const playerId = initial.view.firstPlayerId;
+    const phaseDeadlineAt = await setPhaseDeadlineToNow(session);
+    const command = createFinishPlacementCommand({
+      gameId,
+      playerId,
+      phaseSequence: initial.view.phaseSequence,
+      clientStateVersion: initial.view.stateVersion,
+      commandId: "finish-placement-at-deadline",
+    });
+
+    const [submitted, alarmRan] = await Promise.all([
+      session.submit({
+        ...createAuthenticatedCommand(playerId, command),
+        receivedAt: phaseDeadlineAt,
+      }),
+      runDurableObjectAlarm(session as unknown as DurableObjectStub),
+    ]);
+
+    expect(alarmRan).toBe(true);
+    expect(submitted.submitted).toBe(true);
+    if (!submitted.submitted) {
+      throw new Error("通常操作の送信結果を取得できませんでした。");
+    }
+
+    const after = await requireSnapshot(session, playerId);
+    if (submitted.response.accepted) {
+      expect(after.view).toMatchObject({
+        status: "active",
+        phase: "secondPlayerPlacement",
+      });
+    } else {
+      expect(submitted.response.error.code).toBe("GAME_NOT_ACTIVE");
+      expect(after.view.status).toBe("finished");
+    }
+    expect(after.latestEventSequence).toBe(after.events.at(-1)?.sequence);
+    expect(new Set(after.events.map((event) => event.sequence)).size).toBe(
+      after.events.length,
+    );
+    expect(after.view.stateVersion).toBe(initial.view.stateVersion + 1);
   });
 
   it("eviction後も受理・拒否結果、イベント連番、固定済みカタログを復元する", async () => {
@@ -276,6 +328,26 @@ function createAuthenticatedCommand(
     receivedAt: Date.now(),
     command,
   };
+}
+
+async function setPhaseDeadlineToNow(session: GameSessionRpc): Promise<number> {
+  return runInDurableObject(
+    session as unknown as DurableObjectStub,
+    async (instance, state) => {
+      const internals = instance as unknown as {
+        session: { state: { phaseDeadlineAt: number | null } } | null;
+      };
+      if (internals.session === null) {
+        throw new Error("初期化済みゲームセッションが見つかりません。");
+      }
+
+      const phaseDeadlineAt = Date.now();
+      internals.session.state.phaseDeadlineAt = phaseDeadlineAt;
+      await state.storage.put("game-session-v2-factions", internals.session);
+      await state.storage.setAlarm(phaseDeadlineAt + 60_000);
+      return phaseDeadlineAt;
+    },
+  );
 }
 
 function createFinishPlacementCommand({
