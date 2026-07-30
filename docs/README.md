@@ -13,6 +13,10 @@
 - [Durable Object 対戦ルーム](./backend/durable-object-room.md): 対戦状態・期限・公開イベントの責務。
 - [対戦待機・開始の設計](./backend/matchmaking.md): 対戦部屋、デッキ選択、開始処理の責務。
 
+## Testing
+
+- [対戦ゲームのテスト自動化計画](./testing/test-automation-plan.md): 同時操作、通信障害、状態復元、情報秘匿を段階的に検証する計画。
+
 ## Environment
 
 - [開発環境構築ガイド](./environment/development-environment.md): 必要なツール、初回セットアップ、ローカル起動、D1・認証・Cloudflare の設定手順。
