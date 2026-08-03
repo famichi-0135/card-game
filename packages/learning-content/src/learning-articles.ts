@@ -1,6 +1,7 @@
 import type { LearningArticle } from "./article-types.js";
+import { cardLearningArticles } from "./card-learning-articles.js";
 
-export const learningArticles: readonly LearningArticle[] = Object.freeze([
+const baseLearningArticles: readonly LearningArticle[] = Object.freeze([
   {
     id: "weather-information",
     slug: "weather-information",
@@ -100,4 +101,9 @@ export const learningArticles: readonly LearningArticle[] = Object.freeze([
 
 このサイトの記事は学習用の情報です。災害時は、過去に保存した情報ではなく、気象庁、自治体、報道機関などが発信する最新の公式情報を確認してください。`,
   },
+]);
+
+export const learningArticles: readonly LearningArticle[] = Object.freeze([
+  ...baseLearningArticles,
+  ...cardLearningArticles,
 ]);

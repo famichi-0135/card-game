@@ -13,4 +13,19 @@ describe("学習記事インデックス", () => {
       }
     }
   });
+
+  it("現行カードカタログのすべてのカード定義に公開記事が紐づく", () => {
+    const relatedCardDefinitionIds = new Set(
+      learningArticles
+        .filter((article) => article.status === "published")
+        .flatMap((article) => article.relatedCardDefinitionIds),
+    );
+    const cardDefinitionIdsWithoutArticle = Object.keys(
+      gameEngineContext.cardCatalog.definitions,
+    ).filter(
+      (cardDefinitionId) => !relatedCardDefinitionIds.has(cardDefinitionId),
+    );
+
+    expect(cardDefinitionIdsWithoutArticle).toEqual([]);
+  });
 });
