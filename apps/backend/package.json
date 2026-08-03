@@ -3,6 +3,7 @@
   "type": "module",
   "scripts": {
     "dev": "node scripts/setup-local-dev.mjs && wrangler d1 migrations apply DB --local && wrangler dev",
+    "dev:e2e": "node scripts/start-e2e.mjs",
     "build": "wrangler deploy --dry-run",
     "lint": "eslint . --max-warnings 0",
     "check-types": "tsc --noEmit --pretty false && tsc --project test/tsconfig.json --pretty false",

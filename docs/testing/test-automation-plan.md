@@ -53,12 +53,14 @@
 
 ### P3: ブラウザE2E
 
-Playwright は、P0からP2の高速な単体・Workers統合試験を安定させてから導入する。導入時は次を前提にする。
+Playwright は、P0からP2の高速な単体・Workers統合試験を安定させてから導入する。
 
-- フロントエンドとバックエンドの起動コマンド、ポート、API接続先、テストDBを専用構成で固定する。
-- 認証は、本番Bindingに存在しないローカルE2E専用の境界を利用する。実際の Better Auth セッション形式を経由し、本番D1・staging D1を使わない。
-- 二つの独立した `BrowserContext` で、招待、参加、配置、サポート、再接続、勝敗確定を検証する。
-- フィクスチャ盤面は表示・D&D・アクセシビリティの高速試験にだけ使い、重要なゲームルールと認可は完全統合E2Eで確認する。
+- [x] `pnpm run test:e2e` は、バックエンドを `127.0.0.1:8787`、フロントエンドを `127.0.0.1:4173` で起動する。D1とDurable Objectの状態は `apps/backend/.wrangler/e2e` に限定し、各実行の開始時に初期化する。
+- [x] 認証はE2E起動時に生成するローカル専用環境値と匿名ログインを使い、実際の Better Auth セッション形式を経由する。本番・staging D1やBindingは使わない。
+- [x] 二つの独立した `BrowserContext` で、招待、参加、認証済みHTTPコマンドによる配置・サポート、WebSocketの切断・再接続、勝敗確定を検証する。最終結果はHTTPスナップショットを正本として確認する。
+- [x] フィクスチャ盤面は表示・D&D・アクセシビリティの高速試験にだけ使い、重要なゲームルールと認可は完全統合E2Eで確認する。Playwright では `e2e/game-board-dnd.spec.ts` が手札から攻撃グループへの dnd-kit ドラッグ配置を確認する。
+
+GitHub Actions の CI では、単体・統合試験とは分離した `E2E` ジョブで `pnpm run test:e2e` を実行する。ジョブ開始時に Chromium と必要な OS 依存パッケージを `pnpm exec playwright install --with-deps chromium` で準備し、ローカル専用の D1・Durable Object 環境だけを使用する。
 
 ## テスト設計の原則
 
@@ -76,6 +78,5 @@ pnpm --filter @disastar/game-engine run check-types
 pnpm --filter @disastar/backend run check-types
 pnpm --filter @disastar/game-engine run lint
 pnpm --filter @disastar/backend run lint
+pnpm run test:e2e
 ```
-
-P3の導入後に、別途 `pnpm run test:e2e` を追加する。

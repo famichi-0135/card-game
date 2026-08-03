@@ -5,11 +5,13 @@
     "dev": "turbo run dev",
     "lint": "turbo run lint",
     "test": "turbo run test",
+    "test:e2e": "playwright test",
     "format": "prettier --write \"**/*.{ts,tsx,js,mjs,json,jsonc,md,yaml,yml}\"",
     "format:check": "prettier --check \"**/*.{ts,tsx,js,mjs,json,jsonc,md,yaml,yml}\"",
     "check-types": "turbo run check-types"
   },
   "devDependencies": {
+    "@playwright/test": "^1.62.0",
     "prettier": "^3.7.4",
     "turbo": "^2.0.0"
   },
