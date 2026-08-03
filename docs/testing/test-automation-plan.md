@@ -60,6 +60,8 @@ Playwright は、P0からP2の高速な単体・Workers統合試験を安定さ�
 - [x] 二つの独立した `BrowserContext` で、招待、参加、認証済みHTTPコマンドによる配置・サポート、WebSocketの切断・再接続、勝敗確定を検証する。最終結果はHTTPスナップショットを正本として確認する。
 - [x] フィクスチャ盤面は表示・D&D・アクセシビリティの高速試験にだけ使い、重要なゲームルールと認可は完全統合E2Eで確認する。Playwright では `e2e/game-board-dnd.spec.ts` が手札から攻撃グループへの dnd-kit ドラッグ配置を確認する。
 
+GitHub Actions の CI では、単体・統合試験とは分離した `E2E` ジョブで `pnpm run test:e2e` を実行する。ジョブ開始時に Chromium と必要な OS 依存パッケージを `pnpm exec playwright install --with-deps chromium` で準備し、ローカル専用の D1・Durable Object 環境だけを使用する。
+
 ## テスト設計の原則
 
 - Durable Object の Alarm は `runDurableObjectAlarm()` で同期実行し、実時間待機をテストに入れない。
