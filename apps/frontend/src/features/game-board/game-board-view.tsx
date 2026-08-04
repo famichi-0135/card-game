@@ -6,10 +6,11 @@ import type {
   VisibleAttackGroup,
 } from "@disastar/game-engine";
 import type { GameLearningContextResponse } from "@disastar/contracts/game";
-import { type ReactNode, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { CardField } from "./components/card-field.tsx";
 import { type GameConnectionState } from "./components/connection-status.tsx";
 import { DesktopOnlyNotice } from "./components/desktop-only-notice.tsx";
+import { ForfeitGameButton } from "./components/forfeit-game-button.tsx";
 import { GameProgressBar } from "./components/game-progress-bar.tsx";
 import { GameResultDialog } from "./components/game-result-dialog.tsx";
 import { PhaseEndDialog } from "./components/phase-end-dialog.tsx";
@@ -24,7 +25,6 @@ import type { PublicEventFeedItem } from "./hooks/use-public-event-feed.ts";
 import { getPhasePresentation } from "./phase-presentation.ts";
 
 export function GameBoardView({
-  accountAction,
   availableActions,
   catalog,
   commandError,
@@ -36,6 +36,7 @@ export function GameBoardView({
   onCancelSelectedCard,
   onConfirmSupportPlay,
   onFinishPhase,
+  onForfeit,
   onSelectCard,
   onSelectCardTarget,
   opponentOnline,
@@ -46,7 +47,6 @@ export function GameBoardView({
   selectedCardInstanceId,
   view,
 }: {
-  accountAction?: ReactNode;
   availableActions: AvailableGameActions;
   catalog: PublicCardCatalog;
   commandError: string | null;
@@ -62,6 +62,7 @@ export function GameBoardView({
   onCancelSelectedCard: () => void;
   onConfirmSupportPlay: (effectInputs: EffectInput[]) => void;
   onFinishPhase: () => void;
+  onForfeit?: () => void;
   onSelectCard?: (cardInstanceId: string) => void;
   onSelectCardTarget?: (target: GameBoardCardTarget) => boolean;
   opponentOnline: boolean;
@@ -128,7 +129,6 @@ export function GameBoardView({
       <main className="h-dvh min-w-[1180px] overflow-hidden bg-slate-100 p-4 max-[1179px]:hidden max-[719px]:hidden">
         <div className="mx-auto grid h-full min-h-0 max-w-[1600px] grid-rows-[auto_minmax(0,1fr)_auto] gap-2">
           <GameProgressBar
-            accountAction={accountAction}
             canFinishPhase={canFinishPhase}
             canResynchronize={
               !commandPending &&
@@ -139,6 +139,14 @@ export function GameBoardView({
             connectionState={connectionState}
             finishActionLabel={finishActionLabel}
             gameId={view.gameId}
+            gameAction={
+              onForfeit === undefined ? undefined : (
+                <ForfeitGameButton
+                  disabled={commandPending || !isInteractive}
+                  onForfeit={onForfeit}
+                />
+              )
+            }
             onFinishPhase={() => setIsPhaseEndDialogOpen(true)}
             onResynchronize={onResynchronize}
             onRetryCommand={onRetryCommand}

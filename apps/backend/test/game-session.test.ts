@@ -378,6 +378,68 @@ describe("GameSession Durable Object", () => {
     );
   });
 
+  it("対戦中止を永続化し、送信者を敗北として終了する", async () => {
+    const gameId = "game-session-forfeit";
+    const stub = getGameSession(gameId);
+    await stub.initialize(createInitializeInput(gameId));
+
+    const initial = await stub.getSnapshot("player-1", 0);
+    if (!initial.found) {
+      throw new Error("初期スナップショットを取得できませんでした。");
+    }
+    const forfeitingPlayerId = initial.snapshot.view.secondPlayerId;
+    const forfeitingSnapshot = await stub.getSnapshot(forfeitingPlayerId, 0);
+    if (!forfeitingSnapshot.found) {
+      throw new Error(
+        "対戦中止するプレイヤーのスナップショットを取得できませんでした。",
+      );
+    }
+    const view = forfeitingSnapshot.snapshot.view;
+    const result = await stub.submit({
+      authenticatedPlayerId: forfeitingPlayerId,
+      receivedAt: (view.phaseDeadlineAt ?? Date.now()) + 1,
+      command: {
+        type: "FORFEIT_GAME",
+        commandId: "forfeit-game",
+        gameId,
+        playerId: forfeitingPlayerId,
+        phaseSequence: Math.max(0, view.phaseSequence - 1),
+        clientStateVersion: view.stateVersion + 1,
+        issuedAt: 0,
+      },
+    });
+
+    expect(result).toMatchObject({
+      submitted: true,
+      response: {
+        accepted: true,
+        view: {
+          status: "finished",
+          winner: {
+            type: "player",
+            playerId: view.opponent.playerId,
+            reason: "forfeit",
+          },
+        },
+      },
+    });
+
+    const opponentSnapshot = await stub.getSnapshot(view.opponent.playerId, 0);
+    expect(opponentSnapshot).toMatchObject({
+      found: true,
+      snapshot: {
+        view: {
+          status: "finished",
+          winner: {
+            type: "player",
+            playerId: view.opponent.playerId,
+            reason: "forfeit",
+          },
+        },
+      },
+    });
+  });
+
   it("別プレイヤーが同じcommandIdを再利用しても保存済み結果を返さない", async () => {
     const gameId = "game-session-command-id-owner";
     const stub = getGameSession(gameId);

@@ -114,6 +114,7 @@ const gameCommandSchema = z.discriminatedUnion("type", [
   z
     .object({ ...baseCommandFields, type: z.literal("FINISH_SUPPORT") })
     .strict(),
+  z.object({ ...baseCommandFields, type: z.literal("FORFEIT_GAME") }).strict(),
 ]);
 
 export function parseGameCommand(input: unknown): ParseGameCommandResult {

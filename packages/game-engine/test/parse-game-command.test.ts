@@ -55,6 +55,7 @@ describe("ゲームコマンドの実行時検証", () => {
         ],
       },
       { ...base, type: "FINISH_SUPPORT" },
+      { ...base, type: "FORFEIT_GAME" },
     ];
 
     for (const command of commands) {

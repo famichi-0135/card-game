@@ -15,7 +15,7 @@ import {
   FIXTURE_GAME_ID,
   createGameBoardFixture,
 } from "../features/game-board/fixtures/game-board-fixture.ts";
-import { LoginRoute, LogoutButton } from "../features/auth/auth-routes.tsx";
+import { LoginRoute } from "../features/auth/auth-routes.tsx";
 import {
   LearnArticleRoute,
   LearnIndexRoute,
@@ -144,17 +144,7 @@ function AuthenticatedGameRoute({ gameId }: { gameId: string }) {
     return <Navigate replace to={createAuthPath("/login", returnTo)} />;
   }
 
-  return (
-    <GameBoard
-      accountAction={
-        <LogoutButton
-          className="shrink-0 rounded border border-slate-300 px-3 py-2 text-sm hover:bg-slate-50 disabled:cursor-not-allowed disabled:border-slate-200 disabled:text-slate-400 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-slate-900"
-          confirmBeforeLogout
-        />
-      }
-      gameId={gameId}
-    />
-  );
+  return <GameBoard gameId={gameId} />;
 }
 
 function AuthenticatedMyPageRoute() {

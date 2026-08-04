@@ -414,6 +414,50 @@ describe("効果なしのゲーム進行", () => {
     });
   });
 
+  it("対戦中止は手番外・期限切れ・古い表示状態でも送信者の敗北で終了する", () => {
+    const context = createTestContext();
+    const state = initializeForProgression(context);
+    const forfeitingPlayerId = state.secondPlayerId;
+    const result = executeCommand(
+      state,
+      {
+        command: {
+          type: "FORFEIT_GAME",
+          commandId: "forfeit-game",
+          gameId: state.gameId,
+          playerId: forfeitingPlayerId,
+          phaseSequence: state.phaseSequence - 1,
+          clientStateVersion: state.stateVersion + 1,
+          issuedAt: 0,
+        },
+        receivedAt: (state.phaseDeadlineAt ?? 0) + 1,
+      },
+      context,
+      createDependencies(),
+    );
+
+    expect(result).toMatchObject({
+      accepted: true,
+      state: {
+        status: "finished",
+        phase: "finished",
+        phaseDeadlineAt: null,
+        winner: {
+          type: "player",
+          playerId: state.firstPlayerId,
+          reason: "forfeit",
+        },
+        stateVersion: state.stateVersion + 1,
+      },
+    });
+    if (result.accepted) {
+      expect(result.events.map((entry) => entry.event.type)).toEqual([
+        "PHASE_CHANGED",
+        "GAME_FINISHED",
+      ]);
+    }
+  });
+
   it("同じ固定デッキとseedから、効果なしで山札切れまで同じ対戦結果を再現する", () => {
     const first = runMatchToEnd();
     const second = runMatchToEnd();
@@ -592,7 +636,8 @@ type CommandInput =
     }
   | { type: "DISCARD_HAND_CARD"; cardInstanceId: string }
   | { type: "FINISH_PLACEMENT" }
-  | { type: "FINISH_SUPPORT" };
+  | { type: "FINISH_SUPPORT" }
+  | { type: "FORFEIT_GAME" };
 
 function createCommand(
   state: GameState,

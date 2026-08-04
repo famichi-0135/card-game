@@ -950,6 +950,8 @@ export type BaseGameCommand = {
 
 制限時間判定には、バックエンドがコマンドを受信したサーバー時刻を使用する。クライアントから`receivedAt`を受け取ってはならない。
 
+`FORFEIT_GAME`は、進行中の参加者が自分の敗北でゲームを終了するための明示的なコマンドである。このコマンドだけは`phaseSequence`、`clientStateVersion`、フェーズ期限の一致を要求しない。`gameId`、参加者、進行中状態、`commandId`の冪等性は通常どおり検証する。
+
 ```ts
 export type ReceivedCommandEnvelope = {
   command: GameCommand | SystemGameCommand;
@@ -959,7 +961,7 @@ export type ReceivedCommandEnvelope = {
 
 バックエンドは認証済みプレイヤーと`command.playerId`が一致することを確認してからエンジンへ渡す。
 
-プレイヤーコマンドでは、個別条件より前に次を検証する。
+`FORFEIT_GAME`以外のプレイヤーコマンドでは、個別条件より前に次を検証する。
 
 1. 同じ`commandId`の処理結果が保存済みなら、その結果を再送する
 2. `gameId`が現在状態と一致する
@@ -982,8 +984,19 @@ export type GameCommand =
   | DiscardHandCardCommand
   | FinishPlacementCommand
   | PlaySupportCardCommand
-  | FinishSupportCommand;
+  | FinishSupportCommand
+  | ForfeitGameCommand;
 ```
+
+### 23.1 対戦中止
+
+```ts
+export type ForfeitGameCommand = BaseGameCommand & {
+  type: "FORFEIT_GAME";
+};
+```
+
+エンジンは送信者と反対側のプレイヤーを`{ type: "player", reason: "forfeit" }`の勝者として設定し、通常のゲーム終了状態とイベントを生成する。
 
 システム内部では、別途タイムアウトコマンドを使用する。
 
@@ -1889,7 +1902,8 @@ export type GameWinner =
         | "deckOut"
         | "maxRoundStamina"
         | "maxRoundPower"
-        | "disconnectTimeout";
+        | "disconnectTimeout"
+        | "forfeit";
     }
   | {
       type: "draw";

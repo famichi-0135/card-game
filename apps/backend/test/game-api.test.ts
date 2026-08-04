@@ -344,6 +344,40 @@ describe("ゲーム HTTP API", () => {
     ]);
   });
 
+  it("対戦中止を認証済みのゲームコマンドとして Durable Object へ中継する", async () => {
+    const submitted: AuthenticatedGameCommand[] = [];
+    const app = createGameApi({
+      authenticate: async () => "player-1",
+      now: () => 1_234,
+      getGameSession: () => ({
+        getSnapshot: async () =>
+          ({ found: true, snapshot }) satisfies GetGameSnapshotResult,
+        submit: async (command) => {
+          submitted.push(command);
+          return {
+            submitted: true,
+            response: acceptedResponse,
+          } satisfies SubmitGameCommandResult;
+        },
+      }),
+    });
+    const command = createForfeitGameCommand();
+
+    const response = await request(app, "/game-1/commands", {
+      method: "POST",
+      body: JSON.stringify({ command }),
+    });
+
+    expect(response.status).toBe(200);
+    expect(submitted).toEqual([
+      {
+        authenticatedPlayerId: "player-1",
+        receivedAt: 1_234,
+        command,
+      },
+    ]);
+  });
+
   it("commandId競合を非公開状態なしの409へ変換する", async () => {
     const app = createGameApi({
       authenticate: async () => "player-1",
@@ -436,6 +470,18 @@ function createFinishPlacementCommand({
     commandId: "command-1",
     gameId,
     playerId,
+    phaseSequence: 1,
+    clientStateVersion: 1,
+    issuedAt: 10,
+  };
+}
+
+function createForfeitGameCommand() {
+  return {
+    type: "FORFEIT_GAME" as const,
+    commandId: "forfeit-command-1",
+    gameId: "game-1",
+    playerId: "player-1",
     phaseSequence: 1,
     clientStateVersion: 1,
     issuedAt: 10,

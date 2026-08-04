@@ -118,13 +118,18 @@ export type FinishSupportCommand = BaseGameCommand & {
   type: "FINISH_SUPPORT";
 };
 
+export type ForfeitGameCommand = BaseGameCommand & {
+  type: "FORFEIT_GAME";
+};
+
 export type GameCommand =
   | PlaceAttackCardCommand
   | ChainAttackCardCommand
   | DiscardHandCardCommand
   | FinishPlacementCommand
   | PlaySupportCardCommand
-  | FinishSupportCommand;
+  | FinishSupportCommand
+  | ForfeitGameCommand;
 
 export type GameCommandParseError = {
   code: "INVALID_GAME_COMMAND";

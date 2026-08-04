@@ -366,6 +366,14 @@ export function useGameBoardActions({
     setBoardState((current) => advancePreviewPhase(current));
   };
 
+  const forfeitGame = () => {
+    if (preview || onCommand === undefined || currentView.status !== "active") {
+      return;
+    }
+
+    onCommand(createForfeitGameCommand(currentView));
+  };
+
   const cancelSupportPlay = () => setPendingSupportPlay(null);
 
   const confirmSupportPlay = (effectInputs: EffectInput[]) => {
@@ -421,6 +429,7 @@ export function useGameBoardActions({
     currentView,
     executeSelectedCardTarget,
     finishPhase,
+    forfeitGame,
     handleDragEnd,
     pendingSupportPlay,
     selectCard,
@@ -526,6 +535,10 @@ function createFinishPhaseCommand(view: PlayerGameView): GameCommand | null {
     return { ...baseCommand, type: "FINISH_SUPPORT" };
   }
   return null;
+}
+
+function createForfeitGameCommand(view: PlayerGameView): GameCommand {
+  return { ...createBaseCommand(view), type: "FORFEIT_GAME" };
 }
 
 function createBaseCommand(view: PlayerGameView) {

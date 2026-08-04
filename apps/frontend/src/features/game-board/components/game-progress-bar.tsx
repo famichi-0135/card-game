@@ -7,13 +7,13 @@ import { PublicEventFeed } from "./public-event-feed.tsx";
 import type { PublicEventFeedItem } from "../hooks/use-public-event-feed.ts";
 
 export function GameProgressBar({
-  accountAction,
   canFinishPhase,
   canResynchronize,
   commandMessage,
   connectionState,
   finishActionLabel,
   gameId,
+  gameAction,
   onFinishPhase,
   onResynchronize,
   onRetryCommand,
@@ -24,13 +24,13 @@ export function GameProgressBar({
   round,
   stateVersion,
 }: {
-  accountAction?: ReactNode;
   canFinishPhase: boolean;
   canResynchronize: boolean;
   commandMessage: string | null;
   connectionState: GameConnectionState;
   finishActionLabel: string;
   gameId: string;
+  gameAction?: ReactNode;
   onFinishPhase: () => void;
   onResynchronize?: () => void;
   onRetryCommand?: () => void;
@@ -109,7 +109,7 @@ export function GameProgressBar({
         >
           {finishActionLabel}
         </button>
-        {accountAction}
+        {gameAction}
       </div>
     </section>
   );

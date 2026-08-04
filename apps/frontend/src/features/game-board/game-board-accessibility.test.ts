@@ -23,6 +23,7 @@ describe("ゲーム盤面のキーボード操作", () => {
           onCancelSupportPlay: vi.fn(),
           onConfirmSupportPlay: vi.fn(),
           onFinishPhase: vi.fn(),
+          onForfeit: vi.fn(),
           onSelectCard: vi.fn(),
           onSelectCardTarget: vi.fn(() => true),
           onResynchronize: vi.fn(),
@@ -48,5 +49,6 @@ describe("ゲーム盤面のキーボード操作", () => {
     expect(markup).toContain("motion-reduce:transition-none");
     expect(markup).toContain("そのカードは手札にありません。");
     expect(markup).toContain("盤面を再同期");
+    expect(markup).toContain("対戦を中止する");
   });
 });

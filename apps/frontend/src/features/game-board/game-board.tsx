@@ -6,13 +6,7 @@ import type {
   PublicCardCatalog,
 } from "@disastar/game-engine";
 import type { GameLearningContextResponse } from "@disastar/contracts/game";
-import {
-  type ReactNode,
-  useCallback,
-  useEffect,
-  useRef,
-  useState,
-} from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { ApiClientError } from "../../app/api-client.ts";
 import type { GameConnectionState } from "./components/connection-status.tsx";
 import { GameBoardView } from "./game-board-view.tsx";
@@ -70,13 +64,7 @@ export function FixtureGameBoard({ fixture }: { fixture: GameBoardFixture }) {
   );
 }
 
-export function GameBoard({
-  accountAction,
-  gameId,
-}: {
-  accountAction?: ReactNode;
-  gameId: string;
-}) {
+export function GameBoard({ gameId }: { gameId: string }) {
   const snapshot = useGameSnapshot(gameId);
   const learningContext = useGameLearningContext(
     gameId,
@@ -123,7 +111,6 @@ export function GameBoard({
   return (
     <GameBoardContent
       catalog={catalog.data.catalog}
-      accountAction={accountAction}
       commandError={command.errorMessage}
       commandPending={command.isPending}
       connectionState={getConnectionState({
@@ -151,7 +138,6 @@ export function GameBoard({
 }
 
 function GameBoardContent({
-  accountAction,
   catalog,
   commandError,
   commandPending = false,
@@ -166,7 +152,6 @@ function GameBoardContent({
   preview = false,
   view,
 }: {
-  accountAction?: ReactNode;
   catalog: PublicCardCatalog;
   commandError?: string | null;
   commandPending?: boolean;
@@ -194,6 +179,7 @@ function GameBoardContent({
     currentView,
     executeSelectedCardTarget,
     finishPhase,
+    forfeitGame,
     handleDragEnd,
     pendingSupportPlay,
     selectCard,
@@ -249,7 +235,6 @@ function GameBoardContent({
   return (
     <DragDropProvider onDragEnd={handleDragEnd}>
       <GameBoardView
-        accountAction={accountAction}
         availableActions={availableActions}
         catalog={catalog}
         commandError={commandError ?? null}
@@ -261,6 +246,11 @@ function GameBoardContent({
         onCancelSelectedCard={cancelSelectedCard}
         onConfirmSupportPlay={confirmSupportPlay}
         onFinishPhase={finishPhase}
+        onForfeit={
+          preview || !isInteractive || currentView.status !== "active"
+            ? undefined
+            : forfeitGame
+        }
         onSelectCard={isInteractive ? selectCard : undefined}
         onSelectCardTarget={
           isInteractive ? executeSelectedCardTarget : undefined
