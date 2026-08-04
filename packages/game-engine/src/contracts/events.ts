@@ -19,7 +19,8 @@ export type GameWinner =
         | "deckOut"
         | "maxRoundStamina"
         | "maxRoundPower"
-        | "disconnectTimeout";
+        | "disconnectTimeout"
+        | "forfeit";
     }
   | {
       type: "draw";

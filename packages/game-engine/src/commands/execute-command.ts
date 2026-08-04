@@ -8,6 +8,7 @@ import type {
   ExecuteCommandResult,
   FinishPlacementCommand,
   FinishSupportCommand,
+  ForfeitGameCommand,
   GameCommand,
   HandleDisconnectTimeoutCommand,
   HandlePhaseTimeoutCommand,
@@ -192,6 +193,9 @@ function validatePlayerCommand(
   if (getPlayer(state, command.playerId) === undefined) {
     return commandError("INVALID_TARGET", "操作プレイヤーが存在しません。");
   }
+  if (command.type === "FORFEIT_GAME") {
+    return null;
+  }
   if (command.phaseSequence !== state.phaseSequence) {
     return commandError(
       "PHASE_SEQUENCE_MISMATCH",
@@ -234,7 +238,28 @@ function applyPlayerCommand(
       return finishSupport(state, command, receivedAt, context, events);
     case "PLAY_SUPPORT_CARD":
       return playSupportCard(state, command, context, dependencies, events);
+    case "FORFEIT_GAME":
+      return forfeitGame(state, command, receivedAt, events);
   }
+}
+
+function forfeitGame(
+  state: GameState,
+  command: ForfeitGameCommand,
+  receivedAt: number,
+  events: DomainEvent[],
+): GameCommandError | null {
+  finishGame(
+    state,
+    {
+      type: "player",
+      playerId: getOpponentPlayerId(state, command.playerId),
+      reason: "forfeit",
+    },
+    receivedAt,
+    events,
+  );
+  return null;
 }
 
 function placeAttackCard(

@@ -33,6 +33,7 @@ import { AuthApiError, deleteAccount } from "../auth/auth-api.ts";
 import {
   authSessionQueryKey,
   getAuthErrorMessage,
+  LogoutButton,
 } from "../auth/auth-routes.tsx";
 
 export function MyPage({ session }: { session: AuthenticatedSessionResponse }) {
@@ -118,6 +119,20 @@ export function MyPage({ session }: { session: AuthenticatedSessionResponse }) {
               </CardFooter>
             </Card>
           ) : null}
+
+          {session.isAnonymous ? null : (
+            <Card>
+              <CardHeader>
+                <CardTitle>ログアウト</CardTitle>
+                <CardDescription>
+                  この端末でのGoogleアカウントのログインを終了します。
+                </CardDescription>
+              </CardHeader>
+              <CardFooter>
+                <LogoutButton className="rounded border border-slate-300 px-3 py-2 text-sm hover:bg-slate-50 disabled:cursor-not-allowed disabled:border-slate-200 disabled:text-slate-400 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-slate-900" />
+              </CardFooter>
+            </Card>
+          )}
 
           <Card>
             <CardHeader>

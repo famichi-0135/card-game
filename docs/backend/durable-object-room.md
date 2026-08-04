@@ -21,9 +21,9 @@ GameSession Durable Object
 - `initialize`: 対戦状態と初期イベントを作成して永続化する。
 - `getSnapshot`: 閲覧者別の`PlayerGameView`と公開イベントを返す。未初期化時は`GAME_NOT_FOUND`、参加者外は`GAME_ACCESS_FORBIDDEN`を返す。
 - `getLearningContext`: 終了済み対戦の参加者へ、保存済みの関連カード情報を返す。進行中は`GAME_NOT_FINISHED`、未初期化・期限切れは`GAME_NOT_FOUND`、参加者外は`GAME_ACCESS_FORBIDDEN`を返す。
-- `submit`: 認証済みプレイヤーのコマンドを処理し、最初の結果を`commandId`単位で保存する。未初期化・参加者外・認証済みプレイヤー不一致は安定したエラー結果で返す。
+- `submit`: 認証済みプレイヤーのコマンドを処理し、最初の結果を`commandId`単位で保存する。`FORFEIT_GAME`は進行中の参加者からだけ受理し、送信者を敗北として終了する。未初期化・参加者外・認証済みプレイヤー不一致は安定したエラー結果で返す。
 
-状態とコマンド結果は、応答する前にDO Storageへ書き込む。同じ`commandId`が再送された場合は、エンジンを再実行せず保存済みの最初の結果を返す。フェーズ期限がある間はDO Alarmを1つだけ設定し、アラームでは`HANDLE_PHASE_TIMEOUT`をエンジンへ渡す。ゲーム中の公開イベントを保持し、`afterSequence`による差分取得を可能にする。
+状態とコマンド結果は、応答する前にDO Storageへ書き込む。同じ`commandId`が再送された場合は、エンジンを再実行せず保存済みの最初の結果を返す。対戦中止を受理した場合も、終了状態と結果を応答前に保存する。フェーズ期限がある間はDO Alarmを1つだけ設定し、アラームでは`HANDLE_PHASE_TIMEOUT`をエンジンへ渡す。ゲーム中の公開イベントを保持し、`afterSequence`による差分取得を可能にする。
 
 `GET /api/games/:gameId/events`は、認証済み参加者の接続だけを`GameSession.fetch`へ転送する。DOはWebSocket Hibernation APIで接続を受理し、接続ごとの`gameId`と`playerId`をattachmentとして保存する。接続・切断時には接続中の参加者 ID だけを`GAME_PRESENCE_UPDATED`として配信する。フェーズ期限に操作責任を持つプレイヤーが接続中でなければ、`HANDLE_DISCONNECT_TIMEOUT`によりそのプレイヤーを敗北にする。サポートフェーズで未終了の両者が不在なら引き分けとする。接続中なら既存の`HANDLE_PHASE_TIMEOUT`と同じフェーズ進行を行う。コマンド受理またはタイムアウト処理を永続化した後、接続中の参加者全員へ`GAME_UPDATED`（`stateVersion`と`latestEventSequence`のみ）を送る。ゲームの正規状態・公開イベント・コマンドはWebSocketで扱わず、クライアントは通知後にHTTPスナップショットを再取得する。終了後の保持期間が満了すると、接続を閉じてから状態を削除する。
 

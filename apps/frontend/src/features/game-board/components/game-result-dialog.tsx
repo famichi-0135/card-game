@@ -168,9 +168,10 @@ function getOutcome(view: PlayerGameView): { reason: string; title: string } {
     };
   }
 
+  const viewerWon = winner.playerId === view.viewerPlayerId;
   return {
-    title: winner.playerId === view.viewerPlayerId ? "勝利" : "敗北",
-    reason: getPlayerWinReason(winner.reason),
+    title: viewerWon ? "勝利" : "敗北",
+    reason: getPlayerWinReason(winner.reason, viewerWon),
   };
 }
 
@@ -179,6 +180,7 @@ function getPlayerWinReason(
     NonNullable<PlayerGameView["winner"]>,
     { type: "player" }
   >["reason"],
+  viewerWon: boolean,
 ): string {
   switch (reason) {
     case "stamina":
@@ -191,6 +193,10 @@ function getPlayerWinReason(
       return "最終ラウンドの総パワーが上回りました。";
     case "disconnectTimeout":
       return "相手が制限時間までに対戦へ戻りませんでした。";
+    case "forfeit":
+      return viewerWon
+        ? "相手が対戦を中止しました。"
+        : "あなたが対戦を中止しました。";
   }
 }
 
