@@ -22,4 +22,24 @@ test.describe("ゲーム盤面のドラッグ操作", () => {
       "河川の氾濫",
     );
   });
+
+  test("フェーズ期限を過ぎると状態更新がなくても手札の操作候補を無効化する", async ({
+    page,
+  }) => {
+    await page.clock.install({ time: new Date("2026-01-01T00:00:00.000Z") });
+    await page.goto("/games/demo?scenario=placement");
+
+    const card = page.getByRole("button", {
+      name: /河川の氾濫。攻撃操作の候補があります/,
+    });
+    await expect(card).toBeVisible();
+
+    await page.clock.fastForward(78_001);
+
+    await expect(
+      page.getByRole("button", {
+        name: /河川の氾濫。このフェーズでは操作できません/,
+      }),
+    ).toBeVisible();
+  });
 });

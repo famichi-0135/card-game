@@ -122,4 +122,24 @@ describe("ゲームコマンドの実行時検証", () => {
       );
     }
   });
+
+  it("commandIdは128文字まで受理する", () => {
+    const createCommand = (commandId: string) => ({
+      type: "FINISH_SUPPORT",
+      commandId,
+      gameId: "game-1",
+      playerId: "player-1",
+      phaseSequence: 1,
+      clientStateVersion: 1,
+      issuedAt: 1,
+    });
+
+    expect(parseGameCommand(createCommand("a".repeat(128)))).toMatchObject({
+      parsed: true,
+    });
+    expect(parseGameCommand(createCommand("a".repeat(129)))).toMatchObject({
+      parsed: false,
+      errors: [expect.objectContaining({ path: "commandId" })],
+    });
+  });
 });

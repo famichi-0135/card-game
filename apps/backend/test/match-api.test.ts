@@ -191,7 +191,9 @@ describe("対戦待機 HTTP API", () => {
                   expiresAt: 1_801_000,
                 },
               }
-            : { available: false as const },
+            : matchId === "match-starting"
+              ? { available: false as const, reason: "starting" as const }
+              : { available: false as const, reason: "terminal" as const },
         accept: async () => ({ accepted: true as const, gameId: "game-1" }),
         cancel: async () => ({ cancelled: true as const }),
       }),
@@ -204,6 +206,13 @@ describe("対戦待機 HTTP API", () => {
             ownerFaction: "disaster",
             createdAt: 1_000,
             expiresAt: 1_801_000,
+          },
+          {
+            matchId: "match-starting",
+            ownerPlayerId: "player-4",
+            ownerFaction: "disaster",
+            createdAt: 750,
+            expiresAt: 1_800_750,
           },
           {
             matchId: "match-stale",

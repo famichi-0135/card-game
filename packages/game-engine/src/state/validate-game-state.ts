@@ -26,7 +26,7 @@ export function validateGameState(
   validateCardInstances(state, playerIds, context, issues);
   validateCardLocations(state, playerIds, context, issues);
   validateActiveEffects(state, issues);
-  validateFinishedState(state, issues);
+  validateStatusAndPhase(state, issues);
 
   return issues.length === 0 ? { valid: true } : { valid: false, issues };
 }
@@ -105,7 +105,11 @@ function validateActiveEffects(
     }
   }
 
-  if (state.nextEffectSequence <= highestAppliedSequence) {
+  if (
+    Number.isSafeInteger(state.nextEffectSequence) &&
+    state.nextEffectSequence >= 1 &&
+    state.nextEffectSequence <= highestAppliedSequence
+  ) {
     issues.push({
       code: "INVALID_ACTIVE_EFFECT_SEQUENCE",
       message: "次の継続効果シーケンスが登録済み効果より後ではありません。",
@@ -185,8 +189,8 @@ function validateSequences(
   for (const [name, value, minimum] of [
     ["stateVersion", state.stateVersion, 0],
     ["phaseSequence", state.phaseSequence, 1],
-    ["nextEffectSequence", state.nextEffectSequence, 0],
-    ["nextEventSequence", state.nextEventSequence, 0],
+    ["nextEffectSequence", state.nextEffectSequence, 1],
+    ["nextEventSequence", state.nextEventSequence, 1],
     ["round", state.round, 1],
   ] as const) {
     if (!Number.isSafeInteger(value) || value < minimum) {
@@ -537,10 +541,27 @@ function validateCardLocations(
   }
 }
 
-function validateFinishedState(
+function validateStatusAndPhase(
   state: GameState,
   issues: StateValidationIssue[],
 ): void {
+  if (state.status === "initializing") {
+    issues.push({
+      code: "INVALID_GAME_STATUS",
+      message: "初期化中のゲーム状態は永続状態として扱えません。",
+    });
+  }
+
+  if (
+    state.status === "active" &&
+    (state.phase === "initializing" || state.phase === "finished")
+  ) {
+    issues.push({
+      code: "INVALID_STATUS_PHASE",
+      message: "進行中ゲームのフェーズがゲーム状態と一致しません。",
+    });
+  }
+
   if (
     state.status === "finished" &&
     (state.phase !== "finished" ||

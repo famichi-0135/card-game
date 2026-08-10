@@ -105,5 +105,15 @@ export function validateGameRules(
     });
   }
 
+  if (
+    rules.maxManaCards + rules.maxAttackCards + rules.maxSupportCards <
+    rules.deckSize
+  ) {
+    errors.push({
+      code: "INVALID_DECK_COMPOSITION",
+      message: "カード種別ごとの最大枚数を合計してもデッキ枚数を満たせません。",
+    });
+  }
+
   return errors.length === 0 ? { valid: true } : { valid: false, errors };
 }

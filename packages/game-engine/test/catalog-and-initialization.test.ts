@@ -188,6 +188,26 @@ describe("ゲームルール検証", () => {
       ]),
     });
   });
+
+  it("カード種別の最大枚数合計がデッキ枚数に届かないルールを拒否する", () => {
+    const result = validateGameRules({
+      ...GAME_RULES,
+      minManaCards: 5,
+      maxManaCards: 10,
+      minAttackCards: 5,
+      maxAttackCards: 10,
+      maxSupportCards: 5,
+    });
+
+    expect(result).toMatchObject({
+      valid: false,
+      errors: expect.arrayContaining([
+        expect.objectContaining({
+          code: "INVALID_DECK_COMPOSITION",
+        }),
+      ]),
+    });
+  });
 });
 
 describe("デッキ検証", () => {
@@ -389,6 +409,85 @@ describe("ゲーム初期化", () => {
     expect(new Set(allCardIds)).toHaveLength(60);
     expect(result.events).toHaveLength(7);
     expect(result.state.nextEventSequence).toBe(8);
+  });
+
+  it("次の効果・イベントシーケンスが0の永続状態を拒否する", () => {
+    const context = createTestContext();
+    const result = initializeGame(
+      createInitializationInput(),
+      context,
+      createDependencies(),
+    );
+    if (!result.initialized) {
+      throw new Error(result.error.message);
+    }
+
+    expect(
+      validateGameState({ ...result.state, nextEffectSequence: 0 }, context),
+    ).toMatchObject({
+      valid: false,
+      issues: expect.arrayContaining([
+        expect.objectContaining({
+          code: "INVALID_SEQUENCE",
+          message: expect.stringContaining("nextEffectSequence"),
+        }),
+      ]),
+    });
+    expect(
+      validateGameState({ ...result.state, nextEventSequence: 0 }, context),
+    ).toMatchObject({
+      valid: false,
+      issues: expect.arrayContaining([
+        expect.objectContaining({
+          code: "INVALID_SEQUENCE",
+          message: expect.stringContaining("nextEventSequence"),
+        }),
+      ]),
+    });
+  });
+
+  it("初期化中の永続状態と進行中ゲームの終了フェーズを拒否する", () => {
+    const context = createTestContext();
+    const result = initializeGame(
+      createInitializationInput(),
+      context,
+      createDependencies(),
+    );
+    if (!result.initialized) {
+      throw new Error(result.error.message);
+    }
+
+    expect(
+      validateGameState(
+        {
+          ...result.state,
+          status: "initializing",
+          phase: "initializing",
+          phaseDeadlineAt: null,
+        },
+        context,
+      ),
+    ).toMatchObject({
+      valid: false,
+      issues: expect.arrayContaining([
+        expect.objectContaining({ code: "INVALID_GAME_STATUS" }),
+      ]),
+    });
+    expect(
+      validateGameState(
+        {
+          ...result.state,
+          phase: "finished",
+          phaseDeadlineAt: null,
+        },
+        context,
+      ),
+    ).toMatchObject({
+      valid: false,
+      issues: expect.arrayContaining([
+        expect.objectContaining({ code: "INVALID_STATUS_PHASE" }),
+      ]),
+    });
   });
 
   it("同じ陣営のプレイヤー2人では初期化しない", () => {

@@ -1,53 +1,76 @@
 import {
   createBrowserRouter,
-  Link,
   Navigate,
-  useLocation,
-  useParams,
   useRouteError,
   useSearchParams,
 } from "react-router";
-import {
-  FixtureGameBoard,
-  GameBoard,
-} from "../features/game-board/game-board.tsx";
-import {
-  FIXTURE_GAME_ID,
-  createGameBoardFixture,
-} from "../features/game-board/fixtures/game-board-fixture.ts";
-import { LoginRoute } from "../features/auth/auth-routes.tsx";
-import {
-  LearnArticleRoute,
-  LearnIndexRoute,
-} from "../features/learn/learn-routes.tsx";
-import { MatchmakingHomeRoute } from "../features/matchmaking/lobby-home.tsx";
-import { MatchRoom } from "../features/matchmaking/match-room.tsx";
-import { RuleGuideRoute } from "../features/rule/rule-guide-route.tsx";
-import { GameLearningPage } from "../features/game-learning/game-learning-page.tsx";
-import { MyPage } from "../features/account/my-page.tsx";
+import { createLazyRoute } from "./route-lazy.tsx";
+import { RouteMessage } from "./route-message.tsx";
+import { getRouteErrorDescription } from "./route-error.ts";
 import { createAuthPath, getSafeReturnTo } from "./return-to.ts";
-import { useSession } from "./session.ts";
+
+const MatchmakingHomeRoute = createLazyRoute(
+  () => import("../features/matchmaking/lobby-home.tsx"),
+  "MatchmakingHomeRoute",
+);
+const LearnIndexRoute = createLazyRoute(
+  () => import("../features/learn/learn-routes.tsx"),
+  "LearnIndexRoute",
+);
+const LearnArticleRoute = createLazyRoute(
+  () => import("../features/learn/learn-routes.tsx"),
+  "LearnArticleRoute",
+);
+const RuleGuideRoute = createLazyRoute(
+  () => import("../features/rule/rule-guide-route.tsx"),
+  "RuleGuideRoute",
+);
+const AuthenticatedMyPageRoute = createLazyRoute(
+  () => import("../features/account/my-page-route.tsx"),
+  "AuthenticatedMyPageRoute",
+);
+const RoomRoute = createLazyRoute(
+  () => import("../features/matchmaking/match-room-route.tsx"),
+  "RoomRoute",
+);
+const GameLearningRoute = createLazyRoute(
+  () => import("../features/game-learning/game-learning-route.tsx"),
+  "GameLearningRoute",
+);
+const GameRoute = createLazyRoute(
+  () => import("../features/game-board/game-route.tsx"),
+  "GameRoute",
+);
+const LoginRoute = createLazyRoute(
+  () => import("../features/auth/auth-routes.tsx"),
+  "LoginRoute",
+);
 
 export const router = createBrowserRouter([
   {
     path: "/",
     Component: MatchmakingHomeRoute,
+    ErrorBoundary: RouteErrorBoundary,
   },
   {
     path: "/learn",
     Component: LearnIndexRoute,
+    ErrorBoundary: RouteErrorBoundary,
   },
   {
     path: "/learn/:slug",
     Component: LearnArticleRoute,
+    ErrorBoundary: RouteErrorBoundary,
   },
   {
     path: "/rule",
     Component: RuleGuideRoute,
+    ErrorBoundary: RouteErrorBoundary,
   },
   {
     path: "/mypage",
     Component: AuthenticatedMyPageRoute,
+    ErrorBoundary: RouteErrorBoundary,
   },
   {
     path: "/rooms/:matchId",
@@ -67,6 +90,7 @@ export const router = createBrowserRouter([
   {
     path: "/login",
     Component: LoginRoute,
+    ErrorBoundary: RouteErrorBoundary,
   },
   {
     path: "/register",
@@ -90,124 +114,12 @@ export const router = createBrowserRouter([
   },
 ]);
 
-function GameRoute() {
-  const { gameId } = useParams();
-  const [searchParams] = useSearchParams();
-  if (gameId === undefined) {
-    throw new Error("ゲームIDが指定されていません。");
-  }
-
-  if (gameId === FIXTURE_GAME_ID) {
-    const requestedScenario = searchParams.get("scenario");
-    const scenario =
-      requestedScenario === "support" || requestedScenario === "finished"
-        ? requestedScenario
-        : "placement";
-    return (
-      <FixtureGameBoard fixture={createGameBoardFixture(gameId, scenario)} />
-    );
-  }
-
-  return <AuthenticatedGameRoute gameId={gameId} />;
-}
-
-function GameLearningRoute() {
-  const { gameId } = useParams();
-  if (gameId === undefined) {
-    throw new Error("ゲームIDが指定されていません。");
-  }
-
-  return <AuthenticatedGameLearningRoute gameId={gameId} />;
-}
-
-function RoomRoute() {
-  const { matchId } = useParams();
-  if (matchId === undefined) {
-    throw new Error("招待部屋 ID が指定されていません。");
-  }
-
-  return <AuthenticatedRoomRoute matchId={matchId} />;
-}
-
-function AuthenticatedGameRoute({ gameId }: { gameId: string }) {
-  const session = useSession();
-  const location = useLocation();
-
-  if (session.isPending) {
-    return <RouteMessage title="認証状態を確認しています" />;
-  }
-  if (session.isError) {
-    return <RouteMessage title="認証状態を確認できませんでした" />;
-  }
-  if (session.data === null) {
-    const returnTo = `${location.pathname}${location.search}${location.hash}`;
-    return <Navigate replace to={createAuthPath("/login", returnTo)} />;
-  }
-
-  return <GameBoard gameId={gameId} />;
-}
-
-function AuthenticatedMyPageRoute() {
-  const session = useSession();
-  const location = useLocation();
-
-  if (session.isPending) {
-    return <RouteMessage title="認証状態を確認しています" />;
-  }
-  if (session.isError) {
-    return <RouteMessage title="認証状態を確認できませんでした" />;
-  }
-  if (session.data === null) {
-    const returnTo = `${location.pathname}${location.search}${location.hash}`;
-    return <Navigate replace to={createAuthPath("/login", returnTo)} />;
-  }
-
-  return <MyPage session={session.data} />;
-}
-
-function AuthenticatedGameLearningRoute({ gameId }: { gameId: string }) {
-  const session = useSession();
-  const location = useLocation();
-
-  if (session.isPending) {
-    return <RouteMessage title="認証状態を確認しています" />;
-  }
-  if (session.isError) {
-    return <RouteMessage title="認証状態を確認できませんでした" />;
-  }
-  if (session.data === null) {
-    const returnTo = `${location.pathname}${location.search}${location.hash}`;
-    return <Navigate replace to={createAuthPath("/login", returnTo)} />;
-  }
-
-  return <GameLearningPage gameId={gameId} />;
-}
-
-function AuthenticatedRoomRoute({ matchId }: { matchId: string }) {
-  const session = useSession();
-  const location = useLocation();
-
-  if (session.isPending) {
-    return <RouteMessage title="認証状態を確認しています" />;
-  }
-  if (session.isError) {
-    return <RouteMessage title="認証状態を確認できませんでした" />;
-  }
-  if (session.data === null) {
-    const returnTo = `${location.pathname}${location.search}${location.hash}`;
-    return <Navigate replace to={createAuthPath("/login", returnTo)} />;
-  }
-
-  return <MatchRoom matchId={matchId} playerId={session.data.playerId} />;
-}
-
 function RouteErrorBoundary() {
   const error = useRouteError();
-  const description =
-    error instanceof Error ? error.message : "予期しないエラーです。";
+  const description = getRouteErrorDescription(error);
   return (
     <RouteMessage
-      title="対戦画面を表示できませんでした"
+      title="ページを表示できませんでした"
       description={description}
     />
   );
@@ -221,32 +133,4 @@ function LegacyAuthRoute() {
   const [searchParams] = useSearchParams();
   const returnTo = getSafeReturnTo(searchParams.get("returnTo"));
   return <Navigate replace to={createAuthPath("/login", returnTo)} />;
-}
-
-function RouteMessage({
-  title,
-  description,
-}: {
-  title: string;
-  description?: string;
-}) {
-  return (
-    <main className="grid min-h-dvh place-items-center bg-slate-100 p-6 text-slate-950">
-      <section className="w-full max-w-md rounded-md border border-slate-300 bg-white p-6 shadow-sm">
-        <p className="text-sm font-semibold text-slate-600">
-          DISASTAR CARD GAME
-        </p>
-        <h1 className="mt-4 text-xl font-semibold">{title}</h1>
-        {description === undefined ? null : (
-          <p className="mt-2 text-sm leading-6 text-slate-600">{description}</p>
-        )}
-        <Link
-          className="mt-6 inline-flex rounded border border-slate-800 bg-slate-900 px-4 py-2 text-sm font-medium text-white hover:bg-slate-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-slate-900"
-          to="/"
-        >
-          対戦画面の入口へ戻る
-        </Link>
-      </section>
-    </main>
-  );
 }

@@ -21,6 +21,7 @@ import {
   type CreateMatchLobbyInput,
   type CreateMatchLobbyResult,
   type GetMatchLobbyViewResult,
+  type GetPublicMatchLobbySummaryResult,
   type MatchLobbyAcceptResult,
   type MatchLobbyCancelResult,
 } from "../match-lobby/match-lobby.js";
@@ -53,17 +54,7 @@ export type AuthorizedDeckResolver = (
 
 type MatchLobbyRpc = {
   getView(viewerPlayerId: PlayerId): Promise<GetMatchLobbyViewResult>;
-  getPublicSummary?(): Promise<
-    | {
-        available: true;
-        summary: {
-          ownerFaction: Faction;
-          createdAt: number;
-          expiresAt: number;
-        };
-      }
-    | { available: false }
-  >;
+  getPublicSummary?(): Promise<GetPublicMatchLobbySummaryResult>;
   accept(input: {
     playerId: PlayerId;
     faction: Faction;
@@ -185,9 +176,17 @@ export function createMatchApi({
           return null;
         }
         const result = await lobby.getPublicSummary?.();
+        if (result === undefined) {
+          await removePublicLobby(index, entry.matchId);
+          return null;
+        }
+        if (!result.available) {
+          if (result.reason === "terminal") {
+            await removePublicLobby(index, entry.matchId);
+          }
+          return null;
+        }
         if (
-          result === undefined ||
-          !result.available ||
           result.summary.ownerFaction !== entry.ownerFaction ||
           result.summary.createdAt !== entry.createdAt ||
           result.summary.expiresAt !== entry.expiresAt

@@ -5,7 +5,10 @@ import {
   runInDurableObject,
 } from "cloudflare:test";
 import { describe, expect, it } from "vitest";
-import type { AuthenticatedGameCommand } from "@disastar/contracts/game";
+import type {
+  AuthenticatedGameCommand,
+  GameRealtimeMessage,
+} from "@disastar/contracts/game";
 import type {
   GameCommand,
   InitializeGameInput,
@@ -117,6 +120,277 @@ describe("GameSession の並行実行と状態復元", () => {
       phase: "secondPlayerPlacement",
       stateVersion: initial.view.stateVersion + 1,
     });
+  });
+
+  it("外部同期待機中に状態が進んでも最新フェーズのAlarmを維持する", async () => {
+    const gameId = "game-session-latest-alarm-wins";
+    const session = getGameSession(gameId);
+    await initialize(session, gameId);
+
+    const initial = await requireSnapshot(session, "player-1");
+    const firstPlayerId = initial.view.firstPlayerId;
+    await session.submit(
+      createAuthenticatedCommand(
+        firstPlayerId,
+        createFinishPlacementCommand({
+          gameId,
+          playerId: firstPlayerId,
+          phaseSequence: initial.view.phaseSequence,
+          clientStateVersion: initial.view.stateVersion,
+          commandId: "latest-alarm-first-placement",
+        }),
+      ),
+    );
+
+    const secondPlacement = await requireSnapshot(
+      session,
+      initial.view.secondPlayerId,
+    );
+    const staleSession = await cloneStoredSession(session);
+    const secondPlayerId = secondPlacement.view.viewerPlayerId;
+    await session.submit(
+      createAuthenticatedCommand(
+        secondPlayerId,
+        createFinishPlacementCommand({
+          gameId,
+          playerId: secondPlayerId,
+          phaseSequence: secondPlacement.view.phaseSequence,
+          clientStateVersion: secondPlacement.view.stateVersion,
+          commandId: "latest-alarm-second-placement",
+        }),
+      ),
+    );
+
+    const support = await requireSnapshot(session, secondPlayerId);
+    expect(support.view.phase).toBe("support");
+    expect(support.view.phaseDeadlineAt).not.toBeNull();
+
+    await syncAlarmWithStoredSession(session, staleSession);
+
+    expect(await getStoredAlarm(session)).toBe(support.view.phaseDeadlineAt);
+  });
+
+  it("保存後に外部同期が失敗しても、同じcommandIdの再送でカタログ保持とAlarmを復旧する", async () => {
+    const gameId = "game-session-command-infrastructure-recovery";
+    const session = getGameSession(gameId);
+    await initialize(session, gameId);
+
+    const initial = await requireSnapshot(session, "player-1");
+    const playerId = initial.view.firstPlayerId;
+    const observingSocket = await openGameSocket(
+      session,
+      initial.view.secondPlayerId,
+    );
+    const command = createFinishPlacementCommand({
+      gameId,
+      playerId,
+      phaseSequence: initial.view.phaseSequence,
+      clientStateVersion: initial.view.stateVersion,
+      commandId: "recover-infrastructure-after-command",
+    });
+    const authenticatedCommand = createAuthenticatedCommand(playerId, command);
+
+    await failNextSessionInfrastructureSync(
+      session,
+      "syncSessionAlarm",
+      "simulated session alarm sync failure",
+    );
+    expect(await captureSubmitFailure(session, authenticatedCommand)).toBe(
+      "simulated session alarm sync failure",
+    );
+
+    const committed = await requireSnapshot(session, playerId);
+    expect(committed.view).toMatchObject({
+      phase: "secondPlayerPlacement",
+      stateVersion: initial.view.stateVersion + 1,
+    });
+    if (committed.view.phaseDeadlineAt === null) {
+      throw new Error("進行中ゲームにはフェーズ期限が必要です。");
+    }
+
+    const catalogArchive = getCatalogArchive();
+    await removeCatalogLease(
+      catalogArchive,
+      committed.view.cardCatalogVersion,
+      gameId,
+    );
+    await deleteStoredAlarm(session);
+    await evictDurableObject(session as unknown as DurableObjectStub);
+
+    const recoveryUpdate = waitForGameUpdate(
+      observingSocket,
+      committed.view.stateVersion,
+    );
+
+    const retried = await session.submit(authenticatedCommand);
+    expect(retried).toMatchObject({
+      submitted: true,
+      response: {
+        accepted: true,
+        commandId: command.commandId,
+        view: {
+          phase: "secondPlayerPlacement",
+          stateVersion: initial.view.stateVersion + 1,
+        },
+      },
+    });
+    expect(await getStoredAlarm(session)).toBe(committed.view.phaseDeadlineAt);
+    expect(
+      await getCatalogLease(
+        catalogArchive,
+        committed.view.cardCatalogVersion,
+        gameId,
+      ),
+    ).toBeNull();
+
+    const afterRetry = await requireSnapshot(session, playerId);
+    expect(afterRetry.view.stateVersion).toBe(committed.view.stateVersion);
+    expect(afterRetry.events).toEqual(committed.events);
+    await expect(recoveryUpdate).resolves.toMatchObject({
+      gameId,
+      stateVersion: committed.view.stateVersion,
+    });
+    observingSocket.close(1000, "recovery test complete");
+  });
+
+  it("保存済みcommandIdの再送ではフルカタログ登録を繰り返さない", async () => {
+    const gameId = "game-session-lightweight-catalog-renewal";
+    const session = getGameSession(gameId);
+    await initialize(session, gameId);
+
+    const initial = await requireSnapshot(session, "player-1");
+    const playerId = initial.view.firstPlayerId;
+    const command = createFinishPlacementCommand({
+      gameId,
+      playerId,
+      phaseSequence: initial.view.phaseSequence,
+      clientStateVersion: initial.view.stateVersion,
+      commandId: "lightweight-catalog-renewal-command",
+    });
+    const authenticatedCommand = createAuthenticatedCommand(playerId, command);
+
+    await expect(session.submit(authenticatedCommand)).resolves.toMatchObject({
+      submitted: true,
+      response: { accepted: true },
+    });
+    const catalogArchive = getCatalogArchive();
+    const originalCatalog = await replaceCatalogWithConflictingContent(
+      catalogArchive,
+      initial.view.cardCatalogVersion,
+    );
+    try {
+      await expect(session.submit(authenticatedCommand)).resolves.toMatchObject(
+        {
+          submitted: true,
+          response: {
+            accepted: true,
+            commandId: command.commandId,
+          },
+        },
+      );
+    } finally {
+      await restoreCatalogContent(
+        catalogArchive,
+        initial.view.cardCatalogVersion,
+        originalCatalog,
+      );
+    }
+  });
+
+  it("同じ初期化入力の再送でもカタログ内容の競合を検証する", async () => {
+    const gameId = "game-session-catalog-conflict-retry";
+    const session = getGameSession(gameId);
+    const input = createInitializeInput(gameId);
+    await initialize(session, gameId);
+    const snapshot = await requireSnapshot(session, "player-1");
+    const catalogArchive = getCatalogArchive();
+    const originalCatalog = await replaceCatalogWithConflictingContent(
+      catalogArchive,
+      snapshot.view.cardCatalogVersion,
+    );
+
+    try {
+      await runInDurableObject(
+        session as unknown as DurableObjectStub,
+        async (instance) => {
+          await expect(
+            (instance as unknown as GameSessionInternals).initialize(input),
+          ).rejects.toThrow("CARD_CATALOG_VERSION_CONFLICT");
+        },
+      );
+    } finally {
+      await restoreCatalogContent(
+        catalogArchive,
+        snapshot.view.cardCatalogVersion,
+        originalCatalog,
+      );
+    }
+  });
+
+  it("終了状態の保存後に外部同期が失敗しても、Alarm再試行で同じ保持期限を復旧する", async () => {
+    const gameId = "game-session-alarm-infrastructure-recovery";
+    const session = getGameSession(gameId);
+    await initialize(session, gameId);
+
+    const initial = await requireSnapshot(session, "player-1");
+    const observingSocket = await openGameSocket(
+      session,
+      initial.view.secondPlayerId,
+    );
+    await setPhaseDeadlineToNow(session);
+    await failNextSessionInfrastructureSync(
+      session,
+      "syncCatalogRetention",
+      "simulated catalog retention sync failure",
+    );
+
+    expect(await captureSessionAlarmFailure(session)).toBe(
+      "simulated catalog retention sync failure",
+    );
+
+    const committed = await requireSnapshot(session, "player-1");
+    expect(committed.view.status).toBe("finished");
+    expect(committed.view.stateVersion).toBe(initial.view.stateVersion + 1);
+    const retentionExpiresAt = await getRetentionExpiresAt(session);
+    if (retentionExpiresAt === null) {
+      throw new Error("終了済みゲームには保持期限が必要です。");
+    }
+
+    const catalogArchive = getCatalogArchive();
+    expect(
+      await getCatalogLease(
+        catalogArchive,
+        committed.view.cardCatalogVersion,
+        gameId,
+      ),
+    ).toBeNull();
+    await deleteStoredAlarm(session);
+    await evictDurableObject(session as unknown as DurableObjectStub);
+
+    const recoveryUpdate = waitForGameUpdate(
+      observingSocket,
+      committed.view.stateVersion,
+    );
+
+    await invokeSessionAlarm(session);
+
+    expect(await getStoredAlarm(session)).toBe(retentionExpiresAt);
+    expect(
+      await getCatalogLease(
+        catalogArchive,
+        committed.view.cardCatalogVersion,
+        gameId,
+      ),
+    ).toBe(retentionExpiresAt);
+
+    const afterRetry = await requireSnapshot(session, "player-1");
+    expect(afterRetry.view.stateVersion).toBe(committed.view.stateVersion);
+    expect(afterRetry.events).toEqual(committed.events);
+    await expect(recoveryUpdate).resolves.toMatchObject({
+      gameId,
+      stateVersion: committed.view.stateVersion,
+    });
+    observingSocket.close(1000, "recovery test complete");
   });
 
   it("期限ちょうどの通常操作とAlarmが競合しても、直列化された結果だけを確定する", async () => {
@@ -277,6 +551,7 @@ describe("GameSession の並行実行と状態復元", () => {
 });
 
 type GameSessionRpc = {
+  fetch(request: Request): Promise<Response>;
   initialize(input: InitializeGameInput): Promise<{ initialized: boolean }>;
   getSnapshot(
     viewerPlayerId: string,
@@ -287,11 +562,47 @@ type GameSessionRpc = {
   ): Promise<SubmitGameCommandResult>;
 };
 
+type CatalogArchiveRpc = {
+  getCatalog(version: string): Promise<unknown>;
+};
+
+type SessionInfrastructureMethod = "syncCatalogRetention" | "syncSessionAlarm";
+
+type GameSessionInternals = {
+  session: {
+    retentionExpiresAt?: number | null;
+    state: { phaseDeadlineAt: number | null };
+  } | null;
+  alarm(): Promise<void>;
+  initialize(input: InitializeGameInput): Promise<{ initialized: boolean }>;
+  submit(
+    authenticatedCommand: AuthenticatedGameCommand,
+  ): Promise<SubmitGameCommandResult>;
+  syncCatalogRetention(session: unknown): Promise<void>;
+  syncSessionAlarm(session: unknown): Promise<void>;
+};
+
+type CatalogArchiveInternals = {
+  archive: {
+    entries: Record<
+      string,
+      { catalog: unknown; leases: Record<string, number | null> } | undefined
+    >;
+  };
+};
+
 function getGameSession(gameId: string): GameSessionRpc {
   const gameSessions = env.GAME_SESSION as unknown as {
     getByName(name: string): GameSessionRpc;
   };
   return gameSessions.getByName(gameId);
+}
+
+function getCatalogArchive(): CatalogArchiveRpc {
+  const catalogArchive = env.CATALOG_ARCHIVE as unknown as {
+    getByName(name: string): CatalogArchiveRpc;
+  };
+  return catalogArchive.getByName("card-catalog-retention");
 }
 
 async function initialize(
@@ -348,6 +659,256 @@ async function setPhaseDeadlineToNow(session: GameSessionRpc): Promise<number> {
       return phaseDeadlineAt;
     },
   );
+}
+
+async function failNextSessionInfrastructureSync(
+  session: GameSessionRpc,
+  method: SessionInfrastructureMethod,
+  message: string,
+): Promise<void> {
+  await runInDurableObject(
+    session as unknown as DurableObjectStub,
+    async (instance) => {
+      const internals = instance as unknown as GameSessionInternals;
+      const original = internals[method].bind(internals);
+      let shouldFail = true;
+      internals[method] = async (storedSession: unknown) => {
+        if (shouldFail) {
+          shouldFail = false;
+          throw new Error(message);
+        }
+        await original(storedSession);
+      };
+    },
+  );
+}
+
+async function invokeSessionAlarm(session: GameSessionRpc): Promise<void> {
+  await runInDurableObject(
+    session as unknown as DurableObjectStub,
+    async (instance) => {
+      await (instance as unknown as GameSessionInternals).alarm();
+    },
+  );
+}
+
+async function captureSubmitFailure(
+  session: GameSessionRpc,
+  authenticatedCommand: AuthenticatedGameCommand,
+): Promise<string> {
+  return runInDurableObject(
+    session as unknown as DurableObjectStub,
+    async (instance) => {
+      try {
+        await (instance as unknown as GameSessionInternals).submit(
+          authenticatedCommand,
+        );
+      } catch (error) {
+        return getErrorMessage(error);
+      }
+      throw new Error("GameSession.submitが失敗しませんでした。");
+    },
+  );
+}
+
+async function captureSessionAlarmFailure(
+  session: GameSessionRpc,
+): Promise<string> {
+  return runInDurableObject(
+    session as unknown as DurableObjectStub,
+    async (instance) => {
+      try {
+        await (instance as unknown as GameSessionInternals).alarm();
+      } catch (error) {
+        return getErrorMessage(error);
+      }
+      throw new Error("GameSession.alarmが失敗しませんでした。");
+    },
+  );
+}
+
+function getErrorMessage(error: unknown): string {
+  return error instanceof Error ? error.message : String(error);
+}
+
+async function deleteStoredAlarm(session: GameSessionRpc): Promise<void> {
+  await runInDurableObject(
+    session as unknown as DurableObjectStub,
+    async (_instance, state) => {
+      await state.storage.deleteAlarm();
+    },
+  );
+}
+
+async function getStoredAlarm(session: GameSessionRpc): Promise<number | null> {
+  return runInDurableObject(
+    session as unknown as DurableObjectStub,
+    async (_instance, state) => state.storage.getAlarm(),
+  );
+}
+
+async function getRetentionExpiresAt(
+  session: GameSessionRpc,
+): Promise<number | null> {
+  return runInDurableObject(
+    session as unknown as DurableObjectStub,
+    async (instance) => {
+      const storedSession = (instance as unknown as GameSessionInternals)
+        .session;
+      return storedSession?.retentionExpiresAt ?? null;
+    },
+  );
+}
+
+async function cloneStoredSession(session: GameSessionRpc): Promise<unknown> {
+  return runInDurableObject(
+    session as unknown as DurableObjectStub,
+    async (instance) => {
+      const storedSession = (instance as unknown as GameSessionInternals)
+        .session;
+      if (storedSession === null) {
+        throw new Error("初期化済みゲームセッションが見つかりません。");
+      }
+      return structuredClone(storedSession);
+    },
+  );
+}
+
+async function syncAlarmWithStoredSession(
+  session: GameSessionRpc,
+  storedSession: unknown,
+): Promise<void> {
+  await runInDurableObject(
+    session as unknown as DurableObjectStub,
+    async (instance) => {
+      await (instance as unknown as GameSessionInternals).syncSessionAlarm(
+        storedSession,
+      );
+    },
+  );
+}
+
+async function removeCatalogLease(
+  catalogArchive: CatalogArchiveRpc,
+  version: string,
+  gameId: string,
+): Promise<void> {
+  await catalogArchive.getCatalog(version);
+  await runInDurableObject(
+    catalogArchive as unknown as DurableObjectStub,
+    async (instance, state) => {
+      const archive = (instance as unknown as CatalogArchiveInternals).archive;
+      const entry = archive.entries[version];
+      if (entry === undefined) {
+        throw new Error(`カードカタログ ${version} が見つかりません。`);
+      }
+      delete entry.leases[gameId];
+      await state.storage.put("catalog-archive-v1", archive);
+    },
+  );
+}
+
+async function getCatalogLease(
+  catalogArchive: CatalogArchiveRpc,
+  version: string,
+  gameId: string,
+): Promise<number | null | undefined> {
+  await catalogArchive.getCatalog(version);
+  return runInDurableObject(
+    catalogArchive as unknown as DurableObjectStub,
+    async (instance) => {
+      const archive = (instance as unknown as CatalogArchiveInternals).archive;
+      return archive.entries[version]?.leases[gameId];
+    },
+  );
+}
+
+async function replaceCatalogWithConflictingContent(
+  catalogArchive: CatalogArchiveRpc,
+  version: string,
+): Promise<unknown> {
+  await catalogArchive.getCatalog(version);
+  return runInDurableObject(
+    catalogArchive as unknown as DurableObjectStub,
+    async (instance, state) => {
+      const archive = (instance as unknown as CatalogArchiveInternals).archive;
+      const entry = archive.entries[version];
+      if (entry === undefined) {
+        throw new Error(`カードカタログ ${version} が見つかりません。`);
+      }
+      const originalCatalog = structuredClone(entry.catalog);
+      const catalog = entry.catalog as {
+        definitions: Record<string, { name?: string } | undefined>;
+      };
+      const firstDefinition = Object.values(catalog.definitions)[0];
+      if (firstDefinition === undefined) {
+        throw new Error("競合テスト用のカード定義が見つかりません。");
+      }
+      firstDefinition.name = "conflicting catalog content";
+      await state.storage.put("catalog-archive-v1", archive);
+      return originalCatalog;
+    },
+  );
+}
+
+async function restoreCatalogContent(
+  catalogArchive: CatalogArchiveRpc,
+  version: string,
+  catalog: unknown,
+): Promise<void> {
+  await runInDurableObject(
+    catalogArchive as unknown as DurableObjectStub,
+    async (instance, state) => {
+      const archive = (instance as unknown as CatalogArchiveInternals).archive;
+      const entry = archive.entries[version];
+      if (entry === undefined) {
+        throw new Error(`カードカタログ ${version} が見つかりません。`);
+      }
+      entry.catalog = catalog;
+      await state.storage.put("catalog-archive-v1", archive);
+    },
+  );
+}
+
+async function openGameSocket(
+  session: GameSessionRpc,
+  playerId: string,
+): Promise<WebSocket> {
+  const response = await session.fetch(
+    new Request("https://example.test/events", {
+      headers: {
+        Upgrade: "websocket",
+        "X-Disastar-Authenticated-Player-Id": playerId,
+      },
+    }),
+  );
+  if (response.status !== 101 || response.webSocket === null) {
+    throw new Error("ゲーム更新WebSocketへ接続できませんでした。");
+  }
+
+  const webSocket = response.webSocket;
+  webSocket.accept();
+  await waitForGameUpdate(webSocket);
+  return webSocket;
+}
+
+function waitForGameUpdate(
+  webSocket: WebSocket,
+  stateVersion?: number,
+): Promise<Extract<GameRealtimeMessage, { type: "GAME_UPDATED" }>> {
+  return new Promise((resolve) => {
+    const listener = (event: MessageEvent) => {
+      const message = JSON.parse(String(event.data)) as GameRealtimeMessage;
+      if (
+        message.type === "GAME_UPDATED" &&
+        (stateVersion === undefined || message.stateVersion >= stateVersion)
+      ) {
+        webSocket.removeEventListener("message", listener);
+        resolve(message);
+      }
+    };
+    webSocket.addEventListener("message", listener);
+  });
 }
 
 function createFinishPlacementCommand({

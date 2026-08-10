@@ -32,6 +32,10 @@ import {
   cloneCardCatalog,
   GAME_RECONNECT_GRACE_PERIOD_MS,
   type CatalogRetentionLease,
+  type CatalogRetentionLeaseRenewal,
+  type CatalogRetentionLeaseReference,
+  type ReleaseCatalogLeaseResult,
+  type RenewCatalogLeaseResult,
   type RetainCatalogResult,
 } from "../catalog-archive/catalog-archive.js";
 import {
@@ -41,7 +45,16 @@ import {
 } from "../game-learning/game-learning-context.js";
 
 const SESSION_STORAGE_KEY = "game-session-v2-factions";
+const ABANDONMENT_STORAGE_KEY = "game-session-abandonment-v1";
+const COMMAND_RESULT_STORAGE_PREFIX = "game-command-result:";
 const AUTHENTICATED_PLAYER_ID_HEADER = "X-Disastar-Authenticated-Player-Id";
+const ABANDONMENT_CLEANUP_RETRY_MS = 30 * 1_000;
+
+export const MAX_RETAINED_GAME_EVENTS = 1_024;
+export const MAX_RETAINED_GAME_EVENT_BYTES = 512 * 1024;
+export const MAX_RETAINED_ACCEPTED_COMMAND_RESULTS = 192;
+export const MAX_RETAINED_REJECTED_COMMAND_RESULTS = 128;
+export const MAX_STORED_COMMAND_RESULT_BYTES = 128 * 1024;
 
 type GameWebSocketAttachment = {
   gameId: string;
@@ -55,13 +68,28 @@ export type StoredGameSession = {
   learningContext?: GameLearningContext | null;
   retentionExpiresAt?: number | null;
   events: GameEventEnvelope[];
-  commandResults: Record<string, StoredCommandResult>;
+  playedCards?: PlayedGameCard[];
+  commandResultIndex?: StoredCommandResultIndexEntry[];
+  /** v1/v2の埋込形式。DO起動時に個別Storageキーへ移行する。 */
+  commandResults?: Record<string, StoredCommandResult>;
+};
+
+type StoredCommandResultIndexEntry = {
+  commandId: string;
+  accepted: boolean;
 };
 
 type StoredGameEngineContext = Pick<
   GameEngineContext,
   "rules" | "cardCatalog" | "engineSemanticsVersion"
 >;
+
+type StoredGameSessionAbandonment = {
+  initializationInput: InitializeGameInput;
+  catalogVersion: string;
+  expiresAt: number;
+  catalogLeaseReleased: boolean;
+};
 
 type StoredCommandResult = {
   authenticatedPlayerId: PlayerId;
@@ -71,18 +99,31 @@ type StoredCommandResult = {
 
 type CatalogArchiveRpc = {
   retain(lease: CatalogRetentionLease): Promise<RetainCatalogResult>;
+  renewLease(
+    renewal: CatalogRetentionLeaseRenewal,
+  ): Promise<RenewCatalogLeaseResult>;
+  releaseLease(
+    reference: CatalogRetentionLeaseReference,
+  ): Promise<ReleaseCatalogLeaseResult>;
 };
+
+type CatalogRetentionSyncMode = "none" | "register" | "renew";
 
 export type InitializeGameSessionResult =
   | { initialized: true }
   | { initialized: false; error: InitializeGameError };
+
+export type AbandonGameSessionResult =
+  | { abandoned: true }
+  | { abandoned: false; error: { code: "GAME_SESSION_CONFLICT" } };
 
 export type GameSessionAccessErrorCode =
   | "GAME_NOT_FOUND"
   | "GAME_ACCESS_FORBIDDEN"
   | "GAME_NOT_FINISHED"
   | "AUTHENTICATED_PLAYER_MISMATCH"
-  | "COMMAND_ID_CONFLICT";
+  | "COMMAND_ID_CONFLICT"
+  | "COMMAND_RESULT_CAPACITY_REACHED";
 
 export type GetGameSnapshotResult =
   | { found: true; snapshot: GameSnapshotResponse }
@@ -98,22 +139,34 @@ export type GetGameLearningContextResult =
 
 export class GameSession extends DurableObject<CloudflareBindings> {
   private session: StoredGameSession | null = null;
+  private abandonment: StoredGameSessionAbandonment | null = null;
   private readonly loadSession: Promise<void>;
 
   constructor(ctx: DurableObjectState, env: CloudflareBindings) {
     super(ctx, env);
     this.loadSession = this.ctx.blockConcurrencyWhile(async () => {
-      const stored =
-        (await this.ctx.storage.get<StoredGameSession>(SESSION_STORAGE_KEY)) ??
-        null;
-      if (stored === null) {
+      const [stored, abandonment] = await Promise.all([
+        this.ctx.storage.get<StoredGameSession>(SESSION_STORAGE_KEY),
+        this.ctx.storage.get<StoredGameSessionAbandonment>(
+          ABANDONMENT_STORAGE_KEY,
+        ),
+      ]);
+      this.abandonment = abandonment ?? null;
+      if (stored === undefined) {
         this.session = null;
         return;
       }
+      if (this.abandonment !== null) {
+        this.session = stored ?? null;
+        return;
+      }
       const migrated = migrateStoredGameSession(stored);
-      this.session = migrated.session;
-      if (migrated.changed) {
-        await this.persist(migrated.session);
+      const commandResultsMigrated = await this.migrateEmbeddedCommandResults(
+        migrated.session,
+      );
+      this.session = commandResultsMigrated.session;
+      if (migrated.changed && !commandResultsMigrated.persisted) {
+        await this.persist(commandResultsMigrated.session);
       }
     });
   }
@@ -121,11 +174,20 @@ export class GameSession extends DurableObject<CloudflareBindings> {
   async initialize(
     input: InitializeGameInput,
   ): Promise<InitializeGameSessionResult> {
+    await this.loadSession;
+    if (this.abandonment !== null) {
+      await this.reconcileAbandonment(this.abandonment);
+      return createAbandonedInitializationResult();
+    }
     const existing = await this.requireSessionOrNull();
     if (existing !== null) {
       if (isSameInitializeInput(existing.initializationInput, input)) {
-        await this.syncCatalogRetention(existing);
-        await this.syncSessionAlarm(existing);
+        // 初回のfull登録が競合・失敗していた可能性があるため、初期化再送では内容比較を省略しない。
+        await this.reconcileSessionInfrastructure(existing, "register");
+        if (this.abandonment !== null) {
+          await this.reconcileAbandonment(this.abandonment);
+          return createAbandonedInitializationResult();
+        }
         return { initialized: true };
       }
       return {
@@ -153,14 +215,66 @@ export class GameSession extends DurableObject<CloudflareBindings> {
       engineContext,
       learningContext: null,
       retentionExpiresAt: null,
-      events: initialized.events,
-      commandResults: Object.create(null),
+      events: compactGameEvents(initialized.events),
+      playedCards: extractPlayedCards(
+        initialized.events,
+        initialized.state,
+        engineContext,
+      ),
+      commandResultIndex: [],
     };
     await this.persist(session);
     this.session = session;
-    await this.syncCatalogRetention(session);
-    await this.syncSessionAlarm(session);
+    await this.reconcileSessionInfrastructure(session, "register");
+    if (this.abandonment !== null) {
+      await this.reconcileAbandonment(this.abandonment);
+      return createAbandonedInitializationResult();
+    }
     return { initialized: true };
+  }
+
+  async abandon(input: InitializeGameInput): Promise<AbandonGameSessionResult> {
+    await this.loadSession;
+    const existingAbandonment = this.abandonment;
+    if (existingAbandonment !== null) {
+      if (
+        !isSameInitializeInput(existingAbandonment.initializationInput, input)
+      ) {
+        return {
+          abandoned: false,
+          error: { code: "GAME_SESSION_CONFLICT" },
+        };
+      }
+      await this.reconcileAbandonment(existingAbandonment);
+      return { abandoned: true };
+    }
+    if (
+      this.session !== null &&
+      !isSameInitializeInput(this.session.initializationInput, input)
+    ) {
+      return {
+        abandoned: false,
+        error: { code: "GAME_SESSION_CONFLICT" },
+      };
+    }
+
+    const now = Date.now();
+    const abandonment: StoredGameSessionAbandonment = {
+      initializationInput: cloneInitializeInput(input),
+      catalogVersion:
+        this.session === null
+          ? gameEngineContext.cardCatalog.version
+          : getStoredEngineContext(this.session).cardCatalog.version,
+      expiresAt: now + GAME_RECONNECT_GRACE_PERIOD_MS,
+      catalogLeaseReleased: false,
+    };
+    await this.ctx.storage.put(ABANDONMENT_STORAGE_KEY, abandonment);
+    this.abandonment = abandonment;
+    this.session = null;
+    this.closeWebSockets(1001, "対戦開始が取り消されました。");
+    await this.ctx.storage.setAlarm(now + ABANDONMENT_CLEANUP_RETRY_MS);
+    await this.reconcileAbandonment(abandonment);
+    return { abandoned: true };
   }
 
   async getSnapshot(
@@ -175,6 +289,12 @@ export class GameSession extends DurableObject<CloudflareBindings> {
       return { found: false, error: { code: "GAME_ACCESS_FORBIDDEN" } };
     }
     assertAfterSequence(afterSequence);
+    const latestEventSequence = session.state.nextEventSequence - 1;
+    const eventRetention = createEventRetentionMetadata(
+      session.events,
+      afterSequence,
+      latestEventSequence,
+    );
 
     return {
       found: true,
@@ -190,7 +310,8 @@ export class GameSession extends DurableObject<CloudflareBindings> {
           .filter(
             (event): event is NonNullable<typeof event> => event !== null,
           ),
-        latestEventSequence: session.state.nextEventSequence - 1,
+        ...eventRetention,
+        latestEventSequence,
       },
     };
   }
@@ -274,7 +395,10 @@ export class GameSession extends DurableObject<CloudflareBindings> {
       };
     }
 
-    const storedResult: unknown = session.commandResults[command.commandId];
+    const storedResult: unknown = await this.getStoredCommandResult(
+      session,
+      command.commandId,
+    );
     if (storedResult !== undefined) {
       if (
         !isStoredCommandResult(storedResult) ||
@@ -286,7 +410,19 @@ export class GameSession extends DurableObject<CloudflareBindings> {
           error: { code: "COMMAND_ID_CONFLICT" },
         };
       }
+      await this.reconcileSessionInfrastructure(session, "renew");
+      if (storedResult.response.accepted) {
+        this.broadcastCurrentRealtimeUpdate();
+      }
       return { submitted: true, response: storedResult.response };
+    }
+    if (
+      session.commandResultIndex?.some(
+        (entry) => entry.commandId === command.commandId,
+      ) === true ||
+      session.state.processedCommandIds.includes(command.commandId)
+    ) {
+      throw new Error("保存済みコマンド結果をStorageから復元できません。");
     }
 
     const result = executeCommand(
@@ -322,9 +458,39 @@ export class GameSession extends DurableObject<CloudflareBindings> {
             getSessionEngineContext(session),
           ),
         };
-    const nextEvents = result.accepted
+    const newEvents = result.accepted ? result.events : [];
+    const allEvents = result.accepted
       ? [...session.events, ...result.events]
       : session.events;
+    const nextPlayedCards = [
+      ...(session.playedCards ?? []),
+      ...extractPlayedCards(
+        newEvents,
+        result.state,
+        getStoredEngineContext(session),
+      ),
+    ];
+    const storedCommandResult: StoredCommandResult = {
+      authenticatedPlayerId,
+      command: structuredClone(command),
+      response,
+    };
+    if (
+      !canRetainCommandResult(session, response.accepted) ||
+      !isJsonValueWithinCommandResultStorageLimit(storedCommandResult)
+    ) {
+      return {
+        submitted: false,
+        error: { code: "COMMAND_RESULT_CAPACITY_REACHED" },
+      };
+    }
+    const commandResultIndex = [
+      ...(session.commandResultIndex ?? []),
+      {
+        commandId: command.commandId,
+        accepted: response.accepted,
+      },
+    ];
     const nextSession: StoredGameSession = {
       initializationInput: session.initializationInput,
       state: result.state,
@@ -332,7 +498,7 @@ export class GameSession extends DurableObject<CloudflareBindings> {
       learningContext: getNextLearningContext(
         session,
         result.state,
-        nextEvents,
+        nextPlayedCards,
         authenticatedCommand.receivedAt,
       ),
       retentionExpiresAt: getNextRetentionExpiresAt(
@@ -340,30 +506,40 @@ export class GameSession extends DurableObject<CloudflareBindings> {
         result.state,
         authenticatedCommand.receivedAt,
       ),
-      events: nextEvents,
-      commandResults: {
-        ...session.commandResults,
-        [command.commandId]: {
-          authenticatedPlayerId,
-          command: structuredClone(command),
-          response,
-        },
-      },
+      events: compactGameEvents(allEvents),
+      playedCards: nextPlayedCards,
+      commandResultIndex,
+      commandResults: undefined,
     };
 
-    await this.persist(nextSession);
+    await this.persistWithCommandResult(nextSession, storedCommandResult);
     this.session = nextSession;
-    if (shouldSyncCatalogRetention(session, nextSession)) {
-      await this.syncCatalogRetention(nextSession);
-    }
-    await this.syncSessionAlarm(nextSession);
+    await this.reconcileSessionInfrastructure(
+      nextSession,
+      shouldSyncCatalogRetention(session, nextSession) ? "renew" : "none",
+    );
     if (result.accepted) {
-      this.broadcastRealtimeUpdate(nextSession);
+      this.broadcastCurrentRealtimeUpdate();
     }
     return { submitted: true, response };
   }
 
   async alarm(): Promise<void> {
+    await this.loadSession;
+    if (this.abandonment !== null) {
+      await this.reconcileAbandonment(this.abandonment);
+      if (
+        this.abandonment?.catalogLeaseReleased === true &&
+        this.abandonment.expiresAt <= Date.now()
+      ) {
+        await this.ctx.storage.deleteAll();
+        await this.ctx.storage.deleteAlarm();
+        this.abandonment = null;
+        this.session = null;
+      }
+      return;
+    }
+
     const session = await this.requireSessionOrNull();
     if (session === null) {
       return;
@@ -373,12 +549,13 @@ export class GameSession extends DurableObject<CloudflareBindings> {
     if (retentionExpiresAt !== null) {
       if (retentionExpiresAt <= Date.now()) {
         this.closeWebSockets(1001, "ゲームの保持期間が終了しました。");
-        await this.ctx.storage.delete(SESSION_STORAGE_KEY);
+        await this.ctx.storage.deleteAll();
         await this.ctx.storage.deleteAlarm();
         this.session = null;
         return;
       }
-      await this.syncSessionAlarm(session);
+      await this.reconcileSessionInfrastructure(session, "renew");
+      this.broadcastCurrentRealtimeUpdate();
       return;
     }
     if (session.state.phaseDeadlineAt === null) {
@@ -410,10 +587,19 @@ export class GameSession extends DurableObject<CloudflareBindings> {
       );
     }
     if (result.state === session.state) {
-      await this.syncSessionAlarm(session);
+      await this.reconcileSessionInfrastructure(session, "renew");
+      this.broadcastCurrentRealtimeUpdate();
       return;
     }
 
+    const nextPlayedCards = [
+      ...(session.playedCards ?? []),
+      ...extractPlayedCards(
+        result.events,
+        result.state,
+        getStoredEngineContext(session),
+      ),
+    ];
     const nextSession: StoredGameSession = {
       ...session,
       state: result.state,
@@ -421,7 +607,7 @@ export class GameSession extends DurableObject<CloudflareBindings> {
       learningContext: getNextLearningContext(
         session,
         result.state,
-        [...session.events, ...result.events],
+        nextPlayedCards,
         Date.now(),
       ),
       retentionExpiresAt: getNextRetentionExpiresAt(
@@ -429,15 +615,16 @@ export class GameSession extends DurableObject<CloudflareBindings> {
         result.state,
         Date.now(),
       ),
-      events: [...session.events, ...result.events],
+      events: compactGameEvents([...session.events, ...result.events]),
+      playedCards: nextPlayedCards,
     };
     await this.persist(nextSession);
     this.session = nextSession;
-    if (shouldSyncCatalogRetention(session, nextSession)) {
-      await this.syncCatalogRetention(nextSession);
-    }
-    await this.syncSessionAlarm(nextSession);
-    this.broadcastRealtimeUpdate(nextSession);
+    await this.reconcileSessionInfrastructure(
+      nextSession,
+      shouldSyncCatalogRetention(session, nextSession) ? "renew" : "none",
+    );
+    this.broadcastCurrentRealtimeUpdate();
   }
 
   webSocketMessage(webSocket: WebSocket): void {
@@ -454,6 +641,12 @@ export class GameSession extends DurableObject<CloudflareBindings> {
 
   private broadcastRealtimeUpdate(session: StoredGameSession): void {
     this.broadcastRealtimeMessage(createRealtimeUpdate(session.state));
+  }
+
+  private broadcastCurrentRealtimeUpdate(): void {
+    if (this.session !== null) {
+      this.broadcastRealtimeUpdate(this.session);
+    }
   }
 
   private broadcastPresence(excludedWebSocket?: WebSocket): void {
@@ -516,8 +709,11 @@ export class GameSession extends DurableObject<CloudflareBindings> {
 
   private async requireSessionOrNull(): Promise<StoredGameSession | null> {
     await this.loadSession;
+    if (this.abandonment !== null) {
+      return null;
+    }
     if (this.session !== null && isRetentionExpired(this.session, Date.now())) {
-      await this.ctx.storage.delete(SESSION_STORAGE_KEY);
+      await this.ctx.storage.deleteAll();
       await this.ctx.storage.deleteAlarm();
       this.session = null;
     }
@@ -528,25 +724,195 @@ export class GameSession extends DurableObject<CloudflareBindings> {
     await this.ctx.storage.put(SESSION_STORAGE_KEY, session);
   }
 
+  private async reconcileAbandonment(
+    abandonment: StoredGameSessionAbandonment,
+  ): Promise<void> {
+    let current = this.abandonment;
+    if (
+      current === null ||
+      !isSameInitializeInput(
+        current.initializationInput,
+        abandonment.initializationInput,
+      )
+    ) {
+      return;
+    }
+
+    if (!current.catalogLeaseReleased) {
+      try {
+        await getCatalogArchive(this.env).releaseLease({
+          gameId: current.initializationInput.gameId,
+          version: current.catalogVersion,
+        });
+      } catch {
+        await this.ctx.storage.setAlarm(
+          Date.now() + ABANDONMENT_CLEANUP_RETRY_MS,
+        );
+        return;
+      }
+      current = { ...current, catalogLeaseReleased: true };
+      await this.ctx.storage.put(ABANDONMENT_STORAGE_KEY, current);
+      this.abandonment = current;
+    }
+
+    await this.ctx.storage.setAlarm(current.expiresAt);
+  }
+
+  private async getStoredCommandResult(
+    session: StoredGameSession,
+    commandId: string,
+  ): Promise<StoredCommandResult | undefined> {
+    const embedded = session.commandResults?.[commandId];
+    if (embedded !== undefined) {
+      return embedded;
+    }
+    if (
+      session.commandResultIndex?.some(
+        (entry) => entry.commandId === commandId,
+      ) !== true
+    ) {
+      return undefined;
+    }
+    return await this.ctx.storage.get<StoredCommandResult>(
+      getCommandResultStorageKey(commandId),
+    );
+  }
+
+  private async persistWithCommandResult(
+    session: StoredGameSession,
+    commandResult: StoredCommandResult,
+  ): Promise<void> {
+    await this.ctx.storage.transaction(async (transaction) => {
+      await transaction.put(SESSION_STORAGE_KEY, session);
+      await transaction.put(
+        getCommandResultStorageKey(commandResult.command.commandId),
+        commandResult,
+      );
+    });
+  }
+
+  private async migrateEmbeddedCommandResults(
+    session: StoredGameSession,
+  ): Promise<{
+    session: StoredGameSession;
+    persisted: boolean;
+  }> {
+    const embeddedEntries = Object.entries(session.commandResults ?? {});
+    if (embeddedEntries.length === 0) {
+      return { session, persisted: false };
+    }
+
+    let migratedSession = { ...session, commandResults: undefined };
+    const retainedResults = new Map<string, StoredCommandResult>();
+    const indexedCommandIds = new Set(
+      (migratedSession.commandResultIndex ?? []).map(
+        (entry) => entry.commandId,
+      ),
+    );
+    for (const [commandId, result] of embeddedEntries) {
+      if (
+        !isStoredCommandResult(result) ||
+        result.command.commandId !== commandId ||
+        result.response.commandId !== commandId
+      ) {
+        throw new Error("旧形式の保存済みコマンド結果を検証できません。");
+      }
+      const indexed = migratedSession.commandResultIndex?.find(
+        (entry) => entry.commandId === commandId,
+      );
+      if (
+        indexed !== undefined &&
+        indexed.accepted !== result.response.accepted
+      ) {
+        throw new Error("旧形式のコマンド結果indexが応答と一致しません。");
+      }
+      if (!indexedCommandIds.has(commandId)) {
+        migratedSession = {
+          ...migratedSession,
+          commandResultIndex: [
+            ...(migratedSession.commandResultIndex ?? []),
+            { commandId, accepted: result.response.accepted },
+          ],
+        };
+        indexedCommandIds.add(commandId);
+      }
+      retainedResults.set(commandId, result);
+    }
+
+    const entries = [...retainedResults].map(
+      ([commandId, result]) =>
+        [getCommandResultStorageKey(commandId), result] as const,
+    );
+    for (let index = 0; index < entries.length; index += 128) {
+      await this.ctx.storage.put(
+        Object.fromEntries(entries.slice(index, index + 128)),
+      );
+    }
+    // 埋込結果を残したセッションが正本のままなので、個別キーを先に作っても再試行できる。
+    await this.persist(migratedSession);
+    return { session: migratedSession, persisted: true };
+  }
+
+  /**
+   * Storage確定後に外部同期だけが失敗しても、保存済み状態から冪等に復旧する。
+   * 再送・Alarm再試行ではカタログリースも再主張し、どこまで成功したかを推測しない。
+   */
+  private async reconcileSessionInfrastructure(
+    session: StoredGameSession,
+    catalogRetentionMode: CatalogRetentionSyncMode,
+  ): Promise<void> {
+    if (catalogRetentionMode !== "none") {
+      await this.syncCatalogRetention(session, catalogRetentionMode);
+      const currentSession = this.session;
+      if (
+        currentSession !== null &&
+        hasDifferentCatalogRetention(session, currentSession)
+      ) {
+        await this.syncCatalogRetention(currentSession, "renew");
+      }
+    }
+    await this.syncSessionAlarm(session);
+  }
+
   private async syncCatalogRetention(
     session: StoredGameSession,
+    mode: Exclude<CatalogRetentionSyncMode, "none">,
   ): Promise<void> {
-    const retained = await getCatalogArchive(this.env).retain({
+    const catalogArchive = getCatalogArchive(this.env);
+    const catalog = getStoredEngineContext(session).cardCatalog;
+    const lease = {
       gameId: session.state.gameId,
-      catalog: getStoredEngineContext(session).cardCatalog,
       expiresAt: getRetentionExpiresAt(session.state, session),
-    });
+    };
+    if (mode === "renew") {
+      const renewed = await catalogArchive.renewLease({
+        ...lease,
+        version: catalog.version,
+      });
+      if (renewed.renewed) {
+        return;
+      }
+    }
+
+    const retained = await catalogArchive.retain({ ...lease, catalog });
     if (!retained.retained) {
       throw new Error(
-        `カードカタログ ${getStoredEngineContext(session).cardCatalog.version} の保持に失敗しました: ${retained.error.code}`,
+        `カードカタログ ${catalog.version} の保持に失敗しました: ${retained.error.code}`,
       );
     }
   }
 
   private async syncSessionAlarm(session: StoredGameSession): Promise<void> {
+    const currentSession = this.session;
+    if (currentSession === null) {
+      await this.ctx.storage.deleteAlarm();
+      return;
+    }
+    const sessionToSchedule =
+      currentSession === session ? session : currentSession;
     const alarmAt =
-      getRetentionExpiresAt(session.state, session) ??
-      session.state.phaseDeadlineAt;
+      getRetentionExpiresAt(sessionToSchedule.state, sessionToSchedule) ??
+      sessionToSchedule.state.phaseDeadlineAt;
     if (alarmAt === null) {
       await this.ctx.storage.deleteAlarm();
       return;
@@ -647,6 +1013,7 @@ export function migrateStoredGameSession(stored: StoredGameSession): {
 } {
   const session = structuredClone(stored);
   let changed = migrateAttackGroupSlots(session.state);
+  const finishedAt = getGameFinishedAt(session);
 
   if (session.engineContext === undefined) {
     const compatibleContext = findGameEngineContextForVersions(session.state);
@@ -660,14 +1027,47 @@ export function migrateStoredGameSession(stored: StoredGameSession): {
   }
 
   getStoredEngineContext(session);
+  if (session.playedCards === undefined) {
+    session.playedCards = extractPlayedCards(
+      session.events,
+      session.state,
+      getStoredEngineContext(session),
+    );
+    changed = true;
+  }
+  if (session.commandResultIndex === undefined) {
+    session.commandResultIndex = [];
+    changed = true;
+  } else {
+    const uniqueCommandResults = new Map<
+      string,
+      StoredCommandResultIndexEntry
+    >();
+    for (const entry of session.commandResultIndex) {
+      const existing = uniqueCommandResults.get(entry.commandId);
+      if (existing !== undefined && existing.accepted !== entry.accepted) {
+        throw new Error("保存済みコマンド結果indexが競合しています。");
+      }
+      uniqueCommandResults.set(entry.commandId, entry);
+    }
+    if (uniqueCommandResults.size !== session.commandResultIndex.length) {
+      session.commandResultIndex = [...uniqueCommandResults.values()];
+      changed = true;
+    }
+  }
   if (
     session.state.status === "finished" &&
     session.learningContext === undefined
   ) {
     session.learningContext = createLearningContextForSession(
       session,
-      getGameFinishedAt(session),
+      finishedAt,
     );
+    changed = true;
+  }
+  const compactedEvents = compactGameEvents(session.events);
+  if (compactedEvents.length !== session.events.length) {
+    session.events = compactedEvents;
     changed = true;
   }
   return { session, changed };
@@ -676,7 +1076,7 @@ export function migrateStoredGameSession(stored: StoredGameSession): {
 function getNextLearningContext(
   session: StoredGameSession,
   nextState: GameState,
-  nextEvents: readonly GameEventEnvelope[],
+  nextPlayedCards: readonly PlayedGameCard[],
   completedAt: number,
 ): GameLearningContext | null {
   if (nextState.status !== "finished") {
@@ -690,7 +1090,7 @@ function getNextLearningContext(
   }
 
   return createLearningContextForSession(
-    { ...session, state: nextState, events: [...nextEvents] },
+    { ...session, state: nextState, playedCards: [...nextPlayedCards] },
     completedAt,
   );
 }
@@ -699,8 +1099,28 @@ function createLearningContextForSession(
   session: StoredGameSession,
   createdAt: number,
 ): GameLearningContext {
-  const context = getSessionEngineContext(session);
-  const playedCards = session.events.flatMap((envelope) => {
+  const playedCards =
+    session.playedCards ??
+    extractPlayedCards(
+      session.events,
+      session.state,
+      getStoredEngineContext(session),
+    );
+
+  return createGameLearningContext({
+    createdAt,
+    gameId: session.state.gameId,
+    playedCards,
+    playerIds: Object.keys(session.state.players),
+  });
+}
+
+function extractPlayedCards(
+  events: readonly GameEventEnvelope[],
+  state: GameState,
+  engineContext: StoredGameEngineContext,
+): PlayedGameCard[] {
+  return events.flatMap((envelope) => {
     const event = envelope.event;
     if (
       event.type !== "ATTACK_GROUP_CREATED" &&
@@ -713,12 +1133,13 @@ function createLearningContextForSession(
     const cardDefinitionId =
       typeof event.cardDefinitionId === "string"
         ? event.cardDefinitionId
-        : session.state.cardInstances[event.cardInstanceId]?.definitionId;
+        : state.cardInstances[event.cardInstanceId]?.definitionId;
     if (cardDefinitionId === undefined) {
       return [];
     }
 
-    const cardName = context.cardCatalog.definitions[cardDefinitionId]?.name;
+    const cardName =
+      engineContext.cardCatalog.definitions[cardDefinitionId]?.name;
     return cardName === undefined
       ? []
       : [
@@ -729,13 +1150,6 @@ function createLearningContextForSession(
             sequence: envelope.sequence,
           } satisfies PlayedGameCard,
         ];
-  });
-
-  return createGameLearningContext({
-    createdAt,
-    gameId: session.state.gameId,
-    playedCards,
-    playerIds: Object.keys(session.state.players),
   });
 }
 
@@ -827,6 +1241,18 @@ function shouldSyncCatalogRetention(
   );
 }
 
+function hasDifferentCatalogRetention(
+  previous: StoredGameSession,
+  current: StoredGameSession,
+): boolean {
+  return (
+    getStoredEngineContext(previous).cardCatalog.version !==
+      getStoredEngineContext(current).cardCatalog.version ||
+    getRetentionExpiresAt(previous.state, previous) !==
+      getRetentionExpiresAt(current.state, current)
+  );
+}
+
 function isRetentionExpired(session: StoredGameSession, now: number): boolean {
   const retentionExpiresAt = getRetentionExpiresAt(session.state, session);
   return retentionExpiresAt !== null && retentionExpiresAt <= now;
@@ -840,6 +1266,16 @@ function getCatalogArchive(environment: CloudflareBindings): CatalogArchiveRpc {
 
 function isParticipant(state: GameState, playerId: PlayerId): boolean {
   return state.players[playerId] !== undefined;
+}
+
+function createAbandonedInitializationResult(): InitializeGameSessionResult {
+  return {
+    initialized: false,
+    error: {
+      code: "DEPENDENCY_OUTPUT_INVALID",
+      message: "このゲームセッションの開始は取り消されています。",
+    },
+  };
 }
 
 function getDisconnectedPlayerIds(
@@ -859,6 +1295,79 @@ function createRealtimeUpdate(state: GameState): GameRealtimeUpdate {
     stateVersion: state.stateVersion,
     latestEventSequence: state.nextEventSequence - 1,
   };
+}
+
+export function compactGameEvents(
+  events: readonly GameEventEnvelope[],
+): GameEventEnvelope[] {
+  const retained: GameEventEnvelope[] = [];
+  let serializedBytes = 2;
+  for (
+    let index = events.length - 1;
+    index >= 0 && retained.length < MAX_RETAINED_GAME_EVENTS;
+    index -= 1
+  ) {
+    const event = events[index];
+    if (event === undefined) {
+      continue;
+    }
+    const eventBytes = new TextEncoder().encode(JSON.stringify(event)).length;
+    const separatorBytes = retained.length === 0 ? 0 : 1;
+    if (
+      serializedBytes + separatorBytes + eventBytes >
+      MAX_RETAINED_GAME_EVENT_BYTES
+    ) {
+      break;
+    }
+    retained.push(event);
+    serializedBytes += separatorBytes + eventBytes;
+  }
+  return retained.reverse();
+}
+
+export function createEventRetentionMetadata(
+  events: readonly GameEventEnvelope[],
+  afterSequence: number,
+  latestEventSequence: number,
+): Pick<
+  GameSnapshotResponse,
+  "eventsComplete" | "firstAvailableEventSequence"
+> {
+  const firstAvailableEventSequence =
+    events[0]?.sequence ?? latestEventSequence + 1;
+  return {
+    firstAvailableEventSequence,
+    eventsComplete:
+      afterSequence <= latestEventSequence &&
+      afterSequence >= firstAvailableEventSequence - 1,
+  };
+}
+
+export function isJsonValueWithinCommandResultStorageLimit(
+  value: unknown,
+): boolean {
+  return (
+    new TextEncoder().encode(JSON.stringify(value)).length <=
+    MAX_STORED_COMMAND_RESULT_BYTES
+  );
+}
+
+function canRetainCommandResult(
+  session: StoredGameSession,
+  accepted: boolean,
+): boolean {
+  const maximum = accepted
+    ? MAX_RETAINED_ACCEPTED_COMMAND_RESULTS
+    : MAX_RETAINED_REJECTED_COMMAND_RESULTS;
+  return (
+    (session.commandResultIndex ?? []).filter(
+      (entry) => entry.accepted === accepted,
+    ).length < maximum
+  );
+}
+
+function getCommandResultStorageKey(commandId: string): string {
+  return `${COMMAND_RESULT_STORAGE_PREFIX}${encodeURIComponent(commandId)}`;
 }
 
 function isGameWebSocketAttachment(
@@ -882,7 +1391,10 @@ function isStoredCommandResult(value: unknown): value is StoredCommandResult {
     isRecord(value) &&
     typeof value.authenticatedPlayerId === "string" &&
     isRecord(value.command) &&
-    isRecord(value.response)
+    typeof value.command.commandId === "string" &&
+    isRecord(value.response) &&
+    typeof value.response.accepted === "boolean" &&
+    typeof value.response.commandId === "string"
   );
 }
 

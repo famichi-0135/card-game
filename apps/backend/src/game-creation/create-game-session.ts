@@ -11,6 +11,14 @@ export type GameSessionInitializer = {
   >;
 };
 
+export type AbandonGameSessionResult =
+  | { abandoned: true }
+  | { abandoned: false; error: { code: "GAME_SESSION_CONFLICT" } };
+
+type GameSessionAbandoner = {
+  abandon(input: InitializeGameInput): Promise<AbandonGameSessionResult>;
+};
+
 export type CreateGameSessionInput = Pick<InitializeGameInput, "players">;
 
 export type CreateGameSessionDependencies = {
@@ -108,6 +116,18 @@ export function initializeGameSessionInEnvironment(
         gameId,
       ) as unknown as GameSessionInitializer,
   });
+}
+
+/** 開始が取り消されたゲームIDを再初期化不能にし、関連データを期限付きで破棄する。 */
+export function abandonGameSessionInEnvironment(
+  input: InitializeGameInput,
+  environment: CloudflareBindings,
+): Promise<AbandonGameSessionResult> {
+  return (
+    environment.GAME_SESSION.getByName(
+      input.gameId,
+    ) as unknown as GameSessionAbandoner
+  ).abandon(input);
 }
 
 function isNonEmptyString(value: string): boolean {

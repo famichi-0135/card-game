@@ -256,6 +256,36 @@ describe("ゲーム HTTP API", () => {
     expect(resolved).toBe(false);
   });
 
+  it("16KiBを超えるコマンド本文をDurable Objectの前で拒否する", async () => {
+    let resolved = false;
+    const app = createGameApi({
+      authenticate: async () => "player-1",
+      getGameSession: () => {
+        resolved = true;
+        throw new Error("過大な本文で Durable Object を解決してはいけません。");
+      },
+    });
+
+    const atLimit = await request(app, "/game-1/commands", {
+      method: "POST",
+      body: " ".repeat(16 * 1024),
+    });
+    const response = await request(app, "/game-1/commands", {
+      method: "POST",
+      body: JSON.stringify({ padding: "a".repeat(16 * 1024) }),
+    });
+
+    expect(atLimit.status).toBe(400);
+    expect(await atLimit.json()).toEqual({
+      error: { code: "INVALID_REQUEST" },
+    });
+    expect(response.status).toBe(413);
+    expect(await response.json()).toEqual({
+      error: { code: "REQUEST_BODY_TOO_LARGE" },
+    });
+    expect(resolved).toBe(false);
+  });
+
   it("本文のプレイヤーIDが認証結果と異なるコマンドを拒否する", async () => {
     let resolved = false;
     const app = createGameApi({
@@ -399,6 +429,30 @@ describe("ゲーム HTTP API", () => {
     expect(response.status).toBe(409);
     expect(await response.json()).toEqual({
       error: { code: "COMMAND_ID_CONFLICT" },
+    });
+  });
+
+  it("拒否結果の保持上限を非公開状態なしの429へ変換する", async () => {
+    const app = createGameApi({
+      authenticate: async () => "player-1",
+      getGameSession: () => ({
+        getSnapshot: async () =>
+          ({ found: true, snapshot }) satisfies GetGameSnapshotResult,
+        submit: async () => ({
+          submitted: false,
+          error: { code: "COMMAND_RESULT_CAPACITY_REACHED" },
+        }),
+      }),
+    });
+
+    const response = await request(app, "/game-1/commands", {
+      method: "POST",
+      body: JSON.stringify({ command: createFinishPlacementCommand() }),
+    });
+
+    expect(response.status).toBe(429);
+    expect(await response.json()).toEqual({
+      error: { code: "COMMAND_RESULT_CAPACITY_REACHED" },
     });
   });
 
