@@ -1,4 +1,4 @@
-import { env, runInDurableObject } from "cloudflare:test";
+import { env, evictDurableObject, runInDurableObject } from "cloudflare:test";
 import { describe, expect, it } from "vitest";
 import type {
   AuthenticatedGameCommand,
@@ -12,8 +12,10 @@ import type {
 } from "../src/game-session/game-session.js";
 import {
   getGameSessionRetentionExpiresAt,
+  MAX_RETAINED_REJECTED_COMMAND_RESULTS,
   migrateAttackGroupSlots,
   migrateStoredGameSession,
+  type StoredGameSession,
 } from "../src/game-session/game-session.js";
 import {
   createCountermeasureStarterDeckDefinitionIds,
@@ -50,6 +52,10 @@ describe("GameSession Durable Object", () => {
     expect(playerTwoSnapshot.events).toHaveLength(
       playerOneSnapshot.events.length,
     );
+    expect(playerOneSnapshot.firstAvailableEventSequence).toBe(
+      playerOneSnapshot.events[0]?.sequence,
+    );
+    expect(playerOneSnapshot.eventsComplete).toBe(true);
     expect(playerOneSnapshot.events).toEqual(
       expect.arrayContaining([
         expect.objectContaining({
@@ -293,23 +299,32 @@ describe("GameSession Durable Object", () => {
       ownerId: "player-1",
     };
 
+    const usageEvent = {
+      sequence: state.nextEventSequence,
+      stateVersion: state.stateVersion,
+      occurredAt: 1_000,
+      event: {
+        type: "ATTACK_GROUP_CREATED",
+        playerId: "player-1",
+        groupId: "legacy-group",
+        cardInstanceId: "legacy-learning-card",
+      },
+    } as unknown as (typeof initialized.events)[number];
+    const laterEvents = Array.from({ length: 1_025 }, (_, index) => ({
+      sequence: usageEvent.sequence + index + 1,
+      stateVersion: state.stateVersion,
+      occurredAt: 1_001 + index,
+      event: {
+        type: "PHASE_CHANGED" as const,
+        phase: "support" as const,
+        phaseSequence: index + 1,
+        deadlineAt: null,
+      },
+    }));
     const migrated = migrateStoredGameSession({
       initializationInput: input,
       state,
-      events: [
-        ...initialized.events,
-        {
-          sequence: state.nextEventSequence,
-          stateVersion: state.stateVersion,
-          occurredAt: 1_000,
-          event: {
-            type: "ATTACK_GROUP_CREATED",
-            playerId: "player-1",
-            groupId: "legacy-group",
-            cardInstanceId: "legacy-learning-card",
-          },
-        } as unknown as (typeof initialized.events)[number],
-      ],
+      events: [...initialized.events, usageEvent, ...laterEvents],
       commandResults: {},
     });
 
@@ -320,6 +335,8 @@ describe("GameSession Durable Object", () => {
         usedByPlayerIds: ["player-1"],
       }),
     ]);
+    expect(migrated.session.events).toHaveLength(1_024);
+    expect(migrated.session.events).not.toContainEqual(usageEvent);
   });
 
   it("同じ commandId の再送には最初の結果を返す", async () => {
@@ -496,6 +513,166 @@ describe("GameSession Durable Object", () => {
     ).resolves.toEqual({
       submitted: false,
       error: { code: "COMMAND_ID_CONFLICT" },
+    });
+  });
+
+  it("旧埋込形式のコマンド結果を個別Storageキーへ移行して同じ結果を返す", async () => {
+    const gameId = "game-session-command-result-migration";
+    const stub = getGameSession(gameId);
+    await stub.initialize(createInitializeInput(gameId));
+    const initial = await stub.getSnapshot("player-1", 0);
+    if (!initial.found) {
+      throw new Error("初期スナップショットを取得できませんでした。");
+    }
+    const playerId = initial.snapshot.view.firstPlayerId;
+    const command: AuthenticatedGameCommand = {
+      authenticatedPlayerId: playerId,
+      receivedAt: 1_000,
+      command: {
+        type: "FINISH_SUPPORT",
+        commandId: "legacy-embedded-rejection",
+        gameId,
+        playerId,
+        phaseSequence: initial.snapshot.view.phaseSequence,
+        clientStateVersion: initial.snapshot.view.stateVersion,
+        issuedAt: 1_000,
+      },
+    };
+    const first = await stub.submit(command);
+    expect(first).toMatchObject({
+      submitted: true,
+      response: { accepted: false },
+    });
+
+    const resultKey = `game-command-result:${encodeURIComponent(command.command.commandId)}`;
+    await runInDurableObject(
+      stub as unknown as DurableObjectStub,
+      async (instance, state) => {
+        const internals = instance as unknown as {
+          session: StoredGameSession;
+        };
+        const result = await state.storage.get(resultKey);
+        if (result === undefined) {
+          throw new Error("個別コマンド結果が保存されていません。");
+        }
+        const embeddedResults: NonNullable<
+          StoredGameSession["commandResults"]
+        > = {};
+        for (let index = 0; index < 130; index += 1) {
+          const commandId =
+            index === 0
+              ? command.command.commandId
+              : `legacy-embedded-rejection-${index}`;
+          const cloned = structuredClone(result) as NonNullable<
+            StoredGameSession["commandResults"]
+          >[string];
+          cloned.command.commandId = commandId;
+          cloned.response.commandId = commandId;
+          embeddedResults[commandId] = cloned;
+        }
+        internals.session.commandResults = embeddedResults;
+        internals.session.commandResultIndex = [
+          { commandId: command.command.commandId, accepted: false },
+          { commandId: command.command.commandId, accepted: false },
+        ];
+        await state.storage.put("game-session-v2-factions", internals.session);
+        const existingResults = await state.storage.list({
+          prefix: "game-command-result:",
+        });
+        await state.storage.delete([...existingResults.keys()]);
+      },
+    );
+    await evictDurableObject(stub as unknown as DurableObjectStub);
+
+    await expect(stub.submit(command)).resolves.toEqual(first);
+    await runInDurableObject(
+      stub as unknown as DurableObjectStub,
+      async (instance, state) => {
+        const internals = instance as unknown as {
+          session: StoredGameSession;
+        };
+        expect(internals.session.commandResults).toBeUndefined();
+        expect(internals.session.commandResultIndex).toHaveLength(130);
+        expect(
+          new Set(
+            internals.session.commandResultIndex?.map(
+              (entry) => entry.commandId,
+            ),
+          ).size,
+        ).toBe(130);
+        expect(
+          (await state.storage.list({ prefix: "game-command-result:" })).size,
+        ).toBe(130);
+        expect(await state.storage.get(resultKey)).toBeDefined();
+      },
+    );
+  });
+
+  it("拒否結果が128件に達した後は新規拒否を保存せず、受理可能な操作は継続する", async () => {
+    const gameId = "game-session-rejected-result-capacity";
+    const stub = getGameSession(gameId);
+    await stub.initialize(createInitializeInput(gameId));
+    const initial = await stub.getSnapshot("player-1", 0);
+    if (!initial.found) {
+      throw new Error("初期スナップショットを取得できませんでした。");
+    }
+    const currentPlayerId = initial.snapshot.view.firstPlayerId;
+
+    await runInDurableObject(
+      stub as unknown as DurableObjectStub,
+      async (instance, state) => {
+        const internals = instance as unknown as {
+          session: StoredGameSession;
+        };
+        internals.session.commandResultIndex = Array.from(
+          { length: MAX_RETAINED_REJECTED_COMMAND_RESULTS },
+          (_, index) => ({
+            commandId: `stored-rejection-${index}`,
+            accepted: false,
+          }),
+        );
+        await state.storage.put("game-session-v2-factions", internals.session);
+      },
+    );
+
+    const rejectedCommand: AuthenticatedGameCommand = {
+      authenticatedPlayerId: currentPlayerId,
+      receivedAt: 1_000,
+      command: {
+        type: "FINISH_SUPPORT",
+        commandId: "rejection-over-capacity",
+        gameId,
+        playerId: currentPlayerId,
+        phaseSequence: initial.snapshot.view.phaseSequence,
+        clientStateVersion: initial.snapshot.view.stateVersion,
+        issuedAt: 1_000,
+      },
+    };
+    await expect(stub.submit(rejectedCommand)).resolves.toEqual({
+      submitted: false,
+      error: { code: "COMMAND_RESULT_CAPACITY_REACHED" },
+    });
+    await expect(stub.submit(rejectedCommand)).resolves.toEqual({
+      submitted: false,
+      error: { code: "COMMAND_RESULT_CAPACITY_REACHED" },
+    });
+
+    const acceptedCommand: AuthenticatedGameCommand = {
+      authenticatedPlayerId: currentPlayerId,
+      receivedAt: 1_001,
+      command: {
+        type: "FINISH_PLACEMENT",
+        commandId: "accepted-with-rejection-capacity-full",
+        gameId,
+        playerId: currentPlayerId,
+        phaseSequence: initial.snapshot.view.phaseSequence,
+        clientStateVersion: initial.snapshot.view.stateVersion,
+        issuedAt: 1_001,
+      },
+    };
+    await expect(stub.submit(acceptedCommand)).resolves.toMatchObject({
+      submitted: true,
+      response: { accepted: true },
     });
   });
 

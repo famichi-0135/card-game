@@ -11,9 +11,13 @@ import type {
   InitializeGameInput,
   PlayerId,
 } from "@disastar/game-engine/contracts";
-import { initializeGameSessionInEnvironment } from "../game-creation/create-game-session.js";
+import {
+  abandonGameSessionInEnvironment,
+  initializeGameSessionInEnvironment,
+} from "../game-creation/create-game-session.js";
 
 const LOBBY_STORAGE_KEY = "match-lobby-v2-factions";
+const GAME_ABANDONMENT_RETRY_MS = 30 * 1_000;
 
 export const MATCH_LOBBY_WAIT_DURATION_MS = 30 * 60 * 1_000;
 
@@ -56,6 +60,7 @@ type CancelledMatch = {
   ownerPlayerId: PlayerId;
   ownerFaction: Faction;
   createdAt: number;
+  pendingGameAbandonment?: InitializeGameInput;
 };
 
 type MatchLobbyState =
@@ -87,6 +92,17 @@ export type GetMatchLobbyViewResult =
       visible: false;
       error: { code: "MATCH_ACCESS_FORBIDDEN" | "MATCH_NOT_FOUND" };
     };
+
+export type GetPublicMatchLobbySummaryResult =
+  | {
+      available: true;
+      summary: {
+        ownerFaction: Faction;
+        createdAt: number;
+        expiresAt: number;
+      };
+    }
+  | { available: false; reason: "starting" | "terminal" };
 
 export type MatchLobbyAcceptResult =
   | { accepted: true; gameId: GameId }
@@ -247,24 +263,17 @@ export class MatchLobby extends DurableObject<CloudflareBindings> {
       : { visible: false, error: { code: "MATCH_ACCESS_FORBIDDEN" } };
   }
 
-  async getPublicSummary(): Promise<
-    | {
-        available: true;
-        summary: {
-          ownerFaction: Faction;
-          createdAt: number;
-          expiresAt: number;
-        };
-      }
-    | { available: false }
-  > {
+  async getPublicSummary(): Promise<GetPublicMatchLobbySummaryResult> {
     const match = await this.getMatch();
+    if (match?.status === "starting" && match.visibility === "public") {
+      return { available: false, reason: "starting" };
+    }
     if (
       match === null ||
       match.status !== "waiting" ||
       match.visibility !== "public"
     ) {
-      return { available: false };
+      return { available: false, reason: "terminal" };
     }
 
     return {
@@ -361,7 +370,7 @@ export class MatchLobby extends DurableObject<CloudflareBindings> {
         error: { code: "MATCH_CANCELLATION_FORBIDDEN" },
       };
     }
-    if (match.status !== "waiting") {
+    if (match.status !== "waiting" && match.status !== "starting") {
       return {
         cancelled: false,
         error: { code: "MATCH_NOT_CANCELLABLE" },
@@ -373,43 +382,63 @@ export class MatchLobby extends DurableObject<CloudflareBindings> {
       ownerPlayerId: match.ownerPlayerId,
       ownerFaction: match.ownerFaction,
       createdAt: match.createdAt,
+      ...(match.status === "starting"
+        ? { pendingGameAbandonment: match.gameInput }
+        : {}),
     };
     await this.persist(cancelled);
-    await this.ctx.storage.deleteAlarm();
     this.match = cancelled;
+    if (cancelled.pendingGameAbandonment === undefined) {
+      await this.clearAlarm();
+    } else {
+      await this.reconcileGameAbandonment(cancelled);
+    }
     return { cancelled: true };
   }
 
   async alarm(): Promise<void> {
-    await this.getMatch();
+    const match = await this.getMatch();
+    if (
+      match?.status === "cancelled" &&
+      match.pendingGameAbandonment !== undefined
+    ) {
+      await this.reconcileGameAbandonment(match);
+    }
   }
 
   private async completeStart(
     match: StartingMatch,
   ): Promise<MatchLobbyAcceptResult> {
-    const initialized = await initializeGameSessionInEnvironment(
-      match.gameInput,
-      this.env,
-    );
+    let initialized: Awaited<
+      ReturnType<typeof initializeGameSessionInEnvironment>
+    >;
+    try {
+      initialized = await this.initializeGameSession(match.gameInput);
+    } catch {
+      return await this.handleUnknownStartResult(match);
+    }
     if (!initialized.initialized) {
-      const waiting: WaitingMatch = {
-        status: "waiting",
-        ownerPlayerId: match.ownerPlayerId,
-        ownerFaction: match.ownerFaction,
-        ownerDeckDefinitionIds: match.ownerDeckDefinitionIds,
-        createdAt: match.createdAt,
-        expiresAt: match.expiresAt,
-        visibility: match.visibility,
-      };
-      await this.persist(waiting);
-      this.match = waiting;
-      return {
-        accepted: false,
-        error: {
-          code: "GAME_CREATION_FAILED",
-          initializationError: initialized.error,
-        },
-      };
+      return await this.restoreWaitingAfterStartFailure(
+        match,
+        initialized.error,
+      );
+    }
+
+    const current = this.match;
+    if (current?.status === "started") {
+      return current.gameId === match.gameInput.gameId
+        ? { accepted: true, gameId: current.gameId }
+        : { accepted: false, error: { code: "MATCH_NOT_ACCEPTING" } };
+    }
+    if (current?.status === "cancelled") {
+      await this.reconcileGameAbandonment(current);
+      return { accepted: false, error: { code: "MATCH_NOT_ACCEPTING" } };
+    }
+    if (!isSameStartingAttempt(current, match)) {
+      return { accepted: false, error: { code: "MATCH_NOT_ACCEPTING" } };
+    }
+    if (await this.expireMatchIfNecessary(current)) {
+      return { accepted: false, error: { code: "MATCH_NOT_ACCEPTING" } };
     }
 
     const started: StartedMatch = {
@@ -422,33 +451,145 @@ export class MatchLobby extends DurableObject<CloudflareBindings> {
       createdAt: match.createdAt,
     };
     await this.persist(started);
-    await this.ctx.storage.deleteAlarm();
     this.match = started;
+    await this.clearAlarm();
     return { accepted: true, gameId: started.gameId };
+  }
+
+  private initializeGameSession(input: InitializeGameInput) {
+    return initializeGameSessionInEnvironment(input, this.env);
+  }
+
+  private async handleUnknownStartResult(
+    match: StartingMatch,
+  ): Promise<MatchLobbyAcceptResult> {
+    const current = this.match;
+    if (current?.status === "started") {
+      return current.gameId === match.gameInput.gameId
+        ? { accepted: true, gameId: current.gameId }
+        : { accepted: false, error: { code: "MATCH_NOT_ACCEPTING" } };
+    }
+    if (!isSameStartingAttempt(current, match)) {
+      return { accepted: false, error: { code: "MATCH_NOT_ACCEPTING" } };
+    }
+    if (await this.expireMatchIfNecessary(current)) {
+      return { accepted: false, error: { code: "MATCH_NOT_ACCEPTING" } };
+    }
+
+    // RPC例外では相手側だけ初期化済みの可能性があるため、同じ入力で再試行できる状態を保つ。
+    return createGameCreationFailure();
+  }
+
+  private async restoreWaitingAfterStartFailure(
+    match: StartingMatch,
+    initializationError?: InitializeGameError,
+  ): Promise<MatchLobbyAcceptResult> {
+    const current = this.match;
+    if (current?.status === "started") {
+      return current.gameId === match.gameInput.gameId
+        ? { accepted: true, gameId: current.gameId }
+        : { accepted: false, error: { code: "MATCH_NOT_ACCEPTING" } };
+    }
+    if (!isSameStartingAttempt(current, match)) {
+      return current?.status === "waiting"
+        ? createGameCreationFailure(initializationError)
+        : { accepted: false, error: { code: "MATCH_NOT_ACCEPTING" } };
+    }
+    if (await this.expireMatchIfNecessary(current)) {
+      return { accepted: false, error: { code: "MATCH_NOT_ACCEPTING" } };
+    }
+
+    const waiting: WaitingMatch = {
+      status: "waiting",
+      ownerPlayerId: match.ownerPlayerId,
+      ownerFaction: match.ownerFaction,
+      ownerDeckDefinitionIds: match.ownerDeckDefinitionIds,
+      createdAt: match.createdAt,
+      expiresAt: match.expiresAt,
+      visibility: match.visibility,
+    };
+    await this.persist(waiting);
+    this.match = waiting;
+    return createGameCreationFailure(initializationError);
   }
 
   private async getMatch(): Promise<MatchLobbyState | null> {
     await this.loadMatch;
-    if (
-      this.match !== null &&
-      this.match.status === "waiting" &&
-      Date.now() >= this.match.expiresAt
-    ) {
-      const cancelled: CancelledMatch = {
-        status: "cancelled",
-        ownerPlayerId: this.match.ownerPlayerId,
-        ownerFaction: this.match.ownerFaction,
-        createdAt: this.match.createdAt,
-      };
-      await this.persist(cancelled);
-      await this.ctx.storage.deleteAlarm();
-      this.match = cancelled;
+    if (this.match !== null) {
+      await this.expireMatchIfNecessary(this.match);
     }
     return this.match;
   }
 
+  private async expireMatchIfNecessary(
+    match: MatchLobbyState,
+  ): Promise<boolean> {
+    if (
+      (match.status !== "waiting" && match.status !== "starting") ||
+      Date.now() < match.expiresAt
+    ) {
+      return false;
+    }
+
+    const cancelled: CancelledMatch = {
+      status: "cancelled",
+      ownerPlayerId: match.ownerPlayerId,
+      ownerFaction: match.ownerFaction,
+      createdAt: match.createdAt,
+      ...(match.status === "starting"
+        ? { pendingGameAbandonment: match.gameInput }
+        : {}),
+    };
+    await this.persist(cancelled);
+    this.match = cancelled;
+    if (cancelled.pendingGameAbandonment === undefined) {
+      await this.clearAlarm();
+    } else {
+      await this.reconcileGameAbandonment(cancelled);
+    }
+    return true;
+  }
+
   private async persist(match: MatchLobbyState): Promise<void> {
     await this.ctx.storage.put(LOBBY_STORAGE_KEY, match);
+  }
+
+  private async clearAlarm(): Promise<void> {
+    await this.ctx.storage.deleteAlarm();
+  }
+
+  private async reconcileGameAbandonment(
+    cancelled: CancelledMatch,
+  ): Promise<void> {
+    const input = cancelled.pendingGameAbandonment;
+    if (input === undefined) {
+      return;
+    }
+
+    try {
+      const result = await abandonGameSessionInEnvironment(input, this.env);
+      if (!result.abandoned) {
+        await this.ctx.storage.setAlarm(Date.now() + GAME_ABANDONMENT_RETRY_MS);
+        return;
+      }
+
+      const completed: CancelledMatch = {
+        status: "cancelled",
+        ownerPlayerId: cancelled.ownerPlayerId,
+        ownerFaction: cancelled.ownerFaction,
+        createdAt: cancelled.createdAt,
+      };
+      await this.persist(completed);
+      if (
+        this.match?.status === "cancelled" &&
+        this.match.pendingGameAbandonment?.gameId === input.gameId
+      ) {
+        this.match = completed;
+      }
+      await this.clearAlarm();
+    } catch {
+      await this.ctx.storage.setAlarm(Date.now() + GAME_ABANDONMENT_RETRY_MS);
+    }
   }
 }
 
@@ -491,6 +632,28 @@ function isParticipant(match: MatchLobbyState, playerId: PlayerId): boolean {
     ((match.status === "starting" || match.status === "started") &&
       match.opponentPlayerId === playerId)
   );
+}
+
+function isSameStartingAttempt(
+  current: MatchLobbyState | null,
+  expected: StartingMatch,
+): current is StartingMatch {
+  return (
+    current?.status === "starting" &&
+    current.gameInput.gameId === expected.gameInput.gameId
+  );
+}
+
+function createGameCreationFailure(
+  initializationError?: InitializeGameError,
+): MatchLobbyAcceptResult {
+  return {
+    accepted: false,
+    error: {
+      code: "GAME_CREATION_FAILED",
+      ...(initializationError === undefined ? {} : { initializationError }),
+    },
+  };
 }
 
 function assertNonEmptyIdentifier(value: string, label: string): void {

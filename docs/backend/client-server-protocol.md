@@ -34,14 +34,14 @@ apps/backend, apps/frontend
 
 クライアントは`SubmitGameCommandRequest`を送る。操作本体の`GameCommand`は次を必ず含む。
 
-| 項目                 | 用途                                                           |
-| -------------------- | -------------------------------------------------------------- |
-| `commandId`          | 対戦内で一意な操作ID。同一操作の再送時だけ再利用する           |
-| `gameId`             | 対象の対戦                                                     |
-| `playerId`           | 操作したプレイヤーとしてクライアントが主張する値               |
-| `phaseSequence`      | 操作対象フェーズの世代。通常操作では現在状態との完全一致が必要 |
-| `clientStateVersion` | 操作作成時に観測した状態。通常操作は古いことだけでは拒否しない |
-| `issuedAt`           | クライアント時刻。表示・診断用で、ゲーム判定には使わない       |
+| 項目                 | 用途                                                             |
+| -------------------- | ---------------------------------------------------------------- |
+| `commandId`          | 1〜128文字の対戦内で一意な操作ID。同一操作の再送時だけ再利用する |
+| `gameId`             | 対象の対戦                                                       |
+| `playerId`           | 操作したプレイヤーとしてクライアントが主張する値                 |
+| `phaseSequence`      | 操作対象フェーズの世代。現在状態との完全一致が必要               |
+| `clientStateVersion` | 操作作成時に観測した状態。古いことだけでは拒否しない             |
+| `issuedAt`           | クライアント時刻。表示・診断用で、ゲーム判定には使わない         |
 
 カード対象はカード定義IDではなくカードインスタンスIDで指定する。複合効果の対象は`EffectInput`を効果ID単位で送る。
 
@@ -66,9 +66,11 @@ apps/backend, apps/frontend
 
 - 受理時は、確定後の`PlayerGameView`と閲覧者向けに投影済みの`PlayerVisibleEventEnvelope[]`を返す。
 - 拒否時は、安定した`GameCommandError`と現在の`PlayerGameView`を返す。
-- 再接続時、またはイベント連番の欠落時は、`GameSnapshotResponse`を返す。
+- 再接続時、またはイベント連番の欠落時は、`GameSnapshotResponse`を返す。`firstAvailableEventSequence`は保持中の最古連番、`eventsComplete`は指定した`afterSequence`以降の履歴が完全かを示す。保持範囲より古い値だけでなく、サーバーの最新連番より未来の値でも`eventsComplete: false`とする。
 
 `PlayerGameView`と公開イベントには、相手の手札、山札内容と順番、初期乱数seed、内部カード効果設定を含めない。`CARDS_DRAWN`イベントは本人にはカードID、相手には枚数だけを公開する。
+
+`GameSession`は最新の連続した公開イベントを最大1024件かつJSON換算512KiBまで保持する。表示履歴を切り詰める前に、学習推薦に必要な使用カード実績を別フィールドへ累積するため、保持外イベントが発生しても終了後の学習コンテキストは欠落させない。
 
 ## HTTP アダプター
 
@@ -81,7 +83,7 @@ apps/backend, apps/frontend
 | 学習コンテキスト取得 | `GET /api/games/:gameId/learning-context`       | `GameLearningContextResponse` |
 | 更新通知の購読       | `GET /api/games/:gameId/events`（WebSocket）    | `GameRealtimeUpdate`          |
 
-HTTPアダプターは、認証後かつDO呼び出し前にJSON本文と`afterSequence`を検証する。本文の`gameId`がパスと異なる場合は`400 GAME_ID_MISMATCH`、本文の`playerId`が認証結果と異なる場合は`403 AUTHENTICATED_PLAYER_MISMATCH`で拒否する。ゲームルール上の拒否は通信エラーではないため、`SubmitGameCommandResponse`の`accepted: false`を`200`で返す。
+HTTPアダプターは、認証後かつDO呼び出し前にJSON本文と`afterSequence`を検証する。コマンド本文はUTF-8で16KiBまでとし、超過時は`413 REQUEST_BODY_TOO_LARGE`を返す。本文の`gameId`がパスと異なる場合は`400 GAME_ID_MISMATCH`、本文の`playerId`が認証結果と異なる場合は`403 AUTHENTICATED_PLAYER_MISMATCH`で拒否する。ゲームルール上の拒否は通信エラーではないため、`SubmitGameCommandResponse`の`accepted: false`を`200`で返す。GameSessionは受理結果を192件、拒否結果を128件、各結果をJSON換算128KiBまで保持する。該当分類の保持枠、または個別結果のサイズ上限を超える新規コマンドは、ゲーム状態を確定せず`429 COMMAND_RESULT_CAPACITY_REACHED`を返す。保存済み結果は再接続猶予の24時間中に上限対応のため削除しない。
 
 未初期化または存在しないゲームは`404 GAME_NOT_FOUND`、認証済みプレイヤーがそのゲームの参加者でない場合は`403 GAME_ACCESS_FORBIDDEN`を返す。Durable Object内部の未初期化・参加者外アクセスを例外のままHTTP応答へ流さない。
 
@@ -115,7 +117,7 @@ WebSocketは認証済み参加者だけが接続でき、クライアントか�
 | 対戦参加         | `POST /api/matches/:matchId/accept` | `{ deckId }`              | `{ accepted: true, gameId }`             |
 | 対戦取消         | `POST /api/matches/:matchId/cancel` | なし                      | `{ cancelled: true }`                    |
 
-`visibility`未指定は`invite`として扱う。公開一覧は作成者の`PlayerId`、表示名、メールアドレス、デッキ内容を含めず、作成陣営、作成時刻、待機期限、自分が作成者かだけを返す。D1の一覧候補は`MatchLobby`で再検証し、開始済み・取消済み・期限切れの行を除外する。`MatchLobby`の公開状態にデッキ、乱数seed、開始中のゲーム初期化入力を含めない。状態遷移の詳細は[対戦待機・開始の設計](./matchmaking.md)を参照する。
+`visibility`未指定は`invite`として扱う。公開一覧は作成者の`PlayerId`、表示名、メールアドレス、デッキ内容を含めず、作成陣営、作成時刻、待機期限、自分が作成者かだけを返す。D1の一覧候補は`MatchLobby`で再検証し、`waiting`だけを応答へ含める。開始結果が不明な`starting`は一覧から隠すが、再試行可能性を残すため索引行は維持する。開始済み・取消済み・期限切れなどの終端状態だけを索引から削除する。`MatchLobby`の公開状態にデッキ、乱数seed、開始中のゲーム初期化入力を含めない。状態遷移の詳細は[対戦待機・開始の設計](./matchmaking.md)を参照する。
 
 ## 保存済みデッキ
 
@@ -139,7 +141,7 @@ WebSocketは認証済み参加者だけが接続でき、クライアントか�
 1. クライアントは`stateVersion`とイベント`sequence`を保持する。
 2. `phaseSequence`が古い操作は、遅延コマンドとして拒否する。
 3. `clientStateVersion`が現在より大きい操作は拒否する。現在より小さい場合は、最新状態に対してカード位置、対象、みなもと、フェーズを再検証する。
-4. クライアントがイベント連番の欠落を検出した場合は、差分適用を止めてスナップショットを取得する。
+4. クライアントがイベント連番の欠落を検出した場合は、差分適用を止めてスナップショットを取得する。`eventsComplete: false`なら、`PlayerGameView`を正規状態として採用し、保持範囲外の演出再生を諦めて`latestEventSequence`まで確認済みにする。欠落履歴を得るために同じ再同期を繰り返さない。`afterSequence`がサーバーの最新連番より未来の場合も`eventsComplete: false`になる。
 5. クライアントは可視中に`afterSequence`付きスナップショットを 2 秒ごとに取得する。WebSocketの`GAME_UPDATED`受信時も同じHTTP取得をただちに行うため、切断・再接続中のフォールバックはポーリングで担保する。
 6. POST の通信失敗時、クライアントは同じ`commandId`と同じ本文を再送する。スナップショットは特定コマンドの結果を返さないため、受理・拒否の判定に使わない。
 7. UI演出は公開イベントを使うが、確定した`PlayerGameView`の更新を待たせない。

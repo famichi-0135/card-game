@@ -13,11 +13,13 @@ export type PublicEventFeedItem = {
 
 export function usePublicEventFeed({
   events,
+  eventsComplete,
   gameId,
   latestEventSequence,
   viewerPlayerId,
 }: {
   events: readonly PlayerVisibleEventEnvelope[];
+  eventsComplete: boolean;
   gameId: string;
   latestEventSequence: number;
   viewerPlayerId: PlayerId;
@@ -33,6 +35,12 @@ export function usePublicEventFeed({
   }, [gameId]);
 
   useEffect(() => {
+    if (!eventsComplete) {
+      lastSequenceRef.current = latestEventSequence;
+      setItems([]);
+      setNeedsResynchronization(false);
+      return;
+    }
     if (needsResynchronization) {
       return;
     }
@@ -68,7 +76,13 @@ export function usePublicEventFeed({
         ...receivedEvents.map((event) => toFeedItem(event, viewerPlayerId)),
       ].slice(-MAX_VISIBLE_EVENTS),
     );
-  }, [events, latestEventSequence, needsResynchronization, viewerPlayerId]);
+  }, [
+    events,
+    eventsComplete,
+    latestEventSequence,
+    needsResynchronization,
+    viewerPlayerId,
+  ]);
 
   const acknowledgeResynchronization = useCallback(() => {
     lastSequenceRef.current = latestEventSequence;

@@ -23,6 +23,7 @@
 - [Staging 環境の構築・確認手順](./environment/staging-deployment.md): staging の Worker・D1 分離、Google OAuth 設定、2人対戦の受け入れ確認。
 - [チーム開発ガイド](./environment/team-development.md): Git と GitHub を初めて使うチーム向けの開発手順、ブランチ戦略、プルリクエスト運用。
 - [AI 開発運用ガイド](./environment/ai-development.md): Codex の実装・レビュー補助と、人間の承認を残す GitHub Actions 運用。
+- [リファクタリングロードマップ](./environment/refactoring-roadmap.md): 現行仕様を維持した改善の優先順位、PR分割、判断待ち事項。
 
 ## Game
 

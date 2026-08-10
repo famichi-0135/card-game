@@ -101,10 +101,16 @@ export function useGameBoardActions({
         : view,
     [boardState, preview, view],
   );
+  usePhaseDeadlineRefresh(currentView.phaseDeadlineAt);
+  const actionEvaluationNow = Date.now();
   const availableActions = useMemo(
     () =>
-      getAvailableGameActions({ view: currentView, catalog, now: Date.now() }),
-    [catalog, currentView],
+      getAvailableGameActions({
+        view: currentView,
+        catalog,
+        now: actionEvaluationNow,
+      }),
+    [actionEvaluationNow, catalog, currentView],
   );
 
   useEffect(() => {
@@ -435,6 +441,33 @@ export function useGameBoardActions({
     selectCard,
     selectedCardInstanceId,
   };
+}
+
+function usePhaseDeadlineRefresh(deadlineAt: number | null): void {
+  const [, setRefreshSequence] = useState(0);
+
+  useEffect(() => {
+    const delay = getPhaseDeadlineRefreshDelay(deadlineAt, Date.now());
+    if (delay === null) {
+      return;
+    }
+
+    const timer = window.setTimeout(
+      () => setRefreshSequence((current) => current + 1),
+      delay,
+    );
+    return () => window.clearTimeout(timer);
+  }, [deadlineAt]);
+}
+
+export function getPhaseDeadlineRefreshDelay(
+  deadlineAt: number | null,
+  now: number,
+): number | null {
+  if (deadlineAt === null) {
+    return null;
+  }
+  return Math.max(0, deadlineAt - now + 1);
 }
 
 function hasAvailableCardAction(

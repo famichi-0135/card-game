@@ -87,6 +87,10 @@ export type SubmitGameCommandResponse =
 export type GameSnapshotResponse = {
   view: PlayerGameView;
   events: PlayerVisibleEventEnvelope[];
+  /** 保持中の最古イベント。イベントがない場合は最新連番の次を返す。 */
+  firstAvailableEventSequence: number;
+  /** 指定したafterSequence以降のイベントが切れ目なく保持されているか。 */
+  eventsComplete: boolean;
   latestEventSequence: number;
 };
 
@@ -142,12 +146,14 @@ export type GameHttpApiErrorCode =
   | "UNAUTHENTICATED"
   | "INVALID_AFTER_SEQUENCE"
   | "INVALID_REQUEST"
+  | "REQUEST_BODY_TOO_LARGE"
   | "GAME_ID_MISMATCH"
   | "AUTHENTICATED_PLAYER_MISMATCH"
   | "GAME_NOT_FOUND"
   | "GAME_ACCESS_FORBIDDEN"
   | "GAME_NOT_FINISHED"
   | "COMMAND_ID_CONFLICT"
+  | "COMMAND_RESULT_CAPACITY_REACHED"
   | "WEBSOCKET_UPGRADE_REQUIRED";
 
 export type GameHttpApiErrorResponse = {

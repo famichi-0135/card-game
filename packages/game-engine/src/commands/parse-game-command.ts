@@ -7,6 +7,7 @@ import type {
 } from "../contracts/index.js";
 
 const nonEmptyString = z.string().trim().min(1);
+const commandId = nonEmptyString.max(128);
 const nonNegativeSafeInteger = z
   .number()
   .finite()
@@ -60,7 +61,7 @@ const effectInputSchema = z
   .strict();
 
 const baseCommandFields = {
-  commandId: nonEmptyString,
+  commandId,
   gameId: nonEmptyString,
   playerId: nonEmptyString,
   phaseSequence: nonNegativeSafeInteger,

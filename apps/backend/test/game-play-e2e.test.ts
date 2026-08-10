@@ -192,7 +192,7 @@ describe("2人対戦 Worker 統合", () => {
 
     ownerSocket.close(1000, "E2E complete");
     reconnectedOpponentSocket.close(1000, "E2E complete");
-  });
+  }, 15_000);
 });
 
 type Client = {

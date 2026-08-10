@@ -57,6 +57,7 @@ export function FixtureGameBoard({ fixture }: { fixture: GameBoardFixture }) {
     <GameBoardContent
       catalog={fixture.catalog}
       events={fixture.events}
+      eventsComplete
       latestEventSequence={fixture.latestEventSequence}
       preview
       view={fixture.view}
@@ -123,6 +124,7 @@ export function GameBoard({ gameId }: { gameId: string }) {
         snapshot.data.view.opponent.playerId,
       )}
       events={snapshot.data.events}
+      eventsComplete={snapshot.data.eventsComplete}
       latestEventSequence={snapshot.data.latestEventSequence}
       learningContext={{
         data: learningContext.data,
@@ -143,6 +145,7 @@ function GameBoardContent({
   commandPending = false,
   connectionState = "connected",
   events = [],
+  eventsComplete = true,
   latestEventSequence = 0,
   learningContext,
   onCommand,
@@ -157,6 +160,7 @@ function GameBoardContent({
   commandPending?: boolean;
   connectionState?: GameConnectionState;
   events?: readonly PlayerVisibleEventEnvelope[];
+  eventsComplete?: boolean;
   latestEventSequence?: number;
   learningContext?: {
     data: GameLearningContextResponse | undefined;
@@ -197,6 +201,7 @@ function GameBoardContent({
     needsResynchronization,
   } = usePublicEventFeed({
     events,
+    eventsComplete,
     gameId: view.gameId,
     latestEventSequence,
     viewerPlayerId: view.viewerPlayerId,

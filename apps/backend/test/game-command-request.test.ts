@@ -47,4 +47,30 @@ describe("ゲームコマンドリクエストの検証", () => {
       errors: [expect.objectContaining({ code: "INVALID_GAME_COMMAND" })],
     });
   });
+
+  it("commandIdは128文字まで受理し、129文字を拒否する", () => {
+    const createRequest = (commandId: string) =>
+      parseSubmitGameCommandRequest({
+        command: {
+          type: "FINISH_SUPPORT",
+          commandId,
+          gameId: "game-1",
+          playerId: "player-1",
+          phaseSequence: 1,
+          clientStateVersion: 1,
+          issuedAt: 1,
+        },
+      });
+
+    expect(createRequest("a".repeat(128))).toMatchObject({ parsed: true });
+    expect(createRequest("a".repeat(129))).toMatchObject({
+      parsed: false,
+      errors: [
+        expect.objectContaining({
+          code: "INVALID_GAME_COMMAND",
+          path: "commandId",
+        }),
+      ],
+    });
+  });
 });

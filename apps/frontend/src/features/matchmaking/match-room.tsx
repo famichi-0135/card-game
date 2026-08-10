@@ -30,7 +30,8 @@ export function MatchRoom({
   const match = lobby.data;
   const isOwner = match?.ownerPlayerId === playerId;
   useCancelMatchOnLeave({
-    enabled: isOwner && match?.status === "waiting",
+    enabled:
+      isOwner && (match?.status === "waiting" || match?.status === "starting"),
     matchId,
   });
   const [error, setError] = useState<string | null>(null);
@@ -132,11 +133,27 @@ export function MatchRoom({
     );
   }
 
-  if (match.status === "starting" || match.status === "started") {
+  if (match.status === "starting") {
     return (
       <RoomLayout title="対戦を開始しています">
         <p className="text-sm leading-6 text-slate-600">
-          対戦の準備が完了すると、対戦画面へ自動的に移動します。
+          開始結果を確認できませんでした。同じ対戦情報で再試行するか、作成者が部屋を取り消してください。
+        </p>
+        {error === null ? null : <AuthStatus tone="error">{error}</AuthStatus>}
+        <StartingMatchRecoveryActions
+          isPending={isOwner ? isCancelling : isAccepting}
+          onAction={() => void (isOwner ? handleCancel() : handleAccept())}
+          role={isOwner ? "owner" : "opponent"}
+        />
+      </RoomLayout>
+    );
+  }
+
+  if (match.status === "started") {
+    return (
+      <RoomLayout title="対戦を開始しています">
+        <p className="text-sm leading-6 text-slate-600">
+          対戦画面の情報を確認しています。しばらくしてから再読み込みしてください。
         </p>
       </RoomLayout>
     );
@@ -280,6 +297,35 @@ function OpponentJoinState({
         {isAccepting ? "参加しています" : `${factionLabels[faction]}で参加する`}
       </button>
     </section>
+  );
+}
+
+export function StartingMatchRecoveryActions({
+  isPending,
+  onAction,
+  role,
+}: {
+  isPending: boolean;
+  onAction: () => void;
+  role: "owner" | "opponent";
+}) {
+  const isOwner = role === "owner";
+
+  return (
+    <button
+      className={`${isOwner ? secondaryButtonClassName : primaryButtonClassName} w-fit`}
+      disabled={isPending}
+      onClick={onAction}
+      type="button"
+    >
+      {isPending
+        ? isOwner
+          ? "取り消しています"
+          : "再試行しています"
+        : isOwner
+          ? "招待部屋を取り消す"
+          : "対戦開始を再試行する"}
+    </button>
   );
 }
 

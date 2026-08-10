@@ -15,9 +15,26 @@ export type CatalogRetentionLease = {
   expiresAt: number | null;
 };
 
+export type CatalogRetentionLeaseRenewal = {
+  gameId: GameId;
+  version: CardCatalogVersion;
+  expiresAt: number | null;
+};
+
+export type CatalogRetentionLeaseReference = Pick<
+  CatalogRetentionLeaseRenewal,
+  "gameId" | "version"
+>;
+
 export type RetainCatalogResult =
   | { retained: true }
   | { retained: false; error: { code: "CARD_CATALOG_VERSION_CONFLICT" } };
+
+export type RenewCatalogLeaseResult =
+  | { renewed: true }
+  | { renewed: false; error: { code: "CARD_CATALOG_NOT_FOUND" } };
+
+export type ReleaseCatalogLeaseResult = { released: true };
 
 type StoredCatalogArchive = {
   entries: Record<string, StoredCatalogEntry>;
@@ -33,6 +50,8 @@ type StoredCatalogEntry = {
  */
 export class CatalogArchive extends DurableObject<CloudflareBindings> {
   private archive: StoredCatalogArchive = { entries: Object.create(null) };
+  // Storage失敗後はメモリ上だけ更新済みになるため、再送時の早期returnを禁止する。
+  private archiveNeedsPersistence = false;
   private readonly loadArchive: Promise<void>;
 
   constructor(ctx: DurableObjectState, env: CloudflareBindings) {
@@ -61,15 +80,79 @@ export class CatalogArchive extends DurableObject<CloudflareBindings> {
       };
     }
 
+    if (
+      existing !== undefined &&
+      !this.archiveNeedsPersistence &&
+      Object.prototype.hasOwnProperty.call(existing.leases, lease.gameId) &&
+      existing.leases[lease.gameId] === lease.expiresAt
+    ) {
+      return { retained: true };
+    }
+
     const entry = existing ?? {
       catalog: cloneCardCatalog(lease.catalog),
       leases: Object.create(null),
     };
+    this.archiveNeedsPersistence = true;
     entry.leases[lease.gameId] = lease.expiresAt;
     this.archive.entries[version] = entry;
     await this.persist();
     await this.syncAlarm();
     return { retained: true };
+  }
+
+  async renewLease(
+    renewal: CatalogRetentionLeaseRenewal,
+  ): Promise<RenewCatalogLeaseResult> {
+    await this.loadArchive;
+    await this.removeExpiredLeases(Date.now());
+    assertLeaseReference(renewal);
+
+    const entry = this.archive.entries[renewal.version];
+    if (entry === undefined) {
+      return {
+        renewed: false,
+        error: { code: "CARD_CATALOG_NOT_FOUND" },
+      };
+    }
+    if (
+      !this.archiveNeedsPersistence &&
+      Object.prototype.hasOwnProperty.call(entry.leases, renewal.gameId) &&
+      entry.leases[renewal.gameId] === renewal.expiresAt
+    ) {
+      return { renewed: true };
+    }
+
+    this.archiveNeedsPersistence = true;
+    entry.leases[renewal.gameId] = renewal.expiresAt;
+    await this.persist();
+    await this.syncAlarm();
+    return { renewed: true };
+  }
+
+  async releaseLease(
+    reference: CatalogRetentionLeaseReference,
+  ): Promise<ReleaseCatalogLeaseResult> {
+    await this.loadArchive;
+    await this.removeExpiredLeases(Date.now());
+    assertLeaseReference({ ...reference, expiresAt: null });
+
+    const entry = this.archive.entries[reference.version];
+    if (
+      entry === undefined ||
+      !Object.prototype.hasOwnProperty.call(entry.leases, reference.gameId)
+    ) {
+      return { released: true };
+    }
+
+    this.archiveNeedsPersistence = true;
+    delete entry.leases[reference.gameId];
+    if (Object.keys(entry.leases).length === 0) {
+      delete this.archive.entries[reference.version];
+    }
+    await this.persist();
+    await this.syncAlarm();
+    return { released: true };
   }
 
   /** 内部RPC用。HTTPでは公開DTOへ投影し、内部効果設定をそのまま返さない。 */
@@ -86,21 +169,20 @@ export class CatalogArchive extends DurableObject<CloudflareBindings> {
   }
 
   private async removeExpiredLeases(now: number): Promise<void> {
-    let changed = false;
     for (const [version, entry] of Object.entries(this.archive.entries)) {
       for (const [gameId, expiresAt] of Object.entries(entry.leases)) {
         if (expiresAt !== null && expiresAt <= now) {
+          this.archiveNeedsPersistence = true;
           delete entry.leases[gameId];
-          changed = true;
         }
       }
       if (Object.keys(entry.leases).length === 0) {
+        this.archiveNeedsPersistence = true;
         delete this.archive.entries[version];
-        changed = true;
       }
     }
 
-    if (changed) {
+    if (this.archiveNeedsPersistence) {
       await this.persist();
     }
     await this.syncAlarm();
@@ -108,6 +190,7 @@ export class CatalogArchive extends DurableObject<CloudflareBindings> {
 
   private async persist(): Promise<void> {
     await this.ctx.storage.put(ARCHIVE_STORAGE_KEY, this.archive);
+    this.archiveNeedsPersistence = false;
   }
 
   private async syncAlarm(): Promise<void> {
@@ -120,18 +203,32 @@ export class CatalogArchive extends DurableObject<CloudflareBindings> {
         null,
       );
 
+    const currentAlarm = await this.ctx.storage.getAlarm();
+
     if (expiresAt === null) {
-      await this.ctx.storage.deleteAlarm();
+      if (currentAlarm !== null) {
+        await this.ctx.storage.deleteAlarm();
+      }
       return;
     }
-    await this.ctx.storage.setAlarm(expiresAt);
+    if (currentAlarm !== expiresAt) {
+      await this.ctx.storage.setAlarm(expiresAt);
+    }
   }
 }
 
 function assertLease(lease: CatalogRetentionLease): void {
+  assertLeaseReference({
+    gameId: lease.gameId,
+    version: lease.catalog.version,
+    expiresAt: lease.expiresAt,
+  });
+}
+
+function assertLeaseReference(lease: CatalogRetentionLeaseRenewal): void {
   if (
     lease.gameId.trim().length === 0 ||
-    lease.catalog.version.trim().length === 0 ||
+    lease.version.trim().length === 0 ||
     (lease.expiresAt !== null &&
       (!Number.isSafeInteger(lease.expiresAt) || lease.expiresAt < 0))
   ) {

@@ -12,6 +12,7 @@ import { isHandCardDraggable } from "./components/hand-card.tsx";
 import { createGameBoardFixture } from "./fixtures/game-board-fixture.ts";
 import {
   type GameBoardActionErrorCode,
+  getPhaseDeadlineRefreshDelay,
   useGameBoardActions,
 } from "./hooks/use-game-board-actions.ts";
 
@@ -162,6 +163,18 @@ describe("ゲーム盤面の無効操作フィードバック", () => {
       });
     },
   );
+});
+
+describe("フェーズ期限の操作候補再評価", () => {
+  it("期限がない場合は再評価を予約しない", () => {
+    expect(getPhaseDeadlineRefreshDelay(null, 1_000)).toBeNull();
+  });
+
+  it("期限ちょうどまでは操作を許可し、期限を過ぎた直後に再評価する", () => {
+    expect(getPhaseDeadlineRefreshDelay(1_100, 1_000)).toBe(101);
+    expect(getPhaseDeadlineRefreshDelay(1_000, 1_000)).toBe(1);
+    expect(getPhaseDeadlineRefreshDelay(999, 1_000)).toBe(0);
+  });
 });
 
 function expectInvalidDrop({

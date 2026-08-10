@@ -186,14 +186,17 @@ function snapshotFromCommandResponse(
   response: SubmitGameCommandResponse,
 ): GameSnapshotResponse {
   const events = response.accepted ? response.events : [];
+  const latestEventSequence = Math.max(
+    current?.latestEventSequence ?? 0,
+    ...events.map((event) => event.sequence),
+  );
 
   return {
     view: response.view,
     events,
-    latestEventSequence: Math.max(
-      current?.latestEventSequence ?? 0,
-      ...events.map((event) => event.sequence),
-    ),
+    eventsComplete: true,
+    firstAvailableEventSequence: events[0]?.sequence ?? latestEventSequence + 1,
+    latestEventSequence,
   };
 }
 

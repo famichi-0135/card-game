@@ -50,6 +50,8 @@ export type GameApiDependencies = {
   now?: () => number;
 };
 
+const MAX_GAME_COMMAND_REQUEST_BYTES = 16 * 1024;
+
 export function createGameApi({
   authenticate,
   getGameSession = resolveGameSession,
@@ -132,9 +134,31 @@ export function createGameApi({
   });
 
   api.post("/:gameId/commands", async (c) => {
+    let bodyText: string;
+    try {
+      bodyText = await c.req.text();
+    } catch {
+      return c.json(
+        {
+          error: { code: "INVALID_REQUEST" },
+        } satisfies GameHttpApiErrorResponse,
+        400,
+      );
+    }
+    if (
+      new TextEncoder().encode(bodyText).length > MAX_GAME_COMMAND_REQUEST_BYTES
+    ) {
+      return c.json(
+        {
+          error: { code: "REQUEST_BODY_TOO_LARGE" },
+        } satisfies GameHttpApiErrorResponse,
+        413,
+      );
+    }
+
     let body: unknown;
     try {
-      body = await c.req.json();
+      body = JSON.parse(bodyText) as unknown;
     } catch {
       return c.json(
         {
@@ -214,14 +238,17 @@ function gameSessionError(
     | "GAME_ACCESS_FORBIDDEN"
     | "GAME_NOT_FINISHED"
     | "AUTHENTICATED_PLAYER_MISMATCH"
-    | "COMMAND_ID_CONFLICT",
+    | "COMMAND_ID_CONFLICT"
+    | "COMMAND_RESULT_CAPACITY_REACHED",
 ): Response {
   const status =
     code === "GAME_NOT_FOUND"
       ? 404
-      : code === "COMMAND_ID_CONFLICT" || code === "GAME_NOT_FINISHED"
-        ? 409
-        : 403;
+      : code === "COMMAND_RESULT_CAPACITY_REACHED"
+        ? 429
+        : code === "COMMAND_ID_CONFLICT" || code === "GAME_NOT_FINISHED"
+          ? 409
+          : 403;
   return context.json(
     { error: { code } } satisfies GameHttpApiErrorResponse,
     status,

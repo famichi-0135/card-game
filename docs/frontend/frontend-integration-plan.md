@@ -100,7 +100,7 @@ getAvailableGameActions({
 
 1. `GET /api/games/:gameId?afterSequence=<lastEventSequence>` を呼ぶ。
 2. 応答の `view` を正規状態として置き換える。
-3. 連続する公開イベントだけを演出キューへ追加する。連番が欠落していた場合、欠落した演出は再生せず、取得した正規状態を表示する。
+3. `eventsComplete: true`で連続する公開イベントだけを演出キューへ追加する。`eventsComplete: false`なら保持範囲外の演出は再生せず、取得した正規状態と`latestEventSequence`を採用して同じ欠落の再同期を繰り返さない。
 4. `cardCatalogVersion` が変化した場合だけ、対応する公開カードカタログを取得してから操作を再有効化する。
 
 コマンド POST がタイムアウトまたはネットワーク失敗した場合は、送信内容と `commandId` を保持し、同じ `POST /api/games/:gameId/commands` を同じ本文で再送する。`GameSession` が保存した最初の `SubmitGameCommandResponse` を取得できたら保留状態を解除し、その `view` を採用する。POST の再送上限に達した場合、またはブラウザがオフラインの場合は GET で表示状態だけを再同期し、ユーザーが再試行または離脱できる状態にする。GET の結果だけから当該コマンドの受理・拒否を推測してはならない。

@@ -85,6 +85,25 @@ describe("ゲーム盤面の同期データ", () => {
     expect(retriedRequest.path).toBe("/api/games/retry-game/commands");
     expect(retriedRequest.init.body).toBe(JSON.stringify({ command }));
   });
+
+  it("サーバーが履歴切詰めを示しても正規状態と最新連番を採用する", () => {
+    const current = createSnapshot({
+      gameId: "snapshot-retained-history",
+      latestEventSequence: 20,
+      stateVersion: 10,
+    });
+    const retained = {
+      ...createSnapshot({
+        gameId: "snapshot-retained-history",
+        latestEventSequence: 40,
+        stateVersion: 20,
+      }),
+      eventsComplete: false,
+      firstAvailableEventSequence: 35,
+    } satisfies GameSnapshotResponse;
+
+    expect(mergeGameSnapshot(current, retained)).toBe(retained);
+  });
 });
 
 function createSnapshot({
@@ -100,6 +119,8 @@ function createSnapshot({
 
   return {
     events: fixture.events,
+    eventsComplete: true,
+    firstAvailableEventSequence: fixture.events[0]?.sequence ?? 1,
     latestEventSequence,
     view: { ...fixture.view, stateVersion },
   };
