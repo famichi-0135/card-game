@@ -49,6 +49,7 @@
     {
       "binding": "GAME_ASSETS",
       "bucket_name": "disastar-game-assets",
+      "remote": true,
     },
   ],
   "env": {
@@ -69,6 +70,7 @@
         {
           "binding": "GAME_ASSETS",
           "bucket_name": "disastar-game-assets-staging",
+          "remote": true,
         },
       ],
     },
