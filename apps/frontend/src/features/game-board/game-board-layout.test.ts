@@ -12,6 +12,9 @@ describe("ゲームボードのデスクトップレイアウト", () => {
     );
 
     expect(markup).toContain('data-board-region="game-progress"');
+    expect(markup).toContain(
+      'data-board-background-asset="backgrounds/board/night-city-aerial.037226cbe99ad877f83b09ad99e8ce9fbb7822f92e608058b914a8921008500b.png"',
+    );
     expect(markup).toContain('data-board-region="player-status"');
     expect(markup).toContain('data-board-region="card-field"');
     expect(markup).toContain('data-board-region="resources"');

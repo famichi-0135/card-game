@@ -61,3 +61,68 @@ describe("Frontend Worker の認証プロキシ", () => {
     expect(response.headers.get("set-cookie")).toBeNull();
   });
 });
+
+describe("Frontend Worker のゲーム画像配信", () => {
+  it("R2画像を同一オリジンで配信し、長期キャッシュとETagを付ける", async () => {
+    const gameAssetsGet = vi.fn().mockResolvedValue({
+      body: new Blob(["image-body"]).stream(),
+      httpEtag: '"asset-etag"',
+      writeHttpMetadata(headers: Headers) {
+        headers.set("content-type", "image/png");
+      },
+    });
+    const assetFetch = vi.fn();
+    const backendFetch = vi.fn();
+
+    const response = await worker.fetch(
+      new Request(
+        "https://app.example.test/game-assets/backgrounds/board/night-city-aerial.png",
+      ),
+      {
+        ASSETS: { fetch: assetFetch },
+        BACKEND: { fetch: backendFetch },
+        GAME_ASSETS: { get: gameAssetsGet },
+      } as unknown as Env,
+    );
+
+    expect(response.status).toBe(200);
+    expect(response.headers.get("content-type")).toBe("image/png");
+    expect(response.headers.get("etag")).toBe('"asset-etag"');
+    expect(response.headers.get("cache-control")).toBe(
+      "public, max-age=31536000, immutable",
+    );
+    expect(response.headers.get("x-content-type-options")).toBe("nosniff");
+    expect(gameAssetsGet).toHaveBeenCalledWith(
+      "backgrounds/board/night-city-aerial.png",
+      expect.objectContaining({ onlyIf: expect.any(Headers) }),
+    );
+    expect(assetFetch).not.toHaveBeenCalled();
+    expect(backendFetch).not.toHaveBeenCalled();
+  });
+
+  it("危険なキーと書き込み要求を安全に拒否する", async () => {
+    const gameAssetsGet = vi.fn();
+    const env = {
+      ASSETS: { fetch: vi.fn() },
+      BACKEND: { fetch: vi.fn() },
+      GAME_ASSETS: { get: gameAssetsGet },
+    } as unknown as Env;
+
+    const invalid = await worker.fetch(
+      new Request(
+        "https://app.example.test/game-assets/backgrounds/%252e%252e/private.png",
+      ),
+      env,
+    );
+    const write = await worker.fetch(
+      new Request("https://app.example.test/game-assets/backgrounds/new.png", {
+        method: "PUT",
+      }),
+      env,
+    );
+
+    expect(invalid.status).toBe(400);
+    expect(write.status).toBe(405);
+    expect(gameAssetsGet).not.toHaveBeenCalled();
+  });
+});

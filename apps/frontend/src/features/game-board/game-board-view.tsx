@@ -23,6 +23,10 @@ import type { PendingSupportPlay } from "./hooks/use-game-board-actions.ts";
 import type { GameBoardCardTarget } from "./hooks/use-game-board-actions.ts";
 import type { PublicEventFeedItem } from "./hooks/use-public-event-feed.ts";
 import { getPhasePresentation } from "./phase-presentation.ts";
+import {
+  BOARD_BACKGROUND_ASSET_ID,
+  getBoardBackgroundImage,
+} from "./components/game-board-background.ts";
 
 export function GameBoardView({
   availableActions,
@@ -87,6 +91,7 @@ export function GameBoardView({
   const phasePresentation = getPhasePresentation(view);
   const isFinished = view.status === "finished";
   const commandMessage = commandPending ? "操作を送信しています" : commandError;
+  const boardBackgroundImage = getBoardBackgroundImage();
   const handInstruction =
     view.phase === "support"
       ? "ドラッグしてサポートを使用"
@@ -126,7 +131,11 @@ export function GameBoardView({
 
   return (
     <>
-      <main className="h-dvh min-w-[1180px] overflow-hidden bg-slate-100 p-4 max-[1179px]:hidden max-[719px]:hidden">
+      <main
+        className="h-dvh min-w-[1180px] overflow-hidden bg-[#020609] bg-cover bg-center p-4 max-[1179px]:hidden max-[719px]:hidden"
+        data-board-background-asset={BOARD_BACKGROUND_ASSET_ID}
+        style={{ backgroundImage: boardBackgroundImage }}
+      >
         <div className="mx-auto grid h-full min-h-0 max-w-[1600px] grid-rows-[auto_minmax(0,1fr)_auto] gap-2">
           <GameProgressBar
             canFinishPhase={canFinishPhase}
