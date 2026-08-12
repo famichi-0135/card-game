@@ -29,14 +29,14 @@ export function AttackGroupRow({
 }) {
   return (
     <section
-      className="grid min-h-0 grid-rows-[auto_minmax(0,1fr)] gap-2"
+      className="relative z-10 grid min-h-0 grid-rows-[24px_minmax(0,1fr)] gap-[7px]"
       aria-label={label}
     >
-      <div className="flex items-center justify-between text-sm">
+      <div className="flex items-center justify-between border-b border-white/[.14] px-[4px] text-[10px] tracking-[.1em] text-[#c6d1d5]">
         <span>{label}</span>
-        <span className="text-slate-500">{groups.length} / 5</span>
+        <span className="font-mono text-[#91a6ae]">{groups.length} / 5</span>
       </div>
-      <div className="grid min-h-0 grid-cols-5 gap-3">
+      <div className="grid min-h-0 grid-cols-5 gap-[9px]">
         {ATTACK_GROUP_SLOT_INDICES.map((slotIndex) => {
           const group = groups.find(
             (candidate) => candidate.slotIndex === slotIndex,

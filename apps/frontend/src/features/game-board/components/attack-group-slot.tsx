@@ -7,6 +7,8 @@ import type {
 } from "@disastar/game-engine";
 import { cardTypeMark } from "./card-presentation.ts";
 import type { GameBoardCardTarget } from "../hooks/use-game-board-actions.ts";
+import { BoardCard } from "./board-card.tsx";
+import { cn } from "@/lib/utils";
 
 export function AttackGroupSlot({
   catalog,
@@ -43,23 +45,23 @@ export function AttackGroupSlot({
 
   const content =
     group === undefined ? (
-      <div className="flex h-full items-center justify-center text-xs text-slate-400">
-        {canPlace ? "ここへ配置" : "空き枠"}
+      <div className="flex h-full flex-col items-center justify-center gap-[7px] text-center text-[10px] tracking-[.08em] text-[#78909a]">
+        <span className="grid size-[30px] place-items-center border border-dashed border-current/60 font-mono text-[13px] text-[#aac0c8]">
+          {String(slotIndex + 1).padStart(2, "0")}
+        </span>
+        <span>{canPlace ? "配置可能" : "EMPTY SLOT"}</span>
       </div>
     ) : (
-      <div className="flex h-full flex-col items-center justify-center gap-2 pt-4 text-left">
-        <div className="flex items-center justify-center">
-          {group.cards.slice(-3).map((card, index) => (
-            <CompactCard
-              key={card.instanceId}
-              card={card}
-              catalog={catalog}
-              stacked={index > 0}
-            />
-          ))}
+      <div className="relative flex h-full min-h-0 flex-col gap-[5px] pt-[17px] text-left">
+        <div className="min-h-0 flex-1">
+          <GroupCard
+            card={group.cards.at(-1)}
+            catalog={catalog}
+            group={group}
+          />
         </div>
-        <span className="text-center text-xs text-slate-600">
-          {group.cards.length} 枚 / 力 {group.currentPower}
+        <span className="text-center text-[9px] tracking-[.06em] text-[#b8c6c9]">
+          CHAIN {group.cards.length} / POWER {group.currentPower}
         </span>
       </div>
     );
@@ -82,19 +84,21 @@ export function AttackGroupSlot({
   return (
     <div
       ref={ref}
-      className={`relative min-h-0 rounded-md border p-2 ${
+      className={cn(
+        "relative min-h-0 overflow-hidden border bg-[#071118]/90 p-[5px] shadow-[inset_0_0_20px_rgba(0,0,0,.72)] [clip-path:polygon(5px_0,calc(100%_-_5px)_0,100%_5px,100%_calc(100%_-_5px),calc(100%_-_5px)_100%,5px_100%,0_calc(100%_-_5px),0_5px)]",
+        isSelf ? "border-[#2c6e90]" : "border-[#7b3937]",
         isDropTarget && (canPlace || canChain)
-          ? "border-slate-900 bg-slate-100"
+          ? "ring-2 ring-[#e6c46d] ring-offset-2 ring-offset-[#071118]"
           : canPlace || canChain
-            ? "border-dashed border-slate-500 bg-white"
-            : "border-slate-300 bg-slate-50"
-      }`}
+            ? "border-dashed"
+            : "opacity-90",
+      )}
     >
-      <span className="absolute left-2 top-1 text-[10px] text-slate-400">
+      <span className="absolute z-20 left-[7px] top-[5px] border border-white/[.14] bg-black/75 px-[3px] py-px font-mono text-[8px] text-[#a7bcc5]">
         {String(slotIndex + 1).padStart(2, "0")}
       </span>
       {canChain ? (
-        <span className="absolute right-2 top-1 text-[10px] text-slate-500">
+        <span className="absolute z-20 right-[7px] top-[6px] text-[8px] tracking-[.08em] text-[#e5c675]">
           連鎖可
         </span>
       ) : null}
@@ -123,28 +127,29 @@ export function AttackGroupSlot({
   );
 }
 
-function CompactCard({
+function GroupCard({
   card,
   catalog,
-  stacked,
+  group,
 }: {
-  card: VisibleCardInstance;
+  card: VisibleCardInstance | undefined;
   catalog: PublicCardCatalog;
-  stacked: boolean;
+  group: VisibleAttackGroup;
 }) {
-  const definition = catalog.definitions[card.definitionId];
+  const definition =
+    card === undefined ? undefined : catalog.definitions[card.definitionId];
   if (definition === undefined) {
     return null;
   }
 
   return (
-    <span
-      className={`flex h-16 w-12 shrink-0 flex-col justify-between rounded border border-slate-300 bg-white p-1 text-[9px] ${
-        stacked ? "-ml-4 translate-y-1" : ""
-      }`}
-    >
-      <span>{cardTypeMark(definition.cardType)}</span>
-      <strong className="line-clamp-2 leading-tight">{definition.name}</strong>
-    </span>
+    <BoardCard
+      definition={definition}
+      power={group.currentPower}
+      requiredMana={group.requiredMana}
+      sequenceLabel={cardTypeMark(definition.cardType)}
+      size="field"
+      tone={group.slotIndex >= 0 ? "faction" : "self"}
+    />
   );
 }

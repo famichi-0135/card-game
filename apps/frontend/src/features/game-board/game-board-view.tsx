@@ -132,11 +132,11 @@ export function GameBoardView({
   return (
     <>
       <main
-        className="h-dvh min-w-[1180px] overflow-hidden bg-[#020609] bg-cover bg-center p-4 max-[1179px]:hidden max-[719px]:hidden"
+        className="h-dvh min-w-[1180px] overflow-hidden bg-[#020609] bg-cover bg-center p-[12px] text-[#dfe7e8] max-[1179px]:hidden max-[719px]:hidden"
         data-board-background-asset={BOARD_BACKGROUND_ASSET_ID}
         style={{ backgroundImage: boardBackgroundImage }}
       >
-        <div className="mx-auto grid h-full min-h-0 max-w-[1600px] grid-rows-[auto_minmax(0,1fr)_auto] gap-2">
+        <div className="mx-auto grid h-full min-h-0 max-w-[1600px] grid-rows-[76px_minmax(0,1fr)_188px] gap-[10px]">
           <GameProgressBar
             canFinishPhase={canFinishPhase}
             canResynchronize={
@@ -168,7 +168,7 @@ export function GameBoardView({
           />
 
           <section
-            className="grid min-h-0 grid-cols-[220px_minmax(0,1fr)_220px] gap-3 rounded-md border border-slate-300 bg-white p-3"
+            className="grid min-h-0 grid-cols-[208px_minmax(0,1fr)_272px] gap-[10px]"
             aria-label="バトルゾーン"
           >
             <PlayerStatusColumn
@@ -189,6 +189,7 @@ export function GameBoardView({
             />
 
             <ResourceColumn
+              gameId={view.gameId}
               onOpenOpponentDiscard={() =>
                 openZoneDialog({
                   title: "相手の捨て札",
@@ -196,7 +197,15 @@ export function GameBoardView({
                   cards: view.opponent.discardPile,
                 })
               }
+              onOpenOpponentSupport={() =>
+                openZoneDialog({
+                  title: "相手のサポートグループ",
+                  description: "相手が場に出している公開済みサポートカード",
+                  cards: view.opponent.supportZone,
+                })
+              }
               opponent={view.opponent}
+              publicEvents={publicEvents}
               self={view.self}
             />
           </section>

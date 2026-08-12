@@ -5,6 +5,8 @@ import type {
   VisibleAttackGroup,
 } from "@disastar/game-engine";
 import { AttackGroupRow } from "./attack-group-row.tsx";
+import { getBoardBackgroundImage } from "./game-board-background.ts";
+import { GameFrame } from "./game-ui/index.ts";
 import type { GameBoardCardTarget } from "../hooks/use-game-board-actions.ts";
 
 export function CardField({
@@ -25,10 +27,18 @@ export function CardField({
   selfGroups: PlayerGameView["self"]["attackGroups"];
 }) {
   return (
-    <section
+    <GameFrame
+      as="section"
       aria-label="カード配置フィールド"
-      className="grid min-h-0 grid-rows-2 gap-5 rounded-md border border-slate-300 bg-slate-50 p-3"
+      className="grid min-h-0 grid-rows-2 gap-[10px] bg-[#061016] p-[14px]"
       data-board-region="card-field"
+      data-board-background-asset="backgrounds/board/night-city-aerial.037226cbe99ad877f83b09ad99e8ce9fbb7822f92e608058b914a8921008500b.png"
+      style={{
+        backgroundImage: `linear-gradient(rgba(3, 11, 16, .78), rgba(3, 11, 16, .86)), ${getBoardBackgroundImage()}`,
+        backgroundPosition: "center",
+        backgroundSize: "cover",
+      }}
+      variant="gray"
     >
       <AttackGroupRow
         catalog={catalog}
@@ -47,6 +57,6 @@ export function CardField({
         onSelectTarget={onSelectTarget}
         perspective="self"
       />
-    </section>
+    </GameFrame>
   );
 }

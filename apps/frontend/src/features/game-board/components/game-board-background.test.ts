@@ -11,7 +11,7 @@ describe("ゲームボード背景", () => {
     );
   });
 
-  it("R2画像を優先し、取得できない場合は既存textureへフォールバックする", () => {
+  it("R2画像を優先し、ローカル開発では既存textureへフォールバックする", () => {
     expect(getBoardBackgroundImage()).toBe(
       'url("/game-assets/backgrounds/board/night-city-aerial.037226cbe99ad877f83b09ad99e8ce9fbb7822f92e608058b914a8921008500b.png"), url("/ui-assets/tactical-map.svg")',
     );

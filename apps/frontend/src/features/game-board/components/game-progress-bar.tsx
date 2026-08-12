@@ -1,10 +1,12 @@
 import type { ReactNode } from "react";
-import {
-  ConnectionStatus,
-  type GameConnectionState,
-} from "./connection-status.tsx";
-import { PublicEventFeed } from "./public-event-feed.tsx";
+import type { GameConnectionState } from "./connection-status.tsx";
 import type { PublicEventFeedItem } from "../hooks/use-public-event-feed.ts";
+import {
+  ConnectionIndicator,
+  GameFrame,
+  PrimaryGameButton,
+  SecondaryGameButton,
+} from "./game-ui/index.ts";
 
 export function GameProgressBar({
   canFinishPhase,
@@ -42,75 +44,87 @@ export function GameProgressBar({
   stateVersion: number;
 }) {
   return (
-    <section
+    <GameFrame
+      as="section"
       aria-label="ゲーム進行"
-      className="flex items-stretch gap-2 rounded-md border border-slate-300 bg-white p-2"
+      className="flex h-[76px] items-stretch gap-[12px] p-[10px] text-[#dfe7e8]"
       data-board-region="game-progress"
+      variant="gray"
     >
-      <div className="shrink-0 rounded border border-slate-200 px-3 py-1  ">
-        <span className="block text-xs font-medium text-slate-500">ROUND</span>
-        <strong className="text-xl tabular-nums">{round}</strong>
+      <div className="relative z-10 grid w-[108px] shrink-0 grid-cols-[auto_1fr] items-center gap-[7px] border-r border-white/[.12] pr-[12px]">
+        <span className="text-[9px] tracking-[.14em] text-[#8ca2aa]">
+          ROUND
+        </span>
+        <strong className="font-mono text-[28px] leading-none tabular-nums text-[#e9cc82]">
+          {round}
+        </strong>
       </div>
-      <div className="shrink-0 rounded border border-slate-200 px-3 py-2">
-        <span className="block text-xs font-medium text-slate-500">
+      <div className="relative z-10 min-w-[184px] shrink-0 border-r border-white/[.12] pr-[16px]">
+        <span className="block text-[9px] tracking-[.12em] text-[#8ca2aa]">
           現在のフェーズ
         </span>
-        <div className="mt-1 flex items-center gap-2">
-          <strong className="text-sm">{phaseLabel}</strong>
-          <span className="rounded border border-slate-300 px-2 py-1 font-mono text-xs tabular-nums">
+        <div className="mt-[5px] flex items-center gap-[8px]">
+          <strong className="text-[14px] tracking-[.07em]">{phaseLabel}</strong>
+          <span className="border border-[#907140] bg-black/30 px-[6px] py-[2px] font-mono text-[12px] tabular-nums text-[#f0cf84]">
             {remainingTime}
           </span>
         </div>
       </div>
-      <div className="w-28 shrink-0 text-xs text-slate-500">
-        <p className="truncate">対戦 ID: {gameId}</p>
-        <p>状態 v{stateVersion}</p>
+      <div className="relative z-10 w-[124px] shrink-0 text-[9px] leading-relaxed text-[#83969d]">
+        <p className="truncate">MATCH {gameId}</p>
+        <p>
+          STATE v{stateVersion} / EVENT {publicEvents.length}
+        </p>
       </div>
       <p
         aria-live="polite"
-        className="min-w-[180px] flex-1 self-center text-right text-sm text-slate-700"
+        className="relative z-10 min-w-[180px] flex-1 self-center text-right text-[12px] text-[#bdcccf]"
         role="status"
       >
         {commandMessage ?? phaseInstruction}
       </p>
-      <div className="w-48 shrink-0 self-center">
-        <PublicEventFeed events={publicEvents} gameId={gameId} />
-      </div>
-      <div className="flex shrink-0 items-center justify-end gap-2">
-        <ConnectionStatus
-          onResynchronize={onResynchronize}
-          state={connectionState}
+      <div className="relative z-10 flex shrink-0 items-center justify-end gap-[8px]">
+        <ConnectionIndicator
+          state={toConnectionIndicatorState(connectionState)}
         />
         {onRetryCommand === undefined ? null : (
-          <button
-            className="shrink-0 rounded border border-slate-300 px-3 py-2 text-sm hover:bg-slate-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-slate-900"
+          <SecondaryGameButton
+            className="min-w-[92px]"
             onClick={onRetryCommand}
-            type="button"
           >
             再試行
-          </button>
+          </SecondaryGameButton>
         )}
         {!canResynchronize || onResynchronize === undefined ? null : (
-          <button
-            className="shrink-0 rounded border border-slate-300 px-3 py-2 text-sm hover:bg-slate-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-slate-900"
+          <SecondaryGameButton
+            className="min-w-[116px]"
             onClick={onResynchronize}
-            type="button"
           >
             盤面を再同期
-          </button>
+          </SecondaryGameButton>
         )}
       </div>
-      <div className="flex shrink-0 items-center justify-end gap-2">
-        <button
-          className="shrink-0 rounded border border-slate-700 bg-slate-800 px-3 py-2 text-sm text-white enabled:hover:bg-slate-700 disabled:cursor-not-allowed disabled:border-slate-300 disabled:bg-slate-100 disabled:text-slate-400 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-slate-900"
+      <div className="relative z-10 flex shrink-0 items-center justify-end gap-[8px]">
+        <PrimaryGameButton
+          className="h-[46px] min-w-[126px] text-[13px]"
           disabled={!canFinishPhase}
           onClick={onFinishPhase}
-          type="button"
         >
           {finishActionLabel}
-        </button>
+        </PrimaryGameButton>
         {gameAction}
       </div>
-    </section>
+    </GameFrame>
   );
+}
+
+function toConnectionIndicatorState(state: GameConnectionState) {
+  switch (state) {
+    case "offline":
+      return "disconnected" as const;
+    case "unrecoverable":
+      return "error" as const;
+    default:
+      return state;
+  }
 }
