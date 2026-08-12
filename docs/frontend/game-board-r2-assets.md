@@ -13,6 +13,8 @@
 
 両bindingには`remote: true`を設定する。これにより`pnpm --filter @disastar/frontend run dev`のVite開発サーバーでもWorker本体はローカル実行のままR2だけをリモート参照でき、`http://127.0.0.1:4173/games/demo`でも本番と同じ背景画像を表示できる。ゲーム画像は公開前提の読み取り専用アセットであり、開発サーバーからR2へ書き込む処理は実装しない。
 
+Playwrightが起動する`pnpm --filter @disastar/frontend run dev:e2e`は、`CLOUDFLARE_ENV=e2e`を選ぶ。この環境では同じ`GAME_ASSETS` bindingをローカルR2に接続し、Cloudflareの資格情報や外部R2への接続を必要としない。CIでは画像取得が失敗しても既存の背景フォールバックを描画できることを確認対象とする。
+
 ## 都市俯瞰の背景
 
 - object key: `backgrounds/board/night-city-aerial.037226cbe99ad877f83b09ad99e8ce9fbb7822f92e608058b914a8921008500b.png`
