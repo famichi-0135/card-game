@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 360 260">
+  <defs><radialGradient id="r" cx="50%" cy="45%"><stop stop-color="#0c5f96" stop-opacity=".8"/><stop offset=".48" stop-color="#082947" stop-opacity=".46"/><stop offset="1" stop-color="#05080b" stop-opacity="0"/></radialGradient><filter id="n"><feTurbulence baseFrequency=".08" numOctaves="3" seed="7"/><feDisplacementMap in="SourceGraphic" scale="4"/></filter></defs>
+  <rect width="360" height="260" fill="url(#r)"/>
+  <g fill="#020406" stroke="#176b9d" stroke-opacity=".5" filter="url(#n)"><ellipse cx="180" cy="93" rx="43" ry="51"/><path d="M104 247c3-72 24-109 76-109s74 37 77 109z"/></g>
+  <g fill="none" stroke="#2e9bd1" stroke-opacity=".24"><path d="M12 221L106 154l43 18 78-89 121 61"/><path d="M0 204h360M34 238l59-52m185 36 53-65"/></g>
+</svg>

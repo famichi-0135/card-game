@@ -10,6 +10,8 @@ import {
   getAttributeLabel,
   getChainableCardNames,
 } from "./card-presentation.ts";
+import { BoardCard } from "./board-card.tsx";
+import { cn } from "@/lib/utils";
 
 export function DraggableHandCard({
   card,
@@ -38,18 +40,16 @@ export function DraggableHandCard({
   }
 
   return (
-    <div ref={ref} className="group relative">
+    <div ref={ref} className="group relative shrink-0">
       <button
         ref={handleRef}
-        className={`grid h-36 w-28 grid-rows-[auto_1fr_auto_auto] rounded-md border bg-white p-2 text-left transition-opacity motion-reduce:transition-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-slate-900 ${
-          isDragging ? "opacity-40" : "opacity-100"
-        } ${canDrag ? "cursor-grab active:cursor-grabbing" : "cursor-default"} ${
-          isSelected
-            ? "border-slate-900 bg-slate-100 ring-2 ring-slate-900"
-            : canDrag
-              ? "border-slate-400"
-              : "border-slate-300"
-        }`}
+        className={cn(
+          "relative block rounded-[3px] text-left transition-opacity motion-reduce:transition-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#f1cd7a]",
+          isDragging ? "opacity-40" : "opacity-100",
+          canDrag ? "cursor-grab active:cursor-grabbing" : "cursor-default",
+          isSelected &&
+            "ring-2 ring-[#e5bf65] ring-offset-2 ring-offset-[#091116]",
+        )}
         aria-pressed={isSelected}
         type="button"
         aria-label={`${definition.name}。${getActionSummary(actions)}`}
@@ -64,21 +64,12 @@ export function DraggableHandCard({
             : "このカードは現在のフェーズでは配置できません"
         }
       >
-        <span className="text-[10px] text-slate-500">
-          {cardTypeLabel(definition.cardType)} /{" "}
-          {getAttributeLabel(definition.faction, definition.attribute)}
-        </span>
-        <span
-          className="flex items-center justify-center text-3xl"
-          aria-hidden="true"
-        >
-          {cardTypeMark(definition.cardType)}
-        </span>
-        <strong className="text-sm leading-tight">{definition.name}</strong>
-        <span className="mt-1 flex justify-between border-t border-slate-200 pt-1 text-[10px] text-slate-600">
-          <span>コスト {definition.cost ?? "-"}</span>
-          <span>力 {definition.basePower ?? "-"}</span>
-        </span>
+        <BoardCard
+          definition={definition}
+          sequenceLabel={cardTypeMark(definition.cardType)}
+          size="hand"
+          tone="self"
+        />
       </button>
 
       <CardHoverPreview catalog={catalog} definition={definition} />
@@ -109,37 +100,37 @@ function CardHoverPreview({
 
   return (
     <section
-      className="pointer-events-none absolute bottom-[calc(100%+8px)] left-1/2 z-20 hidden w-64 -translate-x-1/2 rounded-md border border-slate-300 bg-white p-3 text-sm shadow-sm group-hover:block group-focus-within:block"
+      className="pointer-events-none absolute bottom-[calc(100%+9px)] left-1/2 z-[1000] hidden w-[280px] -translate-x-1/2 border border-[#9a7b45] bg-[#050b10] p-[14px] text-sm text-[#dee7e9] shadow-[0_18px_48px_rgba(0,0,0,.82),inset_0_0_24px_rgba(0,0,0,.8)] [clip-path:polygon(7px_0,calc(100%_-_7px)_0,100%_7px,100%_calc(100%_-_7px),calc(100%_-_7px)_100%,7px_100%,0_calc(100%_-_7px),0_7px)] group-hover:block group-focus-within:block"
       role="tooltip"
     >
       <div className="flex items-start justify-between gap-3">
         <div>
-          <p className="text-xs text-slate-500">
+          <p className="text-xs text-[#91a6ad]">
             {cardTypeLabel(definition.cardType)} /{" "}
             {getAttributeLabel(definition.faction, definition.attribute)}
           </p>
           <strong>{definition.name}</strong>
         </div>
-        <span className="text-2xl" aria-hidden="true">
+        <span className="text-2xl text-[#e5c778]" aria-hidden="true">
           {cardTypeMark(definition.cardType)}
         </span>
       </div>
-      <dl className="mt-3 flex gap-4 text-xs">
+      <dl className="mt-3 flex gap-4 border-y border-white/[.09] py-2 text-xs">
         <div>
-          <dt className="text-slate-500">コスト</dt>
+          <dt className="text-[#91a6ad]">コスト</dt>
           <dd className="font-semibold">{definition.cost ?? "-"}</dd>
         </div>
         <div>
-          <dt className="text-slate-500">攻撃力</dt>
+          <dt className="text-[#91a6ad]">攻撃力</dt>
           <dd className="font-semibold">{definition.basePower ?? "-"}</dd>
         </div>
       </dl>
-      <p className="mt-3 whitespace-pre-line text-xs leading-5 text-slate-600">
+      <p className="mt-3 whitespace-pre-line text-xs leading-5 text-[#c1ced2]">
         {definition.rulesText}
       </p>
       {definition.cardType === "attack" ? (
-        <p className="mt-3 border-t border-slate-200 pt-3 text-xs leading-5 text-slate-600">
-          <span className="text-slate-500">連鎖可能なカード: </span>
+        <p className="mt-3 border-t border-white/[.1] pt-3 text-xs leading-5 text-[#c1ced2]">
+          <span className="text-[#91a6ad]">連鎖可能なカード: </span>
           {chainableCardNames.length === 0
             ? "なし"
             : chainableCardNames.join("、")}

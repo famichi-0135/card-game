@@ -23,8 +23,8 @@ describe("ゲームボードのデスクトップレイアウト", () => {
     expect(markup).toContain('aria-label="相手の捨て札"');
     expect(markup).toContain('aria-label="自分のサポートゾーン"');
     expect(markup).toContain('aria-label="自分の手札"');
-    expect(markup).toContain(
-      'aria-label="自分の手札" class="min-w-0 overflow-visible"',
+    expect(markup).toMatch(
+      /aria-label="自分の手札" class="[^"]*min-w-0[^"]*overflow-visible/,
     );
     expect(markup).toContain('aria-label="自分の山札"');
     expect(markup).toContain("大地");
