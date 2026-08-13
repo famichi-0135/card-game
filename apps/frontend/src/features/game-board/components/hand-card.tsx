@@ -65,11 +65,15 @@ export function DraggableHandCard({
               type="button"
               onKeyDownCapture={(event) => {
                 if (event.key === "Enter" || event.key === " ") {
+                  event.preventDefault();
                   event.stopPropagation();
+                  onSelect?.(card.instanceId);
                 }
               }}
+              onClickCapture={() => {
+                onSelect?.(card.instanceId);
+              }}
               aria-label={`${definition.name}。${getActionSummary(actions)}`}
-              onClick={() => onSelect?.(card.instanceId)}
               title={
                 canDrag
                   ? actions?.playSupport.available
