@@ -42,4 +42,24 @@ test.describe("ゲーム盤面のドラッグ操作", () => {
       }),
     ).toBeVisible();
   });
+
+  test("キーボードで選択した攻撃カードの合法な配置先と連鎖先だけを強調する", async ({
+    page,
+  }) => {
+    await page.setViewportSize({ width: 1280, height: 900 });
+    await page.goto("/games/demo?scenario=placement");
+
+    const card = page.getByRole("button", {
+      name: /直下型地震。攻撃操作の候補があります/,
+    });
+    await card.press("Enter");
+
+    await expect(card).toHaveAttribute("aria-pressed", "true");
+    await expect(
+      page.locator('[data-selected-card-target="place"]'),
+    ).toHaveCount(4);
+    await expect(
+      page.locator('[data-selected-card-target="chain"]'),
+    ).toHaveCount(1);
+  });
 });

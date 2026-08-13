@@ -63,6 +63,11 @@ export function DraggableHandCard({
               )}
               aria-pressed={isSelected}
               type="button"
+              onKeyDownCapture={(event) => {
+                if (event.key === "Enter" || event.key === " ") {
+                  event.stopPropagation();
+                }
+              }}
               aria-label={`${definition.name}。${getActionSummary(actions)}`}
               onClick={() => onSelect?.(card.instanceId)}
               title={
