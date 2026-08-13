@@ -1,4 +1,5 @@
 import { DragDropProvider } from "@dnd-kit/react";
+import { PointerActivationConstraints, PointerSensor } from "@dnd-kit/dom";
 import type {
   GameCommand,
   PlayerGameView,
@@ -238,7 +239,24 @@ function GameBoardContent({
         connectionState === "connected"));
 
   return (
-    <DragDropProvider onDragEnd={handleDragEnd}>
+    <DragDropProvider
+      onDragEnd={handleDragEnd}
+      sensors={(defaults) => [
+        ...defaults.filter((sensor) => sensor !== PointerSensor),
+        PointerSensor.configure({
+          activationConstraints(event) {
+            return event.pointerType === "touch"
+              ? [
+                  new PointerActivationConstraints.Delay({
+                    value: 250,
+                    tolerance: 8,
+                  }),
+                ]
+              : [new PointerActivationConstraints.Distance({ value: 5 })];
+          },
+        }),
+      ]}
+    >
       <GameBoardView
         availableActions={availableActions}
         catalog={catalog}
