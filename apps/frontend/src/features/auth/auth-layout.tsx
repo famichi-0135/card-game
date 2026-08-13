@@ -1,4 +1,9 @@
 import type { ReactNode } from "react";
+import {
+  AppPanel,
+  AppShell,
+  PageHeader,
+} from "../../components/application-ui.tsx";
 
 export function AuthLayout({
   title,
@@ -10,16 +15,16 @@ export function AuthLayout({
   children: ReactNode;
 }) {
   return (
-    <main className="grid min-h-dvh place-items-center bg-slate-100 p-6">
-      <section className="w-full max-w-md rounded-md border border-slate-300 bg-white p-6 shadow-sm">
-        <p className="text-sm font-semibold text-slate-600">
-          DISASTAR CARD GAME
-        </p>
-        <h1 className="mt-4 text-2xl font-semibold text-slate-950">{title}</h1>
-        <p className="mt-2 text-sm leading-6 text-slate-600">{description}</p>
-        <div className="mt-6">{children}</div>
-      </section>
-    </main>
+    <AppShell contentClassName="flex min-h-[calc(100dvh-76px)] items-center justify-center py-12">
+      <AppPanel className="w-full max-w-md p-6 sm:p-7" label="ACCOUNT ACCESS">
+        <PageHeader
+          description={description}
+          eyebrow="DISASTAR ACCOUNT"
+          title={title}
+        />
+        <div className="mt-7">{children}</div>
+      </AppPanel>
+    </AppShell>
   );
 }
 
@@ -32,16 +37,13 @@ export function AuthStatus({
 }) {
   const toneClassName =
     tone === "error"
-      ? "border-red-300 bg-red-50 text-red-800"
+      ? "border-[#803c42] bg-[#32151b]/85 text-[#ffb8b8]"
       : tone === "success"
-        ? "border-emerald-300 bg-emerald-50 text-emerald-800"
-        : "border-slate-300 bg-slate-50 text-slate-700";
+        ? "border-[#3f7450] bg-[#10271a]/85 text-[#b9e7c4]"
+        : "border-[#2f4a5e] bg-[#071018]/85 text-[#b9cad4]";
 
   return (
-    <p
-      className={`rounded border px-3 py-2 text-sm ${toneClassName}`}
-      role="status"
-    >
+    <p className={`border px-3 py-2 text-sm ${toneClassName}`} role="status">
       {children}
     </p>
   );
@@ -55,7 +57,7 @@ export function AuthField({
   children: ReactNode;
 }) {
   return (
-    <label className="grid gap-1.5 text-sm font-medium text-slate-800">
+    <label className="grid gap-1.5 text-sm font-medium text-[#c9d8e0]">
       <span>{label}</span>
       {children}
     </label>
@@ -63,10 +65,10 @@ export function AuthField({
 }
 
 export const authInputClassName =
-  "h-10 rounded border border-slate-300 bg-white px-3 text-base text-slate-950 outline-none placeholder:text-slate-400 focus:border-slate-700 focus:ring-2 focus:ring-slate-200";
+  "h-11 border border-[#2f4a5e] bg-[#050d13]/90 px-3 text-base text-[#edf5f9] outline-none placeholder:text-[#506776] shadow-[inset_0_1px_0_rgba(255,255,255,.035)] focus:border-[#72b8e5] focus:ring-2 focus:ring-[#3b86b6]/25";
 
 export const authPrimaryButtonClassName =
-  "inline-flex h-10 items-center justify-center rounded border border-slate-800 bg-slate-900 px-4 text-sm font-medium text-white hover:bg-slate-700 disabled:cursor-not-allowed disabled:border-slate-300 disabled:bg-slate-100 disabled:text-slate-400 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-slate-900";
+  "inline-flex h-11 items-center justify-center border border-[#b98d3f] bg-[radial-gradient(circle_at_20%_0%,rgba(255,224,137,.18),transparent_48%),linear-gradient(180deg,rgba(101,74,30,.95),rgba(47,34,17,.98))] px-4 text-sm font-medium tracking-[.05em] text-[#fff0c9] shadow-[inset_0_1px_0_rgba(255,242,202,.25),inset_0_0_0_1px_rgba(39,25,10,.7)] transition hover:border-[#f3c968] hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-45 focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-[#eac46c]";
 
 export const authLinkClassName =
-  "text-sm font-medium text-slate-800 underline underline-offset-4 hover:text-slate-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-slate-900";
+  "text-sm font-medium text-[#bcdcf0] underline decoration-[#487694] underline-offset-4 hover:text-[#e8f6ff] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#75bced]";

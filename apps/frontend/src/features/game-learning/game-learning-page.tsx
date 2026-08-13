@@ -4,6 +4,13 @@ import {
 } from "@disastar/learning-content";
 import { Link } from "react-router";
 import { ApiClientError } from "../../app/api-client.ts";
+import {
+  AppEmptyState,
+  AppPanel,
+  AppShell,
+  PageHeader,
+  appButtonClassName,
+} from "../../components/application-ui.tsx";
 import { AccountMenu } from "../account/account-menu.tsx";
 import { useGameLearningContext } from "../game-board/hooks/use-game-board-data.ts";
 import { getLearnCategoryLabel } from "../learn/learn-catalog.ts";
@@ -37,111 +44,102 @@ export function GameLearningPage({ gameId }: { gameId: string }) {
   );
 
   return (
-    <main className="min-h-dvh bg-slate-100 p-6 text-slate-950">
-      <div className="mx-auto w-full max-w-5xl">
-        <header className="flex flex-wrap items-center justify-between gap-4 border-b border-slate-300 py-4">
+    <AppShell
+      contentClassName="max-w-5xl"
+      headerRightSlot={
+        <div className="flex items-center gap-3">
           <Link
-            className="text-sm font-semibold text-slate-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-slate-900"
-            to="/"
+            className="border border-[#315b7e] px-3 py-2 text-sm font-medium text-[#d8efff] hover:border-[#76bcec]"
+            to={`/games/${encodeURIComponent(gameId)}`}
           >
-            DISASTAR CARD GAME
+            対戦結果へ戻る
           </Link>
-          <div className="flex flex-wrap items-center gap-2">
-            <Link
-              className="rounded border border-slate-300 bg-white px-3 py-2 text-sm font-medium text-slate-800 hover:bg-slate-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-slate-900"
-              to={`/games/${encodeURIComponent(gameId)}`}
-            >
-              対戦結果へ戻る
-            </Link>
-            <AccountMenu />
-          </div>
-        </header>
+          <AccountMenu />
+        </div>
+      }
+    >
+      <PageHeader
+        description="対戦で実際に使用したカードに関連する防災情報です。災害時の行動は、自治体などの最新の公式情報を優先してください。"
+        eyebrow="GAME LEARNING"
+        title="この対戦から学ぶ"
+      />
 
-        <section className="border-b border-slate-300 py-8">
-          <p className="text-sm font-semibold text-slate-600">GAME LEARNING</p>
-          <h1 className="mt-2 text-3xl font-semibold">この対戦から学ぶ</h1>
-          <p className="mt-3 max-w-2xl text-sm leading-6 text-slate-600">
-            対戦で実際に使用したカードに関連する防災情報です。災害時の行動は、自治体などの最新の公式情報を優先してください。
-          </p>
-        </section>
-
-        <section className="py-8" aria-labelledby="used-cards-title">
-          <h2 className="text-lg font-semibold" id="used-cards-title">
-            関連した使用カード
-          </h2>
-          {learningContext.data.selectedCards.length === 0 ? (
-            <p className="mt-3 text-sm leading-6 text-slate-600">
-              この対戦では、現在公開中の記事に関連するカードは使用されませんでした。
-            </p>
-          ) : (
-            <ul className="mt-4 flex flex-wrap gap-2">
-              {learningContext.data.selectedCards.map((card) => (
-                <li
-                  className="rounded border border-slate-300 bg-white px-3 py-2 text-sm"
-                  key={card.cardDefinitionId}
-                >
-                  {card.cardName}
-                </li>
-              ))}
-            </ul>
-          )}
-        </section>
-
-        <section
-          className="border-t border-slate-300 py-8"
-          aria-labelledby="recommended-articles-title"
+      <section className="py-8" aria-labelledby="used-cards-title">
+        <h2
+          className="text-xl font-semibold text-[#edf3f7]"
+          id="used-cards-title"
         >
-          <h2 className="text-lg font-semibold" id="recommended-articles-title">
-            おすすめの記事
-          </h2>
-          {articles.length === 0 ? (
-            <p className="mt-3 text-sm leading-6 text-slate-600">
-              関連する記事はまだありません。防災情報一覧から、地域に合う情報を確認してください。
-            </p>
-          ) : (
-            <div className="mt-4 grid gap-3">
-              {articles.map((article) => (
-                <article
-                  className="rounded border border-slate-300 bg-white p-5"
-                  key={article.id}
-                >
-                  <p className="text-sm font-semibold text-slate-600">
-                    {getLearnCategoryLabel(article.category)}
-                  </p>
-                  <h3 className="mt-2 text-xl font-semibold">
-                    <Link
-                      className="underline underline-offset-4 hover:text-slate-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-slate-900"
-                      to={`/learn/${article.slug}`}
-                    >
-                      {article.title}
-                    </Link>
-                  </h3>
-                  <p className="mt-3 text-sm leading-6 text-slate-700">
-                    {article.summary}
-                  </p>
-                  <p className="mt-4 text-xs text-slate-500">
-                    関連カード:{" "}
-                    {article.matchedCardDefinitionIds
-                      .map(
-                        (cardDefinitionId) =>
-                          selectedCards.get(cardDefinitionId)?.cardName ??
-                          cardDefinitionId,
-                      )
-                      .join("、")}
-                  </p>
-                </article>
-              ))}
-            </div>
-          )}
-          <Link
-            className="mt-6 inline-flex rounded border border-slate-300 bg-white px-3 py-2 text-sm font-medium text-slate-800 hover:bg-slate-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-slate-900"
-            to="/learn"
-          >
-            防災情報一覧を見る
-          </Link>
-        </section>
-      </div>
-    </main>
+          関連した使用カード
+        </h2>
+        {learningContext.data.selectedCards.length === 0 ? (
+          <p className="mt-3 text-sm leading-6 text-[#91a5b4]">
+            この対戦では、現在公開中の記事に関連するカードは使用されませんでした。
+          </p>
+        ) : (
+          <ul className="mt-4 flex flex-wrap gap-2">
+            {learningContext.data.selectedCards.map((card) => (
+              <li
+                className="border border-[#2f4a5e] bg-[#07131c]/75 px-3 py-2 text-sm text-[#c9d8e0]"
+                key={card.cardDefinitionId}
+              >
+                {card.cardName}
+              </li>
+            ))}
+          </ul>
+        )}
+      </section>
+
+      <section
+        className="border-t border-[#2a3d4b] py-8"
+        aria-labelledby="recommended-articles-title"
+      >
+        <h2
+          className="text-xl font-semibold text-[#edf3f7]"
+          id="recommended-articles-title"
+        >
+          おすすめの記事
+        </h2>
+        {articles.length === 0 ? (
+          <p className="mt-3 text-sm leading-6 text-[#91a5b4]">
+            関連する記事はまだありません。防災情報一覧から、地域に合う情報を確認してください。
+          </p>
+        ) : (
+          <div className="mt-4 grid gap-3">
+            {articles.map((article) => (
+              <AppPanel key={article.id}>
+                <p className="text-[11px] font-medium tracking-[.16em] text-[#5798c9]">
+                  {getLearnCategoryLabel(article.category)}
+                </p>
+                <h3 className="mt-3 text-xl font-semibold text-[#e7eff4]">
+                  <Link
+                    className="underline decoration-[#527895] underline-offset-4 hover:text-[#8ec7ed] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#75bced]"
+                    to={`/learn/${article.slug}`}
+                  >
+                    {article.title}
+                  </Link>
+                </h3>
+                <p className="mt-3 text-sm leading-6 text-[#a7b8c2]">
+                  {article.summary}
+                </p>
+                <p className="mt-4 text-xs text-[#718895]">
+                  関連カード:{" "}
+                  {article.matchedCardDefinitionIds
+                    .map(
+                      (cardDefinitionId) =>
+                        selectedCards.get(cardDefinitionId)?.cardName ??
+                        cardDefinitionId,
+                    )
+                    .join("、")}
+                </p>
+              </AppPanel>
+            ))}
+          </div>
+        )}
+        <Link className={`mt-6 ${appButtonClassName.secondary}`} to="/learn">
+          防災情報一覧を見る
+        </Link>
+      </section>
+    </AppShell>
   );
 }
 
@@ -153,20 +151,24 @@ function GameLearningMessage({
   title: string;
 }) {
   return (
-    <main className="grid min-h-dvh place-items-center bg-slate-100 p-6 text-slate-950">
-      <section className="w-full max-w-md rounded border border-slate-300 bg-white p-6 shadow-sm">
-        <p className="text-sm font-semibold text-slate-600">GAME LEARNING</p>
-        <h1 className="mt-4 text-xl font-semibold">{title}</h1>
-        <Link
-          className="mt-6 inline-flex rounded border border-slate-800 bg-slate-900 px-4 py-2 text-sm font-medium text-white hover:bg-slate-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-slate-900"
-          to={
-            gameId === undefined ? "/" : `/games/${encodeURIComponent(gameId)}`
-          }
-        >
-          {gameId === undefined ? "対戦画面の入口へ戻る" : "対戦結果へ戻る"}
-        </Link>
-      </section>
-    </main>
+    <AppShell contentClassName="flex min-h-[calc(100dvh-76px)] items-center justify-center py-12">
+      <AppEmptyState
+        action={
+          <Link
+            className={appButtonClassName.secondary}
+            to={
+              gameId === undefined
+                ? "/"
+                : `/games/${encodeURIComponent(gameId)}`
+            }
+          >
+            {gameId === undefined ? "対戦画面の入口へ戻る" : "対戦結果へ戻る"}
+          </Link>
+        }
+        description="対戦の状態を確認してから、もう一度お試しください。"
+        title={title}
+      />
+    </AppShell>
   );
 }
 

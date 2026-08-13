@@ -5,6 +5,11 @@
   "main": "src/index.ts",
   "compatibility_date": "2026-07-15",
   "compatibility_flags": ["nodejs_compat"],
+  "vars": {
+    "BETTER_AUTH_URL": "http://localhost:5173",
+    "BETTER_AUTH_TRUSTED_ORIGINS": "http://localhost:5173",
+    "GOOGLE_CLIENT_ID": "508140377650-4lh9mv75ub43uc97b45pbdvbqrdbpj50.apps.googleusercontent.com",
+  },
   "d1_databases": [
     {
       "binding": "DB",
