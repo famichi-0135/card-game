@@ -43,46 +43,60 @@ export function GameProgressBar({
   round: number;
   stateVersion: number;
 }) {
+  const latestEvent = publicEvents.at(-1)?.message;
+
   return (
     <GameFrame
       as="section"
       aria-label="ゲーム進行"
-      className="flex h-[76px] items-stretch gap-[12px] p-[10px] text-[#dfe7e8]"
+      className="flex h-[76px] items-stretch gap-[10px] p-[9px] text-[#dfe7e8]"
       data-board-region="game-progress"
       variant="gray"
     >
-      <div className="relative z-10 grid w-[108px] shrink-0 grid-cols-[auto_1fr] items-center gap-[7px] border-r border-white/[.12] pr-[12px]">
-        <span className="text-[9px] tracking-[.14em] text-[#8ca2aa]">
-          ROUND
-        </span>
-        <strong className="font-mono text-[28px] leading-none tabular-nums text-[#e9cc82]">
-          {round}
-        </strong>
-      </div>
-      <div className="relative z-10 min-w-[184px] shrink-0 border-r border-white/[.12] pr-[16px]">
-        <span className="block text-[9px] tracking-[.12em] text-[#8ca2aa]">
-          現在のフェーズ
-        </span>
-        <div className="mt-[5px] flex items-center gap-[8px]">
-          <strong className="text-[14px] tracking-[.07em]">{phaseLabel}</strong>
-          <span className="border border-[#907140] bg-black/30 px-[6px] py-[2px] font-mono text-[12px] tabular-nums text-[#f0cf84]">
-            {remainingTime}
-          </span>
-        </div>
-      </div>
-      <div className="relative z-10 w-[124px] shrink-0 text-[9px] leading-relaxed text-[#83969d]">
-        <p className="truncate">MATCH {gameId}</p>
-        <p>
-          STATE v{stateVersion} / EVENT {publicEvents.length}
-        </p>
-      </div>
-      <p
-        aria-live="polite"
-        className="relative z-10 min-w-[180px] flex-1 self-center text-right text-[12px] text-[#bdcccf]"
-        role="status"
+      <HudCell
+        className="w-[100px]"
+        label="ROUND"
+        sub={`v${stateVersion}`}
       >
-        {commandMessage ?? phaseInstruction}
-      </p>
+        <strong className="font-mono text-[30px] leading-none tabular-nums text-[#e9cc82] [text-shadow:0_0_12px_rgba(233,204,130,.2)]">
+          {String(round).padStart(2, "0")}
+        </strong>
+        <span className="truncate font-mono text-[7px] tracking-[.06em] text-[#5f7079]">
+          MATCH {gameId}
+        </span>
+      </HudCell>
+      <HudDivider />
+      <HudCell className="min-w-[128px]" label="PHASE">
+        <strong className="truncate text-[14px] tracking-[.08em] text-[#eef3f2]">
+          {phaseLabel}
+        </strong>
+      </HudCell>
+      <HudDivider />
+      <HudCell className="w-[86px]" label="TIME">
+        <strong className="font-mono text-[20px] leading-none tabular-nums text-[#f0cf84]">
+          {remainingTime}
+        </strong>
+      </HudCell>
+      <HudDivider />
+      <HudCell className="min-w-[180px] flex-1" label="MESSAGE">
+        <p
+          aria-live="polite"
+          className="truncate text-[12px] text-[#d3dee0]"
+          role="status"
+        >
+          {commandMessage ?? phaseInstruction}
+        </p>
+      </HudCell>
+      <HudDivider />
+      <HudCell
+        className="min-w-[170px] flex-[.8]"
+        label="EVENT"
+        sub={`STATE v${stateVersion} / EVENT ${publicEvents.length}`}
+      >
+        <p className="truncate text-[11px] text-[#a9bcc2]">
+          {latestEvent ?? "イベントはありません"}
+        </p>
+      </HudCell>
       <div className="relative z-10 flex shrink-0 items-center justify-end gap-[8px]">
         <ConnectionIndicator
           state={toConnectionIndicatorState(connectionState)}
@@ -115,6 +129,43 @@ export function GameProgressBar({
         {gameAction}
       </div>
     </GameFrame>
+  );
+}
+
+function HudCell({
+  children,
+  className,
+  label,
+  sub,
+}: {
+  children: ReactNode;
+  className?: string;
+  label: string;
+  sub?: string;
+}) {
+  return (
+    <div
+      className={`relative z-10 flex min-w-0 shrink-0 flex-col justify-center gap-[3px] ${className ?? ""}`}
+    >
+      <span className="flex items-baseline justify-between gap-[6px] text-[8px] tracking-[.2em] text-[#7f96a0]">
+        {label}
+        {sub === undefined ? null : (
+          <span className="font-mono text-[7px] tracking-normal text-[#5f7079]">
+            {sub}
+          </span>
+        )}
+      </span>
+      {children}
+    </div>
+  );
+}
+
+function HudDivider() {
+  return (
+    <span
+      aria-hidden="true"
+      className="relative z-10 w-[5px] self-stretch bg-[linear-gradient(90deg,transparent_0px,transparent_1px,rgba(0,0,0,.9)_1px,rgba(0,0,0,.9)_2px,rgba(139,159,168,.22)_2px,rgba(139,159,168,.22)_3px,transparent_3px)]"
+    />
   );
 }
 

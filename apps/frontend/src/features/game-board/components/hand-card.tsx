@@ -5,6 +5,12 @@ import type {
   VisibleCardInstance,
 } from "@disastar/game-engine";
 import {
+  HoverCard,
+  HoverCardContent,
+  HoverCardTrigger,
+} from "@/components/ui/hover-card.tsx";
+import { UI_LAYER_CLASS } from "@/components/ui/ui-layers.ts";
+import {
   cardTypeLabel,
   cardTypeMark,
   getAttributeLabel,
@@ -41,38 +47,55 @@ export function DraggableHandCard({
 
   return (
     <div ref={ref} className="group relative shrink-0">
-      <button
-        ref={handleRef}
-        className={cn(
-          "relative block rounded-[3px] text-left transition-opacity motion-reduce:transition-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#f1cd7a]",
-          isDragging ? "opacity-40" : "opacity-100",
-          canDrag ? "cursor-grab active:cursor-grabbing" : "cursor-default",
-          isSelected &&
-            "ring-2 ring-[#e5bf65] ring-offset-2 ring-offset-[#091116]",
-        )}
-        aria-pressed={isSelected}
-        type="button"
-        aria-label={`${definition.name}。${getActionSummary(actions)}`}
-        onClick={() => onSelect?.(card.instanceId)}
-        title={
-          canDrag
-            ? actions?.playSupport.available
-              ? "クリックまたはEnterで選択してから、サポートゾーンで使用"
-              : actions?.discard.available
-                ? "クリックまたはEnterで選択してから、攻撃グループへ配置、連鎖、または捨て札へ破棄"
-                : "クリックまたはEnterで選択してから、攻撃グループへ配置または連鎖"
-            : "このカードは現在のフェーズでは配置できません"
-        }
-      >
+      <HoverCard>
+        <HoverCardTrigger
+          render={
+            <button
+              ref={handleRef}
+              className={cn(
+                "relative block rounded-[3px] text-left transition-opacity motion-reduce:transition-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#f1cd7a]",
+                isDragging ? "opacity-40" : "opacity-100",
+                canDrag
+                  ? "cursor-grab active:cursor-grabbing"
+                  : "cursor-default",
+                isSelected &&
+                  "ring-2 ring-[#e5bf65] ring-offset-2 ring-offset-[#091116]",
+              )}
+              aria-pressed={isSelected}
+              type="button"
+              aria-label={`${definition.name}。${getActionSummary(actions)}`}
+              onClick={() => onSelect?.(card.instanceId)}
+              title={
+                canDrag
+                  ? actions?.playSupport.available
+                    ? "クリックまたはEnterで選択してから、サポートゾーンで使用"
+                    : actions?.discard.available
+                      ? "クリックまたはEnterで選択してから、攻撃グループへ配置、連鎖、または捨て札へ破棄"
+                      : "クリックまたはEnterで選択してから、攻撃グループへ配置または連鎖"
+                  : "このカードは現在のフェーズでは配置できません"
+              }
+            />
+          }
+        >
         <BoardCard
           definition={definition}
           sequenceLabel={cardTypeMark(definition.cardType)}
           size="hand"
           tone="self"
         />
-      </button>
-
-      <CardHoverPreview catalog={catalog} definition={definition} />
+      </HoverCardTrigger>
+      <HoverCardContent
+        align="center"
+        className={cn(
+          "w-[280px] border border-[#9a7b45] bg-[#050b10] p-[14px] text-sm text-[#dee7e9] shadow-[0_18px_48px_rgba(0,0,0,.82),inset_0_0_24px_rgba(0,0,0,.8)] [clip-path:polygon(7px_0,calc(100%_-_7px)_0,100%_7px,100%_calc(100%_-_7px),calc(100%_-_7px)_100%,7px_100%,0_calc(100%_-_7px),0_7px)]",
+          UI_LAYER_CLASS.toast,
+        )}
+        side="top"
+        sideOffset={9}
+      >
+        <CardPreviewContent catalog={catalog} definition={definition} />
+      </HoverCardContent>
+    </HoverCard>
     </div>
   );
 }
@@ -89,7 +112,7 @@ export function isHandCardDraggable(
   );
 }
 
-function CardHoverPreview({
+function CardPreviewContent({
   catalog,
   definition,
 }: {
@@ -99,10 +122,7 @@ function CardHoverPreview({
   const chainableCardNames = getChainableCardNames(catalog, definition);
 
   return (
-    <section
-      className="pointer-events-none absolute bottom-[calc(100%+9px)] left-1/2 z-[1000] hidden w-[280px] -translate-x-1/2 border border-[#9a7b45] bg-[#050b10] p-[14px] text-sm text-[#dee7e9] shadow-[0_18px_48px_rgba(0,0,0,.82),inset_0_0_24px_rgba(0,0,0,.8)] [clip-path:polygon(7px_0,calc(100%_-_7px)_0,100%_7px,100%_calc(100%_-_7px),calc(100%_-_7px)_100%,7px_100%,0_calc(100%_-_7px),0_7px)] group-hover:block group-focus-within:block"
-      role="tooltip"
-    >
+    <>
       <div className="flex items-start justify-between gap-3">
         <div>
           <p className="text-xs text-[#91a6ad]">
@@ -136,7 +156,7 @@ function CardHoverPreview({
             : chainableCardNames.join("、")}
         </p>
       ) : null}
-    </section>
+    </>
   );
 }
 

@@ -132,11 +132,12 @@ export function GameBoardView({
   return (
     <>
       <main
-        className="h-dvh min-w-[1180px] overflow-hidden bg-[#020609] bg-cover bg-center p-[12px] text-[#dfe7e8] max-[1179px]:hidden max-[719px]:hidden"
+        className="relative isolate z-0 h-dvh min-w-[1180px] overflow-hidden bg-[#020609] bg-cover bg-center p-[12px] text-[#dfe7e8] max-[1179px]:hidden max-[719px]:hidden"
         data-board-background-asset={BOARD_BACKGROUND_ASSET_ID}
+        data-ui-layer="board"
         style={{ backgroundImage: boardBackgroundImage }}
       >
-        <div className="mx-auto grid h-full min-h-0 max-w-[1600px] grid-rows-[76px_minmax(0,1fr)_188px] gap-[10px]">
+        <div className="mx-auto grid h-full min-h-0 max-w-[1600px] grid-rows-[76px_minmax(0,1fr)_200px] gap-[10px]">
           <GameProgressBar
             canFinishPhase={canFinishPhase}
             canResynchronize={
@@ -189,7 +190,6 @@ export function GameBoardView({
             />
 
             <ResourceColumn
-              gameId={view.gameId}
               onOpenOpponentDiscard={() =>
                 openZoneDialog({
                   title: "相手の捨て札",
@@ -205,7 +205,6 @@ export function GameBoardView({
                 })
               }
               opponent={view.opponent}
-              publicEvents={publicEvents}
               self={view.self}
             />
           </section>

@@ -17,6 +17,7 @@ export function CardField({
   onSelectTarget,
   opponentGroups,
   selfGroups,
+  selectedCardInstanceId,
 }: {
   availableActions?: AvailableGameActions;
   catalog: PublicCardCatalog;
@@ -25,7 +26,15 @@ export function CardField({
   onSelectTarget?: (target: GameBoardCardTarget) => boolean;
   opponentGroups: PlayerGameView["opponent"]["attackGroups"];
   selfGroups: PlayerGameView["self"]["attackGroups"];
+  selectedCardInstanceId?: string;
 }) {
+  const slotWithSelectedCard = selectedCardInstanceId
+    ? availableActions?.handCards?.[selectedCardInstanceId]
+        ?.placeAttack?.available
+        ? selectedCardInstanceId
+        : undefined
+    : undefined;
+
   return (
     <GameFrame
       as="section"
@@ -56,6 +65,7 @@ export function CardField({
         onOpenGroup={onOpenSelfGroup}
         onSelectTarget={onSelectTarget}
         perspective="self"
+        selectedCardInstanceId={slotWithSelectedCard}
       />
     </GameFrame>
   );

@@ -1,6 +1,6 @@
 import { useDroppable } from "@dnd-kit/react";
-import { Archive } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { CardBack } from "./game-ui/index.ts";
 
 export function DiscardZone({
   canDiscard,
@@ -26,19 +26,28 @@ export function DiscardZone({
     <div
       ref={ref}
       className={cn(
-        "relative h-full",
+        "relative flex h-full min-h-0 flex-col gap-[5px]",
         isDropTarget &&
           canDiscard &&
-          "ring-2 ring-[#e6c46d] ring-offset-2 ring-offset-[#071118]",
+          "rounded-[4px] ring-2 ring-[#e6c46d] ring-offset-2 ring-offset-[#071118]",
       )}
     >
+      <div className="flex items-baseline justify-between px-[2px]">
+        <span className="text-[9px] font-medium tracking-[.14em] text-[#a99a7c]">
+          捨て札
+        </span>
+        <span className="font-mono text-[11px] tabular-nums text-[#f2d087]">
+          {count}
+          <span className="ml-[2px] text-[8px] text-[#b8ac93]">枚</span>
+        </span>
+      </div>
       <button
         aria-label={
           hasSelectedCard ? "捨て札。選択中のカードをここへ破棄" : "捨て札"
         }
         className={cn(
-          "group h-full w-full border border-[#77603b] bg-[#100d09]/92 p-[12px] text-left text-[#e7dcc7] shadow-[inset_0_0_18px_rgba(0,0,0,.82)] transition-colors hover:border-[#b38d4d] hover:bg-[#17120b] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#f1cd7a] [clip-path:polygon(6px_0,calc(100%_-_6px)_0,100%_6px,100%_calc(100%_-_6px),calc(100%_-_6px)_100%,6px_100%,0_calc(100%_-_6px),0_6px)]",
-          canDiscard && "border-dashed",
+          "group relative min-h-0 flex-1 transition-[filter,transform] duration-150 hover:brightness-[1.12] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#f1cd7a] motion-reduce:transition-none",
+          canDiscard && "brightness-[1.08]",
         )}
         onClick={() => {
           if (!onSelectTarget?.()) {
@@ -47,20 +56,9 @@ export function DiscardZone({
         }}
         type="button"
       >
-        <Archive
-          aria-hidden="true"
-          className="mb-[9px] text-[#d3ad66]"
-          size={18}
-        />
-        <span className="block text-[10px] tracking-[.1em] text-[#a99a7c]">
-          捨て札
-        </span>
-        <strong className="font-mono text-[25px] text-[#f2d087]">
-          {count}
-        </strong>
-        <span className="ml-1 text-[10px] text-[#b8ac93]">枚</span>
+        <CardBack className="size-full" />
         {canDiscard ? (
-          <span className="mt-1 block text-[9px] text-[#c3b493]">
+          <span className="absolute inset-x-[6px] bottom-[6px] z-10 border border-[#8a6f42]/70 bg-black/75 py-[2px] text-center text-[8px] tracking-[.08em] text-[#e3c88c]">
             ここへ破棄
           </span>
         ) : null}

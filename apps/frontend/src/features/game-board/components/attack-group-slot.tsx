@@ -43,24 +43,37 @@ export function AttackGroupSlot({
     },
   });
 
+  const hasSelectedCardOnThisSlot = hasSelectedCard === true &&
+    group === undefined &&
+    canPlace;
+
   const content =
     group === undefined ? (
-      <div className="flex h-full flex-col items-center justify-center gap-[7px] text-center text-[10px] tracking-[.08em] text-[#78909a]">
-        <span className="grid size-[30px] place-items-center border border-dashed border-current/60 font-mono text-[13px] text-[#aac0c8]">
-          {String(slotIndex + 1).padStart(2, "0")}
+      <div className="flex h-full flex-col items-center justify-center gap-[6px] text-center">
+        <span
+          aria-hidden="true"
+          className={cn(
+            "font-mono text-[30px] leading-none font-light",
+            canPlace ? "text-[#7fa3b5]" : "text-[#4a5b64]",
+            hasSelectedCardOnThisSlot ? "shadow-[0_0_8px_rgba(127,163,181,.4)]" : "",
+          )}
+        >
+          +
         </span>
-        <span>{canPlace ? "配置可能" : "EMPTY SLOT"}</span>
+        <span className="text-[9px] tracking-[.14em] text-[#78909a]">
+          {canPlace ? "配置可能" : "EMPTY SLOT"}
+        </span>
       </div>
     ) : (
-      <div className="relative flex h-full min-h-0 flex-col gap-[5px] pt-[17px] text-left">
-        <div className="min-h-0 flex-1">
+      <div className="relative flex h-full min-h-0 flex-col gap-[4px] pt-[16px] text-left">
+        <div className="flex min-h-0 flex-1 items-center justify-center [container-type:size]">
           <GroupCard
             card={group.cards.at(-1)}
             catalog={catalog}
             group={group}
           />
         </div>
-        <span className="text-center text-[9px] tracking-[.06em] text-[#b8c6c9]">
+        <span className="shrink-0 text-center text-[9px] tracking-[.06em] text-[#b8c6c9]">
           CHAIN {group.cards.length} / POWER {group.currentPower}
         </span>
       </div>
@@ -85,7 +98,7 @@ export function AttackGroupSlot({
     <div
       ref={ref}
       className={cn(
-        "relative min-h-0 overflow-hidden border bg-[#071118]/90 p-[5px] shadow-[inset_0_0_20px_rgba(0,0,0,.72)] [clip-path:polygon(5px_0,calc(100%_-_5px)_0,100%_5px,100%_calc(100%_-_5px),calc(100%_-_5px)_100%,5px_100%,0_calc(100%_-_5px),0_5px)]",
+        "relative min-h-0 overflow-hidden border bg-[linear-gradient(180deg,rgba(8,15,20,.94),rgba(3,7,10,.97))] p-[5px] shadow-[inset_0_0_22px_rgba(0,0,0,.78)] [clip-path:polygon(5px_0,calc(100%_-_5px)_0,100%_5px,100%_calc(100%_-_5px),calc(100%_-_5px)_100%,5px_100%,0_calc(100%_-_5px),0_5px)] before:pointer-events-none before:absolute before:inset-[3px] before:border before:border-white/[.05]",
         isSelf ? "border-[#2c6e90]" : "border-[#7b3937]",
         isDropTarget && (canPlace || canChain)
           ? "ring-2 ring-[#e6c46d] ring-offset-2 ring-offset-[#071118]"
@@ -94,7 +107,14 @@ export function AttackGroupSlot({
             : "opacity-90",
       )}
     >
-      <span className="absolute z-20 left-[7px] top-[5px] border border-white/[.14] bg-black/75 px-[3px] py-px font-mono text-[8px] text-[#a7bcc5]">
+      <span
+        className={cn(
+          "absolute z-20 left-[6px] top-[5px] border bg-black/75 px-[4px] py-px font-mono text-[8px] tabular-nums shadow-[0_1px_2px_rgba(0,0,0,.8)]",
+          isSelf
+            ? "border-[#2c6e90]/70 text-[#9fc6dd]"
+            : "border-[#7b3937]/70 text-[#d59a95]",
+        )}
+      >
         {String(slotIndex + 1).padStart(2, "0")}
       </span>
       {canChain ? (

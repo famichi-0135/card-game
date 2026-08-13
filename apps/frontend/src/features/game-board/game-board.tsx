@@ -252,9 +252,11 @@ function GameBoardContent({
         onConfirmSupportPlay={confirmSupportPlay}
         onFinishPhase={finishPhase}
         onForfeit={
-          preview || !isInteractive || currentView.status !== "active"
+          !isInteractive || currentView.status !== "active"
             ? undefined
-            : forfeitGame
+            : preview
+              ? () => undefined
+              : forfeitGame
         }
         onSelectCard={isInteractive ? selectCard : undefined}
         onSelectCardTarget={

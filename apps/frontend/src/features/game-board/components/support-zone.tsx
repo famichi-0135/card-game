@@ -1,6 +1,6 @@
 import { useDroppable } from "@dnd-kit/react";
-import { ShieldCheck } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { CardBack } from "./game-ui/index.ts";
 
 export function SupportZone({
   canPlaySupport,
@@ -26,19 +26,28 @@ export function SupportZone({
     <div
       ref={ref}
       className={cn(
-        "relative h-full",
+        "relative flex h-full min-h-0 flex-col gap-[5px]",
         isDropTarget &&
           canPlaySupport &&
-          "ring-2 ring-[#e6c46d] ring-offset-2 ring-offset-[#071118]",
+          "rounded-[4px] ring-2 ring-[#e6c46d] ring-offset-2 ring-offset-[#071118]",
       )}
     >
+      <div className="flex items-baseline justify-between px-[2px]">
+        <span className="text-[9px] font-medium tracking-[.14em] text-[#9cb8c2]">
+          SUPPORT ZONE
+        </span>
+        <span className="font-mono text-[11px] tabular-nums text-[#bde3f0]">
+          {count}
+          <span className="ml-[2px] text-[8px] text-[#a7c1c9]">枚</span>
+        </span>
+      </div>
       <button
         aria-label={
           hasSelectedCard ? "サポート。選択中のカードをここで使用" : "サポート"
         }
         className={cn(
-          "group h-full w-full border border-[#40718a] bg-[#071117]/92 p-[12px] text-left text-[#d8e8ed] shadow-[inset_0_0_18px_rgba(0,0,0,.82)] transition-colors hover:border-[#6ca9c3] hover:bg-[#0c1920] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#8acbf0] [clip-path:polygon(6px_0,calc(100%_-_6px)_0,100%_6px,100%_calc(100%_-_6px),calc(100%_-_6px)_100%,6px_100%,0_calc(100%_-_6px),0_6px)]",
-          canPlaySupport && "border-dashed",
+          "group relative min-h-0 flex-1 transition-[filter,transform] duration-150 hover:brightness-[1.12] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#8acbf0] motion-reduce:transition-none",
+          canPlaySupport && "brightness-[1.08]",
         )}
         onClick={() => {
           if (!onSelectTarget?.()) {
@@ -47,20 +56,9 @@ export function SupportZone({
         }}
         type="button"
       >
-        <ShieldCheck
-          aria-hidden="true"
-          className="mb-[9px] text-[#70bddc]"
-          size={18}
-        />
-        <span className="block text-[10px] tracking-[.1em] text-[#9cb8c2]">
-          サポート
-        </span>
-        <strong className="font-mono text-[25px] text-[#bde3f0]">
-          {count}
-        </strong>
-        <span className="ml-1 text-[10px] text-[#a7c1c9]">枚</span>
+        <CardBack className="size-full" />
         {canPlaySupport ? (
-          <span className="mt-1 block text-[9px] text-[#a7c1c9]">
+          <span className="absolute inset-x-[6px] bottom-[6px] z-10 border border-[#40718a]/70 bg-black/75 py-[2px] text-center text-[8px] tracking-[.08em] text-[#a8d4e8]">
             ここへ使用
           </span>
         ) : null}
