@@ -1,3 +1,4 @@
+export { CardBack } from "./card-back.tsx";
 export { ConnectionIndicator } from "./connection-indicator.tsx";
 export { FrameCorner } from "./frame-corner.tsx";
 export { FrameLine } from "./frame-line.tsx";

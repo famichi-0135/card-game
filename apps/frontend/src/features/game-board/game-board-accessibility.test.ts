@@ -41,6 +41,9 @@ describe("ゲーム盤面のキーボード操作", () => {
     expect(markup).toContain(
       'aria-label="攻撃グループ枠 1。選択中のカードをここへ操作"',
     );
+    expect(markup).toContain('data-selected-card-target="place"');
+    expect(markup).toContain('data-selected-card-target="chain"');
+    expect(markup).not.toContain('data-selected-card-target="unavailable"');
     expect(markup).toContain('aria-label="捨て札。選択中のカードをここへ破棄"');
     expect(markup).toContain(
       'aria-label="サポート。選択中のカードをここで使用"',

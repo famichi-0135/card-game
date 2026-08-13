@@ -5,6 +5,16 @@ import {
   selectLearningArticles,
 } from "@disastar/learning-content";
 import { Link } from "react-router";
+import {
+  TACTICAL_MODAL_FOOTER_CLASS,
+  TACTICAL_MODAL_HEADER_CLASS,
+  TACTICAL_MODAL_OVERLAY_CLASS,
+  TACTICAL_MODAL_PRIMARY_BUTTON_CLASS,
+  TACTICAL_MODAL_SECONDARY_BUTTON_CLASS,
+  TACTICAL_MODAL_SURFACE_CLASS,
+} from "@/components/ui/tactical-overlay-theme.ts";
+import { UI_LAYER_CLASS } from "@/components/ui/ui-layers.ts";
+import { cn } from "@/lib/utils";
 
 export function GameResultDialog({
   learningContext,
@@ -30,15 +40,25 @@ export function GameResultDialog({
         );
 
   return (
-    <div className="fixed inset-0 z-[60] flex items-center justify-center bg-slate-950/20 p-6">
+    <div
+      className={cn(
+        "fixed inset-0 flex items-center justify-center p-6",
+        UI_LAYER_CLASS.modal,
+        TACTICAL_MODAL_OVERLAY_CLASS,
+      )}
+      data-ui-layer="modal"
+    >
       <section
         aria-labelledby="game-result-dialog-title"
         aria-modal="true"
-        className="w-full max-w-2xl rounded-md border border-slate-300 bg-white shadow-sm"
+        className={cn("w-full max-w-2xl", TACTICAL_MODAL_SURFACE_CLASS)}
+        data-modal-theme="tactical-dark"
         role="dialog"
       >
-        <header className="border-b border-slate-200 p-5">
-          <p className="text-xs font-medium text-slate-500">GAME RESULT</p>
+        <header className={cn("border-b p-5", TACTICAL_MODAL_HEADER_CLASS)}>
+          <p className="text-xs font-medium tracking-[.14em] text-[#8fa1ac]">
+            GAME RESULT
+          </p>
           <h2
             className="mt-1 text-2xl font-semibold"
             id="game-result-dialog-title"
@@ -48,13 +68,13 @@ export function GameResultDialog({
         </header>
 
         <div className="p-5">
-          <dl className="grid grid-cols-2 gap-x-6 gap-y-2 border-b border-slate-200 pb-5 text-sm">
+          <dl className="grid grid-cols-2 gap-x-6 gap-y-2 border-b border-white/[.1] pb-5 text-sm">
             <div>
-              <dt className="text-slate-500">最終ラウンド</dt>
+              <dt className="text-[#8fa1ac]">最終ラウンド</dt>
               <dd className="mt-1 text-lg font-semibold">{finalRound}</dd>
             </div>
             <div>
-              <dt className="text-slate-500">終了理由</dt>
+              <dt className="text-[#8fa1ac]">終了理由</dt>
               <dd className="mt-1 font-medium">{outcome.reason}</dd>
             </div>
           </dl>
@@ -64,7 +84,7 @@ export function GameResultDialog({
               最終結果
             </h3>
             <table className="mt-3 w-full border-collapse text-left text-sm">
-              <thead className="border-y border-slate-200 text-xs text-slate-500">
+              <thead className="border-y border-white/[.1] text-xs text-[#8fa1ac]">
                 <tr>
                   <th className="py-2 font-medium">プレイヤー</th>
                   <th className="py-2 text-right font-medium">スタミナ</th>
@@ -93,36 +113,45 @@ export function GameResultDialog({
           </section>
 
           {learningContext?.isPending ? (
-            <p className="mt-5 text-sm text-slate-600" role="status">
+            <p className="mt-5 text-sm text-[#9fb0b8]" role="status">
               関連する防災情報を確認しています。
             </p>
           ) : null}
           {learningContext?.isError ? (
-            <p className="mt-5 text-sm text-slate-600">
+            <p className="mt-5 text-sm text-[#9fb0b8]">
               学習コンテンツを取得できませんでした。
             </p>
           ) : null}
           {articles.length === 0 || learningContext?.isPending ? null : (
-            <section className="mt-5 border-t border-slate-200 pt-5">
+            <section className="mt-5 border-t border-white/[.1] pt-5">
               <h3 className="text-sm font-semibold">この対戦から学ぶ</h3>
-              <p className="mt-1 text-sm leading-6 text-slate-600">
+              <p className="mt-1 text-sm leading-6 text-[#9fb0b8]">
                 対戦で使用したカードに関連する防災情報を確認できます。
               </p>
             </section>
           )}
         </div>
 
-        <footer className="flex flex-wrap justify-end gap-2 border-t border-slate-200 p-4">
+        <footer
+          className={cn(
+            "flex flex-wrap justify-end gap-2 border-t p-4",
+            TACTICAL_MODAL_FOOTER_CLASS,
+          )}
+        >
           {articles.length === 0 || learningContext?.isPending ? null : (
             <Link
-              className="rounded border border-slate-300 bg-white px-3 py-2 text-sm text-slate-800 hover:bg-slate-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-slate-900"
+              className={
+                TACTICAL_MODAL_SECONDARY_BUTTON_CLASS + " px-3 py-2 text-sm"
+              }
               to={`/games/${encodeURIComponent(view.gameId)}/learn`}
             >
               学習コンテンツを見る
             </Link>
           )}
           <Link
-            className="rounded border border-slate-700 bg-slate-800 px-3 py-2 text-sm text-white hover:bg-slate-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-slate-900"
+            className={
+              TACTICAL_MODAL_PRIMARY_BUTTON_CLASS + " px-3 py-2 text-sm"
+            }
             to="/"
           >
             トップへ戻る
@@ -143,7 +172,7 @@ function ResultRow({
   totalPower: number | null;
 }) {
   return (
-    <tr className="border-b border-slate-100 last:border-b-0">
+    <tr className="border-b border-white/[.07] last:border-b-0">
       <th className="py-3 font-medium">{label}</th>
       <td className="py-3 text-right tabular-nums">{stamina}</td>
       <td className="py-3 text-right tabular-nums">

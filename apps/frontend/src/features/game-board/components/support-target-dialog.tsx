@@ -5,6 +5,16 @@ import type {
   PlayerGameView,
 } from "@disastar/game-engine";
 import { useEffect, useMemo, useState } from "react";
+import {
+  TACTICAL_MODAL_FOOTER_CLASS,
+  TACTICAL_MODAL_HEADER_CLASS,
+  TACTICAL_MODAL_OVERLAY_CLASS,
+  TACTICAL_MODAL_PRIMARY_BUTTON_CLASS,
+  TACTICAL_MODAL_SECONDARY_BUTTON_CLASS,
+  TACTICAL_MODAL_SURFACE_CLASS,
+} from "@/components/ui/tactical-overlay-theme.ts";
+import { UI_LAYER_CLASS } from "@/components/ui/ui-layers.ts";
+import { cn } from "@/lib/utils";
 
 export function SupportTargetDialog({
   cardName,
@@ -79,18 +89,27 @@ export function SupportTargetDialog({
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/20 p-6"
+      className={cn(
+        "fixed inset-0 flex items-center justify-center p-6",
+        UI_LAYER_CLASS.modal,
+        TACTICAL_MODAL_OVERLAY_CLASS,
+      )}
+      data-ui-layer="modal"
       onMouseDown={onCancel}
       role="presentation"
     >
       <section
         aria-modal="true"
         aria-labelledby="support-target-dialog-title"
-        className="max-h-[70dvh] w-full max-w-2xl overflow-hidden rounded-md border border-slate-300 bg-white shadow-sm"
+        className={cn(
+          "max-h-[70dvh] w-full max-w-2xl overflow-hidden",
+          TACTICAL_MODAL_SURFACE_CLASS,
+        )}
+        data-modal-theme="tactical-dark"
         onMouseDown={(event) => event.stopPropagation()}
         role="dialog"
       >
-        <header className="border-b border-slate-200 p-4">
+        <header className={cn("border-b p-4", TACTICAL_MODAL_HEADER_CLASS)}>
           <h2
             className="text-lg font-semibold"
             id="support-target-dialog-title"
@@ -105,7 +124,7 @@ export function SupportTargetDialog({
               <section key={`${selection.effectId}-${selection.stageIndex}`}>
                 <div className="flex items-baseline justify-between gap-3">
                   <h3 className="font-medium">対象 {selectionIndex + 1}</h3>
-                  <span className="text-xs text-slate-500">
+                  <span className="text-xs text-[#8fa1ac]">
                     {selected.length} / {selection.maxTargets} 選択
                   </span>
                 </div>
@@ -120,11 +139,11 @@ export function SupportTargetDialog({
                     return (
                       <button
                         aria-pressed={selectedCandidate}
-                        className={`rounded-md border p-3 text-left text-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-slate-900 ${
+                        className={`border p-3 text-left text-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#e1b763] ${
                           selectedCandidate
-                            ? "border-slate-900 bg-slate-100"
-                            : "border-slate-300 hover:bg-slate-50"
-                        } disabled:cursor-not-allowed disabled:text-slate-400`}
+                            ? "border-[#b08a4a] bg-[#171108] text-[#f2dfb2]"
+                            : "border-[#3a4a55] bg-[#081119] text-[#c8d3d9] hover:border-[#52636e] hover:bg-[#0d1a23]"
+                        } disabled:cursor-not-allowed disabled:text-[#5d6c75]`}
                         disabled={isSelectionLimitReached}
                         key={targetKey(candidate)}
                         onClick={() => toggleTarget(selectionIndex, candidate)}
@@ -139,16 +158,26 @@ export function SupportTargetDialog({
             );
           })}
         </div>
-        <footer className="flex justify-end gap-2 border-t border-slate-200 p-4">
+        <footer
+          className={cn(
+            "flex justify-end gap-2 border-t p-4",
+            TACTICAL_MODAL_FOOTER_CLASS,
+          )}
+        >
           <button
-            className="rounded border border-slate-300 px-3 py-2 text-sm hover:bg-slate-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-slate-900"
+            className={
+              TACTICAL_MODAL_SECONDARY_BUTTON_CLASS + " px-3 py-2 text-sm"
+            }
             onClick={onCancel}
             type="button"
           >
             キャンセル
           </button>
           <button
-            className="rounded border border-slate-700 bg-slate-800 px-3 py-2 text-sm text-white enabled:hover:bg-slate-700 disabled:cursor-not-allowed disabled:border-slate-300 disabled:bg-slate-100 disabled:text-slate-400 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-slate-900"
+            className={
+              TACTICAL_MODAL_PRIMARY_BUTTON_CLASS +
+              " px-3 py-2 text-sm disabled:cursor-not-allowed disabled:opacity-40"
+            }
             disabled={!canConfirm}
             onClick={confirm}
             type="button"

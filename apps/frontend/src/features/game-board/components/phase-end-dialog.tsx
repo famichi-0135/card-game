@@ -1,4 +1,12 @@
 import { useEffect } from "react";
+import {
+  TACTICAL_MODAL_OVERLAY_CLASS,
+  TACTICAL_MODAL_PRIMARY_BUTTON_CLASS,
+  TACTICAL_MODAL_SECONDARY_BUTTON_CLASS,
+  TACTICAL_MODAL_SURFACE_CLASS,
+} from "@/components/ui/tactical-overlay-theme.ts";
+import { UI_LAYER_CLASS } from "@/components/ui/ui-layers.ts";
+import { cn } from "@/lib/utils";
 
 export function PhaseEndDialog({
   actionLabel,
@@ -22,33 +30,43 @@ export function PhaseEndDialog({
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/20 p-6"
+      className={cn(
+        "fixed inset-0 flex items-center justify-center p-6",
+        UI_LAYER_CLASS.modal,
+        TACTICAL_MODAL_OVERLAY_CLASS,
+      )}
+      data-ui-layer="modal"
       onMouseDown={onCancel}
       role="presentation"
     >
       <section
         aria-modal="true"
         aria-labelledby="phase-end-dialog-title"
-        className="w-full max-w-md rounded-md border border-slate-300 bg-white p-5 shadow-sm"
+        className={cn("w-full max-w-md p-5", TACTICAL_MODAL_SURFACE_CLASS)}
+        data-modal-theme="tactical-dark"
         onMouseDown={(event) => event.stopPropagation()}
         role="dialog"
       >
         <h2 className="text-lg font-semibold" id="phase-end-dialog-title">
           {actionLabel}を確定しますか？
         </h2>
-        <p className="mt-2 text-sm text-slate-600">
+        <p className="mt-2 text-sm text-[#9fb0b8]">
           確定後は、このフェーズでカードを操作できなくなります。
         </p>
         <div className="mt-5 flex justify-end gap-2">
           <button
-            className="rounded border border-slate-300 px-3 py-2 text-sm hover:bg-slate-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-slate-900"
+            className={
+              TACTICAL_MODAL_SECONDARY_BUTTON_CLASS + " px-3 py-2 text-sm"
+            }
             onClick={onCancel}
             type="button"
           >
             キャンセル
           </button>
           <button
-            className="rounded border border-slate-700 bg-slate-800 px-3 py-2 text-sm text-white hover:bg-slate-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-slate-900"
+            className={
+              TACTICAL_MODAL_PRIMARY_BUTTON_CLASS + " px-3 py-2 text-sm"
+            }
             onClick={onConfirm}
             type="button"
           >

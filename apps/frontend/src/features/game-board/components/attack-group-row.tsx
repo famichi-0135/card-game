@@ -17,6 +17,7 @@ export function AttackGroupRow({
   hasSelectedCard = false,
   onSelectTarget,
   onOpenGroup,
+  selectedCardInstanceId,
 }: {
   catalog: PublicCardCatalog;
   groups: readonly VisibleAttackGroup[];
@@ -26,15 +27,53 @@ export function AttackGroupRow({
   hasSelectedCard?: boolean;
   onSelectTarget?: (target: GameBoardCardTarget) => boolean;
   onOpenGroup?: (group: VisibleAttackGroup) => void;
+  selectedCardInstanceId?: string;
 }) {
+  const selectedCardActions = selectedCardInstanceId
+    ? availableActions?.handCards[selectedCardInstanceId]
+    : undefined;
   return (
     <section
       className="relative z-10 grid min-h-0 grid-rows-[24px_minmax(0,1fr)] gap-[7px]"
       aria-label={label}
     >
-      <div className="flex items-center justify-between border-b border-white/[.14] px-[4px] text-[10px] tracking-[.1em] text-[#c6d1d5]">
-        <span>{label}</span>
-        <span className="font-mono text-[#91a6ae]">{groups.length} / 5</span>
+      <div className="flex items-center gap-[8px] px-[2px]">
+        <span
+          aria-hidden="true"
+          className={
+            perspective === "opponent" ? "text-[#e24a4a]" : "text-[#4a8bff]"
+          }
+        >
+          <svg className="size-[10px]" viewBox="0 0 10 10">
+            <path
+              d="M5 0L10 5L5 10L0 5Z"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="1.2"
+            />
+            <path d="M5 2.8L7.2 5L5 7.2L2.8 5Z" fill="currentColor" />
+          </svg>
+        </span>
+        <span
+          className={
+            "text-[10px] font-semibold tracking-[.18em] " +
+            (perspective === "opponent" ? "text-[#e8a49e]" : "text-[#a8c8f0]")
+          }
+        >
+          {perspective === "opponent" ? "相手" : "自分"} ATTACK GROUP
+        </span>
+        <svg
+          aria-hidden="true"
+          className="h-[8px] min-w-0 flex-1 text-[#54656e]"
+          preserveAspectRatio="none"
+          viewBox="0 0 100 8"
+        >
+          <path d="M0 4H100" stroke="#000" strokeWidth="3" />
+          <path d="M0 4H100" stroke="currentColor" strokeOpacity=".55" />
+        </svg>
+        <span className="font-mono text-[9px] tracking-[.1em] text-[#91a6ae]">
+          {groups.length} / 5
+        </span>
       </div>
       <div className="grid min-h-0 grid-cols-5 gap-[9px]">
         {ATTACK_GROUP_SLOT_INDICES.map((slotIndex) => {
@@ -49,6 +88,12 @@ export function AttackGroupRow({
             perspective === "self" &&
             group !== undefined &&
             hasChainCandidate(availableActions, group.groupId);
+          const selectedCardTarget = getSelectedCardTarget({
+            group,
+            perspective,
+            selectedCardActions,
+            slotIndex,
+          });
           return (
             <AttackGroupSlot
               key={slotIndex}
@@ -58,6 +103,7 @@ export function AttackGroupRow({
               canChain={canChain}
               canPlace={canPlace}
               hasSelectedCard={hasSelectedCard}
+              selectedCardTarget={selectedCardTarget}
               isSelf={perspective === "self"}
               onSelectTarget={
                 perspective === "self" ? onSelectTarget : undefined
@@ -69,6 +115,32 @@ export function AttackGroupRow({
       </div>
     </section>
   );
+}
+
+function getSelectedCardTarget({
+  group,
+  perspective,
+  selectedCardActions,
+  slotIndex,
+}: {
+  group: VisibleAttackGroup | undefined;
+  perspective: "self" | "opponent";
+  selectedCardActions: AvailableGameActions["handCards"][string] | undefined;
+  slotIndex: AttackGroupSlotIndex;
+}): "chain" | "place" | undefined {
+  if (perspective !== "self" || selectedCardActions === undefined) {
+    return undefined;
+  }
+  if (group === undefined) {
+    return selectedCardActions.placeAttack.available &&
+      selectedCardActions.placeAttack.slotIndices.includes(slotIndex)
+      ? "place"
+      : undefined;
+  }
+  return selectedCardActions.chainAttack.available &&
+    selectedCardActions.chainAttack.targetGroupIds.includes(group.groupId)
+    ? "chain"
+    : undefined;
 }
 
 function hasChainCandidate(
