@@ -140,14 +140,18 @@ export function GameResultDialog({
         >
           {articles.length === 0 || learningContext?.isPending ? null : (
             <Link
-              className={TACTICAL_MODAL_SECONDARY_BUTTON_CLASS + " px-3 py-2 text-sm"}
+              className={
+                TACTICAL_MODAL_SECONDARY_BUTTON_CLASS + " px-3 py-2 text-sm"
+              }
               to={`/games/${encodeURIComponent(view.gameId)}/learn`}
             >
               学習コンテンツを見る
             </Link>
           )}
           <Link
-            className={TACTICAL_MODAL_PRIMARY_BUTTON_CLASS + " px-3 py-2 text-sm"}
+            className={
+              TACTICAL_MODAL_PRIMARY_BUTTON_CLASS + " px-3 py-2 text-sm"
+            }
             to="/"
           >
             トップへ戻る

@@ -57,9 +57,7 @@ export function AttackGroupRow({
         <span
           className={
             "text-[10px] font-semibold tracking-[.18em] " +
-            (perspective === "opponent"
-              ? "text-[#e8a49e]"
-              : "text-[#a8c8f0]")
+            (perspective === "opponent" ? "text-[#e8a49e]" : "text-[#a8c8f0]")
           }
         >
           {perspective === "opponent" ? "相手" : "自分"} ATTACK GROUP

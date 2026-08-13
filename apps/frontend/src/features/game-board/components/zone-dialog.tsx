@@ -77,17 +77,14 @@ export function ZoneDialog({
             <h2 className="text-lg font-semibold" id="zone-dialog-title">
               {state.title}
             </h2>
-            <p
-              className={cn(
-                "mt-1 text-sm",
-                TACTICAL_MODAL_MUTED_TEXT_CLASS,
-              )}
-            >
+            <p className={cn("mt-1 text-sm", TACTICAL_MODAL_MUTED_TEXT_CLASS)}>
               {state.description}
             </p>
           </div>
           <button
-            className={TACTICAL_MODAL_SECONDARY_BUTTON_CLASS + " px-3 py-1 text-sm"}
+            className={
+              TACTICAL_MODAL_SECONDARY_BUTTON_CLASS + " px-3 py-1 text-sm"
+            }
             onClick={onClose}
             type="button"
           >

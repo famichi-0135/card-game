@@ -77,25 +77,25 @@ export function DraggableHandCard({
             />
           }
         >
-        <BoardCard
-          definition={definition}
-          sequenceLabel={cardTypeMark(definition.cardType)}
-          size="hand"
-          tone="self"
-        />
-      </HoverCardTrigger>
-      <HoverCardContent
-        align="center"
-        className={cn(
-          "w-[280px] border border-[#9a7b45] bg-[#050b10] p-[14px] text-sm text-[#dee7e9] shadow-[0_18px_48px_rgba(0,0,0,.82),inset_0_0_24px_rgba(0,0,0,.8)] [clip-path:polygon(7px_0,calc(100%_-_7px)_0,100%_7px,100%_calc(100%_-_7px),calc(100%_-_7px)_100%,7px_100%,0_calc(100%_-_7px),0_7px)]",
-          UI_LAYER_CLASS.toast,
-        )}
-        side="top"
-        sideOffset={9}
-      >
-        <CardPreviewContent catalog={catalog} definition={definition} />
-      </HoverCardContent>
-    </HoverCard>
+          <BoardCard
+            definition={definition}
+            sequenceLabel={cardTypeMark(definition.cardType)}
+            size="hand"
+            tone="self"
+          />
+        </HoverCardTrigger>
+        <HoverCardContent
+          align="center"
+          className={cn(
+            "w-[280px] border border-[#9a7b45] bg-[#050b10] p-[14px] text-sm text-[#dee7e9] shadow-[0_18px_48px_rgba(0,0,0,.82),inset_0_0_24px_rgba(0,0,0,.8)] [clip-path:polygon(7px_0,calc(100%_-_7px)_0,100%_7px,100%_calc(100%_-_7px),calc(100%_-_7px)_100%,7px_100%,0_calc(100%_-_7px),0_7px)]",
+            UI_LAYER_CLASS.toast,
+          )}
+          side="top"
+          sideOffset={9}
+        >
+          <CardPreviewContent catalog={catalog} definition={definition} />
+        </HoverCardContent>
+      </HoverCard>
     </div>
   );
 }

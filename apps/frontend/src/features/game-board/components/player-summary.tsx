@@ -38,10 +38,7 @@ export function PlayerSummary({
   status?: ReactNode;
 }) {
   const tone = label === "相手" ? palette.red : palette.blue;
-  const filledSegments = Math.max(
-    0,
-    Math.min(INITIAL_STAMINA, player.stamina),
-  );
+  const filledSegments = Math.max(0, Math.min(INITIAL_STAMINA, player.stamina));
 
   return (
     <GameFrame

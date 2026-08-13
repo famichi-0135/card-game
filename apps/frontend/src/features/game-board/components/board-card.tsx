@@ -75,7 +75,10 @@ export function BoardCard({
             size === "hand" ? "text-[8px]" : "text-[9px]",
           )}
         >
-          COST <span className="font-mono text-[#f0cf84]">{definition.cost ?? "—"}</span>
+          COST{" "}
+          <span className="font-mono text-[#f0cf84]">
+            {definition.cost ?? "—"}
+          </span>
         </span>
       </header>
       <div className="relative min-h-0 overflow-hidden border-b border-white/[.09] bg-[#0b151b] after:pointer-events-none after:absolute after:inset-0 after:bg-[linear-gradient(180deg,transparent_52%,rgba(3,6,9,.88)_98%)] after:content-['']">

@@ -53,11 +53,7 @@ export function GameProgressBar({
       data-board-region="game-progress"
       variant="gray"
     >
-      <HudCell
-        className="w-[100px]"
-        label="ROUND"
-        sub={`v${stateVersion}`}
-      >
+      <HudCell className="w-[100px]" label="ROUND" sub={`v${stateVersion}`}>
         <strong className="font-mono text-[30px] leading-none tabular-nums text-[#e9cc82] [text-shadow:0_0_12px_rgba(233,204,130,.2)]">
           {String(round).padStart(2, "0")}
         </strong>

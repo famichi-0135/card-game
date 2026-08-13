@@ -150,9 +150,33 @@ function CardBackEmblem({ className }: { className?: string }) {
       viewBox="0 0 120 120"
     >
       {/* ハローと二重円 */}
-      <circle cx="60" cy="60" fill="none" r="55" stroke="#b19e74" strokeOpacity=".1" strokeWidth="5" />
-      <circle cx="60" cy="60" fill="none" r="46" stroke="#9c8b66" strokeOpacity=".6" strokeWidth="1.4" />
-      <circle cx="60" cy="60" fill="none" r="41.5" stroke="#9c8b66" strokeOpacity=".3" strokeWidth=".7" />
+      <circle
+        cx="60"
+        cy="60"
+        fill="none"
+        r="55"
+        stroke="#b19e74"
+        strokeOpacity=".1"
+        strokeWidth="5"
+      />
+      <circle
+        cx="60"
+        cy="60"
+        fill="none"
+        r="46"
+        stroke="#9c8b66"
+        strokeOpacity=".6"
+        strokeWidth="1.4"
+      />
+      <circle
+        cx="60"
+        cy="60"
+        fill="none"
+        r="41.5"
+        stroke="#9c8b66"
+        strokeOpacity=".3"
+        strokeWidth=".7"
+      />
       {/* 四方位のダイヤマーカー */}
       <path
         d="M60 4L63 8.5L60 13L57 8.5ZM60 107L63 111.5L60 116L57 111.5ZM4 60L8.5 57L13 60L8.5 63ZM107 60L111.5 57L116 60L111.5 63Z"
@@ -177,8 +201,19 @@ function CardBackEmblem({ className }: { className?: string }) {
         strokeWidth=".8"
       />
       {/* 中心 */}
-      <circle cx="60" cy="60" fill="#0a0d10" r="9.5" stroke="#a8987a" strokeOpacity=".8" />
-      <path d="M60 54.5L65.5 60L60 65.5L54.5 60Z" fill="#a8987a" fillOpacity=".8" />
+      <circle
+        cx="60"
+        cy="60"
+        fill="#0a0d10"
+        r="9.5"
+        stroke="#a8987a"
+        strokeOpacity=".8"
+      />
+      <path
+        d="M60 54.5L65.5 60L60 65.5L54.5 60Z"
+        fill="#a8987a"
+        fillOpacity=".8"
+      />
     </svg>
   );
 }

@@ -55,14 +55,18 @@ export function PhaseEndDialog({
         </p>
         <div className="mt-5 flex justify-end gap-2">
           <button
-            className={TACTICAL_MODAL_SECONDARY_BUTTON_CLASS + " px-3 py-2 text-sm"}
+            className={
+              TACTICAL_MODAL_SECONDARY_BUTTON_CLASS + " px-3 py-2 text-sm"
+            }
             onClick={onCancel}
             type="button"
           >
             キャンセル
           </button>
           <button
-            className={TACTICAL_MODAL_PRIMARY_BUTTON_CLASS + " px-3 py-2 text-sm"}
+            className={
+              TACTICAL_MODAL_PRIMARY_BUTTON_CLASS + " px-3 py-2 text-sm"
+            }
             onClick={onConfirm}
             type="button"
           >

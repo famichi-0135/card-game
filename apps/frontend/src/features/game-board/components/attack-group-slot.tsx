@@ -45,9 +45,8 @@ export function AttackGroupSlot({
     },
   });
 
-  const hasSelectedCardOnThisSlot = hasSelectedCard === true &&
-    group === undefined &&
-    canPlace;
+  const hasSelectedCardOnThisSlot =
+    hasSelectedCard === true && group === undefined && canPlace;
 
   const content =
     group === undefined ? (
@@ -57,7 +56,9 @@ export function AttackGroupSlot({
           className={cn(
             "font-mono text-[30px] leading-none font-light",
             canPlace ? "text-[#7fa3b5]" : "text-[#4a5b64]",
-            hasSelectedCardOnThisSlot ? "shadow-[0_0_8px_rgba(127,163,181,.4)]" : "",
+            hasSelectedCardOnThisSlot
+              ? "shadow-[0_0_8px_rgba(127,163,181,.4)]"
+              : "",
           )}
         >
           +
@@ -105,10 +106,10 @@ export function AttackGroupSlot({
         selectedCardTarget !== undefined
           ? "border-[#e6c46d] ring-1 ring-[#e6c46d]/75 shadow-[inset_0_0_22px_rgba(0,0,0,.78),0_0_14px_rgba(230,196,109,.22)]"
           : isDropTarget && (canPlace || canChain)
-          ? "ring-2 ring-[#e6c46d] ring-offset-2 ring-offset-[#071118]"
-          : canPlace || canChain
-            ? "border-dashed"
-            : "opacity-90",
+            ? "ring-2 ring-[#e6c46d] ring-offset-2 ring-offset-[#071118]"
+            : canPlace || canChain
+              ? "border-dashed"
+              : "opacity-90",
       )}
       data-selected-card-target={selectedCardTarget}
     >

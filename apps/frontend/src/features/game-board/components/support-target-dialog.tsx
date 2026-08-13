@@ -165,14 +165,19 @@ export function SupportTargetDialog({
           )}
         >
           <button
-            className={TACTICAL_MODAL_SECONDARY_BUTTON_CLASS + " px-3 py-2 text-sm"}
+            className={
+              TACTICAL_MODAL_SECONDARY_BUTTON_CLASS + " px-3 py-2 text-sm"
+            }
             onClick={onCancel}
             type="button"
           >
             キャンセル
           </button>
           <button
-            className={TACTICAL_MODAL_PRIMARY_BUTTON_CLASS + " px-3 py-2 text-sm disabled:cursor-not-allowed disabled:opacity-40"}
+            className={
+              TACTICAL_MODAL_PRIMARY_BUTTON_CLASS +
+              " px-3 py-2 text-sm disabled:cursor-not-allowed disabled:opacity-40"
+            }
             disabled={!canConfirm}
             onClick={confirm}
             type="button"

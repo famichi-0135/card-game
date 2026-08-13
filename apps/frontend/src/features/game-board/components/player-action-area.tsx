@@ -145,7 +145,8 @@ function HandLabelRule({ flip = false }: { flip?: boolean }) {
     <svg
       aria-hidden="true"
       className={
-        "h-[8px] w-[34px] shrink-0 text-[#8a764f]" + (flip ? " -scale-x-100" : "")
+        "h-[8px] w-[34px] shrink-0 text-[#8a764f]" +
+        (flip ? " -scale-x-100" : "")
       }
       preserveAspectRatio="none"
       viewBox="0 0 34 8"
