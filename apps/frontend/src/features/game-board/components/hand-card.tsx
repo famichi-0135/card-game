@@ -48,50 +48,44 @@ export function DraggableHandCard({
   return (
     <div ref={ref} className="group relative shrink-0">
       <HoverCard>
-        <HoverCardTrigger
-          render={
-            <button
-              ref={handleRef}
-              className={cn(
-                "relative block rounded-[3px] text-left transition-opacity motion-reduce:transition-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#f1cd7a]",
-                isDragging ? "opacity-40" : "opacity-100",
-                canDrag
-                  ? "cursor-grab active:cursor-grabbing"
-                  : "cursor-default",
-                isSelected &&
-                  "ring-2 ring-[#e5bf65] ring-offset-2 ring-offset-[#091116]",
-              )}
-              aria-pressed={isSelected}
-              type="button"
-              onKeyDownCapture={(event) => {
-                if (event.key === "Enter" || event.key === " ") {
-                  event.preventDefault();
-                  event.stopPropagation();
-                  onSelect?.(card.instanceId);
-                }
-              }}
-              onClickCapture={() => {
+        <HoverCardTrigger render={<div className="relative" />}>
+          <button
+            ref={handleRef}
+            className={cn(
+              "relative block rounded-[3px] text-left transition-opacity motion-reduce:transition-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#f1cd7a]",
+              isDragging ? "opacity-40" : "opacity-100",
+              canDrag ? "cursor-grab active:cursor-grabbing" : "cursor-default",
+              isSelected &&
+                "ring-2 ring-[#e5bf65] ring-offset-2 ring-offset-[#091116]",
+            )}
+            aria-pressed={isSelected}
+            type="button"
+            onKeyDownCapture={(event) => {
+              if (event.key === "Enter" || event.key === " ") {
+                event.preventDefault();
+                event.stopPropagation();
                 onSelect?.(card.instanceId);
-              }}
-              aria-label={`${definition.name}。${getActionSummary(actions)}`}
-              title={
-                canDrag
-                  ? actions?.playSupport.available
-                    ? "クリックまたはEnterで選択してから、サポートゾーンで使用"
-                    : actions?.discard.available
-                      ? "クリックまたはEnterで選択してから、攻撃グループへ配置、連鎖、または捨て札へ破棄"
-                      : "クリックまたはEnterで選択してから、攻撃グループへ配置または連鎖"
-                  : "このカードは現在のフェーズでは配置できません"
               }
+            }}
+            onClick={() => onSelect?.(card.instanceId)}
+            aria-label={`${definition.name}。${getActionSummary(actions)}`}
+            title={
+              canDrag
+                ? actions?.playSupport.available
+                  ? "クリックまたはEnterで選択してから、サポートゾーンで使用"
+                  : actions?.discard.available
+                    ? "クリックまたはEnterで選択してから、攻撃グループへ配置、連鎖、または捨て札へ破棄"
+                    : "クリックまたはEnterで選択してから、攻撃グループへ配置または連鎖"
+                : "このカードは現在のフェーズでは配置できません"
+            }
+          >
+            <BoardCard
+              definition={definition}
+              sequenceLabel={cardTypeMark(definition.cardType)}
+              size="hand"
+              tone="self"
             />
-          }
-        >
-          <BoardCard
-            definition={definition}
-            sequenceLabel={cardTypeMark(definition.cardType)}
-            size="hand"
-            tone="self"
-          />
+          </button>
         </HoverCardTrigger>
         <HoverCardContent
           align="center"
