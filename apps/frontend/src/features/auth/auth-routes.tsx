@@ -1,5 +1,5 @@
 import { useQueryClient } from "@tanstack/react-query";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Navigate, useNavigate, useSearchParams } from "react-router";
 import { getSafeReturnTo } from "../../app/return-to.ts";
 import { useSession } from "../../app/session.ts";
@@ -9,11 +9,9 @@ import {
   signOut,
   startGoogleSignIn,
 } from "./auth-api.ts";
-import {
-  AuthLayout,
-  AuthStatus,
-  authPrimaryButtonClassName,
-} from "./auth-layout.tsx";
+import { AuthLayout, authPrimaryButtonClassName } from "./auth-layout.tsx";
+import { toast } from "../../components/ui/toast.tsx";
+import { appButtonClassName } from "../../components/application-ui.tsx";
 
 export const authSessionQueryKey = ["auth", "session"] as const;
 
@@ -22,44 +20,66 @@ export function LoginRoute() {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const session = useSession();
-  const [error, setError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isStartingGuestSession, setIsStartingGuestSession] = useState(false);
   const returnTo = getSafeReturnTo(searchParams.get("returnTo"));
   const oauthError =
     searchParams.get("oauthError") === "1" || searchParams.has("error");
   const oauthErrorMessage = getOAuthErrorMessage(searchParams.get("error"));
+  const hasNotifiedOAuthError = useRef(false);
 
   const isAnonymous = session.data?.isAnonymous === true;
+
+  useEffect(() => {
+    if (!oauthError || hasNotifiedOAuthError.current) {
+      return;
+    }
+
+    hasNotifiedOAuthError.current = true;
+
+    toast.add({
+      description: oauthErrorMessage,
+      title: "Googleでログインできません",
+      type: "error",
+    });
+  }, [oauthError, oauthErrorMessage]);
 
   if (session.data !== null && session.data !== undefined && !isAnonymous) {
     return <Navigate replace to={returnTo} />;
   }
 
   async function handleGoogleSignIn() {
-    setError(null);
     setIsSubmitting(true);
     try {
       await startGoogleSignIn(returnTo);
     } catch (requestError) {
-      setError(
-        getAuthErrorMessage("Googleでログインできませんでした。", requestError),
-      );
+      toast.add({
+        description: getAuthErrorMessage(
+          "Googleでログインできませんでした。",
+          requestError,
+        ),
+        title: "Googleでログインできません",
+        type: "error",
+      });
       setIsSubmitting(false);
     }
   }
 
   async function handleAnonymousSignIn() {
-    setError(null);
     setIsStartingGuestSession(true);
     try {
       await signInAnonymously();
       await queryClient.invalidateQueries({ queryKey: authSessionQueryKey });
       navigate(returnTo, { replace: true });
     } catch (requestError) {
-      setError(
-        getAuthErrorMessage("ゲストとして開始できませんでした。", requestError),
-      );
+      toast.add({
+        description: getAuthErrorMessage(
+          "ゲストとして開始できませんでした。",
+          requestError,
+        ),
+        title: "ゲストとして開始できません",
+        type: "error",
+      });
     } finally {
       setIsStartingGuestSession(false);
     }
@@ -75,10 +95,6 @@ export function LoginRoute() {
       }
     >
       <div className="grid gap-4">
-        {oauthError ? (
-          <AuthStatus tone="error">{oauthErrorMessage}</AuthStatus>
-        ) : null}
-        {error === null ? null : <AuthStatus tone="error">{error}</AuthStatus>}
         <button
           className={authPrimaryButtonClassName}
           disabled={isSubmitting || isStartingGuestSession}
@@ -93,7 +109,7 @@ export function LoginRoute() {
         </button>
         {isAnonymous ? null : (
           <button
-            className="rounded border border-slate-300 px-4 py-2 text-sm font-medium text-slate-800 hover:bg-slate-50 disabled:cursor-not-allowed disabled:border-slate-200 disabled:text-slate-400 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-slate-900"
+            className={appButtonClassName.secondary}
             disabled={isSubmitting || isStartingGuestSession}
             onClick={() => void handleAnonymousSignIn()}
             type="button"
@@ -115,7 +131,6 @@ export function LogoutButton({
 }) {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
-  const [error, setError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   async function handleClick() {
@@ -126,23 +141,27 @@ export function LogoutButton({
       return;
     }
 
-    setError(null);
     setIsSubmitting(true);
     try {
       await signOut();
       queryClient.setQueryData(authSessionQueryKey, null);
       navigate("/", { replace: true });
     } catch (requestError) {
-      setError(
-        getAuthErrorMessage("ログアウトできませんでした。", requestError),
-      );
+      toast.add({
+        description: getAuthErrorMessage(
+          "ログアウトできませんでした。",
+          requestError,
+        ),
+        title: "ログアウトできません",
+        type: "error",
+      });
     } finally {
       setIsSubmitting(false);
     }
   }
 
   return (
-    <span className="grid justify-items-end gap-1">
+    <span className="inline-flex">
       <button
         className={className}
         disabled={isSubmitting}
@@ -151,14 +170,6 @@ export function LogoutButton({
       >
         {isSubmitting ? "ログアウトしています" : "ログアウト"}
       </button>
-      {error === null ? null : (
-        <span
-          className="max-w-52 text-right text-xs text-red-700"
-          role="status"
-        >
-          {error}
-        </span>
-      )}
     </span>
   );
 }

@@ -2,6 +2,13 @@ import { useQueryClient } from "@tanstack/react-query";
 import type { AuthenticatedSessionResponse } from "@disastar/contracts/session";
 import { useState } from "react";
 import { Link, useNavigate } from "react-router";
+import {
+  AppPanel,
+  AppShell,
+  PageHeader,
+  appButtonClassName,
+} from "../../components/application-ui.tsx";
+import { toast } from "../../components/ui/toast.tsx";
 import { createAuthPath } from "../../app/return-to.ts";
 import {
   Avatar,
@@ -19,16 +26,6 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "../../components/ui/alert-dialog.tsx";
-import { Button } from "../../components/ui/button.tsx";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "../../components/ui/card.tsx";
-import { AccountMenu } from "./account-menu.tsx";
 import { AuthApiError, deleteAccount } from "../auth/auth-api.ts";
 import {
   authSessionQueryKey,
@@ -40,17 +37,19 @@ export function MyPage({ session }: { session: AuthenticatedSessionResponse }) {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const [isDeleting, setIsDeleting] = useState(false);
-  const [deleteError, setDeleteError] = useState<string | null>(null);
 
   async function handleDeleteAccount() {
-    setDeleteError(null);
     setIsDeleting(true);
     try {
       await deleteAccount();
       queryClient.setQueryData(authSessionQueryKey, null);
       navigate("/", { replace: true });
     } catch (error) {
-      setDeleteError(getDeleteAccountErrorMessage(error));
+      toast.add({
+        description: getDeleteAccountErrorMessage(error),
+        title: "アカウントを削除できません",
+        type: "error",
+      });
     } finally {
       setIsDeleting(false);
     }
@@ -62,121 +61,104 @@ export function MyPage({ session }: { session: AuthenticatedSessionResponse }) {
     : "アカウントを削除";
 
   return (
-    <main className="min-h-dvh bg-slate-100 p-6 text-slate-950">
-      <div className="mx-auto w-full max-w-3xl">
-        <header className="flex items-center justify-between gap-4 border-b border-slate-300 py-4">
-          <Link
-            className="text-sm font-semibold text-slate-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
-            to="/"
-          >
-            DISASTAR CARD GAME
-          </Link>
-          <AccountMenu />
-        </header>
+    <AppShell contentClassName="max-w-3xl">
+      <div className="flex flex-col gap-5">
+        <PageHeader
+          description="アカウントの状態と、この端末での利用設定を確認できます。"
+          eyebrow="PLAYER ACCOUNT"
+          title="マイページ"
+        />
 
-        <div className="flex flex-col gap-6 py-10">
-          <div>
-            <h1 className="text-2xl font-semibold">マイページ</h1>
-            <p className="mt-2 text-sm leading-6 text-slate-600">
-              アカウントの状態を確認できます。
-            </p>
-          </div>
-
-          <Card>
-            <CardHeader>
-              <CardTitle>アカウント</CardTitle>
-              <CardDescription>{accountKind}で利用中です。</CardDescription>
-            </CardHeader>
-            <CardContent className="flex items-center gap-4">
-              <Avatar size="lg">
-                {session.user.image === null ? null : (
-                  <AvatarImage alt="" src={session.user.image} />
-                )}
-                <AvatarFallback>
-                  {getAvatarFallback(session.user.name)}
-                </AvatarFallback>
-              </Avatar>
-              <p className="min-w-0 truncate font-medium">
+        <AppPanel label="ACCOUNT">
+          <div className="flex items-center gap-4">
+            <Avatar size="lg">
+              {session.user.image === null ? null : (
+                <AvatarImage alt="" src={session.user.image} />
+              )}
+              <AvatarFallback>
+                {getAvatarFallback(session.user.name)}
+              </AvatarFallback>
+            </Avatar>
+            <div className="min-w-0">
+              <p className="text-sm text-[#91a5b4]">{accountKind}で利用中</p>
+              <p className="mt-1 truncate text-lg font-semibold text-[#e9f1f5]">
                 {session.user.name}
               </p>
-            </CardContent>
-          </Card>
+            </div>
+          </div>
+        </AppPanel>
 
-          {session.isAnonymous ? (
-            <Card>
-              <CardHeader>
-                <CardTitle>Googleアカウントへの引継ぎ</CardTitle>
-                <CardDescription>
-                  現在の対戦データをGoogleアカウントへ引き継げます。
-                </CardDescription>
-              </CardHeader>
-              <CardFooter>
-                <Button
-                  render={<Link to={createAuthPath("/login", "/mypage")} />}
-                >
-                  Googleアカウントに引き継ぐ
-                </Button>
-              </CardFooter>
-            </Card>
-          ) : null}
+        {session.isAnonymous ? (
+          <AppPanel label="ACCOUNT TRANSFER">
+            <h2 className="text-lg font-semibold text-[#e7eff4]">
+              Googleアカウントへの引継ぎ
+            </h2>
+            <p className="mt-2 text-sm leading-6 text-[#91a5b4]">
+              現在の対戦データをGoogleアカウントへ引き継げます。
+            </p>
+            <Link
+              className={`mt-5 ${appButtonClassName.primary}`}
+              to={createAuthPath("/login", "/mypage")}
+            >
+              Googleアカウントに引き継ぐ
+            </Link>
+          </AppPanel>
+        ) : null}
 
-          {session.isAnonymous ? null : (
-            <Card>
-              <CardHeader>
-                <CardTitle>ログアウト</CardTitle>
-                <CardDescription>
-                  この端末でのGoogleアカウントのログインを終了します。
-                </CardDescription>
-              </CardHeader>
-              <CardFooter>
-                <LogoutButton className="rounded border border-slate-300 px-3 py-2 text-sm hover:bg-slate-50 disabled:cursor-not-allowed disabled:border-slate-200 disabled:text-slate-400 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-slate-900" />
-              </CardFooter>
-            </Card>
-          )}
+        {session.isAnonymous ? null : (
+          <AppPanel label="SESSION">
+            <h2 className="text-lg font-semibold text-[#e7eff4]">ログアウト</h2>
+            <p className="mt-2 text-sm leading-6 text-[#91a5b4]">
+              この端末でのGoogleアカウントのログインを終了します。
+            </p>
+            <div className="mt-5">
+              <LogoutButton className={appButtonClassName.tertiary} />
+            </div>
+          </AppPanel>
+        )}
 
-          <Card>
-            <CardHeader>
-              <CardTitle>アカウントの削除</CardTitle>
-              <CardDescription>
-                認証情報とログインセッションを完全に削除します。対戦記録は参加者や再接続の整合性のため保持されますが、削除後のアカウントから参照できません。
-              </CardDescription>
-            </CardHeader>
-            <CardFooter className="flex-col items-start gap-3">
-              <AlertDialog>
-                <AlertDialogTrigger render={<Button variant="destructive" />}>
-                  {deleteLabel}
-                </AlertDialogTrigger>
-                <AlertDialogContent>
-                  <AlertDialogHeader>
-                    <AlertDialogTitle>{deleteLabel}しますか？</AlertDialogTitle>
-                    <AlertDialogDescription>
-                      この操作は取り消せません。認証情報とすべてのログインセッションを削除します。
-                    </AlertDialogDescription>
-                  </AlertDialogHeader>
-                  <AlertDialogFooter>
-                    <AlertDialogCancel disabled={isDeleting}>
-                      キャンセル
-                    </AlertDialogCancel>
-                    <AlertDialogAction
-                      disabled={isDeleting}
-                      onClick={() => void handleDeleteAccount()}
-                      variant="destructive"
-                    >
-                      {isDeleting ? "削除しています" : deleteLabel}
-                    </AlertDialogAction>
-                  </AlertDialogFooter>
-                </AlertDialogContent>
-              </AlertDialog>
-              {deleteError === null ? null : (
-                <p className="text-sm text-destructive" role="status">
-                  {deleteError}
-                </p>
-              )}
-            </CardFooter>
-          </Card>
-        </div>
+        <AppPanel label="DANGER ZONE" className="border-[#57343a]">
+          <h2 className="text-lg font-semibold text-[#ffd9da]">
+            アカウントの削除
+          </h2>
+          <p className="mt-2 text-sm leading-6 text-[#bda9ac]">
+            認証情報とログインセッションを完全に削除します。対戦記録は参加者や再接続の整合性のため保持されますが、削除後のアカウントから参照できません。
+          </p>
+          <div className="mt-5">
+            <AlertDialog>
+              <AlertDialogTrigger
+                render={<button className={appButtonClassName.danger} />}
+              >
+                {deleteLabel}
+              </AlertDialogTrigger>
+              <AlertDialogContent className="border border-[#3a5160] bg-[linear-gradient(145deg,#0d1d28,#050d13)] text-[#edf5f9] shadow-[0_24px_64px_rgba(0,0,0,.65)]">
+                <AlertDialogHeader className="text-left sm:place-items-start sm:text-left">
+                  <AlertDialogTitle>{deleteLabel}しますか？</AlertDialogTitle>
+                  <AlertDialogDescription>
+                    この操作は取り消せません。認証情報とすべてのログインセッションを削除します。
+                  </AlertDialogDescription>
+                </AlertDialogHeader>
+                <AlertDialogFooter className="border-[#2a3d4b] bg-[#071018]/90">
+                  <AlertDialogCancel
+                    className={appButtonClassName.tertiary}
+                    disabled={isDeleting}
+                  >
+                    キャンセル
+                  </AlertDialogCancel>
+                  <AlertDialogAction
+                    disabled={isDeleting}
+                    onClick={() => void handleDeleteAccount()}
+                    className={appButtonClassName.danger}
+                  >
+                    {isDeleting ? "削除しています" : deleteLabel}
+                  </AlertDialogAction>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
+          </div>
+        </AppPanel>
       </div>
-    </main>
+    </AppShell>
   );
 }
 

@@ -1,6 +1,11 @@
 import { lazy, Suspense, type ReactNode } from "react";
 import { Link, useParams, useSearchParams } from "react-router";
-import { AccountMenu } from "../account/account-menu.tsx";
+import {
+  AppPanel,
+  AppShell,
+  PageHeader,
+  appButtonClassName,
+} from "../../components/application-ui.tsx";
 import {
   getLearnArticle,
   getLearnArticles,
@@ -24,13 +29,11 @@ export function LearnIndexRoute() {
 
   return (
     <LearnLayout>
-      <div className="border-b border-slate-300 pb-8">
-        <p className="text-sm font-semibold text-slate-600">防災情報</p>
-        <h1 className="mt-2 text-3xl font-semibold">防災を学ぶ</h1>
-        <p className="mt-3 max-w-2xl text-sm leading-6 text-slate-600">
-          災害が起きる前に、住んでいる地域の危険性と情報の確かめ方を確認します。
-        </p>
-      </div>
+      <PageHeader
+        description="災害が起きる前に、住んでいる地域の危険性と情報の確かめ方を確認します。"
+        eyebrow="DISASTER PREPAREDNESS"
+        title="防災を学ぶ"
+      />
 
       <nav
         aria-label="防災情報のカテゴリ"
@@ -71,23 +74,25 @@ export function LearnArticleRoute() {
     <LearnLayout>
       <article className="pb-10">
         <Link
-          className="text-sm font-medium text-slate-700 underline underline-offset-4 hover:text-slate-950 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-slate-900"
+          className="text-sm font-medium text-[#bcdcf0] underline decoration-[#487694] underline-offset-4 hover:text-[#e8f6ff] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#75bced]"
           to="/learn"
         >
           防災情報一覧へ戻る
         </Link>
-        <p className="mt-8 text-sm font-semibold text-slate-600">
+        <p className="mt-8 text-[11px] font-medium tracking-[.18em] text-[#5798c9]">
           {getLearnCategoryLabel(article.category)}
         </p>
-        <h1 className="mt-2 text-3xl font-semibold">{article.title}</h1>
-        <p className="mt-4 max-w-2xl text-base leading-7 text-slate-700">
+        <h1 className="mt-3 text-[clamp(2rem,4vw,3.35rem)] font-semibold leading-[1.12] tracking-[-.04em] text-[#edf3f7]">
+          {article.title}
+        </h1>
+        <p className="mt-4 max-w-2xl text-base leading-7 text-[#b4c4cd]">
           {article.summary}
         </p>
         <ArticleTags tags={article.tags} />
 
         <Suspense
           fallback={
-            <div className="mt-10 max-w-3xl border-y border-slate-300 py-8 text-sm text-slate-600">
+            <div className="mt-10 max-w-3xl border-y border-[#2a3d4b] py-8 text-sm text-[#91a5b4]">
               記事を読み込んでいます。
             </div>
           }
@@ -95,25 +100,27 @@ export function LearnArticleRoute() {
           <LearnArticleBody body={article.body} />
         </Suspense>
 
-        <dl className="mt-8 grid max-w-3xl gap-5 rounded border border-slate-300 bg-white p-5 text-sm">
-          <div>
-            <dt className="font-semibold text-slate-700">出典</dt>
-            <dd className="mt-1">
-              <a
-                className="text-slate-800 underline underline-offset-4 hover:text-slate-950 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-slate-900"
-                href={article.sourceUrl}
-                rel="noreferrer"
-                target="_blank"
-              >
-                {article.sourceName}（外部サイト）
-              </a>
-            </dd>
-          </div>
-          <div>
-            <dt className="font-semibold text-slate-700">最終確認日</dt>
-            <dd className="mt-1 text-slate-700">{article.reviewedAt}</dd>
-          </div>
-        </dl>
+        <AppPanel className="mt-8 max-w-3xl" label="SOURCE INFORMATION">
+          <dl className="grid gap-5 text-sm">
+            <div>
+              <dt className="font-semibold text-[#dce9ef]">出典</dt>
+              <dd className="mt-1">
+                <a
+                  className="text-[#bcdcf0] underline decoration-[#487694] underline-offset-4 hover:text-[#e8f6ff] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#75bced]"
+                  href={article.sourceUrl}
+                  rel="noreferrer"
+                  target="_blank"
+                >
+                  {article.sourceName}（外部サイト）
+                </a>
+              </dd>
+            </div>
+            <div>
+              <dt className="font-semibold text-[#dce9ef]">最終確認日</dt>
+              <dd className="mt-1 text-[#b4c4cd]">{article.reviewedAt}</dd>
+            </div>
+          </dl>
+        </AppPanel>
 
         <EmergencyNotice />
       </article>
@@ -136,10 +143,10 @@ function CategoryLink({
   return (
     <Link
       aria-current={isSelected ? "page" : undefined}
-      className={`rounded border px-3 py-2 text-sm font-medium focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-slate-900 ${
+      className={`border px-3 py-2 text-sm font-medium tracking-[.04em] focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-[#75bced] ${
         isSelected
-          ? "border-slate-800 bg-slate-900 text-white"
-          : "border-slate-300 bg-white text-slate-800 hover:bg-slate-50"
+          ? "border-[#b98d3f] bg-[linear-gradient(180deg,rgba(101,74,30,.92),rgba(47,34,17,.98))] text-[#fff0c9]"
+          : "border-[#315b7e] bg-[#07151f]/85 text-[#cce8fa] hover:border-[#72b7e5] hover:bg-[#102536]"
       }`}
       to={to}
     >
@@ -150,24 +157,24 @@ function CategoryLink({
 
 function ArticleSummary({ article }: { article: LearnArticle }) {
   return (
-    <article className="rounded border border-slate-300 bg-white p-5">
-      <p className="text-sm font-semibold text-slate-600">
+    <AppPanel className="transition hover:-translate-y-0.5 hover:border-[#527895] motion-reduce:transform-none">
+      <p className="text-[11px] font-medium tracking-[.16em] text-[#5798c9]">
         {getLearnCategoryLabel(article.category)}
       </p>
-      <h2 className="mt-2 text-xl font-semibold">
+      <h2 className="mt-3 text-xl font-semibold text-[#e8f1f5]">
         <Link
-          className="underline underline-offset-4 hover:text-slate-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-slate-900"
+          className="underline decoration-[#527895] underline-offset-4 hover:text-[#8ec7ed] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#75bced]"
           to={`/learn/${article.slug}`}
         >
           {article.title}
         </Link>
       </h2>
-      <p className="mt-3 text-sm leading-6 text-slate-700">{article.summary}</p>
+      <p className="mt-3 text-sm leading-6 text-[#a7b8c2]">{article.summary}</p>
       <ArticleTags tags={article.tags} />
-      <p className="mt-4 text-xs text-slate-500">
+      <p className="mt-4 text-xs text-[#718895]">
         最終確認日: {article.reviewedAt}
       </p>
-    </article>
+    </AppPanel>
   );
 }
 
@@ -176,7 +183,7 @@ function ArticleTags({ tags }: { tags: readonly string[] }) {
     <ul aria-label="記事のタグ" className="mt-4 flex flex-wrap gap-2">
       {tags.map((tag) => (
         <li
-          className="rounded border border-slate-200 px-2 py-1 text-xs text-slate-600"
+          className="border border-[#2f4a5e] bg-[#07131c]/70 px-2 py-1 text-xs text-[#9fb5c3]"
           key={tag}
         >
           {tag}
@@ -190,15 +197,16 @@ function LearnArticleNotFound() {
   return (
     <LearnLayout>
       <section className="max-w-xl py-10">
-        <p className="text-sm font-semibold text-slate-600">防災情報</p>
-        <h1 className="mt-2 text-2xl font-semibold">記事が見つかりません</h1>
-        <p className="mt-3 text-sm leading-6 text-slate-600">
+        <p className="text-[11px] font-medium tracking-[.18em] text-[#5798c9]">
+          DISASTER PREPAREDNESS
+        </p>
+        <h1 className="mt-3 text-3xl font-semibold text-[#edf3f7]">
+          記事が見つかりません
+        </h1>
+        <p className="mt-3 text-sm leading-6 text-[#91a5b4]">
           指定された記事は存在しないか、公開を終了しています。
         </p>
-        <Link
-          className="mt-6 inline-flex rounded border border-slate-800 bg-slate-900 px-4 py-2 text-sm font-medium text-white hover:bg-slate-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-slate-900"
-          to="/learn"
-        >
+        <Link className={`mt-6 ${appButtonClassName.secondary}`} to="/learn">
           防災情報一覧へ戻る
         </Link>
       </section>
@@ -208,8 +216,8 @@ function LearnArticleNotFound() {
 
 function EmergencyNotice() {
   return (
-    <aside className="mt-8 max-w-3xl rounded border border-amber-300 bg-amber-50 p-5 text-sm leading-6 text-amber-950">
-      <h2 className="font-semibold">緊急時の注意</h2>
+    <aside className="mt-8 max-w-3xl border border-[#8d6b2d] bg-[linear-gradient(145deg,rgba(64,48,18,.68),rgba(20,17,8,.92))] p-5 text-sm leading-6 text-[#f3dfab] shadow-[inset_0_1px_0_rgba(255,238,185,.08)]">
+      <h2 className="font-semibold text-[#ffe6a2]">緊急時の注意</h2>
       <p className="mt-2">
         このページはリアルタイムの避難判断には使用しないでください。災害の危険があるときは、自治体、気象庁などの最新の公式情報と避難情報を確認してください。
       </p>
@@ -218,36 +226,5 @@ function EmergencyNotice() {
 }
 
 function LearnLayout({ children }: { children: ReactNode }) {
-  return (
-    <main className="min-h-dvh bg-slate-100 p-6 text-slate-950">
-      <div className="mx-auto w-full max-w-5xl">
-        <header className="flex items-center justify-between gap-4 border-b border-slate-300 py-4">
-          <Link
-            className="text-sm font-semibold text-slate-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-slate-900"
-            to="/"
-          >
-            DISASTAR CARD GAME
-          </Link>
-          <div className="flex flex-wrap items-center gap-2">
-            <nav aria-label="関連ページ" className="flex flex-wrap gap-2">
-              <Link
-                className="rounded border border-slate-300 bg-white px-3 py-2 text-sm font-medium text-slate-800 hover:bg-slate-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-slate-900"
-                to="/rule"
-              >
-                遊び方
-              </Link>
-              <Link
-                className="rounded border border-slate-300 bg-white px-3 py-2 text-sm font-medium text-slate-800 hover:bg-slate-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-slate-900"
-                to="/"
-              >
-                対戦準備へ
-              </Link>
-            </nav>
-            <AccountMenu />
-          </div>
-        </header>
-        <div className="py-10">{children}</div>
-      </div>
-    </main>
-  );
+  return <AppShell contentClassName="max-w-5xl">{children}</AppShell>;
 }

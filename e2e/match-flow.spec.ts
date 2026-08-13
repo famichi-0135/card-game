@@ -118,7 +118,7 @@ test.describe("二人対戦の完全統合フロー", () => {
     try {
       await signInAsGuest(ownerPage, "/");
       await expect(
-        ownerPage.getByRole("heading", { name: "対戦部屋を作成" }),
+        ownerPage.getByText("招待のみ", { exact: true }),
       ).toBeVisible();
 
       await ownerPage

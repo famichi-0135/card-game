@@ -132,6 +132,11 @@ pnpm --filter @disastar/frontend run dev
 Frontendの`/api/*`は`BACKEND` Service Bindingへ転送される。APIを含む画面を検証するときは、
 基本的にルートの`pnpm run dev`で両方を起動する。
 
+`pnpm --filter @disastar/frontend run dev`だけでは、ローカルの`BACKEND` Service Bindingの接続先である
+Backend Workerは起動しない。そのため認証、部屋作成、対戦などの`/api/*`を利用する操作は失敗する。
+認証を含む通常の手動確認は`pnpm run dev`で起動し、`http://localhost:5173`を開く。`127.0.0.1`や別ポートは
+Better Authのローカル許可オリジンと一致しないため、通常の認証確認には使用しない。
+
 ## 6. Backendのローカル初期化
 
 Backendの`dev`コマンドは、Worker起動前に次を自動実行する。
@@ -277,6 +282,17 @@ pnpm install --force
 
 `pnpm --filter @disastar/backend run dev`から起動し、ローカル設定の自動生成を完了させる。
 `.dev.vars`の内容を画面共有やログへ出さず、必要なキー名だけを`.dev.vars.example`と比較する。
+
+### 画面上で`Worker "disastar-backend" not found`と表示される
+
+Frontendだけが起動しており、Service Bindingの接続先となるBackend Workerが存在しない状態である。
+Frontendを停止してから、リポジトリルートで次を実行する。
+
+```sh
+pnpm run dev
+```
+
+`http://localhost:5173/api/health`が`{"status":"ok"}`を返すことを確認してから、認証や対戦を確認する。
 
 ### D1のテーブルが見つからない
 

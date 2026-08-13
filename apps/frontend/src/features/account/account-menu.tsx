@@ -8,6 +8,8 @@ import {
   AvatarImage,
 } from "../../components/ui/avatar.tsx";
 import { Button } from "../../components/ui/button.tsx";
+import { appButtonClassName } from "../../components/application-ui.tsx";
+import { toast } from "../../components/ui/toast.tsx";
 import {
   HoverCard,
   HoverCardContent,
@@ -24,7 +26,6 @@ export function AccountMenu() {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const [isLoggingOut, setIsLoggingOut] = useState(false);
-  const [error, setError] = useState<string | null>(null);
 
   if (session.data === null || session.data === undefined) {
     return null;
@@ -34,16 +35,20 @@ export function AccountMenu() {
   const accountKind = session.data.isAnonymous ? "ゲスト" : "Googleアカウント";
 
   async function handleSignOut() {
-    setError(null);
     setIsLoggingOut(true);
     try {
       await signOut();
       queryClient.setQueryData(authSessionQueryKey, null);
       navigate("/", { replace: true });
     } catch (requestError) {
-      setError(
-        getAuthErrorMessage("ログアウトできませんでした。", requestError),
-      );
+      toast.add({
+        description: getAuthErrorMessage(
+          "ログアウトできませんでした。",
+          requestError,
+        ),
+        title: "ログアウトできません",
+        type: "error",
+      });
     } finally {
       setIsLoggingOut(false);
     }
@@ -65,28 +70,29 @@ export function AccountMenu() {
           <AvatarFallback>{getAvatarFallback(user.name)}</AvatarFallback>
         </Avatar>
       </HoverCardTrigger>
-      <HoverCardContent align="end" className="w-72">
+      <HoverCardContent
+        align="end"
+        className="w-72 border border-[#334d5e] bg-[linear-gradient(145deg,#0d1d28,#050d13)] text-[#edf5f9] shadow-[0_20px_48px_rgba(0,0,0,.55)]"
+      >
         <div className="flex flex-col gap-3">
           <div className="min-w-0">
-            <p className="truncate font-medium text-foreground">{user.name}</p>
-            <p className="mt-1 text-xs text-muted-foreground">{accountKind}</p>
+            <p className="truncate font-medium text-[#edf5f9]">{user.name}</p>
+            <p className="mt-1 text-xs text-[#91a5b4]">{accountKind}</p>
           </div>
-          <Button className="w-full" render={<Link to="/mypage" />}>
+          <Button
+            className={`w-full ${appButtonClassName.secondary}`}
+            render={<Link to="/mypage" />}
+          >
             マイページ
           </Button>
           <Button
-            className="w-full"
+            className={`w-full ${appButtonClassName.tertiary}`}
             disabled={isLoggingOut}
             onClick={() => void handleSignOut()}
             variant="outline"
           >
             {isLoggingOut ? "ログアウトしています" : "ログアウト"}
           </Button>
-          {error === null ? null : (
-            <p className="text-xs text-destructive" role="status">
-              {error}
-            </p>
-          )}
         </div>
       </HoverCardContent>
     </HoverCard>

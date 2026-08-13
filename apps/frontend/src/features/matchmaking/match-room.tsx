@@ -1,7 +1,14 @@
 import type { Faction } from "@disastar/game-engine/contracts";
 import { type ReactNode, useEffect, useRef, useState } from "react";
 import { Link, Navigate, useNavigate } from "react-router";
-import { AccountMenu } from "../account/account-menu.tsx";
+import {
+  AppPanel,
+  AppShell,
+  PageHeader,
+  appButtonClassName,
+  appInputClassName,
+} from "../../components/application-ui.tsx";
+import { toast } from "../../components/ui/toast.tsx";
 import { AuthStatus } from "../auth/auth-layout.tsx";
 import { createRoomPath } from "./match-id.ts";
 import {
@@ -34,7 +41,6 @@ export function MatchRoom({
       isOwner && (match?.status === "waiting" || match?.status === "starting"),
     matchId,
   });
-  const [error, setError] = useState<string | null>(null);
   const [isAccepting, setIsAccepting] = useState(false);
   const [isCancelling, setIsCancelling] = useState(false);
   const [copyStatus, setCopyStatus] = useState<"idle" | "copied" | "failed">(
@@ -53,7 +59,7 @@ export function MatchRoom({
             "招待部屋を取得できませんでした。部屋 ID または招待 URL を確認してください。",
           )}
         </AuthStatus>
-        <Link className={primaryButtonClassName} to="/">
+        <Link className={appButtonClassName.secondary} to="/">
           対戦準備へ戻る
         </Link>
       </RoomLayout>
@@ -72,7 +78,6 @@ export function MatchRoom({
       return;
     }
 
-    setError(null);
     setIsAccepting(true);
     try {
       const deck = await createStarterDeck(
@@ -81,12 +86,14 @@ export function MatchRoom({
       const gameId = await acceptMatch(matchId, deck.id);
       navigate(`/games/${encodeURIComponent(gameId)}`, { replace: true });
     } catch (requestError) {
-      setError(
-        getMatchmakingErrorMessage(
+      toast.add({
+        description: getMatchmakingErrorMessage(
           requestError,
           "招待部屋に参加できませんでした。最新の状態を確認してください。",
         ),
-      );
+        title: "招待部屋に参加できません",
+        type: "error",
+      });
       void lobby.refetch();
     } finally {
       setIsAccepting(false);
@@ -94,18 +101,19 @@ export function MatchRoom({
   }
 
   async function handleCancel() {
-    setError(null);
     setIsCancelling(true);
     try {
       await cancelMatch(matchId);
       await lobby.refetch();
     } catch (requestError) {
-      setError(
-        getMatchmakingErrorMessage(
+      toast.add({
+        description: getMatchmakingErrorMessage(
           requestError,
           "招待部屋を取り消せませんでした。もう一度お試しください。",
         ),
-      );
+        title: "招待部屋を取り消せません",
+        type: "error",
+      });
     } finally {
       setIsCancelling(false);
     }
@@ -123,10 +131,10 @@ export function MatchRoom({
   if (match.status === "cancelled") {
     return (
       <RoomLayout title="招待部屋は取り消されました">
-        <p className="text-sm leading-6 text-slate-600">
+        <p className="text-sm leading-6 text-[#91a5b4]">
           この招待部屋では対戦を開始できません。
         </p>
-        <Link className={primaryButtonClassName} to="/">
+        <Link className={appButtonClassName.secondary} to="/">
           対戦準備へ戻る
         </Link>
       </RoomLayout>
@@ -136,10 +144,9 @@ export function MatchRoom({
   if (match.status === "starting") {
     return (
       <RoomLayout title="対戦を開始しています">
-        <p className="text-sm leading-6 text-slate-600">
+        <p className="text-sm leading-6 text-[#91a5b4]">
           開始結果を確認できませんでした。同じ対戦情報で再試行するか、作成者が部屋を取り消してください。
         </p>
-        {error === null ? null : <AuthStatus tone="error">{error}</AuthStatus>}
         <StartingMatchRecoveryActions
           isPending={isOwner ? isCancelling : isAccepting}
           onAction={() => void (isOwner ? handleCancel() : handleAccept())}
@@ -152,7 +159,7 @@ export function MatchRoom({
   if (match.status === "started") {
     return (
       <RoomLayout title="対戦を開始しています">
-        <p className="text-sm leading-6 text-slate-600">
+        <p className="text-sm leading-6 text-[#91a5b4]">
           対戦画面の情報を確認しています。しばらくしてから再読み込みしてください。
         </p>
       </RoomLayout>
@@ -161,14 +168,15 @@ export function MatchRoom({
 
   return (
     <RoomLayout title="招待部屋">
-      <section className="grid gap-5 border-b border-slate-300 pb-8">
+      <section className="grid gap-5">
         <div>
-          <p className="text-sm text-slate-600">作成者の陣営</p>
-          <h1 className="mt-1 text-2xl font-semibold">
+          <p className="text-[11px] font-medium tracking-[.18em] text-[#5798c9]">
+            OWNER FACTION
+          </p>
+          <h1 className="mt-2 text-3xl font-semibold text-[#edf3f7]">
             {factionLabels[match.ownerFaction]}
           </h1>
         </div>
-        {error === null ? null : <AuthStatus tone="error">{error}</AuthStatus>}
         <InvitationDetails
           copyStatus={copyStatus}
           invitationURL={invitationURL}
@@ -204,37 +212,37 @@ function InvitationDetails({
   onCopy: () => void;
 }) {
   return (
-    <div className="grid max-w-2xl gap-3">
-      <label className="grid gap-1.5 text-sm font-medium text-slate-800">
+    <div className="grid max-w-2xl gap-4">
+      <label className="grid gap-1.5 text-sm font-medium text-[#c9d8e0]">
         <span>部屋 ID</span>
         <input
-          className="h-10 rounded border border-slate-300 bg-slate-50 px-3 font-mono text-sm text-slate-800"
+          className={`${appInputClassName} font-mono text-sm`}
           readOnly
           value={matchId}
         />
       </label>
-      <label className="grid gap-1.5 text-sm font-medium text-slate-800">
+      <label className="grid gap-1.5 text-sm font-medium text-[#c9d8e0]">
         <span>招待 URL</span>
         <input
-          className="h-10 rounded border border-slate-300 bg-slate-50 px-3 text-sm text-slate-800"
+          className={`${appInputClassName} text-sm`}
           readOnly
           value={invitationURL}
         />
       </label>
       <div className="flex flex-wrap items-center gap-3">
         <button
-          className={secondaryButtonClassName}
+          className={appButtonClassName.secondary}
           onClick={onCopy}
           type="button"
         >
           招待 URL をコピー
         </button>
         {copyStatus === "copied" ? (
-          <span className="text-sm text-emerald-700" role="status">
+          <span className="text-sm text-[#9cddb0]" role="status">
             コピーしました。
           </span>
         ) : copyStatus === "failed" ? (
-          <span className="text-sm text-slate-600" role="status">
+          <span className="text-sm text-[#b5c5ce]" role="status">
             コピーできませんでした。入力欄からコピーしてください。
           </span>
         ) : null}
@@ -251,23 +259,27 @@ function OwnerWaitingState({
   onCancel: () => void;
 }) {
   return (
-    <section className="grid gap-4 py-8">
-      <div>
-        <h2 className="text-lg font-semibold">対戦相手を待っています</h2>
-        <p className="mt-1 text-sm leading-6 text-slate-600">
-          招待 URL
-          を相手に共有してください。相手が反対ロールで参加すると対戦を開始します。
-        </p>
-      </div>
-      <button
-        className="w-fit rounded border border-slate-300 px-4 py-2 text-sm font-medium text-slate-800 hover:bg-slate-50 disabled:cursor-not-allowed disabled:border-slate-200 disabled:text-slate-400 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-slate-900"
-        disabled={isCancelling}
-        onClick={onCancel}
-        type="button"
-      >
-        {isCancelling ? "取り消しています" : "招待部屋を取り消す"}
-      </button>
-    </section>
+    <AppPanel className="mt-7" label="WAITING ROOM">
+      <section className="grid gap-4">
+        <div>
+          <h2 className="text-lg font-semibold text-[#e7eff4]">
+            対戦相手を待っています
+          </h2>
+          <p className="mt-1 text-sm leading-6 text-[#91a5b4]">
+            招待 URL
+            を相手に共有してください。相手が反対ロールで参加すると対戦を開始します。
+          </p>
+        </div>
+        <button
+          className={`w-fit ${appButtonClassName.tertiary}`}
+          disabled={isCancelling}
+          onClick={onCancel}
+          type="button"
+        >
+          {isCancelling ? "取り消しています" : "招待部屋を取り消す"}
+        </button>
+      </section>
+    </AppPanel>
   );
 }
 
@@ -281,22 +293,26 @@ function OpponentJoinState({
   onAccept: () => void;
 }) {
   return (
-    <section className="grid max-w-xl gap-4 py-8">
-      <div>
-        <h2 className="text-lg font-semibold">ロールを確認</h2>
-        <p className="mt-1 text-sm leading-6 text-slate-600">
-          {factionLabels[faction]}の固定スターターデッキで参加します。
-        </p>
-      </div>
-      <button
-        className={`${primaryButtonClassName} w-fit`}
-        disabled={isAccepting}
-        onClick={onAccept}
-        type="button"
-      >
-        {isAccepting ? "参加しています" : `${factionLabels[faction]}で参加する`}
-      </button>
-    </section>
+    <AppPanel className="mt-7 max-w-xl" label="JOIN MATCH">
+      <section className="grid gap-4">
+        <div>
+          <h2 className="text-lg font-semibold text-[#e7eff4]">ロールを確認</h2>
+          <p className="mt-1 text-sm leading-6 text-[#91a5b4]">
+            {factionLabels[faction]}の固定スターターデッキで参加します。
+          </p>
+        </div>
+        <button
+          className={`${appButtonClassName.primary} w-fit`}
+          disabled={isAccepting}
+          onClick={onAccept}
+          type="button"
+        >
+          {isAccepting
+            ? "参加しています"
+            : `${factionLabels[faction]}で参加する`}
+        </button>
+      </section>
+    </AppPanel>
   );
 }
 
@@ -313,7 +329,7 @@ export function StartingMatchRecoveryActions({
 
   return (
     <button
-      className={`${isOwner ? secondaryButtonClassName : primaryButtonClassName} w-fit`}
+      className={`${isOwner ? secondaryButtonClassName : appButtonClassName.primary} w-fit`}
       disabled={isPending}
       onClick={onAction}
       type="button"
@@ -337,20 +353,10 @@ function RoomLayout({
   children?: ReactNode;
 }) {
   return (
-    <main className="min-h-dvh bg-slate-100 p-6 text-slate-950">
-      <div className="mx-auto grid w-full max-w-3xl gap-6 py-10">
-        <header className="flex items-start justify-between gap-4 border-b border-slate-300 pb-4">
-          <div>
-            <p className="text-sm font-semibold text-slate-700">
-              DISASTAR CARD GAME
-            </p>
-            <p className="mt-2 text-sm text-slate-600">{title}</p>
-          </div>
-          <AccountMenu />
-        </header>
-        {children}
-      </div>
-    </main>
+    <AppShell contentClassName="max-w-3xl">
+      <PageHeader eyebrow="MATCH LOBBY" title={title} />
+      <div className="mt-7 grid gap-6">{children}</div>
+    </AppShell>
   );
 }
 
@@ -400,8 +406,4 @@ function useCancelMatchOnLeave({
   }, [enabled, matchId]);
 }
 
-const primaryButtonClassName =
-  "inline-flex h-10 items-center justify-center rounded border border-slate-800 bg-slate-900 px-4 text-sm font-medium text-white hover:bg-slate-700 disabled:cursor-not-allowed disabled:border-slate-300 disabled:bg-slate-100 disabled:text-slate-400 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-slate-900";
-
-const secondaryButtonClassName =
-  "inline-flex h-10 items-center justify-center rounded border border-slate-300 px-4 text-sm font-medium text-slate-800 hover:bg-slate-50 disabled:cursor-not-allowed disabled:border-slate-200 disabled:text-slate-400 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-slate-900";
+const secondaryButtonClassName = appButtonClassName.tertiary;
