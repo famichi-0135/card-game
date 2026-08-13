@@ -17,6 +17,7 @@ export function AttackGroupRow({
   hasSelectedCard = false,
   onSelectTarget,
   onOpenGroup,
+  selectedCardInstanceId,
 }: {
   catalog: PublicCardCatalog;
   groups: readonly VisibleAttackGroup[];
@@ -26,7 +27,11 @@ export function AttackGroupRow({
   hasSelectedCard?: boolean;
   onSelectTarget?: (target: GameBoardCardTarget) => boolean;
   onOpenGroup?: (group: VisibleAttackGroup) => void;
+  selectedCardInstanceId?: string;
 }) {
+  const selectedCardActions = selectedCardInstanceId
+    ? availableActions?.handCards[selectedCardInstanceId]
+    : undefined;
   return (
     <section
       className="relative z-10 grid min-h-0 grid-rows-[24px_minmax(0,1fr)] gap-[7px]"
@@ -85,6 +90,12 @@ export function AttackGroupRow({
             perspective === "self" &&
             group !== undefined &&
             hasChainCandidate(availableActions, group.groupId);
+          const selectedCardTarget = getSelectedCardTarget({
+            group,
+            perspective,
+            selectedCardActions,
+            slotIndex,
+          });
           return (
             <AttackGroupSlot
               key={slotIndex}
@@ -94,6 +105,7 @@ export function AttackGroupRow({
               canChain={canChain}
               canPlace={canPlace}
               hasSelectedCard={hasSelectedCard}
+              selectedCardTarget={selectedCardTarget}
               isSelf={perspective === "self"}
               onSelectTarget={
                 perspective === "self" ? onSelectTarget : undefined
@@ -105,6 +117,32 @@ export function AttackGroupRow({
       </div>
     </section>
   );
+}
+
+function getSelectedCardTarget({
+  group,
+  perspective,
+  selectedCardActions,
+  slotIndex,
+}: {
+  group: VisibleAttackGroup | undefined;
+  perspective: "self" | "opponent";
+  selectedCardActions: AvailableGameActions["handCards"][string] | undefined;
+  slotIndex: AttackGroupSlotIndex;
+}): "chain" | "place" | undefined {
+  if (perspective !== "self" || selectedCardActions === undefined) {
+    return undefined;
+  }
+  if (group === undefined) {
+    return selectedCardActions.placeAttack.available &&
+      selectedCardActions.placeAttack.slotIndices.includes(slotIndex)
+      ? "place"
+      : undefined;
+  }
+  return selectedCardActions.chainAttack.available &&
+    selectedCardActions.chainAttack.targetGroupIds.includes(group.groupId)
+    ? "chain"
+    : undefined;
 }
 
 function hasChainCandidate(

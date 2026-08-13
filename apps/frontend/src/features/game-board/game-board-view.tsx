@@ -186,6 +186,7 @@ export function GameBoardView({
               onOpenSelfGroup={openAttackGroup}
               onSelectTarget={isInteractive ? onSelectCardTarget : undefined}
               opponentGroups={view.opponent.attackGroups}
+              selectedCardInstanceId={selectedCardInstanceId ?? undefined}
               selfGroups={view.self.attackGroups}
             />
 

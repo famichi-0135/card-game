@@ -20,6 +20,7 @@ export function AttackGroupSlot({
   isSelf,
   onSelectTarget,
   onOpenGroup,
+  selectedCardTarget,
 }: {
   catalog: PublicCardCatalog;
   group: VisibleAttackGroup | undefined;
@@ -30,6 +31,7 @@ export function AttackGroupSlot({
   isSelf: boolean;
   onSelectTarget?: (target: GameBoardCardTarget) => boolean;
   onOpenGroup?: (group: VisibleAttackGroup) => void;
+  selectedCardTarget?: "chain" | "place";
 }) {
   const { ref, isDropTarget } = useDroppable({
     id: `attack-slot-${isSelf ? "self" : "opponent"}-${slotIndex}`,
@@ -100,12 +102,15 @@ export function AttackGroupSlot({
       className={cn(
         "relative min-h-0 overflow-hidden border bg-[linear-gradient(180deg,rgba(8,15,20,.94),rgba(3,7,10,.97))] p-[5px] shadow-[inset_0_0_22px_rgba(0,0,0,.78)] [clip-path:polygon(5px_0,calc(100%_-_5px)_0,100%_5px,100%_calc(100%_-_5px),calc(100%_-_5px)_100%,5px_100%,0_calc(100%_-_5px),0_5px)] before:pointer-events-none before:absolute before:inset-[3px] before:border before:border-white/[.05]",
         isSelf ? "border-[#2c6e90]" : "border-[#7b3937]",
-        isDropTarget && (canPlace || canChain)
+        selectedCardTarget !== undefined
+          ? "border-[#e6c46d] ring-1 ring-[#e6c46d]/75 shadow-[inset_0_0_22px_rgba(0,0,0,.78),0_0_14px_rgba(230,196,109,.22)]"
+          : isDropTarget && (canPlace || canChain)
           ? "ring-2 ring-[#e6c46d] ring-offset-2 ring-offset-[#071118]"
           : canPlace || canChain
             ? "border-dashed"
             : "opacity-90",
       )}
+      data-selected-card-target={selectedCardTarget}
     >
       <span
         className={cn(
