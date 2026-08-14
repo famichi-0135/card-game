@@ -139,6 +139,24 @@ test.describe("二人対戦の完全統合フロー", () => {
         .getByRole("button", { name: "対策側で参加する" })
         .click();
 
+      await expect(ownerPage).toHaveURL(/\/rooms\/[A-Za-z0-9_-]+$/);
+      await expect(opponentPage).toHaveURL(/\/rooms\/[A-Za-z0-9_-]+$/);
+      await expect(
+        ownerPage.getByRole("button", { name: "準備完了", exact: true }),
+      ).toBeVisible();
+      await expect(
+        opponentPage.getByRole("button", { name: "準備完了", exact: true }),
+      ).toBeVisible();
+
+      await ownerPage
+        .getByRole("button", { name: "準備完了", exact: true })
+        .click();
+      await expect(ownerPage).toHaveURL(/\/rooms\/[A-Za-z0-9_-]+$/);
+
+      await opponentPage
+        .getByRole("button", { name: "準備完了", exact: true })
+        .click();
+
       await expect(ownerPage).toHaveURL(/\/games\/[A-Za-z0-9_-]+$/);
       await expect(opponentPage).toHaveURL(/\/games\/[A-Za-z0-9_-]+$/);
       const gameId = gameIdFromUrl(ownerPage.url());

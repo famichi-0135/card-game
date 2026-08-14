@@ -7,6 +7,8 @@ import {
   appButtonClassName,
 } from "../../components/application-ui.tsx";
 import {
+  filterLearnArticles,
+  getAvailableTags,
   getLearnArticle,
   getLearnArticles,
   getLearnCategoryLabel,
@@ -15,17 +17,46 @@ import {
   type LearnArticle,
   type LearnCategory,
 } from "./learn-catalog.ts";
+import { TagFilterBar } from "./tag-filter-bar.tsx";
 
 const allCategoryLabel = "すべて";
 const LearnArticleBody = lazy(() => import("./learn-article-body.tsx"));
 
 export function LearnIndexRoute() {
-  const [searchParams] = useSearchParams();
+  const [searchParams, setSearchParams] = useSearchParams();
   const requestedCategory = searchParams.get("category");
   const selectedCategory = isLearnCategory(requestedCategory)
     ? requestedCategory
     : null;
-  const articles = getLearnArticles(selectedCategory);
+  const selectedTags = searchParams.getAll("tag");
+
+  const categoryArticles = getLearnArticles(selectedCategory);
+  const availableTags = getAvailableTags(categoryArticles);
+  const articles = filterLearnArticles(categoryArticles, {
+    category: null,
+    tags: selectedTags,
+  });
+
+  const handleToggleTag = (tag: string) => {
+    const nextParams = new URLSearchParams(searchParams);
+    const currentTags = nextParams.getAll("tag");
+    nextParams.delete("tag");
+
+    const newTags = currentTags.includes(tag)
+      ? currentTags.filter((t) => t !== tag)
+      : [...currentTags, tag];
+
+    for (const t of newTags) {
+      nextParams.append("tag", t);
+    }
+    setSearchParams(nextParams);
+  };
+
+  const handleClearTags = () => {
+    const nextParams = new URLSearchParams(searchParams);
+    nextParams.delete("tag");
+    setSearchParams(nextParams);
+  };
 
   return (
     <LearnLayout>
@@ -53,10 +84,30 @@ export function LearnIndexRoute() {
         ))}
       </nav>
 
+      <div className="mb-6">
+        <TagFilterBar
+          allTags={availableTags}
+          onClearTags={handleClearTags}
+          onToggleTag={handleToggleTag}
+          selectedTags={selectedTags}
+        />
+      </div>
+
       <section aria-label="防災情報の記事一覧" className="grid gap-3 pb-10">
-        {articles.map((article) => (
-          <ArticleSummary article={article} key={article.slug} />
-        ))}
+        {articles.length === 0 ? (
+          <p className="py-8 text-center text-sm text-[#91a5b4]">
+            条件に一致する防災情報記事が見つかりませんでした。
+          </p>
+        ) : (
+          articles.map((article) => (
+            <ArticleSummary
+              article={article}
+              key={article.slug}
+              onToggleTag={handleToggleTag}
+              selectedTags={selectedTags}
+            />
+          ))
+        )}
       </section>
     </LearnLayout>
   );
@@ -137,8 +188,20 @@ function CategoryLink({
   children: string;
   selectedCategory: LearnCategory | null;
 }) {
+  const [searchParams] = useSearchParams();
   const isSelected = category === selectedCategory;
-  const to = category === null ? "/learn" : `/learn?category=${category}`;
+
+  const nextParams = new URLSearchParams();
+  if (category !== null) {
+    nextParams.set("category", category);
+  }
+  const currentTags = searchParams.getAll("tag");
+  for (const tag of currentTags) {
+    nextParams.append("tag", tag);
+  }
+
+  const paramsStr = nextParams.toString();
+  const to = paramsStr ? `/learn?${paramsStr}` : "/learn";
 
   return (
     <Link
@@ -155,7 +218,15 @@ function CategoryLink({
   );
 }
 
-function ArticleSummary({ article }: { article: LearnArticle }) {
+function ArticleSummary({
+  article,
+  onToggleTag,
+  selectedTags,
+}: {
+  article: LearnArticle;
+  onToggleTag?: (tag: string) => void;
+  selectedTags?: readonly string[];
+}) {
   return (
     <AppPanel className="transition hover:-translate-y-0.5 hover:border-[#527895] motion-reduce:transform-none">
       <p className="text-[11px] font-medium tracking-[.16em] text-[#5798c9]">
@@ -170,7 +241,11 @@ function ArticleSummary({ article }: { article: LearnArticle }) {
         </Link>
       </h2>
       <p className="mt-3 text-sm leading-6 text-[#a7b8c2]">{article.summary}</p>
-      <ArticleTags tags={article.tags} />
+      <ArticleTags
+        onToggleTag={onToggleTag}
+        selectedTags={selectedTags}
+        tags={article.tags}
+      />
       <p className="mt-4 text-xs text-[#718895]">
         最終確認日: {article.reviewedAt}
       </p>
@@ -178,17 +253,51 @@ function ArticleSummary({ article }: { article: LearnArticle }) {
   );
 }
 
-function ArticleTags({ tags }: { tags: readonly string[] }) {
+function ArticleTags({
+  tags,
+  selectedTags,
+  onToggleTag,
+}: {
+  tags: readonly string[];
+  selectedTags?: readonly string[];
+  onToggleTag?: (tag: string) => void;
+}) {
+  const selectedSet = new Set(selectedTags ?? []);
+
   return (
     <ul aria-label="記事のタグ" className="mt-4 flex flex-wrap gap-2">
-      {tags.map((tag) => (
-        <li
-          className="border border-[#2f4a5e] bg-[#07131c]/70 px-2 py-1 text-xs text-[#9fb5c3]"
-          key={tag}
-        >
-          {tag}
-        </li>
-      ))}
+      {tags.map((tag) => {
+        const isSelected = selectedSet.has(tag);
+        if (onToggleTag !== undefined) {
+          return (
+            <li key={tag}>
+              <button
+                aria-pressed={isSelected}
+                className={`rounded border px-2 py-1 text-xs transition focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#75bced] ${
+                  isSelected
+                    ? "border-[#c49b49] bg-[linear-gradient(180deg,rgba(110,81,33,.95),rgba(52,38,18,.98))] text-[#fff4d6]"
+                    : "border-[#2f4a5e] bg-[#07131c]/70 text-[#9fb5c3] hover:border-[#537e9d] hover:text-[#d3e5f2]"
+                }`}
+                onClick={() => onToggleTag(tag)}
+                type="button"
+              >
+                #{tag}
+              </button>
+            </li>
+          );
+        }
+
+        return (
+          <li key={tag}>
+            <Link
+              className="inline-block rounded border border-[#2f4a5e] bg-[#07131c]/70 px-2 py-1 text-xs text-[#9fb5c3] hover:border-[#537e9d] hover:text-[#d3e5f2] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#75bced]"
+              to={`/learn?tag=${encodeURIComponent(tag)}`}
+            >
+              #{tag}
+            </Link>
+          </li>
+        );
+      })}
     </ul>
   );
 }

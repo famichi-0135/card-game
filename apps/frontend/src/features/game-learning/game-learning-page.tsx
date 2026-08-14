@@ -1,3 +1,4 @@
+import { useState } from "react";
 import {
   learningArticles,
   selectLearningArticles,
@@ -13,10 +14,16 @@ import {
 } from "../../components/application-ui.tsx";
 import { AccountMenu } from "../account/account-menu.tsx";
 import { useGameLearningContext } from "../game-board/hooks/use-game-board-data.ts";
-import { getLearnCategoryLabel } from "../learn/learn-catalog.ts";
+import {
+  filterLearnArticles,
+  getAvailableTags,
+  getLearnCategoryLabel,
+} from "../learn/learn-catalog.ts";
+import { TagFilterBar } from "../learn/tag-filter-bar.tsx";
 
 export function GameLearningPage({ gameId }: { gameId: string }) {
   const learningContext = useGameLearningContext(gameId, true);
+  const [selectedTags, setSelectedTags] = useState<readonly string[]>([]);
 
   if (learningContext.isPending) {
     return <GameLearningMessage title="学習コンテンツを読み込んでいます" />;
@@ -36,12 +43,26 @@ export function GameLearningPage({ gameId }: { gameId: string }) {
       card,
     ]),
   );
-  const articles = selectLearningArticles(
+  const allArticles = selectLearningArticles(
     learningContext.data.selectedCards.map(
       ({ cardDefinitionId }) => cardDefinitionId,
     ),
     learningArticles,
   );
+  const availableTags = getAvailableTags(allArticles);
+  const articles = filterLearnArticles(allArticles, {
+    tags: selectedTags,
+  });
+
+  const handleToggleTag = (tag: string) => {
+    setSelectedTags((prev) =>
+      prev.includes(tag) ? prev.filter((t) => t !== tag) : [...prev, tag],
+    );
+  };
+
+  const handleClearTags = () => {
+    setSelectedTags([]);
+  };
 
   return (
     <AppShell
@@ -99,40 +120,83 @@ export function GameLearningPage({ gameId }: { gameId: string }) {
         >
           おすすめの記事
         </h2>
+
+        {availableTags.length > 0 ? (
+          <div className="mt-4 mb-4">
+            <TagFilterBar
+              allTags={availableTags}
+              onClearTags={handleClearTags}
+              onToggleTag={handleToggleTag}
+              selectedTags={selectedTags}
+            />
+          </div>
+        ) : null}
+
         {articles.length === 0 ? (
           <p className="mt-3 text-sm leading-6 text-[#91a5b4]">
-            関連する記事はまだありません。防災情報一覧から、地域に合う情報を確認してください。
+            {allArticles.length === 0
+              ? "関連する記事はまだありません。防災情報一覧から、地域に合う情報を確認してください。"
+              : "選択されたタグに一致するおすすめ記事はありません。"}
           </p>
         ) : (
           <div className="mt-4 grid gap-3">
-            {articles.map((article) => (
-              <AppPanel key={article.id}>
-                <p className="text-[11px] font-medium tracking-[.16em] text-[#5798c9]">
-                  {getLearnCategoryLabel(article.category)}
-                </p>
-                <h3 className="mt-3 text-xl font-semibold text-[#e7eff4]">
-                  <Link
-                    className="underline decoration-[#527895] underline-offset-4 hover:text-[#8ec7ed] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#75bced]"
-                    to={`/learn/${article.slug}`}
+            {articles.map((article) => {
+              const selectedSet = new Set(selectedTags);
+              return (
+                <AppPanel key={article.id}>
+                  <p className="text-[11px] font-medium tracking-[.16em] text-[#5798c9]">
+                    {getLearnCategoryLabel(article.category)}
+                  </p>
+                  <h3 className="mt-3 text-xl font-semibold text-[#e7eff4]">
+                    <Link
+                      className="underline decoration-[#527895] underline-offset-4 hover:text-[#8ec7ed] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#75bced]"
+                      to={`/learn/${article.slug}`}
+                    >
+                      {article.title}
+                    </Link>
+                  </h3>
+                  <p className="mt-3 text-sm leading-6 text-[#a7b8c2]">
+                    {article.summary}
+                  </p>
+
+                  <ul
+                    aria-label="記事のタグ"
+                    className="mt-4 flex flex-wrap gap-2"
                   >
-                    {article.title}
-                  </Link>
-                </h3>
-                <p className="mt-3 text-sm leading-6 text-[#a7b8c2]">
-                  {article.summary}
-                </p>
-                <p className="mt-4 text-xs text-[#718895]">
-                  関連カード:{" "}
-                  {article.matchedCardDefinitionIds
-                    .map(
-                      (cardDefinitionId) =>
-                        selectedCards.get(cardDefinitionId)?.cardName ??
-                        cardDefinitionId,
-                    )
-                    .join("、")}
-                </p>
-              </AppPanel>
-            ))}
+                    {article.tags.map((tag) => {
+                      const isSelected = selectedSet.has(tag);
+                      return (
+                        <li key={tag}>
+                          <button
+                            aria-pressed={isSelected}
+                            className={`rounded border px-2 py-1 text-xs transition focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#75bced] ${
+                              isSelected
+                                ? "border-[#c49b49] bg-[linear-gradient(180deg,rgba(110,81,33,.95),rgba(52,38,18,.98))] text-[#fff4d6]"
+                                : "border-[#2f4a5e] bg-[#07131c]/70 text-[#9fb5c3] hover:border-[#537e9d] hover:text-[#d3e5f2]"
+                            }`}
+                            onClick={() => handleToggleTag(tag)}
+                            type="button"
+                          >
+                            #{tag}
+                          </button>
+                        </li>
+                      );
+                    })}
+                  </ul>
+
+                  <p className="mt-4 text-xs text-[#718895]">
+                    関連カード:{" "}
+                    {article.matchedCardDefinitionIds
+                      .map(
+                        (cardDefinitionId) =>
+                          selectedCards.get(cardDefinitionId)?.cardName ??
+                          cardDefinitionId,
+                      )
+                      .join("、")}
+                  </p>
+                </AppPanel>
+              );
+            })}
           </div>
         )}
         <Link className={`mt-6 ${appButtonClassName.secondary}`} to="/learn">
