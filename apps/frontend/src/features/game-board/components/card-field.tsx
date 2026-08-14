@@ -34,6 +34,7 @@ export function CardField({
       aria-label="カード配置フィールド"
       className="grid min-h-0 grid-rows-2 gap-[10px] bg-[#061016] p-[14px]"
       data-board-region="card-field"
+      data-onboarding-target="battle-zone"
       data-board-background-asset="backgrounds/board/night-city-aerial.037226cbe99ad877f83b09ad99e8ce9fbb7822f92e608058b914a8921008500b.png"
       style={{
         backgroundImage: `linear-gradient(rgba(3, 11, 16, .78), rgba(3, 11, 16, .86)), ${getBoardBackgroundImage()}`,

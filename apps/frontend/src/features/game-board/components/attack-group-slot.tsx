@@ -111,6 +111,15 @@ export function AttackGroupSlot({
               ? "border-dashed"
               : "opacity-90",
       )}
+      data-onboarding-target={
+        !isSelf
+          ? undefined
+          : group === undefined && slotIndex === 0
+            ? "attack-slot"
+            : group !== undefined
+              ? "attack-chain"
+              : undefined
+      }
       data-selected-card-target={selectedCardTarget}
     >
       <span

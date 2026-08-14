@@ -51,6 +51,7 @@ export function GameProgressBar({
       aria-label="ゲーム進行"
       className="flex h-[76px] items-stretch gap-[10px] p-[9px] text-[#dfe7e8]"
       data-board-region="game-progress"
+      data-onboarding-target="game-progress"
       variant="gray"
     >
       <HudCell className="w-[100px]" label="ROUND" sub={`v${stateVersion}`}>
@@ -117,6 +118,7 @@ export function GameProgressBar({
       <div className="relative z-10 flex shrink-0 items-center justify-end gap-[8px]">
         <PrimaryGameButton
           className="h-[46px] min-w-[126px] text-[13px]"
+          data-onboarding-target="phase-finish"
           disabled={!canFinishPhase}
           onClick={onFinishPhase}
         >
