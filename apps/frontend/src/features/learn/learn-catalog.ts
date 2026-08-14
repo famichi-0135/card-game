@@ -37,3 +37,37 @@ export function getLearnCategoryLabel(category: LearnCategory): string {
 export function isLearnCategory(value: string | null): value is LearnCategory {
   return LEARN_CATEGORIES.some((category) => category === value);
 }
+
+export function getAvailableTags(
+  articles: readonly LearnArticle[],
+): readonly string[] {
+  const set = new Set<string>();
+  for (const article of articles) {
+    for (const tag of article.tags) {
+      set.add(tag);
+    }
+  }
+  return Array.from(set).sort((a, b) => a.localeCompare(b, "ja"));
+}
+
+export function filterLearnArticles<T extends LearnArticle>(
+  articles: readonly T[],
+  options: {
+    category?: LearnCategory | null;
+    tags?: readonly string[];
+  },
+): readonly T[] {
+  const { category = null, tags = [] } = options;
+  return articles.filter((article) => {
+    if (category !== null && article.category !== category) {
+      return false;
+    }
+    if (tags.length > 0) {
+      const articleTagSet = new Set(article.tags);
+      if (!tags.every((tag) => articleTagSet.has(tag))) {
+        return false;
+      }
+    }
+    return true;
+  });
+}
