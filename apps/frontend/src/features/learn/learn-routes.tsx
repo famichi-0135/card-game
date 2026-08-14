@@ -188,8 +188,20 @@ function CategoryLink({
   children: string;
   selectedCategory: LearnCategory | null;
 }) {
+  const [searchParams] = useSearchParams();
   const isSelected = category === selectedCategory;
-  const to = category === null ? "/learn" : `/learn?category=${category}`;
+
+  const nextParams = new URLSearchParams();
+  if (category !== null) {
+    nextParams.set("category", category);
+  }
+  const currentTags = searchParams.getAll("tag");
+  for (const tag of currentTags) {
+    nextParams.append("tag", tag);
+  }
+
+  const paramsStr = nextParams.toString();
+  const to = paramsStr ? `/learn?${paramsStr}` : "/learn";
 
   return (
     <Link
