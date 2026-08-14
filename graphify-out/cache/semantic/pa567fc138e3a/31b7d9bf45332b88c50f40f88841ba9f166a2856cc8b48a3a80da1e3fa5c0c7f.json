@@ -1,0 +1,86 @@
+{
+  "nodes": [
+    {
+      "id": "_agents_skills_turborepo_references_best_practices_packages_document",
+      "label": "Creating Internal Packages",
+      "file_type": "document",
+      "source_file": ".agents/skills/turborepo/references/best-practices/packages.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_agents_skills_turborepo_references_best_practices_packages_creation_checklist_concept",
+      "label": "Internal package creation checklist",
+      "file_type": "concept",
+      "source_file": ".agents/skills/turborepo/references/best-practices/packages.md",
+      "source_location": null
+    },
+    {
+      "id": "_agents_skills_turborepo_references_best_practices_packages_compilation_concept",
+      "label": "JIT versus compiled internal packages",
+      "file_type": "concept",
+      "source_file": ".agents/skills/turborepo/references/best-practices/packages.md",
+      "source_location": null
+    },
+    {
+      "id": "_agents_skills_turborepo_references_best_practices_packages_exports_concept",
+      "label": "Multiple and conditional package exports",
+      "file_type": "concept",
+      "source_file": ".agents/skills/turborepo/references/best-practices/packages.md",
+      "source_location": null
+    },
+    {
+      "id": "_agents_skills_turborepo_references_best_practices_packages_typescript_concept",
+      "label": "Node subpath imports for TypeScript packages",
+      "file_type": "concept",
+      "source_file": ".agents/skills/turborepo/references/best-practices/packages.md",
+      "source_location": null
+    }
+  ],
+  "edges": [
+    {
+      "source": "_agents_skills_turborepo_references_best_practices_packages_document",
+      "target": "_agents_skills_turborepo_references_best_practices_packages_creation_checklist_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".agents/skills/turborepo/references/best-practices/packages.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_agents_skills_turborepo_references_best_practices_packages_document",
+      "target": "_agents_skills_turborepo_references_best_practices_packages_compilation_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".agents/skills/turborepo/references/best-practices/packages.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_agents_skills_turborepo_references_best_practices_packages_document",
+      "target": "_agents_skills_turborepo_references_best_practices_packages_exports_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".agents/skills/turborepo/references/best-practices/packages.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_agents_skills_turborepo_references_best_practices_packages_document",
+      "target": "_agents_skills_turborepo_references_best_practices_packages_typescript_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".agents/skills/turborepo/references/best-practices/packages.md",
+      "source_location": null,
+      "weight": 1.0
+    }
+  ],
+  "hyperedges": []
+}

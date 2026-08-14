@@ -1,0 +1,79 @@
+{
+  "nodes": [
+    {
+      "id": "_agents_skills_turborepo_references_cli_rule_document",
+      "label": "turbo run",
+      "file_type": "document",
+      "source_file": ".agents/skills/turborepo/references/cli/RULE.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_agents_skills_turborepo_references_cli_rule_turbo_run_usage_concept",
+      "label": "turbo run command usage",
+      "file_type": "concept",
+      "source_file": ".agents/skills/turborepo/references/cli/RULE.md",
+      "source_location": null
+    },
+    {
+      "id": "_agents_skills_turborepo_references_cli_rule_shorthand_concept",
+      "label": "Shorthand only for terminal one-offs",
+      "file_type": "concept",
+      "source_file": ".agents/skills/turborepo/references/cli/RULE.md",
+      "source_location": null
+    },
+    {
+      "id": "_agents_skills_turborepo_references_cli_rule_argument_passthrough_concept",
+      "label": "Pass script arguments after double dash",
+      "file_type": "concept",
+      "source_file": ".agents/skills/turborepo/references/cli/RULE.md",
+      "source_location": null
+    }
+  ],
+  "edges": [
+    {
+      "source": "_agents_skills_turborepo_references_cli_rule_document",
+      "target": "_agents_skills_turborepo_references_cli_rule_turbo_run_usage_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".agents/skills/turborepo/references/cli/RULE.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_agents_skills_turborepo_references_cli_rule_document",
+      "target": "_agents_skills_turborepo_references_cli_rule_shorthand_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".agents/skills/turborepo/references/cli/RULE.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_agents_skills_turborepo_references_cli_rule_document",
+      "target": "_agents_skills_turborepo_references_cli_rule_argument_passthrough_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".agents/skills/turborepo/references/cli/RULE.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_agents_skills_turborepo_references_cli_rule_document",
+      "target": "_agents_skills_turborepo_references_cli_commands_document",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".agents/skills/turborepo/references/cli/RULE.md",
+      "source_location": null,
+      "weight": 1.0
+    }
+  ],
+  "hyperedges": []
+}

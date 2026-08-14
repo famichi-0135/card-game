@@ -1,0 +1,233 @@
+{
+  "nodes": [
+    {
+      "id": "_docs_frontend_frontend_requirements_md_document",
+      "label": "\u30d5\u30ed\u30f3\u30c8\u30a8\u30f3\u30c9\u8981\u4ef6\u5b9a\u7fa9\u66f8",
+      "file_type": "document",
+      "source_file": "docs/frontend/frontend-requirements.md",
+      "source_location": null
+    },
+    {
+      "id": "_docs_frontend_frontend_requirements_md_educational_two_faction_game_concept",
+      "label": "\u707d\u5bb3\u5074/\u5bfe\u7b56\u5074\u306e\u6559\u80b2\u7528\u30ab\u30fc\u30c9\u30b2\u30fc\u30e0",
+      "file_type": "concept",
+      "source_file": "docs/frontend/frontend-requirements.md",
+      "source_location": "1. \u6587\u66f8\u6982\u8981"
+    },
+    {
+      "id": "_docs_frontend_frontend_requirements_md_priority_p0_p1_p2_concept",
+      "label": "P0/P1/P2\u6a5f\u80fd\u512a\u5148\u5ea6",
+      "file_type": "concept",
+      "source_file": "docs/frontend/frontend-requirements.md",
+      "source_location": "1. \u6587\u66f8\u6982\u8981"
+    },
+    {
+      "id": "_docs_frontend_frontend_requirements_md_pc_minimum_1180x720_concept",
+      "label": "PC\u6a2a\u753b\u97621180x720\u6700\u5c0f\u5bfe\u5fdc",
+      "file_type": "concept",
+      "source_file": "docs/frontend/frontend-requirements.md",
+      "source_location": "4. \u5bfe\u5fdc\u74b0\u5883"
+    },
+    {
+      "id": "_docs_frontend_frontend_requirements_md_dnd_fixed_slots_concept",
+      "label": "dnd-kit\u3068\u56fa\u5b9a5\u67a0\u30ab\u30fc\u30c9\u64cd\u4f5c",
+      "file_type": "concept",
+      "source_file": "docs/frontend/frontend-requirements.md",
+      "source_location": "2. \u78ba\u5b9a\u4e8b\u9805"
+    },
+    {
+      "id": "_docs_frontend_frontend_requirements_md_route_map_concept",
+      "label": "\u30c8\u30c3\u30d7\u30fb\u90e8\u5c4b\u30fb\u30b2\u30fc\u30e0\u30fb\u5b66\u7fd2\u30fb\u8a8d\u8a3c\u30eb\u30fc\u30c8",
+      "file_type": "concept",
+      "source_file": "docs/frontend/frontend-requirements.md",
+      "source_location": "5. \u60c5\u5831\u8a2d\u8a08\u3068\u30eb\u30fc\u30c6\u30a3\u30f3\u30b0"
+    },
+    {
+      "id": "_docs_frontend_frontend_requirements_md_three_region_board_layout_concept",
+      "label": "\u76f8\u624b\u30fb\u4e2d\u592e\u30fb\u81ea\u5206\u306e3\u9818\u57df\u76e4\u9762",
+      "file_type": "concept",
+      "source_file": "docs/frontend/frontend-requirements.md",
+      "source_location": "6.2 \u30ec\u30a4\u30a2\u30a6\u30c8"
+    },
+    {
+      "id": "_docs_frontend_frontend_requirements_md_phase_commands_concept",
+      "label": "\u914d\u7f6e\u30fb\u9023\u9396\u30fb\u7834\u68c4\u30fb\u30b5\u30dd\u30fc\u30c8\u30fb\u7d42\u4e86\u30b3\u30de\u30f3\u30c9",
+      "file_type": "concept",
+      "source_file": "docs/frontend/frontend-requirements.md",
+      "source_location": "6.3 \u30d5\u30a7\u30fc\u30ba\u5225\u306e\u64cd\u4f5c"
+    },
+    {
+      "id": "_docs_frontend_frontend_requirements_md_public_private_info_boundary_concept",
+      "label": "PlayerGameView\u306b\u3088\u308b\u516c\u958b/\u975e\u516c\u958b\u60c5\u5831\u5883\u754c",
+      "file_type": "concept",
+      "source_file": "docs/frontend/frontend-requirements.md",
+      "source_location": "12. \u30c7\u30fc\u30bf\u3068\u4f9d\u5b58\u5883\u754c"
+    },
+    {
+      "id": "_docs_frontend_frontend_requirements_md_better_auth_guest_google_concept",
+      "label": "Better Auth\u533f\u540d\u30b2\u30b9\u30c8/Google OAuth",
+      "file_type": "concept",
+      "source_file": "docs/frontend/frontend-requirements.md",
+      "source_location": "9. \u8a8d\u8a3c\u3068\u30a2\u30ab\u30a6\u30f3\u30c8\u64cd\u4f5c"
+    },
+    {
+      "id": "_docs_frontend_frontend_requirements_md_learning_content_concept",
+      "label": "\u9632\u707d\u5b66\u7fd2\u30b3\u30f3\u30c6\u30f3\u30c4\u3068\u5bfe\u6226\u5f8c\u5c0e\u7dda",
+      "file_type": "concept",
+      "source_file": "docs/frontend/frontend-requirements.md",
+      "source_location": "7. \u707d\u5bb3\u30fb\u9632\u707d\u60c5\u5831\u753b\u9762"
+    },
+    {
+      "id": "_docs_frontend_frontend_requirements_md_accessibility_concept",
+      "label": "\u30ad\u30fc\u30dc\u30fc\u30c9\u64cd\u4f5c\u30fb\u30d5\u30a9\u30fc\u30ab\u30b9\u30fbreduced motion",
+      "file_type": "concept",
+      "source_file": "docs/frontend/frontend-requirements.md",
+      "source_location": "11. \u30a2\u30af\u30bb\u30b7\u30d3\u30ea\u30c6\u30a3\u3068\u64cd\u4f5c\u6027"
+    },
+    {
+      "id": "_docs_frontend_frontend_requirements_md_no_optimistic_update_concept",
+      "label": "\u30b5\u30fc\u30d0\u30fc\u6b63\u672c\u3067\u697d\u89b3\u66f4\u65b0\u3057\u306a\u3044",
+      "file_type": "concept",
+      "source_file": "docs/frontend/frontend-requirements.md",
+      "source_location": "6.4 \u30c9\u30e9\u30c3\u30b0\uff06\u30c9\u30ed\u30c3\u30d7"
+    }
+  ],
+  "edges": [
+    {
+      "source": "_docs_frontend_frontend_requirements_md_document",
+      "target": "_docs_frontend_frontend_requirements_md_educational_two_faction_game_concept",
+      "relation": "describes",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/frontend/frontend-requirements.md",
+      "source_location": "1. \u6587\u66f8\u6982\u8981"
+    },
+    {
+      "source": "_docs_frontend_frontend_requirements_md_document",
+      "target": "_docs_frontend_frontend_requirements_md_priority_p0_p1_p2_concept",
+      "relation": "prioritizes",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/frontend/frontend-requirements.md",
+      "source_location": "1. \u6587\u66f8\u6982\u8981"
+    },
+    {
+      "source": "_docs_frontend_frontend_requirements_md_document",
+      "target": "_docs_frontend_frontend_requirements_md_pc_minimum_1180x720_concept",
+      "relation": "requires",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/frontend/frontend-requirements.md",
+      "source_location": "4. \u5bfe\u5fdc\u74b0\u5883"
+    },
+    {
+      "source": "_docs_frontend_frontend_requirements_md_document",
+      "target": "_docs_frontend_frontend_requirements_md_dnd_fixed_slots_concept",
+      "relation": "requires",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/frontend/frontend-requirements.md",
+      "source_location": "2. \u78ba\u5b9a\u4e8b\u9805"
+    },
+    {
+      "source": "_docs_frontend_frontend_requirements_md_document",
+      "target": "_docs_frontend_frontend_requirements_md_route_map_concept",
+      "relation": "defines",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/frontend/frontend-requirements.md",
+      "source_location": "5. \u60c5\u5831\u8a2d\u8a08\u3068\u30eb\u30fc\u30c6\u30a3\u30f3\u30b0"
+    },
+    {
+      "source": "_docs_frontend_frontend_requirements_md_document",
+      "target": "_docs_frontend_frontend_requirements_md_three_region_board_layout_concept",
+      "relation": "defines",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/frontend/frontend-requirements.md",
+      "source_location": "6.2 \u30ec\u30a4\u30a2\u30a6\u30c8"
+    },
+    {
+      "source": "_docs_frontend_frontend_requirements_md_document",
+      "target": "_docs_frontend_frontend_requirements_md_phase_commands_concept",
+      "relation": "defines",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/frontend/frontend-requirements.md",
+      "source_location": "6.3 \u30d5\u30a7\u30fc\u30ba\u5225\u306e\u64cd\u4f5c"
+    },
+    {
+      "source": "_docs_frontend_frontend_requirements_md_document",
+      "target": "_docs_frontend_frontend_requirements_md_public_private_info_boundary_concept",
+      "relation": "requires",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/frontend/frontend-requirements.md",
+      "source_location": "12. \u30c7\u30fc\u30bf\u3068\u4f9d\u5b58\u5883\u754c"
+    },
+    {
+      "source": "_docs_frontend_frontend_requirements_md_document",
+      "target": "_docs_frontend_frontend_requirements_md_better_auth_guest_google_concept",
+      "relation": "requires",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/frontend/frontend-requirements.md",
+      "source_location": "9. \u8a8d\u8a3c\u3068\u30a2\u30ab\u30a6\u30f3\u30c8\u64cd\u4f5c"
+    },
+    {
+      "source": "_docs_frontend_frontend_requirements_md_document",
+      "target": "_docs_frontend_frontend_requirements_md_learning_content_concept",
+      "relation": "defines",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/frontend/frontend-requirements.md",
+      "source_location": "7. \u707d\u5bb3\u30fb\u9632\u707d\u60c5\u5831\u753b\u9762"
+    },
+    {
+      "source": "_docs_frontend_frontend_requirements_md_document",
+      "target": "_docs_frontend_frontend_requirements_md_accessibility_concept",
+      "relation": "requires",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/frontend/frontend-requirements.md",
+      "source_location": "11. \u30a2\u30af\u30bb\u30b7\u30d3\u30ea\u30c6\u30a3\u3068\u64cd\u4f5c\u6027"
+    },
+    {
+      "source": "_docs_frontend_frontend_requirements_md_document",
+      "target": "_docs_frontend_frontend_requirements_md_no_optimistic_update_concept",
+      "relation": "prohibits",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/frontend/frontend-requirements.md",
+      "source_location": "6.4 \u30c9\u30e9\u30c3\u30b0\uff06\u30c9\u30ed\u30c3\u30d7"
+    },
+    {
+      "source": "_docs_frontend_frontend_requirements_md_document",
+      "target": "_docs_game_rule_definition_md_document",
+      "relation": "defers_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/frontend/frontend-requirements.md",
+      "source_location": "1. \u6587\u66f8\u6982\u8981"
+    },
+    {
+      "source": "_docs_frontend_frontend_requirements_md_document",
+      "target": "_docs_game_gameengine_definition_md_document",
+      "relation": "defers_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/frontend/frontend-requirements.md",
+      "source_location": "1. \u6587\u66f8\u6982\u8981"
+    },
+    {
+      "source": "_docs_frontend_frontend_requirements_md_document",
+      "target": "_docs_frontend_card_game_ui_image_image_png_image",
+      "relation": "uses_as_layout_reference",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/frontend/frontend-requirements.md",
+      "source_location": "6.2 \u30ec\u30a4\u30a2\u30a6\u30c8"
+    }
+  ],
+  "hyperedges": []
+}

@@ -1,0 +1,39 @@
+{
+  "nodes": [
+    {
+      "id": "_agents_skills_migrate_radix_to_base_class_mapping_document",
+      "label": "Class-string rewrites",
+      "file_type": "document",
+      "source_file": ".agents/skills/migrate-radix-to-base/class-mapping.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_agents_skills_migrate_radix_to_base_class_mapping_document_data_attributes",
+      "label": "Radix to Base data-attribute rewrites",
+      "file_type": "concept",
+      "source_file": ".agents/skills/migrate-radix-to-base/class-mapping.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    }
+  ],
+  "edges": [
+    {
+      "source": "_agents_skills_migrate_radix_to_base_class_mapping_document",
+      "target": "_agents_skills_migrate_radix_to_base_class_mapping_document_data_attributes",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".agents/skills/migrate-radix-to-base/class-mapping.md",
+      "source_location": null,
+      "weight": 1.0
+    }
+  ],
+  "hyperedges": []
+}

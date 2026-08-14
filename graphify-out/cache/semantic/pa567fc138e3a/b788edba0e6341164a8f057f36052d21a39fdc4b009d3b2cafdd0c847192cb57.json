@@ -1,0 +1,55 @@
+{
+  "nodes": [
+    {
+      "id": "_pnpm_workspace_yaml_document",
+      "label": "pnpm workspace\u8a2d\u5b9a",
+      "file_type": "document",
+      "source_file": "pnpm-workspace.yaml",
+      "source_location": null
+    },
+    {
+      "id": "_pnpm_workspace_yaml_workspace_globs_concept",
+      "label": "apps/*\u30fbpackages/* workspace glob",
+      "file_type": "concept",
+      "source_file": "pnpm-workspace.yaml",
+      "source_location": "packages"
+    },
+    {
+      "id": "_pnpm_workspace_yaml_allowed_builds_concept",
+      "label": "esbuild/sharp/workerd allowBuilds",
+      "file_type": "concept",
+      "source_file": "pnpm-workspace.yaml",
+      "source_location": "allowBuilds"
+    }
+  ],
+  "edges": [
+    {
+      "source": "_pnpm_workspace_yaml_document",
+      "target": "_pnpm_workspace_yaml_workspace_globs_concept",
+      "relation": "defines",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "pnpm-workspace.yaml",
+      "source_location": "packages"
+    },
+    {
+      "source": "_pnpm_workspace_yaml_document",
+      "target": "_pnpm_workspace_yaml_allowed_builds_concept",
+      "relation": "defines",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "pnpm-workspace.yaml",
+      "source_location": "allowBuilds"
+    },
+    {
+      "source": "_docs_environment_development_environment_md_pnpm_turborepo_monorepo_concept",
+      "target": "_pnpm_workspace_yaml_workspace_globs_concept",
+      "relation": "implemented_by",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "pnpm-workspace.yaml",
+      "source_location": "packages"
+    }
+  ],
+  "hyperedges": []
+}

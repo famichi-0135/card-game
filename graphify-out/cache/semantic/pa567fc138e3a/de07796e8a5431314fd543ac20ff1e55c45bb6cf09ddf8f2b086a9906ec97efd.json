@@ -1,0 +1,847 @@
+{
+  "nodes": [
+    {
+      "id": "_docs_backend_database_and_auth_md_document",
+      "label": "Database and Authentication Foundation",
+      "file_type": "document",
+      "source_file": "docs/backend/database-and-auth.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_docs_backend_database_and_auth_md_d1_database_concept",
+      "label": "Cloudflare D1",
+      "file_type": "concept",
+      "source_file": "docs/backend/database-and-auth.md",
+      "source_location": null
+    },
+    {
+      "id": "_docs_backend_database_and_auth_md_drizzle_schema_concept",
+      "label": "Drizzle schema and migrations",
+      "file_type": "concept",
+      "source_file": "docs/backend/database-and-auth.md",
+      "source_location": null
+    },
+    {
+      "id": "_docs_backend_database_and_auth_md_better_auth_concept",
+      "label": "Better Auth",
+      "file_type": "concept",
+      "source_file": "docs/backend/database-and-auth.md",
+      "source_location": null
+    },
+    {
+      "id": "_docs_backend_database_and_auth_md_anonymous_guest_concept",
+      "label": "Anonymous guest",
+      "file_type": "concept",
+      "source_file": "docs/backend/database-and-auth.md",
+      "source_location": null
+    },
+    {
+      "id": "_docs_backend_database_and_auth_md_google_oauth_concept",
+      "label": "Google OAuth",
+      "file_type": "concept",
+      "source_file": "docs/backend/database-and-auth.md",
+      "source_location": null
+    },
+    {
+      "id": "_docs_backend_database_and_auth_md_unsupported_auth_concept",
+      "label": "Unsupported email/password and email service",
+      "file_type": "concept",
+      "source_file": "docs/backend/database-and-auth.md",
+      "source_location": null
+    },
+    {
+      "id": "_docs_backend_database_and_auth_md_auth_source_paths_concept",
+      "label": "Authentication source paths",
+      "file_type": "concept",
+      "source_file": "docs/backend/database-and-auth.md",
+      "source_location": null
+    },
+    {
+      "id": "_docs_backend_database_and_auth_md_social_signin_concept",
+      "label": "Social sign-in endpoint",
+      "file_type": "concept",
+      "source_file": "docs/backend/database-and-auth.md",
+      "source_location": null
+    },
+    {
+      "id": "_docs_backend_database_and_auth_md_google_scopes_concept",
+      "label": "openid email profile scopes",
+      "file_type": "concept",
+      "source_file": "docs/backend/database-and-auth.md",
+      "source_location": null
+    },
+    {
+      "id": "_docs_backend_database_and_auth_md_callback_uri_concept",
+      "label": "Google callback URI",
+      "file_type": "concept",
+      "source_file": "docs/backend/database-and-auth.md",
+      "source_location": null
+    },
+    {
+      "id": "_docs_backend_database_and_auth_md_trusted_origins_concept",
+      "label": "Trusted origins",
+      "file_type": "concept",
+      "source_file": "docs/backend/database-and-auth.md",
+      "source_location": null
+    },
+    {
+      "id": "_docs_backend_database_and_auth_md_oauth_error_handling_concept",
+      "label": "OAuth error handling",
+      "file_type": "concept",
+      "source_file": "docs/backend/database-and-auth.md",
+      "source_location": null
+    },
+    {
+      "id": "_docs_backend_database_and_auth_md_anonymous_plugin_concept",
+      "label": "Anonymous plugin",
+      "file_type": "concept",
+      "source_file": "docs/backend/database-and-auth.md",
+      "source_location": null
+    },
+    {
+      "id": "_docs_backend_database_and_auth_md_guest_cookie_concept",
+      "label": "Guest session cookie",
+      "file_type": "concept",
+      "source_file": "docs/backend/database-and-auth.md",
+      "source_location": null
+    },
+    {
+      "id": "_docs_backend_database_and_auth_md_account_linking_concept",
+      "label": "Guest account linking",
+      "file_type": "concept",
+      "source_file": "docs/backend/database-and-auth.md",
+      "source_location": null
+    },
+    {
+      "id": "_docs_backend_database_and_auth_md_on_link_account_concept",
+      "label": "onLinkAccount handler",
+      "file_type": "concept",
+      "source_file": "docs/backend/database-and-auth.md",
+      "source_location": null
+    },
+    {
+      "id": "_docs_backend_database_and_auth_md_account_link_conflict_concept",
+      "label": "ACCOUNT_LINK_CONFLICT",
+      "file_type": "concept",
+      "source_file": "docs/backend/database-and-auth.md",
+      "source_location": null
+    },
+    {
+      "id": "_docs_backend_database_and_auth_md_migration_0001_concept",
+      "label": "0001_curved_doctor_octopus migration",
+      "file_type": "concept",
+      "source_file": "docs/backend/database-and-auth.md",
+      "source_location": null
+    },
+    {
+      "id": "_docs_backend_database_and_auth_md_auth_schema_migration_concept",
+      "label": "Auth schema migration",
+      "file_type": "concept",
+      "source_file": "docs/backend/database-and-auth.md",
+      "source_location": null
+    },
+    {
+      "id": "_docs_backend_database_and_auth_md_environment_auth_vars_concept",
+      "label": "Authentication environment variables",
+      "file_type": "concept",
+      "source_file": "docs/backend/database-and-auth.md",
+      "source_location": null
+    },
+    {
+      "id": "_docs_backend_database_and_auth_md_local_auth_commands_concept",
+      "label": "Local auth and database commands",
+      "file_type": "concept",
+      "source_file": "docs/backend/database-and-auth.md",
+      "source_location": null
+    },
+    {
+      "id": "_docs_backend_database_and_auth_md_dev_vars_secret_concept",
+      "label": "BETTER_AUTH_SECRET handling",
+      "file_type": "concept",
+      "source_file": "docs/backend/database-and-auth.md",
+      "source_location": null
+    },
+    {
+      "id": "_docs_backend_database_and_auth_md_runtime_auth_instance_concept",
+      "label": "Per-request Better Auth instance",
+      "file_type": "concept",
+      "source_file": "docs/backend/database-and-auth.md",
+      "source_location": null
+    },
+    {
+      "id": "_docs_backend_database_and_auth_md_session_endpoint_concept",
+      "label": "GET /api/session",
+      "file_type": "concept",
+      "source_file": "docs/backend/database-and-auth.md",
+      "source_location": null
+    },
+    {
+      "id": "_docs_backend_database_and_auth_md_player_identity_concept",
+      "label": "player_identity mapping",
+      "file_type": "concept",
+      "source_file": "docs/backend/database-and-auth.md",
+      "source_location": null
+    },
+    {
+      "id": "_docs_backend_database_and_auth_md_no_identity_foreign_key_concept",
+      "label": "No foreign key on auth_user_id",
+      "file_type": "concept",
+      "source_file": "docs/backend/database-and-auth.md",
+      "source_location": null
+    },
+    {
+      "id": "_docs_backend_database_and_auth_md_delete_user_concept",
+      "label": "Delete-user endpoint",
+      "file_type": "concept",
+      "source_file": "docs/backend/database-and-auth.md",
+      "source_location": null
+    },
+    {
+      "id": "_docs_backend_database_and_auth_md_cascade_delete_concept",
+      "label": "Account/session cascade delete",
+      "file_type": "concept",
+      "source_file": "docs/backend/database-and-auth.md",
+      "source_location": null
+    },
+    {
+      "id": "_docs_backend_database_and_auth_md_recent_auth_required_concept",
+      "label": "Recent-auth deletion requirement",
+      "file_type": "concept",
+      "source_file": "docs/backend/database-and-auth.md",
+      "source_location": null
+    },
+    {
+      "id": "_docs_backend_database_and_auth_md_retained_game_data_concept",
+      "label": "Retained game data",
+      "file_type": "concept",
+      "source_file": "docs/backend/database-and-auth.md",
+      "source_location": null
+    },
+    {
+      "id": "_docs_backend_database_and_auth_md_staging_production_setup_concept",
+      "label": "Staging and production setup",
+      "file_type": "concept",
+      "source_file": "docs/backend/database-and-auth.md",
+      "source_location": null
+    },
+    {
+      "id": "_docs_backend_database_and_auth_md_deployment_order_concept",
+      "label": "Backend then frontend deployment",
+      "file_type": "concept",
+      "source_file": "docs/backend/database-and-auth.md",
+      "source_location": null
+    },
+    {
+      "id": "_docs_backend_database_and_auth_md_secret_handling_concept",
+      "label": "Secret handling",
+      "file_type": "concept",
+      "source_file": "docs/backend/database-and-auth.md",
+      "source_location": null
+    },
+    {
+      "id": "_docs_backend_database_and_auth_md_existing_d1_import_concept",
+      "label": "Existing D1 import",
+      "file_type": "concept",
+      "source_file": "docs/backend/database-and-auth.md",
+      "source_location": null
+    },
+    {
+      "id": "_docs_backend_database_and_auth_md_db_pull_concept",
+      "label": "db:pull command",
+      "file_type": "concept",
+      "source_file": "docs/backend/database-and-auth.md",
+      "source_location": null
+    },
+    {
+      "id": "_docs_backend_database_and_auth_md_baseline_sql_concept",
+      "label": "Baseline SQL",
+      "file_type": "concept",
+      "source_file": "docs/backend/database-and-auth.md",
+      "source_location": null
+    },
+    {
+      "id": "_docs_backend_database_and_auth_md_database_id_placeholder_concept",
+      "label": "Placeholder database ID",
+      "file_type": "concept",
+      "source_file": "docs/backend/database-and-auth.md",
+      "source_location": null
+    }
+  ],
+  "edges": [
+    {
+      "source": "_docs_backend_database_and_auth_md_document",
+      "target": "_docs_backend_database_and_auth_md_d1_database_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": "docs/backend/database-and-auth.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_docs_backend_database_and_auth_md_document",
+      "target": "_docs_backend_database_and_auth_md_drizzle_schema_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": "docs/backend/database-and-auth.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_docs_backend_database_and_auth_md_document",
+      "target": "_docs_backend_database_and_auth_md_better_auth_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": "docs/backend/database-and-auth.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_docs_backend_database_and_auth_md_document",
+      "target": "_docs_backend_database_and_auth_md_anonymous_guest_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": "docs/backend/database-and-auth.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_docs_backend_database_and_auth_md_document",
+      "target": "_docs_backend_database_and_auth_md_google_oauth_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": "docs/backend/database-and-auth.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_docs_backend_database_and_auth_md_document",
+      "target": "_docs_backend_database_and_auth_md_unsupported_auth_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": "docs/backend/database-and-auth.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_docs_backend_database_and_auth_md_document",
+      "target": "_docs_backend_database_and_auth_md_auth_source_paths_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": "docs/backend/database-and-auth.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_docs_backend_database_and_auth_md_document",
+      "target": "_docs_backend_database_and_auth_md_social_signin_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": "docs/backend/database-and-auth.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_docs_backend_database_and_auth_md_document",
+      "target": "_docs_backend_database_and_auth_md_google_scopes_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": "docs/backend/database-and-auth.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_docs_backend_database_and_auth_md_document",
+      "target": "_docs_backend_database_and_auth_md_callback_uri_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": "docs/backend/database-and-auth.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_docs_backend_database_and_auth_md_document",
+      "target": "_docs_backend_database_and_auth_md_trusted_origins_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": "docs/backend/database-and-auth.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_docs_backend_database_and_auth_md_document",
+      "target": "_docs_backend_database_and_auth_md_oauth_error_handling_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": "docs/backend/database-and-auth.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_docs_backend_database_and_auth_md_document",
+      "target": "_docs_backend_database_and_auth_md_anonymous_plugin_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": "docs/backend/database-and-auth.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_docs_backend_database_and_auth_md_document",
+      "target": "_docs_backend_database_and_auth_md_guest_cookie_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": "docs/backend/database-and-auth.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_docs_backend_database_and_auth_md_document",
+      "target": "_docs_backend_database_and_auth_md_account_linking_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": "docs/backend/database-and-auth.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_docs_backend_database_and_auth_md_document",
+      "target": "_docs_backend_database_and_auth_md_on_link_account_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": "docs/backend/database-and-auth.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_docs_backend_database_and_auth_md_document",
+      "target": "_docs_backend_database_and_auth_md_account_link_conflict_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": "docs/backend/database-and-auth.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_docs_backend_database_and_auth_md_document",
+      "target": "_docs_backend_database_and_auth_md_migration_0001_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": "docs/backend/database-and-auth.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_docs_backend_database_and_auth_md_document",
+      "target": "_docs_backend_database_and_auth_md_auth_schema_migration_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": "docs/backend/database-and-auth.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_docs_backend_database_and_auth_md_document",
+      "target": "_docs_backend_database_and_auth_md_environment_auth_vars_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": "docs/backend/database-and-auth.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_docs_backend_database_and_auth_md_document",
+      "target": "_docs_backend_database_and_auth_md_local_auth_commands_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": "docs/backend/database-and-auth.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_docs_backend_database_and_auth_md_document",
+      "target": "_docs_backend_database_and_auth_md_dev_vars_secret_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": "docs/backend/database-and-auth.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_docs_backend_database_and_auth_md_document",
+      "target": "_docs_backend_database_and_auth_md_runtime_auth_instance_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": "docs/backend/database-and-auth.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_docs_backend_database_and_auth_md_document",
+      "target": "_docs_backend_database_and_auth_md_session_endpoint_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": "docs/backend/database-and-auth.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_docs_backend_database_and_auth_md_document",
+      "target": "_docs_backend_database_and_auth_md_player_identity_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": "docs/backend/database-and-auth.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_docs_backend_database_and_auth_md_document",
+      "target": "_docs_backend_database_and_auth_md_no_identity_foreign_key_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": "docs/backend/database-and-auth.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_docs_backend_database_and_auth_md_document",
+      "target": "_docs_backend_database_and_auth_md_delete_user_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": "docs/backend/database-and-auth.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_docs_backend_database_and_auth_md_document",
+      "target": "_docs_backend_database_and_auth_md_cascade_delete_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": "docs/backend/database-and-auth.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_docs_backend_database_and_auth_md_document",
+      "target": "_docs_backend_database_and_auth_md_recent_auth_required_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": "docs/backend/database-and-auth.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_docs_backend_database_and_auth_md_document",
+      "target": "_docs_backend_database_and_auth_md_retained_game_data_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": "docs/backend/database-and-auth.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_docs_backend_database_and_auth_md_document",
+      "target": "_docs_backend_database_and_auth_md_staging_production_setup_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": "docs/backend/database-and-auth.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_docs_backend_database_and_auth_md_document",
+      "target": "_docs_backend_database_and_auth_md_deployment_order_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": "docs/backend/database-and-auth.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_docs_backend_database_and_auth_md_document",
+      "target": "_docs_backend_database_and_auth_md_secret_handling_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": "docs/backend/database-and-auth.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_docs_backend_database_and_auth_md_document",
+      "target": "_docs_backend_database_and_auth_md_existing_d1_import_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": "docs/backend/database-and-auth.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_docs_backend_database_and_auth_md_document",
+      "target": "_docs_backend_database_and_auth_md_db_pull_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": "docs/backend/database-and-auth.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_docs_backend_database_and_auth_md_document",
+      "target": "_docs_backend_database_and_auth_md_baseline_sql_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": "docs/backend/database-and-auth.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_docs_backend_database_and_auth_md_document",
+      "target": "_docs_backend_database_and_auth_md_database_id_placeholder_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": "docs/backend/database-and-auth.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_docs_backend_database_and_auth_md_d1_database_concept",
+      "target": "_docs_backend_database_and_auth_md_drizzle_schema_concept",
+      "relation": "persists",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": "docs/backend/database-and-auth.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_docs_backend_database_and_auth_md_better_auth_concept",
+      "target": "_docs_backend_database_and_auth_md_google_oauth_concept",
+      "relation": "provides",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": "docs/backend/database-and-auth.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_docs_backend_database_and_auth_md_better_auth_concept",
+      "target": "_docs_backend_database_and_auth_md_anonymous_guest_concept",
+      "relation": "provides",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": "docs/backend/database-and-auth.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_docs_backend_database_and_auth_md_google_oauth_concept",
+      "target": "_docs_backend_database_and_auth_md_google_scopes_concept",
+      "relation": "requests",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": "docs/backend/database-and-auth.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_docs_backend_database_and_auth_md_google_oauth_concept",
+      "target": "_docs_backend_database_and_auth_md_callback_uri_concept",
+      "relation": "uses",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": "docs/backend/database-and-auth.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_docs_backend_database_and_auth_md_trusted_origins_concept",
+      "target": "_docs_backend_database_and_auth_md_callback_uri_concept",
+      "relation": "constrains",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": "docs/backend/database-and-auth.md",
+      "source_location": null,
+      "weight": 0.85
+    },
+    {
+      "source": "_docs_backend_database_and_auth_md_anonymous_guest_concept",
+      "target": "_docs_backend_database_and_auth_md_guest_cookie_concept",
+      "relation": "creates",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": "docs/backend/database-and-auth.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_docs_backend_database_and_auth_md_account_linking_concept",
+      "target": "_docs_backend_database_and_auth_md_on_link_account_concept",
+      "relation": "uses",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": "docs/backend/database-and-auth.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_docs_backend_database_and_auth_md_account_linking_concept",
+      "target": "_docs_backend_database_and_auth_md_account_link_conflict_concept",
+      "relation": "rejects",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": "docs/backend/database-and-auth.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_docs_backend_database_and_auth_md_migration_0001_concept",
+      "target": "_docs_backend_database_and_auth_md_player_identity_concept",
+      "relation": "backfills",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": "docs/backend/database-and-auth.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_docs_backend_database_and_auth_md_session_endpoint_concept",
+      "target": "_docs_backend_database_and_auth_md_player_identity_concept",
+      "relation": "resolves",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": "docs/backend/database-and-auth.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_docs_backend_database_and_auth_md_player_identity_concept",
+      "target": "_docs_backend_database_and_auth_md_no_identity_foreign_key_concept",
+      "relation": "enables",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": "docs/backend/database-and-auth.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_docs_backend_database_and_auth_md_delete_user_concept",
+      "target": "_docs_backend_database_and_auth_md_cascade_delete_concept",
+      "relation": "uses",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": "docs/backend/database-and-auth.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_docs_backend_database_and_auth_md_delete_user_concept",
+      "target": "_docs_backend_database_and_auth_md_retained_game_data_concept",
+      "relation": "preserves",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": "docs/backend/database-and-auth.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_docs_backend_database_and_auth_md_staging_production_setup_concept",
+      "target": "_docs_backend_database_and_auth_md_deployment_order_concept",
+      "relation": "specifies",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": "docs/backend/database-and-auth.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_docs_backend_database_and_auth_md_staging_production_setup_concept",
+      "target": "_docs_backend_database_and_auth_md_secret_handling_concept",
+      "relation": "requires",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": "docs/backend/database-and-auth.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_docs_backend_database_and_auth_md_existing_d1_import_concept",
+      "target": "_docs_backend_database_and_auth_md_db_pull_concept",
+      "relation": "requires",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": "docs/backend/database-and-auth.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_docs_backend_database_and_auth_md_existing_d1_import_concept",
+      "target": "_docs_backend_database_and_auth_md_baseline_sql_concept",
+      "relation": "produces",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": "docs/backend/database-and-auth.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_docs_backend_database_and_auth_md_player_identity_concept",
+      "target": "_docs_backend_client_server_protocol_md_player_id_distinction_concept",
+      "relation": "resolves",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": "docs/backend/database-and-auth.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_docs_backend_database_and_auth_md_deployment_order_concept",
+      "target": "_readme_md_service_binding_deploy_order_concept",
+      "relation": "aligns_with",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": "docs/backend/database-and-auth.md",
+      "source_location": null,
+      "weight": 1
+    }
+  ],
+  "hyperedges": []
+}

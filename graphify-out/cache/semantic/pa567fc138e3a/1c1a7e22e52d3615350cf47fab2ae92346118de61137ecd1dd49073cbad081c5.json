@@ -1,0 +1,536 @@
+{
+  "nodes": [
+    {
+      "id": "_agents_skills_two_factor_authentication_best_practices_skill_md_document",
+      "label": "Two-Factor Authentication Best Practices",
+      "file_type": "document",
+      "source_file": ".agents/skills/two-factor-authentication-best-practices/SKILL.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_agents_skills_two_factor_authentication_best_practices_skill_md_two_factor_plugin_concept",
+      "label": "Better Auth twoFactor plugin",
+      "file_type": "concept",
+      "source_file": ".agents/skills/two-factor-authentication-best-practices/SKILL.md",
+      "source_location": null
+    },
+    {
+      "id": "_agents_skills_two_factor_authentication_best_practices_skill_md_two_factor_client_plugin_concept",
+      "label": "twoFactorClient plugin",
+      "file_type": "concept",
+      "source_file": ".agents/skills/two-factor-authentication-best-practices/SKILL.md",
+      "source_location": null
+    },
+    {
+      "id": "_agents_skills_two_factor_authentication_best_practices_skill_md_auth_migration_concept",
+      "label": "Better Auth schema migration",
+      "file_type": "concept",
+      "source_file": ".agents/skills/two-factor-authentication-best-practices/SKILL.md",
+      "source_location": null
+    },
+    {
+      "id": "_agents_skills_two_factor_authentication_best_practices_skill_md_two_factor_secret_column_concept",
+      "label": "twoFactorSecret user column",
+      "file_type": "concept",
+      "source_file": ".agents/skills/two-factor-authentication-best-practices/SKILL.md",
+      "source_location": null
+    },
+    {
+      "id": "_agents_skills_two_factor_authentication_best_practices_skill_md_password_verification_concept",
+      "label": "Password verification",
+      "file_type": "concept",
+      "source_file": ".agents/skills/two-factor-authentication-best-practices/SKILL.md",
+      "source_location": null
+    },
+    {
+      "id": "_agents_skills_two_factor_authentication_best_practices_skill_md_totp_uri_concept",
+      "label": "TOTP URI",
+      "file_type": "concept",
+      "source_file": ".agents/skills/two-factor-authentication-best-practices/SKILL.md",
+      "source_location": null
+    },
+    {
+      "id": "_agents_skills_two_factor_authentication_best_practices_skill_md_backup_codes_concept",
+      "label": "Backup codes",
+      "file_type": "concept",
+      "source_file": ".agents/skills/two-factor-authentication-best-practices/SKILL.md",
+      "source_location": null
+    },
+    {
+      "id": "_agents_skills_two_factor_authentication_best_practices_skill_md_skip_verification_concept",
+      "label": "skipVerificationOnEnable option",
+      "file_type": "concept",
+      "source_file": ".agents/skills/two-factor-authentication-best-practices/SKILL.md",
+      "source_location": null
+    },
+    {
+      "id": "_agents_skills_two_factor_authentication_best_practices_skill_md_qr_code_setup_concept",
+      "label": "TOTP QR code setup",
+      "file_type": "concept",
+      "source_file": ".agents/skills/two-factor-authentication-best-practices/SKILL.md",
+      "source_location": null
+    },
+    {
+      "id": "_agents_skills_two_factor_authentication_best_practices_skill_md_totp_verification_concept",
+      "label": "TOTP verification",
+      "file_type": "concept",
+      "source_file": ".agents/skills/two-factor-authentication-best-practices/SKILL.md",
+      "source_location": null
+    },
+    {
+      "id": "_agents_skills_two_factor_authentication_best_practices_skill_md_totp_options_concept",
+      "label": "TOTP digits and period",
+      "file_type": "concept",
+      "source_file": ".agents/skills/two-factor-authentication-best-practices/SKILL.md",
+      "source_location": null
+    },
+    {
+      "id": "_agents_skills_two_factor_authentication_best_practices_skill_md_otp_delivery_concept",
+      "label": "OTP email or SMS delivery",
+      "file_type": "concept",
+      "source_file": ".agents/skills/two-factor-authentication-best-practices/SKILL.md",
+      "source_location": null
+    },
+    {
+      "id": "_agents_skills_two_factor_authentication_best_practices_skill_md_otp_options_concept",
+      "label": "OTP period and attempts",
+      "file_type": "concept",
+      "source_file": ".agents/skills/two-factor-authentication-best-practices/SKILL.md",
+      "source_location": null
+    },
+    {
+      "id": "_agents_skills_two_factor_authentication_best_practices_skill_md_otp_storage_concept",
+      "label": "OTP storage protection",
+      "file_type": "concept",
+      "source_file": ".agents/skills/two-factor-authentication-best-practices/SKILL.md",
+      "source_location": null
+    },
+    {
+      "id": "_agents_skills_two_factor_authentication_best_practices_skill_md_backup_code_single_use_concept",
+      "label": "Single-use backup codes",
+      "file_type": "concept",
+      "source_file": ".agents/skills/two-factor-authentication-best-practices/SKILL.md",
+      "source_location": null
+    },
+    {
+      "id": "_agents_skills_two_factor_authentication_best_practices_skill_md_backup_code_regeneration_concept",
+      "label": "Backup code regeneration",
+      "file_type": "concept",
+      "source_file": ".agents/skills/two-factor-authentication-best-practices/SKILL.md",
+      "source_location": null
+    },
+    {
+      "id": "_agents_skills_two_factor_authentication_best_practices_skill_md_two_factor_redirect_concept",
+      "label": "twoFactorRedirect response",
+      "file_type": "concept",
+      "source_file": ".agents/skills/two-factor-authentication-best-practices/SKILL.md",
+      "source_location": null
+    },
+    {
+      "id": "_agents_skills_two_factor_authentication_best_practices_skill_md_signin_2fa_flow_concept",
+      "label": "Two-factor sign-in flow",
+      "file_type": "concept",
+      "source_file": ".agents/skills/two-factor-authentication-best-practices/SKILL.md",
+      "source_location": null
+    },
+    {
+      "id": "_agents_skills_two_factor_authentication_best_practices_skill_md_trusted_devices_concept",
+      "label": "Trusted devices",
+      "file_type": "concept",
+      "source_file": ".agents/skills/two-factor-authentication-best-practices/SKILL.md",
+      "source_location": null
+    },
+    {
+      "id": "_agents_skills_two_factor_authentication_best_practices_skill_md_temporary_2fa_cookie_concept",
+      "label": "Temporary two-factor cookie",
+      "file_type": "concept",
+      "source_file": ".agents/skills/two-factor-authentication-best-practices/SKILL.md",
+      "source_location": null
+    },
+    {
+      "id": "_agents_skills_two_factor_authentication_best_practices_skill_md_rate_limiting_concept",
+      "label": "Two-factor rate limiting",
+      "file_type": "concept",
+      "source_file": ".agents/skills/two-factor-authentication-best-practices/SKILL.md",
+      "source_location": null
+    },
+    {
+      "id": "_agents_skills_two_factor_authentication_best_practices_skill_md_encryption_at_rest_concept",
+      "label": "Encryption at rest",
+      "file_type": "concept",
+      "source_file": ".agents/skills/two-factor-authentication-best-practices/SKILL.md",
+      "source_location": null
+    },
+    {
+      "id": "_agents_skills_two_factor_authentication_best_practices_skill_md_credential_account_only_concept",
+      "label": "Credential account restriction",
+      "file_type": "concept",
+      "source_file": ".agents/skills/two-factor-authentication-best-practices/SKILL.md",
+      "source_location": null
+    },
+    {
+      "id": "_agents_skills_two_factor_authentication_best_practices_skill_md_disable_two_factor_concept",
+      "label": "Disable two-factor authentication",
+      "file_type": "concept",
+      "source_file": ".agents/skills/two-factor-authentication-best-practices/SKILL.md",
+      "source_location": null
+    }
+  ],
+  "edges": [
+    {
+      "source": "_agents_skills_two_factor_authentication_best_practices_skill_md_document",
+      "target": "_agents_skills_two_factor_authentication_best_practices_skill_md_two_factor_plugin_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": ".agents/skills/two-factor-authentication-best-practices/SKILL.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_agents_skills_two_factor_authentication_best_practices_skill_md_document",
+      "target": "_agents_skills_two_factor_authentication_best_practices_skill_md_two_factor_client_plugin_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": ".agents/skills/two-factor-authentication-best-practices/SKILL.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_agents_skills_two_factor_authentication_best_practices_skill_md_document",
+      "target": "_agents_skills_two_factor_authentication_best_practices_skill_md_auth_migration_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": ".agents/skills/two-factor-authentication-best-practices/SKILL.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_agents_skills_two_factor_authentication_best_practices_skill_md_document",
+      "target": "_agents_skills_two_factor_authentication_best_practices_skill_md_two_factor_secret_column_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": ".agents/skills/two-factor-authentication-best-practices/SKILL.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_agents_skills_two_factor_authentication_best_practices_skill_md_document",
+      "target": "_agents_skills_two_factor_authentication_best_practices_skill_md_password_verification_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": ".agents/skills/two-factor-authentication-best-practices/SKILL.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_agents_skills_two_factor_authentication_best_practices_skill_md_document",
+      "target": "_agents_skills_two_factor_authentication_best_practices_skill_md_totp_uri_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": ".agents/skills/two-factor-authentication-best-practices/SKILL.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_agents_skills_two_factor_authentication_best_practices_skill_md_document",
+      "target": "_agents_skills_two_factor_authentication_best_practices_skill_md_backup_codes_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": ".agents/skills/two-factor-authentication-best-practices/SKILL.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_agents_skills_two_factor_authentication_best_practices_skill_md_document",
+      "target": "_agents_skills_two_factor_authentication_best_practices_skill_md_skip_verification_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": ".agents/skills/two-factor-authentication-best-practices/SKILL.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_agents_skills_two_factor_authentication_best_practices_skill_md_document",
+      "target": "_agents_skills_two_factor_authentication_best_practices_skill_md_qr_code_setup_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": ".agents/skills/two-factor-authentication-best-practices/SKILL.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_agents_skills_two_factor_authentication_best_practices_skill_md_document",
+      "target": "_agents_skills_two_factor_authentication_best_practices_skill_md_totp_verification_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": ".agents/skills/two-factor-authentication-best-practices/SKILL.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_agents_skills_two_factor_authentication_best_practices_skill_md_document",
+      "target": "_agents_skills_two_factor_authentication_best_practices_skill_md_totp_options_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": ".agents/skills/two-factor-authentication-best-practices/SKILL.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_agents_skills_two_factor_authentication_best_practices_skill_md_document",
+      "target": "_agents_skills_two_factor_authentication_best_practices_skill_md_otp_delivery_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": ".agents/skills/two-factor-authentication-best-practices/SKILL.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_agents_skills_two_factor_authentication_best_practices_skill_md_document",
+      "target": "_agents_skills_two_factor_authentication_best_practices_skill_md_otp_options_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": ".agents/skills/two-factor-authentication-best-practices/SKILL.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_agents_skills_two_factor_authentication_best_practices_skill_md_document",
+      "target": "_agents_skills_two_factor_authentication_best_practices_skill_md_otp_storage_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": ".agents/skills/two-factor-authentication-best-practices/SKILL.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_agents_skills_two_factor_authentication_best_practices_skill_md_document",
+      "target": "_agents_skills_two_factor_authentication_best_practices_skill_md_backup_code_single_use_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": ".agents/skills/two-factor-authentication-best-practices/SKILL.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_agents_skills_two_factor_authentication_best_practices_skill_md_document",
+      "target": "_agents_skills_two_factor_authentication_best_practices_skill_md_backup_code_regeneration_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": ".agents/skills/two-factor-authentication-best-practices/SKILL.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_agents_skills_two_factor_authentication_best_practices_skill_md_document",
+      "target": "_agents_skills_two_factor_authentication_best_practices_skill_md_two_factor_redirect_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": ".agents/skills/two-factor-authentication-best-practices/SKILL.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_agents_skills_two_factor_authentication_best_practices_skill_md_document",
+      "target": "_agents_skills_two_factor_authentication_best_practices_skill_md_signin_2fa_flow_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": ".agents/skills/two-factor-authentication-best-practices/SKILL.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_agents_skills_two_factor_authentication_best_practices_skill_md_document",
+      "target": "_agents_skills_two_factor_authentication_best_practices_skill_md_trusted_devices_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": ".agents/skills/two-factor-authentication-best-practices/SKILL.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_agents_skills_two_factor_authentication_best_practices_skill_md_document",
+      "target": "_agents_skills_two_factor_authentication_best_practices_skill_md_temporary_2fa_cookie_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": ".agents/skills/two-factor-authentication-best-practices/SKILL.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_agents_skills_two_factor_authentication_best_practices_skill_md_document",
+      "target": "_agents_skills_two_factor_authentication_best_practices_skill_md_rate_limiting_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": ".agents/skills/two-factor-authentication-best-practices/SKILL.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_agents_skills_two_factor_authentication_best_practices_skill_md_document",
+      "target": "_agents_skills_two_factor_authentication_best_practices_skill_md_encryption_at_rest_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": ".agents/skills/two-factor-authentication-best-practices/SKILL.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_agents_skills_two_factor_authentication_best_practices_skill_md_document",
+      "target": "_agents_skills_two_factor_authentication_best_practices_skill_md_credential_account_only_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": ".agents/skills/two-factor-authentication-best-practices/SKILL.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_agents_skills_two_factor_authentication_best_practices_skill_md_document",
+      "target": "_agents_skills_two_factor_authentication_best_practices_skill_md_disable_two_factor_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": ".agents/skills/two-factor-authentication-best-practices/SKILL.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_agents_skills_two_factor_authentication_best_practices_skill_md_two_factor_plugin_concept",
+      "target": "_agents_skills_two_factor_authentication_best_practices_skill_md_two_factor_client_plugin_concept",
+      "relation": "pairs_with",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": ".agents/skills/two-factor-authentication-best-practices/SKILL.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_agents_skills_two_factor_authentication_best_practices_skill_md_two_factor_plugin_concept",
+      "target": "_agents_skills_two_factor_authentication_best_practices_skill_md_auth_migration_concept",
+      "relation": "requires",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": ".agents/skills/two-factor-authentication-best-practices/SKILL.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_agents_skills_two_factor_authentication_best_practices_skill_md_two_factor_plugin_concept",
+      "target": "_agents_skills_two_factor_authentication_best_practices_skill_md_password_verification_concept",
+      "relation": "requires",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": ".agents/skills/two-factor-authentication-best-practices/SKILL.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_agents_skills_two_factor_authentication_best_practices_skill_md_two_factor_plugin_concept",
+      "target": "_agents_skills_two_factor_authentication_best_practices_skill_md_two_factor_secret_column_concept",
+      "relation": "creates",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": ".agents/skills/two-factor-authentication-best-practices/SKILL.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_agents_skills_two_factor_authentication_best_practices_skill_md_signin_2fa_flow_concept",
+      "target": "_agents_skills_two_factor_authentication_best_practices_skill_md_two_factor_redirect_concept",
+      "relation": "uses",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": ".agents/skills/two-factor-authentication-best-practices/SKILL.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_agents_skills_two_factor_authentication_best_practices_skill_md_signin_2fa_flow_concept",
+      "target": "_agents_skills_two_factor_authentication_best_practices_skill_md_temporary_2fa_cookie_concept",
+      "relation": "creates",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": ".agents/skills/two-factor-authentication-best-practices/SKILL.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_agents_skills_two_factor_authentication_best_practices_skill_md_trusted_devices_concept",
+      "target": "_agents_skills_two_factor_authentication_best_practices_skill_md_totp_verification_concept",
+      "relation": "uses",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": ".agents/skills/two-factor-authentication-best-practices/SKILL.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_agents_skills_two_factor_authentication_best_practices_skill_md_disable_two_factor_concept",
+      "target": "_agents_skills_two_factor_authentication_best_practices_skill_md_trusted_devices_concept",
+      "relation": "revokes",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": ".agents/skills/two-factor-authentication-best-practices/SKILL.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_agents_skills_two_factor_authentication_best_practices_skill_md_otp_options_concept",
+      "target": "_agents_skills_two_factor_authentication_best_practices_skill_md_otp_storage_concept",
+      "relation": "configures",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": ".agents/skills/two-factor-authentication-best-practices/SKILL.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_agents_skills_two_factor_authentication_best_practices_skill_md_backup_code_regeneration_concept",
+      "target": "_agents_skills_two_factor_authentication_best_practices_skill_md_backup_codes_concept",
+      "relation": "invalidates",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": ".agents/skills/two-factor-authentication-best-practices/SKILL.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_agents_skills_two_factor_authentication_best_practices_skill_md_two_factor_plugin_concept",
+      "target": "_docs_backend_database_and_auth_md_better_auth_concept",
+      "relation": "extends",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": ".agents/skills/two-factor-authentication-best-practices/SKILL.md",
+      "source_location": null,
+      "weight": 0.85
+    }
+  ],
+  "hyperedges": []
+}

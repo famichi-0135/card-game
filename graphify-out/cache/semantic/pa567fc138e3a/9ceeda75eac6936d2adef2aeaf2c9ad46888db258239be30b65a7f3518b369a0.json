@@ -1,0 +1,167 @@
+{
+  "nodes": [
+    {
+      "id": "_agents_skills_turborepo_skill_document",
+      "label": "Turborepo Skill",
+      "file_type": "document",
+      "source_file": ".agents/skills/turborepo/SKILL.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_agents_skills_turborepo_skill_package_tasks_concept",
+      "label": "Package tasks over root tasks",
+      "file_type": "concept",
+      "source_file": ".agents/skills/turborepo/SKILL.md",
+      "source_location": null
+    },
+    {
+      "id": "_agents_skills_turborepo_skill_turbo_run_code_concept",
+      "label": "Use turbo run in code and CI",
+      "file_type": "concept",
+      "source_file": ".agents/skills/turborepo/SKILL.md",
+      "source_location": null
+    },
+    {
+      "id": "_agents_skills_turborepo_skill_dependency_graph_concept",
+      "label": "Dependency graph parallel execution",
+      "file_type": "concept",
+      "source_file": ".agents/skills/turborepo/SKILL.md",
+      "source_location": null
+    },
+    {
+      "id": "_agents_skills_turborepo_skill_cache_outputs_concept",
+      "label": "Task outputs and caching",
+      "file_type": "concept",
+      "source_file": ".agents/skills/turborepo/SKILL.md",
+      "source_location": null
+    },
+    {
+      "id": "_agents_skills_turborepo_skill_environment_inputs_concept",
+      "label": "Environment and input declarations",
+      "file_type": "concept",
+      "source_file": ".agents/skills/turborepo/SKILL.md",
+      "source_location": null
+    },
+    {
+      "id": "_agents_skills_turborepo_skill_affected_filtering_concept",
+      "label": "Affected and filtered package execution",
+      "file_type": "concept",
+      "source_file": ".agents/skills/turborepo/SKILL.md",
+      "source_location": null
+    },
+    {
+      "id": "_agents_skills_turborepo_skill_boundaries_concept",
+      "label": "Package boundaries and shared packages",
+      "file_type": "concept",
+      "source_file": ".agents/skills/turborepo/SKILL.md",
+      "source_location": null
+    }
+  ],
+  "edges": [
+    {
+      "source": "_agents_skills_turborepo_skill_document",
+      "target": "_agents_skills_turborepo_skill_package_tasks_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".agents/skills/turborepo/SKILL.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_agents_skills_turborepo_skill_document",
+      "target": "_agents_skills_turborepo_skill_turbo_run_code_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".agents/skills/turborepo/SKILL.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_agents_skills_turborepo_skill_document",
+      "target": "_agents_skills_turborepo_skill_dependency_graph_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".agents/skills/turborepo/SKILL.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_agents_skills_turborepo_skill_document",
+      "target": "_agents_skills_turborepo_skill_cache_outputs_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".agents/skills/turborepo/SKILL.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_agents_skills_turborepo_skill_document",
+      "target": "_agents_skills_turborepo_skill_environment_inputs_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".agents/skills/turborepo/SKILL.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_agents_skills_turborepo_skill_document",
+      "target": "_agents_skills_turborepo_skill_affected_filtering_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".agents/skills/turborepo/SKILL.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_agents_skills_turborepo_skill_document",
+      "target": "_agents_skills_turborepo_skill_boundaries_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".agents/skills/turborepo/SKILL.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_agents_skills_turborepo_skill_package_tasks_concept",
+      "target": "_agents_skills_turborepo_references_configuration_rule_package_tasks_concept",
+      "relation": "conceptually_related_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": ".agents/skills/turborepo/SKILL.md",
+      "source_location": null,
+      "weight": 0.85
+    },
+    {
+      "source": "_agents_skills_turborepo_skill_cache_outputs_concept",
+      "target": "_agents_skills_turborepo_references_caching_rule_outputs_restoration_concept",
+      "relation": "conceptually_related_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": ".agents/skills/turborepo/SKILL.md",
+      "source_location": null,
+      "weight": 0.85
+    },
+    {
+      "source": "_agents_skills_turborepo_skill_affected_filtering_concept",
+      "target": "_agents_skills_turborepo_references_cli_commands_affected_concept",
+      "relation": "conceptually_related_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": ".agents/skills/turborepo/SKILL.md",
+      "source_location": null,
+      "weight": 0.85
+    }
+  ],
+  "hyperedges": []
+}

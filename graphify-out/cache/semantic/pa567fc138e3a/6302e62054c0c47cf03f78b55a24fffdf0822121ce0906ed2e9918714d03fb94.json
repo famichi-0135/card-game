@@ -1,0 +1,367 @@
+{
+  "nodes": [
+    {
+      "id": "_readme_md_document",
+      "label": "Disastar Card Game Project Overview",
+      "file_type": "document",
+      "source_file": "README.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_readme_md_disastar_card_game_concept",
+      "label": "Disastar Card Game",
+      "file_type": "concept",
+      "source_file": "README.md",
+      "source_location": null
+    },
+    {
+      "id": "_readme_md_pnpm_turborepo_monorepo_concept",
+      "label": "pnpm Turborepo monorepo",
+      "file_type": "concept",
+      "source_file": "README.md",
+      "source_location": null
+    },
+    {
+      "id": "_readme_md_frontend_worker_concept",
+      "label": "Frontend Worker",
+      "file_type": "concept",
+      "source_file": "README.md",
+      "source_location": null
+    },
+    {
+      "id": "_readme_md_backend_worker_concept",
+      "label": "Backend Worker",
+      "file_type": "concept",
+      "source_file": "README.md",
+      "source_location": null
+    },
+    {
+      "id": "_readme_md_contracts_package_concept",
+      "label": "Contracts package",
+      "file_type": "concept",
+      "source_file": "README.md",
+      "source_location": null
+    },
+    {
+      "id": "_readme_md_ui_package_concept",
+      "label": "Shared UI package",
+      "file_type": "concept",
+      "source_file": "README.md",
+      "source_location": null
+    },
+    {
+      "id": "_readme_md_eslint_config_package_concept",
+      "label": "ESLint config package",
+      "file_type": "concept",
+      "source_file": "README.md",
+      "source_location": null
+    },
+    {
+      "id": "_readme_md_typescript_config_package_concept",
+      "label": "TypeScript config package",
+      "file_type": "concept",
+      "source_file": "README.md",
+      "source_location": null
+    },
+    {
+      "id": "_readme_md_node_26_concept",
+      "label": "Node.js 26 requirement",
+      "file_type": "concept",
+      "source_file": "README.md",
+      "source_location": null
+    },
+    {
+      "id": "_readme_md_pnpm_11_concept",
+      "label": "pnpm 11 requirement",
+      "file_type": "concept",
+      "source_file": "README.md",
+      "source_location": null
+    },
+    {
+      "id": "_readme_md_dev_commands_concept",
+      "label": "Development commands",
+      "file_type": "concept",
+      "source_file": "README.md",
+      "source_location": null
+    },
+    {
+      "id": "_readme_md_ci_quality_checks_concept",
+      "label": "CI quality checks",
+      "file_type": "concept",
+      "source_file": "README.md",
+      "source_location": null
+    },
+    {
+      "id": "_readme_md_local_frontend_port_concept",
+      "label": "Frontend localhost port",
+      "file_type": "concept",
+      "source_file": "README.md",
+      "source_location": null
+    },
+    {
+      "id": "_readme_md_local_backend_port_concept",
+      "label": "Backend localhost port",
+      "file_type": "concept",
+      "source_file": "README.md",
+      "source_location": null
+    },
+    {
+      "id": "_readme_md_service_binding_deploy_order_concept",
+      "label": "Backend-before-frontend deployment",
+      "file_type": "concept",
+      "source_file": "README.md",
+      "source_location": null
+    },
+    {
+      "id": "_readme_md_cf_typegen_command_concept",
+      "label": "Cloudflare binding type generation command",
+      "file_type": "concept",
+      "source_file": "README.md",
+      "source_location": null
+    },
+    {
+      "id": "_readme_md_health_endpoint_concept",
+      "label": "Health endpoint",
+      "file_type": "concept",
+      "source_file": "README.md",
+      "source_location": null
+    }
+  ],
+  "edges": [
+    {
+      "source": "_readme_md_document",
+      "target": "_readme_md_disastar_card_game_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": "README.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_readme_md_document",
+      "target": "_readme_md_pnpm_turborepo_monorepo_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": "README.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_readme_md_document",
+      "target": "_readme_md_frontend_worker_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": "README.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_readme_md_document",
+      "target": "_readme_md_backend_worker_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": "README.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_readme_md_document",
+      "target": "_readme_md_contracts_package_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": "README.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_readme_md_document",
+      "target": "_readme_md_ui_package_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": "README.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_readme_md_document",
+      "target": "_readme_md_eslint_config_package_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": "README.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_readme_md_document",
+      "target": "_readme_md_typescript_config_package_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": "README.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_readme_md_document",
+      "target": "_readme_md_node_26_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": "README.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_readme_md_document",
+      "target": "_readme_md_pnpm_11_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": "README.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_readme_md_document",
+      "target": "_readme_md_dev_commands_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": "README.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_readme_md_document",
+      "target": "_readme_md_ci_quality_checks_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": "README.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_readme_md_document",
+      "target": "_readme_md_local_frontend_port_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": "README.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_readme_md_document",
+      "target": "_readme_md_local_backend_port_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": "README.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_readme_md_document",
+      "target": "_readme_md_service_binding_deploy_order_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": "README.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_readme_md_document",
+      "target": "_readme_md_cf_typegen_command_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": "README.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_readme_md_document",
+      "target": "_readme_md_health_endpoint_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": "README.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_readme_md_frontend_worker_concept",
+      "target": "_readme_md_backend_worker_concept",
+      "relation": "delegates_api_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": "README.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_readme_md_service_binding_deploy_order_concept",
+      "target": "_readme_md_backend_worker_concept",
+      "relation": "deploys_before",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": "README.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_readme_md_service_binding_deploy_order_concept",
+      "target": "_readme_md_frontend_worker_concept",
+      "relation": "deploys_after",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": "README.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_readme_md_dev_commands_concept",
+      "target": "_readme_md_ci_quality_checks_concept",
+      "relation": "overlaps",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": "README.md",
+      "source_location": null,
+      "weight": 0.85
+    },
+    {
+      "source": "_readme_md_frontend_worker_concept",
+      "target": "_apps_backend_readme_md_backend_service_binding_concept",
+      "relation": "routes_through",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": "README.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_readme_md_contracts_package_concept",
+      "target": "_docs_backend_client_server_protocol_md_contracts_dto_concept",
+      "relation": "implements_contract",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": "README.md",
+      "source_location": null,
+      "weight": 0.85
+    }
+  ],
+  "hyperedges": []
+}

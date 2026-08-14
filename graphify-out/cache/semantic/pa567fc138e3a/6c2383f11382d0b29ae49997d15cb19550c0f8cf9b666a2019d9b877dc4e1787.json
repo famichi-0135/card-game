@@ -1,0 +1,13 @@
+{
+  "nodes": [
+    {
+      "id": "_apps_frontend_src_assets_cloudflare_svg_image",
+      "label": "\u30aa\u30ec\u30f3\u30b8\u8272\u306eCloudflare\u96f2\u30ed\u30b4",
+      "file_type": "image",
+      "source_file": "apps/frontend/src/assets/cloudflare.svg",
+      "source_location": null
+    }
+  ],
+  "edges": [],
+  "hyperedges": []
+}

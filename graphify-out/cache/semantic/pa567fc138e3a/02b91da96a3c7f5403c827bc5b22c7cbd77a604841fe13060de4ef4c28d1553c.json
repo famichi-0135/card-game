@@ -1,0 +1,292 @@
+{
+  "nodes": [
+    {
+      "id": "_github_workflows_codex_review_yml_document",
+      "label": "Codex Review Workflow",
+      "file_type": "document",
+      "source_file": ".github/workflows/codex-review.yml",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_github_workflows_codex_review_yml_review_workflow_concept",
+      "label": "Codex review workflow",
+      "file_type": "concept",
+      "source_file": ".github/workflows/codex-review.yml",
+      "source_location": null
+    },
+    {
+      "id": "_github_workflows_codex_review_yml_pull_request_events_concept",
+      "label": "Pull request event triggers",
+      "file_type": "concept",
+      "source_file": ".github/workflows/codex-review.yml",
+      "source_location": null
+    },
+    {
+      "id": "_github_workflows_codex_review_yml_same_repo_gate_concept",
+      "label": "Same repository head gate",
+      "file_type": "concept",
+      "source_file": ".github/workflows/codex-review.yml",
+      "source_location": null
+    },
+    {
+      "id": "_github_workflows_codex_review_yml_review_enabled_gate_concept",
+      "label": "Review enabled gate",
+      "file_type": "concept",
+      "source_file": ".github/workflows/codex-review.yml",
+      "source_location": null
+    },
+    {
+      "id": "_github_workflows_codex_review_yml_merge_result_checkout_concept",
+      "label": "Merge result checkout",
+      "file_type": "concept",
+      "source_file": ".github/workflows/codex-review.yml",
+      "source_location": null
+    },
+    {
+      "id": "_github_workflows_codex_review_yml_trusted_prompt_checkout_concept",
+      "label": "Trusted prompt checkout",
+      "file_type": "concept",
+      "source_file": ".github/workflows/codex-review.yml",
+      "source_location": null
+    },
+    {
+      "id": "_github_workflows_codex_review_yml_read_only_codex_action_concept",
+      "label": "Read-only Codex review action",
+      "file_type": "concept",
+      "source_file": ".github/workflows/codex-review.yml",
+      "source_location": null
+    },
+    {
+      "id": "_github_workflows_codex_review_yml_post_feedback_job_concept",
+      "label": "Post feedback job",
+      "file_type": "concept",
+      "source_file": ".github/workflows/codex-review.yml",
+      "source_location": null
+    },
+    {
+      "id": "_github_workflows_codex_review_yml_github_comment_concept",
+      "label": "GitHub feedback comment",
+      "file_type": "concept",
+      "source_file": ".github/workflows/codex-review.yml",
+      "source_location": null
+    },
+    {
+      "id": "_github_workflows_codex_review_yml_promote_generated_pr_concept",
+      "label": "Promote generated PR",
+      "file_type": "concept",
+      "source_file": ".github/workflows/codex-review.yml",
+      "source_location": null
+    },
+    {
+      "id": "_github_workflows_codex_review_yml_draft_label_gate_concept",
+      "label": "Generated draft label gate",
+      "file_type": "concept",
+      "source_file": ".github/workflows/codex-review.yml",
+      "source_location": null
+    },
+    {
+      "id": "_github_workflows_codex_review_yml_auto_squash_merge_concept",
+      "label": "Automatic squash merge",
+      "file_type": "concept",
+      "source_file": ".github/workflows/codex-review.yml",
+      "source_location": null
+    }
+  ],
+  "edges": [
+    {
+      "source": "_github_workflows_codex_review_yml_document",
+      "target": "_github_workflows_codex_review_yml_review_workflow_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": ".github/workflows/codex-review.yml",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_github_workflows_codex_review_yml_document",
+      "target": "_github_workflows_codex_review_yml_pull_request_events_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": ".github/workflows/codex-review.yml",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_github_workflows_codex_review_yml_document",
+      "target": "_github_workflows_codex_review_yml_same_repo_gate_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": ".github/workflows/codex-review.yml",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_github_workflows_codex_review_yml_document",
+      "target": "_github_workflows_codex_review_yml_review_enabled_gate_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": ".github/workflows/codex-review.yml",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_github_workflows_codex_review_yml_document",
+      "target": "_github_workflows_codex_review_yml_merge_result_checkout_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": ".github/workflows/codex-review.yml",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_github_workflows_codex_review_yml_document",
+      "target": "_github_workflows_codex_review_yml_trusted_prompt_checkout_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": ".github/workflows/codex-review.yml",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_github_workflows_codex_review_yml_document",
+      "target": "_github_workflows_codex_review_yml_read_only_codex_action_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": ".github/workflows/codex-review.yml",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_github_workflows_codex_review_yml_document",
+      "target": "_github_workflows_codex_review_yml_post_feedback_job_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": ".github/workflows/codex-review.yml",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_github_workflows_codex_review_yml_document",
+      "target": "_github_workflows_codex_review_yml_github_comment_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": ".github/workflows/codex-review.yml",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_github_workflows_codex_review_yml_document",
+      "target": "_github_workflows_codex_review_yml_promote_generated_pr_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": ".github/workflows/codex-review.yml",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_github_workflows_codex_review_yml_document",
+      "target": "_github_workflows_codex_review_yml_draft_label_gate_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": ".github/workflows/codex-review.yml",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_github_workflows_codex_review_yml_document",
+      "target": "_github_workflows_codex_review_yml_auto_squash_merge_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": ".github/workflows/codex-review.yml",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_github_workflows_codex_review_yml_review_workflow_concept",
+      "target": "_github_workflows_codex_review_yml_pull_request_events_concept",
+      "relation": "triggers_on",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": ".github/workflows/codex-review.yml",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_github_workflows_codex_review_yml_review_workflow_concept",
+      "target": "_github_workflows_codex_review_yml_same_repo_gate_concept",
+      "relation": "gated_by",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": ".github/workflows/codex-review.yml",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_github_workflows_codex_review_yml_review_workflow_concept",
+      "target": "_github_workflows_codex_review_yml_review_enabled_gate_concept",
+      "relation": "gated_by",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": ".github/workflows/codex-review.yml",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_github_workflows_codex_review_yml_read_only_codex_action_concept",
+      "target": "_github_workflows_codex_review_yml_trusted_prompt_checkout_concept",
+      "relation": "uses",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": ".github/workflows/codex-review.yml",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_github_workflows_codex_review_yml_post_feedback_job_concept",
+      "target": "_github_workflows_codex_review_yml_github_comment_concept",
+      "relation": "creates",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": ".github/workflows/codex-review.yml",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_github_workflows_codex_review_yml_promote_generated_pr_concept",
+      "target": "_github_workflows_codex_review_yml_draft_label_gate_concept",
+      "relation": "gated_by",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": ".github/workflows/codex-review.yml",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_github_workflows_codex_review_yml_promote_generated_pr_concept",
+      "target": "_github_workflows_codex_review_yml_auto_squash_merge_concept",
+      "relation": "performs",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": ".github/workflows/codex-review.yml",
+      "source_location": null,
+      "weight": 1
+    }
+  ],
+  "hyperedges": []
+}

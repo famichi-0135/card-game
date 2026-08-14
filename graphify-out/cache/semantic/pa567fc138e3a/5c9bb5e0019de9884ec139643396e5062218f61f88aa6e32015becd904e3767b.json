@@ -1,0 +1,86 @@
+{
+  "nodes": [
+    {
+      "id": "_agents_skills_turborepo_references_best_practices_structure_document",
+      "label": "Repository Structure",
+      "file_type": "document",
+      "source_file": ".agents/skills/turborepo/references/best-practices/structure.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_agents_skills_turborepo_references_best_practices_structure_workspace_concept",
+      "label": "Workspace configuration globs",
+      "file_type": "concept",
+      "source_file": ".agents/skills/turborepo/references/best-practices/structure.md",
+      "source_location": null
+    },
+    {
+      "id": "_agents_skills_turborepo_references_best_practices_structure_root_delegation_concept",
+      "label": "Root scripts delegate to turbo run",
+      "file_type": "concept",
+      "source_file": ".agents/skills/turborepo/references/best-practices/structure.md",
+      "source_location": null
+    },
+    {
+      "id": "_agents_skills_turborepo_references_best_practices_structure_package_anatomy_concept",
+      "label": "Package anatomy and required files",
+      "file_type": "concept",
+      "source_file": ".agents/skills/turborepo/references/best-practices/structure.md",
+      "source_location": null
+    },
+    {
+      "id": "_agents_skills_turborepo_references_best_practices_structure_shared_config_concept",
+      "label": "Shared TypeScript and ESLint config packages",
+      "file_type": "concept",
+      "source_file": ".agents/skills/turborepo/references/best-practices/structure.md",
+      "source_location": null
+    }
+  ],
+  "edges": [
+    {
+      "source": "_agents_skills_turborepo_references_best_practices_structure_document",
+      "target": "_agents_skills_turborepo_references_best_practices_structure_workspace_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".agents/skills/turborepo/references/best-practices/structure.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_agents_skills_turborepo_references_best_practices_structure_document",
+      "target": "_agents_skills_turborepo_references_best_practices_structure_root_delegation_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".agents/skills/turborepo/references/best-practices/structure.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_agents_skills_turborepo_references_best_practices_structure_document",
+      "target": "_agents_skills_turborepo_references_best_practices_structure_package_anatomy_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".agents/skills/turborepo/references/best-practices/structure.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_agents_skills_turborepo_references_best_practices_structure_document",
+      "target": "_agents_skills_turborepo_references_best_practices_structure_shared_config_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".agents/skills/turborepo/references/best-practices/structure.md",
+      "source_location": null,
+      "weight": 1.0
+    }
+  ],
+  "hyperedges": []
+}

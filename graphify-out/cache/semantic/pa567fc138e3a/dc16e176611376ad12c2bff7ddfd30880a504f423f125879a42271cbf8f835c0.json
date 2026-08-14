@@ -1,0 +1,183 @@
+{
+  "nodes": [
+    {
+      "id": "_docs_game_card_type_definition_md_document",
+      "label": "\u30ab\u30fc\u30c9\u52b9\u679c\u4ed5\u69d8\u66f8",
+      "file_type": "document",
+      "source_file": "docs/game/card-type-definition.md",
+      "source_location": null
+    },
+    {
+      "id": "_docs_game_card_type_definition_md_effect_system_responsibility_concept",
+      "label": "\u30ab\u30fc\u30c9\u52b9\u679c\u30b7\u30b9\u30c6\u30e0\u306e\u8cac\u52d9\u5206\u96e2",
+      "file_type": "concept",
+      "source_file": "docs/game/card-type-definition.md",
+      "source_location": "2. \u30ab\u30fc\u30c9\u52b9\u679c\u30b7\u30b9\u30c6\u30e0\u306e\u8cac\u52d9"
+    },
+    {
+      "id": "_docs_game_card_type_definition_md_card_types_concept",
+      "label": "\u307f\u306a\u3082\u3068\u30fb\u653b\u6483\u30fb\u30b5\u30dd\u30fc\u30c8\u30ab\u30fc\u30c9\u7a2e\u5225",
+      "file_type": "concept",
+      "source_file": "docs/game/card-type-definition.md",
+      "source_location": "4. \u52b9\u679c\u3092\u6301\u3064\u30ab\u30fc\u30c9"
+    },
+    {
+      "id": "_docs_game_card_type_definition_md_onplay_continuous_concept",
+      "label": "onPlay/continuous\u767a\u52d5\u5f62\u5f0f",
+      "file_type": "concept",
+      "source_file": "docs/game/card-type-definition.md",
+      "source_location": "5. \u52b9\u679c\u306e\u767a\u52d5\u5f62\u5f0f"
+    },
+    {
+      "id": "_docs_game_card_type_definition_md_support_duration_concept",
+      "label": "instant/untilRoundEnd/permanent\u7d99\u7d9a\u671f\u9593",
+      "file_type": "concept",
+      "source_file": "docs/game/card-type-definition.md",
+      "source_location": "6. \u30b5\u30dd\u30fc\u30c8\u30ab\u30fc\u30c9\u306e\u7d99\u7d9a\u671f\u9593"
+    },
+    {
+      "id": "_docs_game_card_type_definition_md_effect_definition_handler_concept",
+      "label": "EffectDefinition\u3068CardEffectHandler",
+      "file_type": "concept",
+      "source_file": "docs/game/card-type-definition.md",
+      "source_location": "7\u301c14"
+    },
+    {
+      "id": "_docs_game_card_type_definition_md_target_rule_concept",
+      "label": "TargetRule\u3068\u5bfe\u8c61\u30be\u30fc\u30f3",
+      "file_type": "concept",
+      "source_file": "docs/game/card-type-definition.md",
+      "source_location": "10\u301c12"
+    },
+    {
+      "id": "_docs_game_card_type_definition_md_effect_resolution_plan_atomicity_concept",
+      "label": "EffectResolutionPlan\u3068\u52b9\u679c\u89e3\u6c7a\u539f\u5b50\u6027",
+      "file_type": "concept",
+      "source_file": "docs/game/card-type-definition.md",
+      "source_location": "16\u301c18"
+    },
+    {
+      "id": "_docs_game_card_type_definition_md_active_effect_sequence_concept",
+      "label": "ActiveEffect\u3068appliedSequence",
+      "file_type": "concept",
+      "source_file": "docs/game/card-type-definition.md",
+      "source_location": "21\u301c24"
+    },
+    {
+      "id": "_docs_game_card_type_definition_md_common_effects_concept",
+      "label": "\u653b\u6483\u529b\u30fb\u307f\u306a\u3082\u3068\u30fb\u9664\u53bb\u30fb\u30c9\u30ed\u30fc\u5171\u901a\u52b9\u679c",
+      "file_type": "concept",
+      "source_file": "docs/game/card-type-definition.md",
+      "source_location": "26\u301c44"
+    },
+    {
+      "id": "_docs_game_card_type_definition_md_catalog_registry_tests_concept",
+      "label": "\u30ab\u30fc\u30c9\u30ab\u30bf\u30ed\u30b0\u30fb\u52b9\u679c\u30ec\u30b8\u30b9\u30c8\u30ea\u30fb\u30c6\u30b9\u30c8",
+      "file_type": "concept",
+      "source_file": "docs/game/card-type-definition.md",
+      "source_location": "49\u301c56"
+    }
+  ],
+  "edges": [
+    {
+      "source": "_docs_game_card_type_definition_md_document",
+      "target": "_docs_game_card_type_definition_md_effect_system_responsibility_concept",
+      "relation": "defines",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/game/card-type-definition.md",
+      "source_location": "2. \u30ab\u30fc\u30c9\u52b9\u679c\u30b7\u30b9\u30c6\u30e0\u306e\u8cac\u52d9"
+    },
+    {
+      "source": "_docs_game_card_type_definition_md_document",
+      "target": "_docs_game_card_type_definition_md_card_types_concept",
+      "relation": "defines",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/game/card-type-definition.md",
+      "source_location": "4. \u52b9\u679c\u3092\u6301\u3064\u30ab\u30fc\u30c9"
+    },
+    {
+      "source": "_docs_game_card_type_definition_md_document",
+      "target": "_docs_game_card_type_definition_md_onplay_continuous_concept",
+      "relation": "defines",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/game/card-type-definition.md",
+      "source_location": "5. \u52b9\u679c\u306e\u767a\u52d5\u5f62\u5f0f"
+    },
+    {
+      "source": "_docs_game_card_type_definition_md_document",
+      "target": "_docs_game_card_type_definition_md_support_duration_concept",
+      "relation": "defines",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/game/card-type-definition.md",
+      "source_location": "6. \u30b5\u30dd\u30fc\u30c8\u30ab\u30fc\u30c9\u306e\u7d99\u7d9a\u671f\u9593"
+    },
+    {
+      "source": "_docs_game_card_type_definition_md_document",
+      "target": "_docs_game_card_type_definition_md_effect_definition_handler_concept",
+      "relation": "defines",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/game/card-type-definition.md",
+      "source_location": "7\u301c14"
+    },
+    {
+      "source": "_docs_game_card_type_definition_md_document",
+      "target": "_docs_game_card_type_definition_md_target_rule_concept",
+      "relation": "defines",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/game/card-type-definition.md",
+      "source_location": "10\u301c12"
+    },
+    {
+      "source": "_docs_game_card_type_definition_md_document",
+      "target": "_docs_game_card_type_definition_md_effect_resolution_plan_atomicity_concept",
+      "relation": "requires",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/game/card-type-definition.md",
+      "source_location": "16\u301c18"
+    },
+    {
+      "source": "_docs_game_card_type_definition_md_document",
+      "target": "_docs_game_card_type_definition_md_active_effect_sequence_concept",
+      "relation": "defines",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/game/card-type-definition.md",
+      "source_location": "21\u301c24"
+    },
+    {
+      "source": "_docs_game_card_type_definition_md_document",
+      "target": "_docs_game_card_type_definition_md_common_effects_concept",
+      "relation": "defines",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/game/card-type-definition.md",
+      "source_location": "26\u301c44"
+    },
+    {
+      "source": "_docs_game_card_type_definition_md_document",
+      "target": "_docs_game_card_type_definition_md_catalog_registry_tests_concept",
+      "relation": "defines",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/game/card-type-definition.md",
+      "source_location": "49\u301c56"
+    },
+    {
+      "source": "_docs_game_card_type_definition_md_onplay_continuous_concept",
+      "target": "_docs_game_rule_definition_md_support_duration_concept",
+      "relation": "specifies",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/game/card-type-definition.md",
+      "source_location": "5\u301c6"
+    }
+  ],
+  "hyperedges": []
+}

@@ -1,0 +1,445 @@
+{
+  "nodes": [
+    {
+      "id": "_agents_md_document",
+      "label": "Codex Working Agreement",
+      "file_type": "document",
+      "source_file": "AGENTS.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_agents_md_japanese_only_concept",
+      "label": "Japanese communication requirement",
+      "file_type": "concept",
+      "source_file": "AGENTS.md",
+      "source_location": null
+    },
+    {
+      "id": "_agents_md_requirements_driven_concept",
+      "label": "Requirements-driven development",
+      "file_type": "concept",
+      "source_file": "AGENTS.md",
+      "source_location": null
+    },
+    {
+      "id": "_agents_md_documents_and_contracts_concept",
+      "label": "Docs/issues/API contracts as requirements",
+      "file_type": "concept",
+      "source_file": "AGENTS.md",
+      "source_location": null
+    },
+    {
+      "id": "_agents_md_change_design_concept",
+      "label": "Change design",
+      "file_type": "concept",
+      "source_file": "AGENTS.md",
+      "source_location": null
+    },
+    {
+      "id": "_agents_md_test_first_concept",
+      "label": "Test-first development",
+      "file_type": "concept",
+      "source_file": "AGENTS.md",
+      "source_location": null
+    },
+    {
+      "id": "_agents_md_minimal_implementation_concept",
+      "label": "Minimal implementation",
+      "file_type": "concept",
+      "source_file": "AGENTS.md",
+      "source_location": null
+    },
+    {
+      "id": "_agents_md_regression_validation_concept",
+      "label": "Regression validation",
+      "file_type": "concept",
+      "source_file": "AGENTS.md",
+      "source_location": null
+    },
+    {
+      "id": "_agents_md_document_sync_concept",
+      "label": "Documentation synchronization",
+      "file_type": "concept",
+      "source_file": "AGENTS.md",
+      "source_location": null
+    },
+    {
+      "id": "_agents_md_observable_tests_concept",
+      "label": "Observable behavior tests",
+      "file_type": "concept",
+      "source_file": "AGENTS.md",
+      "source_location": null
+    },
+    {
+      "id": "_agents_md_contract_compatibility_concept",
+      "label": "Contract compatibility",
+      "file_type": "concept",
+      "source_file": "AGENTS.md",
+      "source_location": null
+    },
+    {
+      "id": "_agents_md_stable_error_codes_concept",
+      "label": "Stable error codes",
+      "file_type": "concept",
+      "source_file": "AGENTS.md",
+      "source_location": null
+    },
+    {
+      "id": "_agents_md_server_authority_concept",
+      "label": "Server-side authorization",
+      "file_type": "concept",
+      "source_file": "AGENTS.md",
+      "source_location": null
+    },
+    {
+      "id": "_agents_md_ui_accessibility_concept",
+      "label": "UI accessibility requirements",
+      "file_type": "concept",
+      "source_file": "AGENTS.md",
+      "source_location": null
+    },
+    {
+      "id": "_agents_md_dependency_justification_concept",
+      "label": "Dependency justification",
+      "file_type": "concept",
+      "source_file": "AGENTS.md",
+      "source_location": null
+    },
+    {
+      "id": "_agents_md_completion_conditions_concept",
+      "label": "Completion conditions",
+      "file_type": "concept",
+      "source_file": "AGENTS.md",
+      "source_location": null
+    },
+    {
+      "id": "_agents_md_quality_commands_concept",
+      "label": "Required quality commands",
+      "file_type": "concept",
+      "source_file": "AGENTS.md",
+      "source_location": null
+    },
+    {
+      "id": "_agents_md_feature_branch_pr_concept",
+      "label": "Feature branch and pull request",
+      "file_type": "concept",
+      "source_file": "AGENTS.md",
+      "source_location": null
+    },
+    {
+      "id": "_agents_md_secret_protection_concept",
+      "label": "Secret protection",
+      "file_type": "concept",
+      "source_file": "AGENTS.md",
+      "source_location": null
+    },
+    {
+      "id": "_agents_md_untrusted_automation_input_concept",
+      "label": "Untrusted automation input",
+      "file_type": "concept",
+      "source_file": "AGENTS.md",
+      "source_location": null
+    },
+    {
+      "id": "_agents_md_human_review_concept",
+      "label": "Human review",
+      "file_type": "concept",
+      "source_file": "AGENTS.md",
+      "source_location": null
+    },
+    {
+      "id": "_agents_md_cloudflare_typegen_concept",
+      "label": "Cloudflare binding type generation",
+      "file_type": "concept",
+      "source_file": "AGENTS.md",
+      "source_location": null
+    }
+  ],
+  "edges": [
+    {
+      "source": "_agents_md_document",
+      "target": "_agents_md_japanese_only_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": "AGENTS.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_agents_md_document",
+      "target": "_agents_md_requirements_driven_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": "AGENTS.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_agents_md_document",
+      "target": "_agents_md_documents_and_contracts_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": "AGENTS.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_agents_md_document",
+      "target": "_agents_md_change_design_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": "AGENTS.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_agents_md_document",
+      "target": "_agents_md_test_first_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": "AGENTS.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_agents_md_document",
+      "target": "_agents_md_minimal_implementation_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": "AGENTS.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_agents_md_document",
+      "target": "_agents_md_regression_validation_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": "AGENTS.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_agents_md_document",
+      "target": "_agents_md_document_sync_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": "AGENTS.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_agents_md_document",
+      "target": "_agents_md_observable_tests_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": "AGENTS.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_agents_md_document",
+      "target": "_agents_md_contract_compatibility_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": "AGENTS.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_agents_md_document",
+      "target": "_agents_md_stable_error_codes_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": "AGENTS.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_agents_md_document",
+      "target": "_agents_md_server_authority_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": "AGENTS.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_agents_md_document",
+      "target": "_agents_md_ui_accessibility_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": "AGENTS.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_agents_md_document",
+      "target": "_agents_md_dependency_justification_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": "AGENTS.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_agents_md_document",
+      "target": "_agents_md_completion_conditions_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": "AGENTS.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_agents_md_document",
+      "target": "_agents_md_quality_commands_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": "AGENTS.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_agents_md_document",
+      "target": "_agents_md_feature_branch_pr_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": "AGENTS.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_agents_md_document",
+      "target": "_agents_md_secret_protection_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": "AGENTS.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_agents_md_document",
+      "target": "_agents_md_untrusted_automation_input_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": "AGENTS.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_agents_md_document",
+      "target": "_agents_md_human_review_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": "AGENTS.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_agents_md_document",
+      "target": "_agents_md_cloudflare_typegen_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": "AGENTS.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_agents_md_requirements_driven_concept",
+      "target": "_agents_md_documents_and_contracts_concept",
+      "relation": "uses",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": "AGENTS.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_agents_md_test_first_concept",
+      "target": "_agents_md_observable_tests_concept",
+      "relation": "requires",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": "AGENTS.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_agents_md_quality_commands_concept",
+      "target": "_agents_md_completion_conditions_concept",
+      "relation": "verifies",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": "AGENTS.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_agents_md_feature_branch_pr_concept",
+      "target": "_agents_md_human_review_concept",
+      "relation": "requires",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": "AGENTS.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_agents_md_secret_protection_concept",
+      "target": "_agents_md_untrusted_automation_input_concept",
+      "relation": "guards",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": "AGENTS.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_agents_md_quality_commands_concept",
+      "target": "_github_workflows_ci_yml_quality_job_concept",
+      "relation": "requires",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": "AGENTS.md",
+      "source_location": null,
+      "weight": 0.85
+    },
+    {
+      "source": "_agents_md_human_review_concept",
+      "target": "_github_workflows_codex_create_pr_yml_human_review_required_concept",
+      "relation": "enforces",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": "AGENTS.md",
+      "source_location": null,
+      "weight": 1
+    }
+  ],
+  "hyperedges": []
+}

@@ -1,0 +1,109 @@
+{
+  "nodes": [
+    {
+      "id": "_agents_skills_turborepo_references_ci_rule_document",
+      "label": "CI and CD with Turborepo",
+      "file_type": "document",
+      "source_file": ".agents/skills/turborepo/references/ci/RULE.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_agents_skills_turborepo_references_ci_rule_turbo_run_concept",
+      "label": "turbo run in CI",
+      "file_type": "concept",
+      "source_file": ".agents/skills/turborepo/references/ci/RULE.md",
+      "source_location": null
+    },
+    {
+      "id": "_agents_skills_turborepo_references_ci_rule_affected_pr_concept",
+      "label": "Affected builds for pull requests",
+      "file_type": "concept",
+      "source_file": ".agents/skills/turborepo/references/ci/RULE.md",
+      "source_location": null
+    },
+    {
+      "id": "_agents_skills_turborepo_references_ci_rule_git_history_concept",
+      "label": "Git history depth for affected",
+      "file_type": "concept",
+      "source_file": ".agents/skills/turborepo/references/ci/RULE.md",
+      "source_location": null
+    }
+  ],
+  "edges": [
+    {
+      "source": "_agents_skills_turborepo_references_ci_rule_document",
+      "target": "_agents_skills_turborepo_references_ci_rule_turbo_run_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".agents/skills/turborepo/references/ci/RULE.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_agents_skills_turborepo_references_ci_rule_document",
+      "target": "_agents_skills_turborepo_references_ci_rule_affected_pr_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".agents/skills/turborepo/references/ci/RULE.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_agents_skills_turborepo_references_ci_rule_document",
+      "target": "_agents_skills_turborepo_references_ci_rule_git_history_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".agents/skills/turborepo/references/ci/RULE.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_agents_skills_turborepo_references_ci_rule_turbo_run_concept",
+      "target": "_agents_skills_turborepo_references_cli_rule_turbo_run_usage_concept",
+      "relation": "conceptually_related_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.95,
+      "source_file": ".agents/skills/turborepo/references/ci/RULE.md",
+      "source_location": null,
+      "weight": 0.95
+    },
+    {
+      "source": "_agents_skills_turborepo_references_ci_rule_document",
+      "target": "_agents_skills_turborepo_references_ci_github_actions_document",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".agents/skills/turborepo/references/ci/RULE.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_agents_skills_turborepo_references_ci_rule_document",
+      "target": "_agents_skills_turborepo_references_ci_patterns_document",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".agents/skills/turborepo/references/ci/RULE.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_agents_skills_turborepo_references_ci_rule_document",
+      "target": "_agents_skills_turborepo_references_ci_vercel_document",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".agents/skills/turborepo/references/ci/RULE.md",
+      "source_location": null,
+      "weight": 1.0
+    }
+  ],
+  "hyperedges": []
+}

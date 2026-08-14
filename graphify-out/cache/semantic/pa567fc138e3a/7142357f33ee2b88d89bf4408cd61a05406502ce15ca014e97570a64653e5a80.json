@@ -1,0 +1,303 @@
+{
+  "nodes": [
+    {
+      "id": "_agents_skills_turborepo_references_configuration_tasks_md_document",
+      "label": "Task Configuration Reference",
+      "file_type": "document",
+      "source_file": ".agents/skills/turborepo/references/configuration/tasks.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_agents_skills_turborepo_references_configuration_tasks_md_task_configuration_concept",
+      "label": "Task configuration",
+      "file_type": "concept",
+      "source_file": ".agents/skills/turborepo/references/configuration/tasks.md",
+      "source_location": null
+    },
+    {
+      "id": "_agents_skills_turborepo_references_configuration_tasks_md_depends_on_concept",
+      "label": "dependsOn execution ordering",
+      "file_type": "concept",
+      "source_file": ".agents/skills/turborepo/references/configuration/tasks.md",
+      "source_location": null
+    },
+    {
+      "id": "_agents_skills_turborepo_references_configuration_tasks_md_transit_nodes_concept",
+      "label": "Transit nodes for parallel tasks",
+      "file_type": "concept",
+      "source_file": ".agents/skills/turborepo/references/configuration/tasks.md",
+      "source_location": null
+    },
+    {
+      "id": "_agents_skills_turborepo_references_configuration_tasks_md_outputs_concept",
+      "label": "Task output globs",
+      "file_type": "concept",
+      "source_file": ".agents/skills/turborepo/references/configuration/tasks.md",
+      "source_location": null
+    },
+    {
+      "id": "_agents_skills_turborepo_references_configuration_tasks_md_inputs_concept",
+      "label": "Task input globs",
+      "file_type": "concept",
+      "source_file": ".agents/skills/turborepo/references/configuration/tasks.md",
+      "source_location": null
+    },
+    {
+      "id": "_agents_skills_turborepo_references_configuration_tasks_md_environment_hash_concept",
+      "label": "Environment variables in task hash",
+      "file_type": "concept",
+      "source_file": ".agents/skills/turborepo/references/configuration/tasks.md",
+      "source_location": null
+    },
+    {
+      "id": "_agents_skills_turborepo_references_configuration_tasks_md_cache_control_concept",
+      "label": "Task cache control",
+      "file_type": "concept",
+      "source_file": ".agents/skills/turborepo/references/configuration/tasks.md",
+      "source_location": null
+    },
+    {
+      "id": "_agents_skills_turborepo_references_configuration_tasks_md_persistent_tasks_concept",
+      "label": "Persistent long-running tasks",
+      "file_type": "concept",
+      "source_file": ".agents/skills/turborepo/references/configuration/tasks.md",
+      "source_location": null
+    },
+    {
+      "id": "_agents_skills_turborepo_references_configuration_tasks_md_interactive_tasks_concept",
+      "label": "Interactive task input",
+      "file_type": "concept",
+      "source_file": ".agents/skills/turborepo/references/configuration/tasks.md",
+      "source_location": null
+    },
+    {
+      "id": "_agents_skills_turborepo_references_configuration_tasks_md_output_logs_concept",
+      "label": "Task outputLogs modes",
+      "file_type": "concept",
+      "source_file": ".agents/skills/turborepo/references/configuration/tasks.md",
+      "source_location": null
+    },
+    {
+      "id": "_agents_skills_turborepo_references_configuration_tasks_md_with_tasks_concept",
+      "label": "Concurrent with tasks",
+      "file_type": "concept",
+      "source_file": ".agents/skills/turborepo/references/configuration/tasks.md",
+      "source_location": null
+    },
+    {
+      "id": "_agents_skills_turborepo_references_configuration_tasks_md_interruptible_tasks_concept",
+      "label": "Interruptible watch tasks",
+      "file_type": "concept",
+      "source_file": ".agents/skills/turborepo/references/configuration/tasks.md",
+      "source_location": null
+    },
+    {
+      "id": "_agents_skills_turborepo_references_configuration_tasks_md_task_description_concept",
+      "label": "Task descriptions",
+      "file_type": "concept",
+      "source_file": ".agents/skills/turborepo/references/configuration/tasks.md",
+      "source_location": null
+    },
+    {
+      "id": "_agents_skills_turborepo_references_configuration_tasks_md_passthrough_env_concept",
+      "label": "Runtime passThroughEnv",
+      "file_type": "concept",
+      "source_file": ".agents/skills/turborepo/references/configuration/tasks.md",
+      "source_location": null
+    },
+    {
+      "id": "_agents_skills_turborepo_references_configuration_tasks_md_package_extends_concept",
+      "label": "Package task extends",
+      "file_type": "concept",
+      "source_file": ".agents/skills/turborepo/references/configuration/tasks.md",
+      "source_location": null
+    }
+  ],
+  "edges": [
+    {
+      "source": "_agents_skills_turborepo_references_configuration_tasks_md_document",
+      "target": "_agents_skills_turborepo_references_configuration_tasks_md_task_configuration_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": ".agents/skills/turborepo/references/configuration/tasks.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_agents_skills_turborepo_references_configuration_tasks_md_document",
+      "target": "_agents_skills_turborepo_references_configuration_tasks_md_depends_on_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": ".agents/skills/turborepo/references/configuration/tasks.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_agents_skills_turborepo_references_configuration_tasks_md_document",
+      "target": "_agents_skills_turborepo_references_configuration_tasks_md_transit_nodes_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": ".agents/skills/turborepo/references/configuration/tasks.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_agents_skills_turborepo_references_configuration_tasks_md_document",
+      "target": "_agents_skills_turborepo_references_configuration_tasks_md_outputs_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": ".agents/skills/turborepo/references/configuration/tasks.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_agents_skills_turborepo_references_configuration_tasks_md_document",
+      "target": "_agents_skills_turborepo_references_configuration_tasks_md_inputs_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": ".agents/skills/turborepo/references/configuration/tasks.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_agents_skills_turborepo_references_configuration_tasks_md_document",
+      "target": "_agents_skills_turborepo_references_configuration_tasks_md_environment_hash_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": ".agents/skills/turborepo/references/configuration/tasks.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_agents_skills_turborepo_references_configuration_tasks_md_document",
+      "target": "_agents_skills_turborepo_references_configuration_tasks_md_cache_control_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": ".agents/skills/turborepo/references/configuration/tasks.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_agents_skills_turborepo_references_configuration_tasks_md_document",
+      "target": "_agents_skills_turborepo_references_configuration_tasks_md_persistent_tasks_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": ".agents/skills/turborepo/references/configuration/tasks.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_agents_skills_turborepo_references_configuration_tasks_md_document",
+      "target": "_agents_skills_turborepo_references_configuration_tasks_md_interactive_tasks_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": ".agents/skills/turborepo/references/configuration/tasks.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_agents_skills_turborepo_references_configuration_tasks_md_document",
+      "target": "_agents_skills_turborepo_references_configuration_tasks_md_output_logs_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": ".agents/skills/turborepo/references/configuration/tasks.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_agents_skills_turborepo_references_configuration_tasks_md_document",
+      "target": "_agents_skills_turborepo_references_configuration_tasks_md_with_tasks_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": ".agents/skills/turborepo/references/configuration/tasks.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_agents_skills_turborepo_references_configuration_tasks_md_document",
+      "target": "_agents_skills_turborepo_references_configuration_tasks_md_interruptible_tasks_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": ".agents/skills/turborepo/references/configuration/tasks.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_agents_skills_turborepo_references_configuration_tasks_md_document",
+      "target": "_agents_skills_turborepo_references_configuration_tasks_md_task_description_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": ".agents/skills/turborepo/references/configuration/tasks.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_agents_skills_turborepo_references_configuration_tasks_md_document",
+      "target": "_agents_skills_turborepo_references_configuration_tasks_md_passthrough_env_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": ".agents/skills/turborepo/references/configuration/tasks.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_agents_skills_turborepo_references_configuration_tasks_md_document",
+      "target": "_agents_skills_turborepo_references_configuration_tasks_md_package_extends_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": ".agents/skills/turborepo/references/configuration/tasks.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_agents_skills_turborepo_references_configuration_tasks_md_depends_on_concept",
+      "target": "_agents_skills_turborepo_references_configuration_tasks_md_transit_nodes_concept",
+      "relation": "enables_parallelism",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": ".agents/skills/turborepo/references/configuration/tasks.md",
+      "source_location": null,
+      "weight": 0.85
+    },
+    {
+      "source": "_agents_skills_turborepo_references_configuration_tasks_md_persistent_tasks_concept",
+      "target": "_agents_skills_turborepo_references_configuration_tasks_md_cache_control_concept",
+      "relation": "requires_cache_disabled",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": ".agents/skills/turborepo/references/configuration/tasks.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_agents_skills_turborepo_references_configuration_tasks_md_with_tasks_concept",
+      "target": "_agents_skills_turborepo_references_configuration_tasks_md_depends_on_concept",
+      "relation": "runs_concurrently",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": ".agents/skills/turborepo/references/configuration/tasks.md",
+      "source_location": null,
+      "weight": 1
+    }
+  ],
+  "hyperedges": []
+}

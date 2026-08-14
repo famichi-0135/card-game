@@ -41,7 +41,9 @@ describe("PreparingMatchState", () => {
         isReady: false,
         isReadying: false,
         onReady: () => {},
+        onOpenOnboarding: () => {},
         opponentReady: false,
+        onboardingTriggerRef: { current: null },
         ownerReady: true,
       }),
     );

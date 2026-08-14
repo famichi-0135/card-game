@@ -1,0 +1,126 @@
+{
+  "nodes": [
+    {
+      "id": "_docs_environment_team_development_md_document",
+      "label": "\u30c1\u30fc\u30e0\u958b\u767a\u30ac\u30a4\u30c9",
+      "file_type": "document",
+      "source_file": "docs/environment/team-development.md",
+      "source_location": null
+    },
+    {
+      "id": "_docs_environment_team_development_md_pr_only_main_concept",
+      "label": "main\u3078\u306e\u76f4\u63a5push\u7981\u6b62\u30fbPR\u5fc5\u9808",
+      "file_type": "concept",
+      "source_file": "docs/environment/team-development.md",
+      "source_location": "\u76ee\u7684\u3068\u57fa\u672c\u65b9\u91dd"
+    },
+    {
+      "id": "_docs_environment_team_development_md_issue_branch_pr_one_to_one_concept",
+      "label": "1 Issue\u30fb1\u30d6\u30e9\u30f3\u30c1\u30fb1 PR",
+      "file_type": "concept",
+      "source_file": "docs/environment/team-development.md",
+      "source_location": "\u76ee\u7684\u3068\u57fa\u672c\u65b9\u91dd"
+    },
+    {
+      "id": "_docs_environment_team_development_md_quality_status_check_concept",
+      "label": "Quality status check\u5fc5\u9808",
+      "file_type": "concept",
+      "source_file": "docs/environment/team-development.md",
+      "source_location": "GitHub\u5074\u3067\u6700\u521d\u306b\u8a2d\u5b9a\u3059\u308b\u3053\u3068"
+    },
+    {
+      "id": "_docs_environment_team_development_md_branch_lifecycle_concept",
+      "label": "\u30d6\u30e9\u30f3\u30c1\u4f5c\u6210\u30fbPR\u30fb\u30de\u30fc\u30b8\u5f8c\u524a\u9664",
+      "file_type": "concept",
+      "source_file": "docs/environment/team-development.md",
+      "source_location": "\u30d6\u30e9\u30f3\u30c1\u6226\u7565"
+    },
+    {
+      "id": "_docs_environment_team_development_md_merge_not_rebase_concept",
+      "label": "main\u53d6\u308a\u8fbc\u307f\u306fmerge\u3092\u63a8\u5968",
+      "file_type": "concept",
+      "source_file": "docs/environment/team-development.md",
+      "source_location": "main\u306e\u5909\u66f4\u3092\u53d6\u308a\u8fbc\u3080\u624b\u9806"
+    },
+    {
+      "id": "_docs_environment_team_development_md_cf_typegen_commit_concept",
+      "label": "Cloudflare Binding\u5909\u66f4\u6642\u306ecf-typegen commit",
+      "file_type": "concept",
+      "source_file": "docs/environment/team-development.md",
+      "source_location": "\u4f5c\u696d\u4e2d\u306eGit\u64cd\u4f5c"
+    },
+    {
+      "id": "_docs_environment_team_development_md_codex_human_review_concept",
+      "label": "Codex\u88dc\u52a9\u3068\u4eba\u9593\u30ec\u30d3\u30e5\u30fc",
+      "file_type": "concept",
+      "source_file": "docs/environment/team-development.md",
+      "source_location": "Codex\u306b\u3088\u308b\u5b9f\u88c5\u88dc\u52a9"
+    }
+  ],
+  "edges": [
+    {
+      "source": "_docs_environment_team_development_md_document",
+      "target": "_docs_environment_team_development_md_pr_only_main_concept",
+      "relation": "requires",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/environment/team-development.md",
+      "source_location": "\u76ee\u7684\u3068\u57fa\u672c\u65b9\u91dd"
+    },
+    {
+      "source": "_docs_environment_team_development_md_document",
+      "target": "_docs_environment_team_development_md_issue_branch_pr_one_to_one_concept",
+      "relation": "defines",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/environment/team-development.md",
+      "source_location": "\u76ee\u7684\u3068\u57fa\u672c\u65b9\u91dd"
+    },
+    {
+      "source": "_docs_environment_team_development_md_document",
+      "target": "_docs_environment_team_development_md_quality_status_check_concept",
+      "relation": "requires",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/environment/team-development.md",
+      "source_location": "GitHub\u5074\u3067\u6700\u521d\u306b\u8a2d\u5b9a\u3059\u308b\u3053\u3068"
+    },
+    {
+      "source": "_docs_environment_team_development_md_document",
+      "target": "_docs_environment_team_development_md_branch_lifecycle_concept",
+      "relation": "defines",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/environment/team-development.md",
+      "source_location": "\u30d6\u30e9\u30f3\u30c1\u6226\u7565"
+    },
+    {
+      "source": "_docs_environment_team_development_md_document",
+      "target": "_docs_environment_team_development_md_merge_not_rebase_concept",
+      "relation": "recommends",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/environment/team-development.md",
+      "source_location": "main\u306e\u5909\u66f4\u3092\u53d6\u308a\u8fbc\u3080\u624b\u9806"
+    },
+    {
+      "source": "_docs_environment_team_development_md_document",
+      "target": "_docs_environment_team_development_md_cf_typegen_commit_concept",
+      "relation": "requires",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/environment/team-development.md",
+      "source_location": "\u4f5c\u696d\u4e2d\u306eGit\u64cd\u4f5c"
+    },
+    {
+      "source": "_docs_environment_team_development_md_document",
+      "target": "_docs_environment_team_development_md_codex_human_review_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/environment/team-development.md",
+      "source_location": "Codex\u306b\u3088\u308b\u5b9f\u88c5\u88dc\u52a9"
+    }
+  ],
+  "hyperedges": []
+}

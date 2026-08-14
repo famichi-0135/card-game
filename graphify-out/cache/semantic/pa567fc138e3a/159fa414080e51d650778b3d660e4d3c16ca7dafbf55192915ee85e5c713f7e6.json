@@ -1,0 +1,183 @@
+{
+  "nodes": [
+    {
+      "id": "_docs_frontend_frontend_integration_plan_md_document",
+      "label": "\u30d5\u30ed\u30f3\u30c8\u30a8\u30f3\u30c9\u9023\u643a\u306e\u5b9f\u88c5\u8a08\u753b",
+      "file_type": "document",
+      "source_file": "docs/frontend/frontend-integration-plan.md",
+      "source_location": null
+    },
+    {
+      "id": "_docs_frontend_frontend_integration_plan_md_contract_gate_concept",
+      "label": "\u30d5\u30ed\u30f3\u30c8\u30a8\u30f3\u30c9\u5951\u7d04\u30b2\u30fc\u30c8",
+      "file_type": "concept",
+      "source_file": "docs/frontend/frontend-integration-plan.md",
+      "source_location": "1. \u76ee\u7684\u3068\u7d50\u8ad6"
+    },
+    {
+      "id": "_docs_frontend_frontend_integration_plan_md_fixed_five_slots_concept",
+      "label": "\u56fa\u5b9a5\u653b\u6483\u30b0\u30eb\u30fc\u30d7slotIndex",
+      "file_type": "concept",
+      "source_file": "docs/frontend/frontend-integration-plan.md",
+      "source_location": "4.1 \u56fa\u5b9a\u30b9\u30ed\u30c3\u30c8\u3068\u516c\u958b\u76e4\u9762"
+    },
+    {
+      "id": "_docs_frontend_frontend_integration_plan_md_public_card_catalog_version_concept",
+      "label": "\u30d0\u30fc\u30b8\u30e7\u30f3\u56fa\u5b9aPublicCardCatalog",
+      "file_type": "concept",
+      "source_file": "docs/frontend/frontend-integration-plan.md",
+      "source_location": "4.2 \u516c\u958b\u30ab\u30fc\u30c9\u30ab\u30bf\u30ed\u30b0"
+    },
+    {
+      "id": "_docs_frontend_frontend_integration_plan_md_get_available_game_actions_concept",
+      "label": "getAvailableGameActions\u516c\u958b\u5224\u5b9aAPI",
+      "file_type": "concept",
+      "source_file": "docs/frontend/frontend-integration-plan.md",
+      "source_location": "4.3 \u30af\u30e9\u30a4\u30a2\u30f3\u30c8\u7528\u306e\u5408\u6cd5\u624b\u5224\u5b9a"
+    },
+    {
+      "id": "_docs_frontend_frontend_integration_plan_md_http_snapshot_resync_concept",
+      "label": "HTTP\u30b9\u30ca\u30c3\u30d7\u30b7\u30e7\u30c3\u30c8\u518d\u540c\u671f",
+      "file_type": "concept",
+      "source_file": "docs/frontend/frontend-integration-plan.md",
+      "source_location": "4.4 HTTP\u540c\u671f\u3068\u518d\u9001"
+    },
+    {
+      "id": "_docs_frontend_frontend_integration_plan_md_same_command_retry_concept",
+      "label": "\u540c\u3058commandId\u30fb\u672c\u6587\u306ePOST\u518d\u9001",
+      "file_type": "concept",
+      "source_file": "docs/frontend/frontend-integration-plan.md",
+      "source_location": "4.4 HTTP\u540c\u671f\u3068\u518d\u9001"
+    },
+    {
+      "id": "_docs_frontend_frontend_integration_plan_md_websocket_notification_polling_concept",
+      "label": "WebSocket\u901a\u77e5\u30682\u79d2\u5dee\u5206\u30dd\u30fc\u30ea\u30f3\u30b0",
+      "file_type": "concept",
+      "source_file": "docs/frontend/frontend-integration-plan.md",
+      "source_location": "4.4 HTTP\u540c\u671f\u3068\u518d\u9001"
+    },
+    {
+      "id": "_docs_frontend_frontend_integration_plan_md_frontend_stack_concept",
+      "label": "react-router/React Query/dnd-kit\u57fa\u76e4",
+      "file_type": "concept",
+      "source_file": "docs/frontend/frontend-integration-plan.md",
+      "source_location": "3. \u5909\u66f4\u5224\u65ad"
+    },
+    {
+      "id": "_docs_frontend_frontend_integration_plan_md_phased_implementation_concept",
+      "label": "\u30d5\u30a7\u30fc\u30ba0\u301c4\u306e\u5b9f\u88c5\u9806\u5e8f",
+      "file_type": "concept",
+      "source_file": "docs/frontend/frontend-integration-plan.md",
+      "source_location": "5. \u5b9f\u88c5\u9806\u5e8f"
+    },
+    {
+      "id": "_docs_frontend_frontend_integration_plan_md_initial_release_exclusions_concept",
+      "label": "\u30e2\u30d0\u30a4\u30eb\u30fb\u89b3\u6226\u30fb\u30c1\u30e3\u30c3\u30c8\u7b49\u306e\u521d\u56de\u5bfe\u8c61\u5916",
+      "file_type": "concept",
+      "source_file": "docs/frontend/frontend-integration-plan.md",
+      "source_location": "7. \u521d\u56de\u30ea\u30ea\u30fc\u30b9\u5916"
+    }
+  ],
+  "edges": [
+    {
+      "source": "_docs_frontend_frontend_integration_plan_md_document",
+      "target": "_docs_frontend_frontend_integration_plan_md_contract_gate_concept",
+      "relation": "defines",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/frontend/frontend-integration-plan.md",
+      "source_location": "1. \u76ee\u7684\u3068\u7d50\u8ad6"
+    },
+    {
+      "source": "_docs_frontend_frontend_integration_plan_md_document",
+      "target": "_docs_frontend_frontend_integration_plan_md_fixed_five_slots_concept",
+      "relation": "requires",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/frontend/frontend-integration-plan.md",
+      "source_location": "4.1 \u56fa\u5b9a\u30b9\u30ed\u30c3\u30c8\u3068\u516c\u958b\u76e4\u9762"
+    },
+    {
+      "source": "_docs_frontend_frontend_integration_plan_md_document",
+      "target": "_docs_frontend_frontend_integration_plan_md_public_card_catalog_version_concept",
+      "relation": "defines",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/frontend/frontend-integration-plan.md",
+      "source_location": "4.2 \u516c\u958b\u30ab\u30fc\u30c9\u30ab\u30bf\u30ed\u30b0"
+    },
+    {
+      "source": "_docs_frontend_frontend_integration_plan_md_document",
+      "target": "_docs_frontend_frontend_integration_plan_md_get_available_game_actions_concept",
+      "relation": "defines",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/frontend/frontend-integration-plan.md",
+      "source_location": "4.3 \u30af\u30e9\u30a4\u30a2\u30f3\u30c8\u7528\u306e\u5408\u6cd5\u624b\u5224\u5b9a"
+    },
+    {
+      "source": "_docs_frontend_frontend_integration_plan_md_document",
+      "target": "_docs_frontend_frontend_integration_plan_md_http_snapshot_resync_concept",
+      "relation": "defines",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/frontend/frontend-integration-plan.md",
+      "source_location": "4.4 HTTP\u540c\u671f\u3068\u518d\u9001"
+    },
+    {
+      "source": "_docs_frontend_frontend_integration_plan_md_document",
+      "target": "_docs_frontend_frontend_integration_plan_md_same_command_retry_concept",
+      "relation": "defines",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/frontend/frontend-integration-plan.md",
+      "source_location": "4.4 HTTP\u540c\u671f\u3068\u518d\u9001"
+    },
+    {
+      "source": "_docs_frontend_frontend_integration_plan_md_document",
+      "target": "_docs_frontend_frontend_integration_plan_md_websocket_notification_polling_concept",
+      "relation": "defines",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/frontend/frontend-integration-plan.md",
+      "source_location": "4.4 HTTP\u540c\u671f\u3068\u518d\u9001"
+    },
+    {
+      "source": "_docs_frontend_frontend_integration_plan_md_document",
+      "target": "_docs_frontend_frontend_integration_plan_md_frontend_stack_concept",
+      "relation": "chooses",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/frontend/frontend-integration-plan.md",
+      "source_location": "3. \u5909\u66f4\u5224\u65ad"
+    },
+    {
+      "source": "_docs_frontend_frontend_integration_plan_md_document",
+      "target": "_docs_frontend_frontend_integration_plan_md_phased_implementation_concept",
+      "relation": "orders",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/frontend/frontend-integration-plan.md",
+      "source_location": "5. \u5b9f\u88c5\u9806\u5e8f"
+    },
+    {
+      "source": "_docs_frontend_frontend_integration_plan_md_document",
+      "target": "_docs_frontend_frontend_integration_plan_md_initial_release_exclusions_concept",
+      "relation": "excludes",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/frontend/frontend-integration-plan.md",
+      "source_location": "7. \u521d\u56de\u30ea\u30ea\u30fc\u30b9\u5916"
+    },
+    {
+      "source": "_docs_frontend_frontend_integration_plan_md_fixed_five_slots_concept",
+      "target": "_docs_frontend_game_board_ui_requirements_md_fixed_slot_board_concept",
+      "relation": "aligns_with",
+      "confidence": "INFERRED",
+      "confidence_score": 0.95,
+      "source_file": "docs/frontend/frontend-integration-plan.md",
+      "source_location": "4.1 \u56fa\u5b9a\u30b9\u30ed\u30c3\u30c8\u3068\u516c\u958b\u76e4\u9762"
+    }
+  ],
+  "hyperedges": []
+}

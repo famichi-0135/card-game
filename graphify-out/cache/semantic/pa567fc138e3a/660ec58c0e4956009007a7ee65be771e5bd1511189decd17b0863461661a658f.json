@@ -1,0 +1,167 @@
+{
+  "nodes": [
+    {
+      "id": "_apps_frontend_index_html_document",
+      "label": "Frontend HTML Entry",
+      "file_type": "document",
+      "source_file": "apps/frontend/index.html",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_apps_frontend_index_html_html_document_concept",
+      "label": "HTML document",
+      "file_type": "concept",
+      "source_file": "apps/frontend/index.html",
+      "source_location": null
+    },
+    {
+      "id": "_apps_frontend_index_html_lang_en_concept",
+      "label": "English document language",
+      "file_type": "concept",
+      "source_file": "apps/frontend/index.html",
+      "source_location": null
+    },
+    {
+      "id": "_apps_frontend_index_html_favicon_svg_concept",
+      "label": "Favicon SVG",
+      "file_type": "concept",
+      "source_file": "apps/frontend/index.html",
+      "source_location": null
+    },
+    {
+      "id": "_apps_frontend_index_html_viewport_meta_concept",
+      "label": "Responsive viewport metadata",
+      "file_type": "concept",
+      "source_file": "apps/frontend/index.html",
+      "source_location": null
+    },
+    {
+      "id": "_apps_frontend_index_html_web_front_title_concept",
+      "label": "web-front title",
+      "file_type": "concept",
+      "source_file": "apps/frontend/index.html",
+      "source_location": null
+    },
+    {
+      "id": "_apps_frontend_index_html_root_mount_concept",
+      "label": "Root DOM mount",
+      "file_type": "concept",
+      "source_file": "apps/frontend/index.html",
+      "source_location": null
+    },
+    {
+      "id": "_apps_frontend_index_html_vite_module_entry_concept",
+      "label": "Vite module entry",
+      "file_type": "concept",
+      "source_file": "apps/frontend/index.html",
+      "source_location": null
+    }
+  ],
+  "edges": [
+    {
+      "source": "_apps_frontend_index_html_document",
+      "target": "_apps_frontend_index_html_html_document_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": "apps/frontend/index.html",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_apps_frontend_index_html_document",
+      "target": "_apps_frontend_index_html_lang_en_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": "apps/frontend/index.html",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_apps_frontend_index_html_document",
+      "target": "_apps_frontend_index_html_favicon_svg_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": "apps/frontend/index.html",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_apps_frontend_index_html_document",
+      "target": "_apps_frontend_index_html_viewport_meta_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": "apps/frontend/index.html",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_apps_frontend_index_html_document",
+      "target": "_apps_frontend_index_html_web_front_title_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": "apps/frontend/index.html",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_apps_frontend_index_html_document",
+      "target": "_apps_frontend_index_html_root_mount_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": "apps/frontend/index.html",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_apps_frontend_index_html_document",
+      "target": "_apps_frontend_index_html_vite_module_entry_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": "apps/frontend/index.html",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_apps_frontend_index_html_html_document_concept",
+      "target": "_apps_frontend_index_html_root_mount_concept",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": "apps/frontend/index.html",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_apps_frontend_index_html_html_document_concept",
+      "target": "_apps_frontend_index_html_vite_module_entry_concept",
+      "relation": "loads",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": "apps/frontend/index.html",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_apps_frontend_index_html_html_document_concept",
+      "target": "_apps_frontend_index_html_viewport_meta_concept",
+      "relation": "sets",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": "apps/frontend/index.html",
+      "source_location": null,
+      "weight": 1
+    }
+  ],
+  "hyperedges": []
+}

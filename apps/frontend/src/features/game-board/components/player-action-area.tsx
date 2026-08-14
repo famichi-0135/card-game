@@ -53,6 +53,7 @@ export function PlayerActionArea({
       <section
         aria-label="自分の捨て札"
         className="relative z-10 min-h-0 min-w-0"
+        data-onboarding-target="discard-zone"
       >
         <DiscardZone
           canDiscard={canDiscard}
@@ -65,6 +66,7 @@ export function PlayerActionArea({
       <section
         aria-label="自分のサポートゾーン"
         className="relative z-10 min-h-0 min-w-0"
+        data-onboarding-target="support-zone"
       >
         <SupportZone
           canPlaySupport={canPlaySupport}
@@ -77,6 +79,7 @@ export function PlayerActionArea({
       <section
         aria-label="自分の手札"
         className="min-w-0 overflow-visible relative z-10"
+        data-onboarding-target="hand"
       >
         <div className="flex h-full min-h-0 flex-col gap-[5px] border-x border-white/[.08] px-[12px]">
           <div className="relative flex items-center gap-[10px]">

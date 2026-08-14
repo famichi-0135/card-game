@@ -1,0 +1,272 @@
+{
+  "nodes": [
+    {
+      "id": "_apps_backend_readme_md_document",
+      "label": "Backend Worker README",
+      "file_type": "document",
+      "source_file": "apps/backend/README.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_apps_backend_readme_md_hono_api_worker_concept",
+      "label": "Hono API Worker",
+      "file_type": "concept",
+      "source_file": "apps/backend/README.md",
+      "source_location": null
+    },
+    {
+      "id": "_apps_backend_readme_md_backend_service_binding_concept",
+      "label": "Frontend BACKEND binding",
+      "file_type": "concept",
+      "source_file": "apps/backend/README.md",
+      "source_location": null
+    },
+    {
+      "id": "_apps_backend_readme_md_backend_dev_script_concept",
+      "label": "Backend dev command",
+      "file_type": "concept",
+      "source_file": "apps/backend/README.md",
+      "source_location": null
+    },
+    {
+      "id": "_apps_backend_readme_md_local_dev_vars_generation_concept",
+      "label": "Local dev vars generation",
+      "file_type": "concept",
+      "source_file": "apps/backend/README.md",
+      "source_location": null
+    },
+    {
+      "id": "_apps_backend_readme_md_local_better_auth_secret_concept",
+      "label": "Local Better Auth secret",
+      "file_type": "concept",
+      "source_file": "apps/backend/README.md",
+      "source_location": null
+    },
+    {
+      "id": "_apps_backend_readme_md_d1_local_migration_concept",
+      "label": "Local D1 migration",
+      "file_type": "concept",
+      "source_file": "apps/backend/README.md",
+      "source_location": null
+    },
+    {
+      "id": "_apps_backend_readme_md_dev_vars_gitignored_concept",
+      "label": "dev.vars excluded from Git",
+      "file_type": "concept",
+      "source_file": "apps/backend/README.md",
+      "source_location": null
+    },
+    {
+      "id": "_apps_backend_readme_md_cloudflare_secrets_concept",
+      "label": "Cloudflare production secrets",
+      "file_type": "concept",
+      "source_file": "apps/backend/README.md",
+      "source_location": null
+    },
+    {
+      "id": "_apps_backend_readme_md_cf_connecting_ip_warning_concept",
+      "label": "CF-Connecting-IP warning",
+      "file_type": "concept",
+      "source_file": "apps/backend/README.md",
+      "source_location": null
+    },
+    {
+      "id": "_apps_backend_readme_md_trusted_forward_headers_concept",
+      "label": "Trusted forward header restriction",
+      "file_type": "concept",
+      "source_file": "apps/backend/README.md",
+      "source_location": null
+    },
+    {
+      "id": "_apps_backend_readme_md_health_api_concept",
+      "label": "GET /api/health",
+      "file_type": "concept",
+      "source_file": "apps/backend/README.md",
+      "source_location": null
+    },
+    {
+      "id": "_apps_backend_readme_md_contracts_api_types_concept",
+      "label": "Contracts API types",
+      "file_type": "concept",
+      "source_file": "apps/backend/README.md",
+      "source_location": null
+    }
+  ],
+  "edges": [
+    {
+      "source": "_apps_backend_readme_md_document",
+      "target": "_apps_backend_readme_md_hono_api_worker_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": "apps/backend/README.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_apps_backend_readme_md_document",
+      "target": "_apps_backend_readme_md_backend_service_binding_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": "apps/backend/README.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_apps_backend_readme_md_document",
+      "target": "_apps_backend_readme_md_backend_dev_script_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": "apps/backend/README.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_apps_backend_readme_md_document",
+      "target": "_apps_backend_readme_md_local_dev_vars_generation_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": "apps/backend/README.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_apps_backend_readme_md_document",
+      "target": "_apps_backend_readme_md_local_better_auth_secret_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": "apps/backend/README.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_apps_backend_readme_md_document",
+      "target": "_apps_backend_readme_md_d1_local_migration_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": "apps/backend/README.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_apps_backend_readme_md_document",
+      "target": "_apps_backend_readme_md_dev_vars_gitignored_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": "apps/backend/README.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_apps_backend_readme_md_document",
+      "target": "_apps_backend_readme_md_cloudflare_secrets_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": "apps/backend/README.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_apps_backend_readme_md_document",
+      "target": "_apps_backend_readme_md_cf_connecting_ip_warning_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": "apps/backend/README.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_apps_backend_readme_md_document",
+      "target": "_apps_backend_readme_md_trusted_forward_headers_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": "apps/backend/README.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_apps_backend_readme_md_document",
+      "target": "_apps_backend_readme_md_health_api_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": "apps/backend/README.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_apps_backend_readme_md_document",
+      "target": "_apps_backend_readme_md_contracts_api_types_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": "apps/backend/README.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_apps_backend_readme_md_hono_api_worker_concept",
+      "target": "_apps_backend_readme_md_backend_service_binding_concept",
+      "relation": "served_through",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": "apps/backend/README.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_apps_backend_readme_md_local_dev_vars_generation_concept",
+      "target": "_apps_backend_readme_md_local_better_auth_secret_concept",
+      "relation": "generates",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": "apps/backend/README.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_apps_backend_readme_md_d1_local_migration_concept",
+      "target": "_apps_backend_readme_md_backend_dev_script_concept",
+      "relation": "runs_before",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": "apps/backend/README.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_apps_backend_readme_md_cf_connecting_ip_warning_concept",
+      "target": "_apps_backend_readme_md_trusted_forward_headers_concept",
+      "relation": "restricts",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": "apps/backend/README.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_apps_backend_readme_md_health_api_concept",
+      "target": "_apps_backend_readme_md_contracts_api_types_concept",
+      "relation": "uses",
+      "confidence": "INFERRED",
+      "confidence_score": 0.75,
+      "source_file": "apps/backend/README.md",
+      "source_location": null,
+      "weight": 0.75
+    }
+  ],
+  "hyperedges": []
+}

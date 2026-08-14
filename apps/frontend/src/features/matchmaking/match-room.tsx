@@ -1,5 +1,11 @@
 import type { Faction } from "@disastar/game-engine/contracts";
-import { type ReactNode, useEffect, useRef, useState } from "react";
+import {
+  type ReactNode,
+  type RefObject,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 import { Link, Navigate, useNavigate } from "react-router";
 import {
   AppPanel,
@@ -10,6 +16,14 @@ import {
 } from "../../components/application-ui.tsx";
 import { toast } from "../../components/ui/toast.tsx";
 import { AuthStatus } from "../auth/auth-layout.tsx";
+import {
+  GameBoardOnboarding,
+  type OnboardingResult,
+} from "../game-onboarding/game-board-onboarding.tsx";
+import {
+  saveGameBoardOnboardingState,
+  shouldAutoStartGameBoardOnboarding,
+} from "../game-onboarding/onboarding-storage.ts";
 import { createRoomPath } from "./match-id.ts";
 import {
   acceptMatch,
@@ -59,9 +73,37 @@ export function MatchRoom({
   const [isAccepting, setIsAccepting] = useState(false);
   const [isReadying, setIsReadying] = useState(false);
   const [isCancelling, setIsCancelling] = useState(false);
+  const [isOnboardingOpen, setIsOnboardingOpen] = useState(false);
+  const onboardingAutoStartedRef = useRef(false);
+  const onboardingTriggerRef = useRef<HTMLButtonElement>(null);
   const [copyStatus, setCopyStatus] = useState<"idle" | "copied" | "failed">(
     "idle",
   );
+
+  useEffect(() => {
+    if (
+      onboardingAutoStartedRef.current ||
+      (match?.status !== "waiting" && match?.status !== "preparing") ||
+      !shouldAutoStartGameBoardOnboarding()
+    ) {
+      return;
+    }
+
+    onboardingAutoStartedRef.current = true;
+    setIsOnboardingOpen(true);
+  }, [match?.status]);
+
+  function openOnboarding() {
+    setIsOnboardingOpen(true);
+  }
+
+  function finishOnboarding(result: OnboardingResult) {
+    if (result !== "interrupted") {
+      saveGameBoardOnboardingState(result);
+    }
+    setIsOnboardingOpen(false);
+    window.requestAnimationFrame(() => onboardingTriggerRef.current?.focus());
+  }
 
   if (lobby.isPending) {
     return <RoomLayout title="招待部屋を読み込んでいます" />;
@@ -214,9 +256,14 @@ export function MatchRoom({
           isReady={isReady}
           isReadying={isReadying}
           opponentReady={match.opponentReady}
+          onboardingTriggerRef={onboardingTriggerRef}
+          onOpenOnboarding={openOnboarding}
           ownerReady={match.ownerReady}
           onReady={() => void handleReady()}
         />
+        {isOnboardingOpen ? (
+          <GameBoardOnboarding onFinish={finishOnboarding} />
+        ) : null}
       </RoomLayout>
     );
   }
@@ -242,15 +289,22 @@ export function MatchRoom({
       {isOwner ? (
         <OwnerWaitingState
           isCancelling={isCancelling}
+          onboardingTriggerRef={onboardingTriggerRef}
           onCancel={() => void handleCancel()}
+          onOpenOnboarding={openOnboarding}
         />
       ) : (
         <OpponentJoinState
           faction={getOpposingFaction(match.ownerFaction)}
           isAccepting={isAccepting}
           onAccept={() => void handleAccept()}
+          onboardingTriggerRef={onboardingTriggerRef}
+          onOpenOnboarding={openOnboarding}
         />
       )}
+      {isOnboardingOpen ? (
+        <GameBoardOnboarding onFinish={finishOnboarding} />
+      ) : null}
     </RoomLayout>
   );
 }
@@ -260,12 +314,16 @@ export function PreparingMatchState({
   isReady,
   isReadying,
   opponentReady,
+  onboardingTriggerRef,
+  onOpenOnboarding,
   ownerReady,
   onReady,
 }: {
   isOwner: boolean;
   isReady: boolean;
   isReadying: boolean;
+  onboardingTriggerRef: RefObject<HTMLButtonElement | null>;
+  onOpenOnboarding: () => void;
   opponentReady: boolean;
   ownerReady: boolean;
   onReady: () => void;
@@ -296,6 +354,14 @@ export function PreparingMatchState({
             : isReady
               ? "準備完了を送信済みです"
               : "準備完了"}
+        </button>
+        <button
+          className={`${appButtonClassName.secondary} w-fit`}
+          onClick={onOpenOnboarding}
+          ref={onboardingTriggerRef}
+          type="button"
+        >
+          遊び方を見る
         </button>
         {!isOwner ? (
           <p className="text-sm text-[#91a5b4]">
@@ -377,10 +443,14 @@ function InvitationDetails({
 
 function OwnerWaitingState({
   isCancelling,
+  onboardingTriggerRef,
   onCancel,
+  onOpenOnboarding,
 }: {
   isCancelling: boolean;
+  onboardingTriggerRef: RefObject<HTMLButtonElement | null>;
   onCancel: () => void;
+  onOpenOnboarding: () => void;
 }) {
   return (
     <AppPanel className="mt-7" label="WAITING ROOM">
@@ -402,6 +472,14 @@ function OwnerWaitingState({
         >
           {isCancelling ? "取り消しています" : "招待部屋を取り消す"}
         </button>
+        <button
+          className={`w-fit ${appButtonClassName.secondary}`}
+          onClick={onOpenOnboarding}
+          ref={onboardingTriggerRef}
+          type="button"
+        >
+          遊び方を見る
+        </button>
       </section>
     </AppPanel>
   );
@@ -411,10 +489,14 @@ function OpponentJoinState({
   faction,
   isAccepting,
   onAccept,
+  onboardingTriggerRef,
+  onOpenOnboarding,
 }: {
   faction: Faction;
   isAccepting: boolean;
   onAccept: () => void;
+  onboardingTriggerRef: RefObject<HTMLButtonElement | null>;
+  onOpenOnboarding: () => void;
 }) {
   return (
     <AppPanel className="mt-7 max-w-xl" label="JOIN MATCH">
@@ -434,6 +516,14 @@ function OpponentJoinState({
           {isAccepting
             ? "参加しています"
             : `${factionLabels[faction]}で参加する`}
+        </button>
+        <button
+          className={`${appButtonClassName.secondary} w-fit`}
+          onClick={onOpenOnboarding}
+          ref={onboardingTriggerRef}
+          type="button"
+        >
+          遊び方を見る
         </button>
       </section>
     </AppPanel>

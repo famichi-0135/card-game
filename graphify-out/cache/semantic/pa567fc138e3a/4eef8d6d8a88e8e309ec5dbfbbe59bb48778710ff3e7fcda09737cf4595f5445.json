@@ -1,0 +1,455 @@
+{
+  "nodes": [
+    {
+      "id": "_github_workflows_codex_create_pr_yml_document",
+      "label": "Codex Create Draft PR Workflow",
+      "file_type": "document",
+      "source_file": ".github/workflows/codex-create-pr.yml",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_github_workflows_codex_create_pr_yml_draft_pr_workflow_concept",
+      "label": "Codex draft PR workflow",
+      "file_type": "concept",
+      "source_file": ".github/workflows/codex-create-pr.yml",
+      "source_location": null
+    },
+    {
+      "id": "_github_workflows_codex_create_pr_yml_workflow_dispatch_inputs_concept",
+      "label": "Manual workflow inputs",
+      "file_type": "concept",
+      "source_file": ".github/workflows/codex-create-pr.yml",
+      "source_location": null
+    },
+    {
+      "id": "_github_workflows_codex_create_pr_yml_title_input_concept",
+      "label": "Title input",
+      "file_type": "concept",
+      "source_file": ".github/workflows/codex-create-pr.yml",
+      "source_location": null
+    },
+    {
+      "id": "_github_workflows_codex_create_pr_yml_task_input_concept",
+      "label": "Task input",
+      "file_type": "concept",
+      "source_file": ".github/workflows/codex-create-pr.yml",
+      "source_location": null
+    },
+    {
+      "id": "_github_workflows_codex_create_pr_yml_issue_number_input_concept",
+      "label": "Issue number input",
+      "file_type": "concept",
+      "source_file": ".github/workflows/codex-create-pr.yml",
+      "source_location": null
+    },
+    {
+      "id": "_github_workflows_codex_create_pr_yml_confirm_input_concept",
+      "label": "Confirmation input",
+      "file_type": "concept",
+      "source_file": ".github/workflows/codex-create-pr.yml",
+      "source_location": null
+    },
+    {
+      "id": "_github_workflows_codex_create_pr_yml_implementation_enabled_gate_concept",
+      "label": "Implementation enabled gate",
+      "file_type": "concept",
+      "source_file": ".github/workflows/codex-create-pr.yml",
+      "source_location": null
+    },
+    {
+      "id": "_github_workflows_codex_create_pr_yml_generate_patch_job_concept",
+      "label": "Generate patch job",
+      "file_type": "concept",
+      "source_file": ".github/workflows/codex-create-pr.yml",
+      "source_location": null
+    },
+    {
+      "id": "_github_workflows_codex_create_pr_yml_read_only_contents_concept",
+      "label": "Read-only contents permission",
+      "file_type": "concept",
+      "source_file": ".github/workflows/codex-create-pr.yml",
+      "source_location": null
+    },
+    {
+      "id": "_github_workflows_codex_create_pr_yml_codex_action_concept",
+      "label": "OpenAI Codex action",
+      "file_type": "concept",
+      "source_file": ".github/workflows/codex-create-pr.yml",
+      "source_location": null
+    },
+    {
+      "id": "_github_workflows_codex_create_pr_yml_workspace_write_sandbox_concept",
+      "label": "Workspace-write sandbox",
+      "file_type": "concept",
+      "source_file": ".github/workflows/codex-create-pr.yml",
+      "source_location": null
+    },
+    {
+      "id": "_github_workflows_codex_create_pr_yml_protected_paths_concept",
+      "label": "Protected path guard",
+      "file_type": "concept",
+      "source_file": ".github/workflows/codex-create-pr.yml",
+      "source_location": null
+    },
+    {
+      "id": "_github_workflows_codex_create_pr_yml_patch_artifact_concept",
+      "label": "Patch artifact",
+      "file_type": "concept",
+      "source_file": ".github/workflows/codex-create-pr.yml",
+      "source_location": null
+    },
+    {
+      "id": "_github_workflows_codex_create_pr_yml_verify_patch_job_concept",
+      "label": "Verify patch job",
+      "file_type": "concept",
+      "source_file": ".github/workflows/codex-create-pr.yml",
+      "source_location": null
+    },
+    {
+      "id": "_github_workflows_codex_create_pr_yml_apply_patch_validation_concept",
+      "label": "Patch apply validation",
+      "file_type": "concept",
+      "source_file": ".github/workflows/codex-create-pr.yml",
+      "source_location": null
+    },
+    {
+      "id": "_github_workflows_codex_create_pr_yml_quality_validation_concept",
+      "label": "Patch quality validation",
+      "file_type": "concept",
+      "source_file": ".github/workflows/codex-create-pr.yml",
+      "source_location": null
+    },
+    {
+      "id": "_github_workflows_codex_create_pr_yml_publish_draft_job_concept",
+      "label": "Publish draft PR job",
+      "file_type": "concept",
+      "source_file": ".github/workflows/codex-create-pr.yml",
+      "source_location": null
+    },
+    {
+      "id": "_github_workflows_codex_create_pr_yml_codex_branch_concept",
+      "label": "codex/manual branch",
+      "file_type": "concept",
+      "source_file": ".github/workflows/codex-create-pr.yml",
+      "source_location": null
+    },
+    {
+      "id": "_github_workflows_codex_create_pr_yml_commit_push_concept",
+      "label": "Commit and push",
+      "file_type": "concept",
+      "source_file": ".github/workflows/codex-create-pr.yml",
+      "source_location": null
+    },
+    {
+      "id": "_github_workflows_codex_create_pr_yml_draft_pr_creation_concept",
+      "label": "Draft PR creation",
+      "file_type": "concept",
+      "source_file": ".github/workflows/codex-create-pr.yml",
+      "source_location": null
+    },
+    {
+      "id": "_github_workflows_codex_create_pr_yml_human_review_required_concept",
+      "label": "Human review required",
+      "file_type": "concept",
+      "source_file": ".github/workflows/codex-create-pr.yml",
+      "source_location": null
+    }
+  ],
+  "edges": [
+    {
+      "source": "_github_workflows_codex_create_pr_yml_document",
+      "target": "_github_workflows_codex_create_pr_yml_draft_pr_workflow_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": ".github/workflows/codex-create-pr.yml",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_github_workflows_codex_create_pr_yml_document",
+      "target": "_github_workflows_codex_create_pr_yml_workflow_dispatch_inputs_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": ".github/workflows/codex-create-pr.yml",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_github_workflows_codex_create_pr_yml_document",
+      "target": "_github_workflows_codex_create_pr_yml_title_input_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": ".github/workflows/codex-create-pr.yml",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_github_workflows_codex_create_pr_yml_document",
+      "target": "_github_workflows_codex_create_pr_yml_task_input_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": ".github/workflows/codex-create-pr.yml",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_github_workflows_codex_create_pr_yml_document",
+      "target": "_github_workflows_codex_create_pr_yml_issue_number_input_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": ".github/workflows/codex-create-pr.yml",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_github_workflows_codex_create_pr_yml_document",
+      "target": "_github_workflows_codex_create_pr_yml_confirm_input_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": ".github/workflows/codex-create-pr.yml",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_github_workflows_codex_create_pr_yml_document",
+      "target": "_github_workflows_codex_create_pr_yml_implementation_enabled_gate_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": ".github/workflows/codex-create-pr.yml",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_github_workflows_codex_create_pr_yml_document",
+      "target": "_github_workflows_codex_create_pr_yml_generate_patch_job_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": ".github/workflows/codex-create-pr.yml",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_github_workflows_codex_create_pr_yml_document",
+      "target": "_github_workflows_codex_create_pr_yml_read_only_contents_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": ".github/workflows/codex-create-pr.yml",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_github_workflows_codex_create_pr_yml_document",
+      "target": "_github_workflows_codex_create_pr_yml_codex_action_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": ".github/workflows/codex-create-pr.yml",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_github_workflows_codex_create_pr_yml_document",
+      "target": "_github_workflows_codex_create_pr_yml_workspace_write_sandbox_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": ".github/workflows/codex-create-pr.yml",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_github_workflows_codex_create_pr_yml_document",
+      "target": "_github_workflows_codex_create_pr_yml_protected_paths_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": ".github/workflows/codex-create-pr.yml",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_github_workflows_codex_create_pr_yml_document",
+      "target": "_github_workflows_codex_create_pr_yml_patch_artifact_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": ".github/workflows/codex-create-pr.yml",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_github_workflows_codex_create_pr_yml_document",
+      "target": "_github_workflows_codex_create_pr_yml_verify_patch_job_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": ".github/workflows/codex-create-pr.yml",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_github_workflows_codex_create_pr_yml_document",
+      "target": "_github_workflows_codex_create_pr_yml_apply_patch_validation_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": ".github/workflows/codex-create-pr.yml",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_github_workflows_codex_create_pr_yml_document",
+      "target": "_github_workflows_codex_create_pr_yml_quality_validation_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": ".github/workflows/codex-create-pr.yml",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_github_workflows_codex_create_pr_yml_document",
+      "target": "_github_workflows_codex_create_pr_yml_publish_draft_job_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": ".github/workflows/codex-create-pr.yml",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_github_workflows_codex_create_pr_yml_document",
+      "target": "_github_workflows_codex_create_pr_yml_codex_branch_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": ".github/workflows/codex-create-pr.yml",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_github_workflows_codex_create_pr_yml_document",
+      "target": "_github_workflows_codex_create_pr_yml_commit_push_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": ".github/workflows/codex-create-pr.yml",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_github_workflows_codex_create_pr_yml_document",
+      "target": "_github_workflows_codex_create_pr_yml_draft_pr_creation_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": ".github/workflows/codex-create-pr.yml",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_github_workflows_codex_create_pr_yml_document",
+      "target": "_github_workflows_codex_create_pr_yml_human_review_required_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": ".github/workflows/codex-create-pr.yml",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_github_workflows_codex_create_pr_yml_generate_patch_job_concept",
+      "target": "_github_workflows_codex_create_pr_yml_patch_artifact_concept",
+      "relation": "produces",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": ".github/workflows/codex-create-pr.yml",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_github_workflows_codex_create_pr_yml_verify_patch_job_concept",
+      "target": "_github_workflows_codex_create_pr_yml_patch_artifact_concept",
+      "relation": "validates",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": ".github/workflows/codex-create-pr.yml",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_github_workflows_codex_create_pr_yml_verify_patch_job_concept",
+      "target": "_github_workflows_codex_create_pr_yml_quality_validation_concept",
+      "relation": "runs",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": ".github/workflows/codex-create-pr.yml",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_github_workflows_codex_create_pr_yml_publish_draft_job_concept",
+      "target": "_github_workflows_codex_create_pr_yml_verify_patch_job_concept",
+      "relation": "depends_on",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": ".github/workflows/codex-create-pr.yml",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_github_workflows_codex_create_pr_yml_publish_draft_job_concept",
+      "target": "_github_workflows_codex_create_pr_yml_codex_branch_concept",
+      "relation": "creates",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": ".github/workflows/codex-create-pr.yml",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_github_workflows_codex_create_pr_yml_publish_draft_job_concept",
+      "target": "_github_workflows_codex_create_pr_yml_draft_pr_creation_concept",
+      "relation": "performs",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": ".github/workflows/codex-create-pr.yml",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_github_workflows_codex_create_pr_yml_draft_pr_creation_concept",
+      "target": "_github_workflows_codex_create_pr_yml_human_review_required_concept",
+      "relation": "requires",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": ".github/workflows/codex-create-pr.yml",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_github_workflows_codex_create_pr_yml_quality_validation_concept",
+      "target": "_github_workflows_ci_yml_quality_job_concept",
+      "relation": "reuses",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": ".github/workflows/codex-create-pr.yml",
+      "source_location": null,
+      "weight": 0.85
+    }
+  ],
+  "hyperedges": []
+}

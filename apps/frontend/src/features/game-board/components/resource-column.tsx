@@ -18,6 +18,7 @@ export function ResourceColumn({
       aria-label="みなもと"
       className="grid h-full min-h-0 grid-rows-[clamp(196px,24vh,226px)_minmax(0,1fr)] gap-[10px] overflow-visible"
       data-board-region="resources"
+      data-onboarding-target="resources"
     >
       <div
         className="min-h-0"

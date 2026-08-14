@@ -1,0 +1,215 @@
+{
+  "nodes": [
+    {
+      "id": "_docs_game_rule_definition_md_document",
+      "label": "\u57fa\u672c\u30b2\u30fc\u30e0\u30eb\u30fc\u30eb\u5b9a\u7fa9\u66f8",
+      "file_type": "document",
+      "source_file": "docs/game/rule-definition.md",
+      "source_location": null
+    },
+    {
+      "id": "_docs_game_rule_definition_md_two_player_factions_concept",
+      "label": "2\u4eba\u5bfe\u6226\u3068\u707d\u5bb3/\u5bfe\u7b56\u9663\u55b6",
+      "file_type": "concept",
+      "source_file": "docs/game/rule-definition.md",
+      "source_location": "2. \u57fa\u672c\u7528\u8a9e"
+    },
+    {
+      "id": "_docs_game_rule_definition_md_base_parameters_concept",
+      "label": "30\u679a\u30c7\u30c3\u30ad\u30fb\u30b9\u30bf\u30df\u30ca25\u30fb\u624b\u672d5\u30fb\u6700\u592730\u30e9\u30a6\u30f3\u30c9",
+      "file_type": "concept",
+      "source_file": "docs/game/rule-definition.md",
+      "source_location": "3. \u30b2\u30fc\u30e0\u306e\u57fa\u672c\u6761\u4ef6"
+    },
+    {
+      "id": "_docs_game_rule_definition_md_card_types_attributes_concept",
+      "label": "3\u5c5e\u6027\u30683\u30ab\u30fc\u30c9\u7a2e\u5225",
+      "file_type": "concept",
+      "source_file": "docs/game/rule-definition.md",
+      "source_location": "4\u301c5"
+    },
+    {
+      "id": "_docs_game_rule_definition_md_deck_building_concept",
+      "label": "\u9663\u55b6\u4e00\u81f4\u30fb30\u679a\u30fb\u7a2e\u5225\u679a\u6570\u30fb\u5c5e\u6027\u6761\u4ef6",
+      "file_type": "concept",
+      "source_file": "docs/game/rule-definition.md",
+      "source_location": "6. \u30c7\u30c3\u30ad\u69cb\u7bc9\u30eb\u30fc\u30eb"
+    },
+    {
+      "id": "_docs_game_rule_definition_md_game_start_shuffle_mulligan_concept",
+      "label": "\u30b7\u30e3\u30c3\u30d5\u30eb\u30fb\u4e71\u6570\u5148\u653b\u30fb\u521d\u671f\u624b\u672d\u5f15\u304d\u76f4\u3057",
+      "file_type": "concept",
+      "source_file": "docs/game/rule-definition.md",
+      "source_location": "7. \u30b2\u30fc\u30e0\u958b\u59cb\u51e6\u7406"
+    },
+    {
+      "id": "_docs_game_rule_definition_md_mana_resource_concept",
+      "label": "\u5c5e\u6027\u5225\u307f\u306a\u3082\u3068\u7dcf\u91cf\u30fb\u4f7f\u7528\u4e2d\u91cf\u30fb\u4f7f\u7528\u53ef\u80fd\u91cf",
+      "file_type": "concept",
+      "source_file": "docs/game/rule-definition.md",
+      "source_location": "9. \u307f\u306a\u3082\u3068\u306e\u30eb\u30fc\u30eb"
+    },
+    {
+      "id": "_docs_game_rule_definition_md_round_phase_concept",
+      "label": "\u914d\u7f6e\u30fb\u30b5\u30dd\u30fc\u30c8\u30fb\u81ea\u52d5\u51e6\u7406\u30d5\u30a7\u30fc\u30ba",
+      "file_type": "concept",
+      "source_file": "docs/game/rule-definition.md",
+      "source_location": "10\u301c16"
+    },
+    {
+      "id": "_docs_game_rule_definition_md_attack_chain_fixed_slot_concept",
+      "label": "\u653b\u6483\u914d\u7f6e\u30fb\u9023\u9396\u30fb\u56fa\u5b9a5\u67a0",
+      "file_type": "concept",
+      "source_file": "docs/game/rule-definition.md",
+      "source_location": "11\u301c12"
+    },
+    {
+      "id": "_docs_game_rule_definition_md_support_duration_concept",
+      "label": "\u30b5\u30dd\u30fc\u30c8onPlay/continuous\u3068\u7d99\u7d9a\u671f\u9593",
+      "file_type": "concept",
+      "source_file": "docs/game/rule-definition.md",
+      "source_location": "14\u301c16"
+    },
+    {
+      "id": "_docs_game_rule_definition_md_power_score_winner_concept",
+      "label": "\u30d1\u30ef\u30fc\u8a08\u7b97\u30fb\u30b9\u30bf\u30df\u30ca\u30fb\u52dd\u6557\u30fb\u6700\u5927\u30e9\u30a6\u30f3\u30c9",
+      "file_type": "concept",
+      "source_file": "docs/game/rule-definition.md",
+      "source_location": "18\u301c27"
+    },
+    {
+      "id": "_docs_game_rule_definition_md_draw_deckout_concept",
+      "label": "\u624b\u672d\u88dc\u5145\u30fb\u307f\u306a\u3082\u3068\u30ab\u30fc\u30c9\u30fb\u5c71\u672d\u5207\u308c",
+      "file_type": "concept",
+      "source_file": "docs/game/rule-definition.md",
+      "source_location": "23\u301c25"
+    },
+    {
+      "id": "_docs_game_rule_definition_md_public_info_disconnect_version_concept",
+      "label": "\u516c\u958b\u60c5\u5831\u30fb\u5207\u65ad\u518d\u63a5\u7d9a\u30fb\u30eb\u30fc\u30eb\u30d0\u30fc\u30b8\u30e7\u30f3\u56fa\u5b9a",
+      "file_type": "concept",
+      "source_file": "docs/game/rule-definition.md",
+      "source_location": "28\u301c31"
+    }
+  ],
+  "edges": [
+    {
+      "source": "_docs_game_rule_definition_md_document",
+      "target": "_docs_game_rule_definition_md_two_player_factions_concept",
+      "relation": "defines",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/game/rule-definition.md",
+      "source_location": "2. \u57fa\u672c\u7528\u8a9e"
+    },
+    {
+      "source": "_docs_game_rule_definition_md_document",
+      "target": "_docs_game_rule_definition_md_base_parameters_concept",
+      "relation": "defines",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/game/rule-definition.md",
+      "source_location": "3. \u30b2\u30fc\u30e0\u306e\u57fa\u672c\u6761\u4ef6"
+    },
+    {
+      "source": "_docs_game_rule_definition_md_document",
+      "target": "_docs_game_rule_definition_md_card_types_attributes_concept",
+      "relation": "defines",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/game/rule-definition.md",
+      "source_location": "4\u301c5"
+    },
+    {
+      "source": "_docs_game_rule_definition_md_document",
+      "target": "_docs_game_rule_definition_md_deck_building_concept",
+      "relation": "defines",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/game/rule-definition.md",
+      "source_location": "6. \u30c7\u30c3\u30ad\u69cb\u7bc9\u30eb\u30fc\u30eb"
+    },
+    {
+      "source": "_docs_game_rule_definition_md_document",
+      "target": "_docs_game_rule_definition_md_game_start_shuffle_mulligan_concept",
+      "relation": "defines",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/game/rule-definition.md",
+      "source_location": "7. \u30b2\u30fc\u30e0\u958b\u59cb\u51e6\u7406"
+    },
+    {
+      "source": "_docs_game_rule_definition_md_document",
+      "target": "_docs_game_rule_definition_md_mana_resource_concept",
+      "relation": "defines",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/game/rule-definition.md",
+      "source_location": "9. \u307f\u306a\u3082\u3068\u306e\u30eb\u30fc\u30eb"
+    },
+    {
+      "source": "_docs_game_rule_definition_md_document",
+      "target": "_docs_game_rule_definition_md_round_phase_concept",
+      "relation": "defines",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/game/rule-definition.md",
+      "source_location": "10\u301c16"
+    },
+    {
+      "source": "_docs_game_rule_definition_md_document",
+      "target": "_docs_game_rule_definition_md_attack_chain_fixed_slot_concept",
+      "relation": "defines",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/game/rule-definition.md",
+      "source_location": "11\u301c12"
+    },
+    {
+      "source": "_docs_game_rule_definition_md_document",
+      "target": "_docs_game_rule_definition_md_support_duration_concept",
+      "relation": "defines",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/game/rule-definition.md",
+      "source_location": "14\u301c16"
+    },
+    {
+      "source": "_docs_game_rule_definition_md_document",
+      "target": "_docs_game_rule_definition_md_power_score_winner_concept",
+      "relation": "defines",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/game/rule-definition.md",
+      "source_location": "18\u301c27"
+    },
+    {
+      "source": "_docs_game_rule_definition_md_document",
+      "target": "_docs_game_rule_definition_md_draw_deckout_concept",
+      "relation": "defines",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/game/rule-definition.md",
+      "source_location": "23\u301c25"
+    },
+    {
+      "source": "_docs_game_rule_definition_md_document",
+      "target": "_docs_game_rule_definition_md_public_info_disconnect_version_concept",
+      "relation": "defines",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/game/rule-definition.md",
+      "source_location": "28\u301c31"
+    },
+    {
+      "source": "_docs_game_rule_definition_md_attack_chain_fixed_slot_concept",
+      "target": "_docs_frontend_frontend_integration_plan_md_fixed_five_slots_concept",
+      "relation": "constrains",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/game/rule-definition.md",
+      "source_location": "11\u301c12"
+    }
+  ],
+  "hyperedges": []
+}

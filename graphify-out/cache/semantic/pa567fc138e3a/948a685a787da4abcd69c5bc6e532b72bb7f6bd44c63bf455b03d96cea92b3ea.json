@@ -1,0 +1,39 @@
+{
+  "nodes": [
+    {
+      "id": "_agents_skills_email_and_password_best_practices_skill_document",
+      "label": "Email and password best practices",
+      "file_type": "document",
+      "source_file": ".agents/skills/email-and-password-best-practices/SKILL.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_agents_skills_email_and_password_best_practices_skill_password_reset",
+      "label": "Password reset flow",
+      "file_type": "concept",
+      "source_file": ".agents/skills/email-and-password-best-practices/SKILL.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    }
+  ],
+  "edges": [
+    {
+      "source": "_agents_skills_email_and_password_best_practices_skill_document",
+      "target": "_agents_skills_email_and_password_best_practices_skill_password_reset",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".agents/skills/email-and-password-best-practices/SKILL.md",
+      "source_location": null,
+      "weight": 1.0
+    }
+  ],
+  "hyperedges": []
+}

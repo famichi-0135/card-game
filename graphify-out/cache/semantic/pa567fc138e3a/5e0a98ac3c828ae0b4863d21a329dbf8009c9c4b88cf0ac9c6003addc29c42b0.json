@@ -1,0 +1,805 @@
+{
+  "nodes": [
+    {
+      "id": "_docs_backend_durable_object_room_md_document",
+      "label": "Game Session Durable Object",
+      "file_type": "document",
+      "source_file": "docs/backend/durable-object-room.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_docs_backend_durable_object_room_md_game_session_do_concept",
+      "label": "GameSession Durable Object",
+      "file_type": "concept",
+      "source_file": "docs/backend/durable-object-room.md",
+      "source_location": null
+    },
+    {
+      "id": "_docs_backend_durable_object_room_md_worker_auth_rpc_concept",
+      "label": "Authenticated Worker RPC",
+      "file_type": "concept",
+      "source_file": "docs/backend/durable-object-room.md",
+      "source_location": null
+    },
+    {
+      "id": "_docs_backend_durable_object_room_md_game_engine_api_concept",
+      "label": "GameEngine API",
+      "file_type": "concept",
+      "source_file": "docs/backend/durable-object-room.md",
+      "source_location": null
+    },
+    {
+      "id": "_docs_backend_durable_object_room_md_public_rpc_methods_concept",
+      "label": "Public RPC methods",
+      "file_type": "concept",
+      "source_file": "docs/backend/durable-object-room.md",
+      "source_location": null
+    },
+    {
+      "id": "_docs_backend_durable_object_room_md_initialize_rpc_concept",
+      "label": "initialize RPC",
+      "file_type": "concept",
+      "source_file": "docs/backend/durable-object-room.md",
+      "source_location": null
+    },
+    {
+      "id": "_docs_backend_durable_object_room_md_snapshot_rpc_concept",
+      "label": "getSnapshot RPC",
+      "file_type": "concept",
+      "source_file": "docs/backend/durable-object-room.md",
+      "source_location": null
+    },
+    {
+      "id": "_docs_backend_durable_object_room_md_learning_context_rpc_concept",
+      "label": "getLearningContext RPC",
+      "file_type": "concept",
+      "source_file": "docs/backend/durable-object-room.md",
+      "source_location": null
+    },
+    {
+      "id": "_docs_backend_durable_object_room_md_submit_rpc_concept",
+      "label": "submit RPC",
+      "file_type": "concept",
+      "source_file": "docs/backend/durable-object-room.md",
+      "source_location": null
+    },
+    {
+      "id": "_docs_backend_durable_object_room_md_do_storage_concept",
+      "label": "Durable Object Storage",
+      "file_type": "concept",
+      "source_file": "docs/backend/durable-object-room.md",
+      "source_location": null
+    },
+    {
+      "id": "_docs_backend_durable_object_room_md_command_idempotency_concept",
+      "label": "Command ID idempotency",
+      "file_type": "concept",
+      "source_file": "docs/backend/durable-object-room.md",
+      "source_location": null
+    },
+    {
+      "id": "_docs_backend_durable_object_room_md_do_alarm_concept",
+      "label": "Durable Object Alarm",
+      "file_type": "concept",
+      "source_file": "docs/backend/durable-object-room.md",
+      "source_location": null
+    },
+    {
+      "id": "_docs_backend_durable_object_room_md_public_event_sequence_concept",
+      "label": "Public event sequence",
+      "file_type": "concept",
+      "source_file": "docs/backend/durable-object-room.md",
+      "source_location": null
+    },
+    {
+      "id": "_docs_backend_durable_object_room_md_websocket_hibernation_concept",
+      "label": "WebSocket Hibernation API",
+      "file_type": "concept",
+      "source_file": "docs/backend/durable-object-room.md",
+      "source_location": null
+    },
+    {
+      "id": "_docs_backend_durable_object_room_md_presence_update_concept",
+      "label": "GAME_PRESENCE_UPDATED",
+      "file_type": "concept",
+      "source_file": "docs/backend/durable-object-room.md",
+      "source_location": null
+    },
+    {
+      "id": "_docs_backend_durable_object_room_md_disconnect_timeout_concept",
+      "label": "Disconnect timeout",
+      "file_type": "concept",
+      "source_file": "docs/backend/durable-object-room.md",
+      "source_location": null
+    },
+    {
+      "id": "_docs_backend_durable_object_room_md_game_updated_notification_concept",
+      "label": "GAME_UPDATED notification",
+      "file_type": "concept",
+      "source_file": "docs/backend/durable-object-room.md",
+      "source_location": null
+    },
+    {
+      "id": "_docs_backend_durable_object_room_md_immutable_engine_context_concept",
+      "label": "Immutable GameEngineContext",
+      "file_type": "concept",
+      "source_file": "docs/backend/durable-object-room.md",
+      "source_location": null
+    },
+    {
+      "id": "_docs_backend_durable_object_room_md_catalog_archive_concept",
+      "label": "CatalogArchive Durable Object",
+      "file_type": "concept",
+      "source_file": "docs/backend/durable-object-room.md",
+      "source_location": null
+    },
+    {
+      "id": "_docs_backend_durable_object_room_md_catalog_lease_concept",
+      "label": "Catalog lease",
+      "file_type": "concept",
+      "source_file": "docs/backend/durable-object-room.md",
+      "source_location": null
+    },
+    {
+      "id": "_docs_backend_durable_object_room_md_reconnect_grace_concept",
+      "label": "24-hour reconnect grace",
+      "file_type": "concept",
+      "source_file": "docs/backend/durable-object-room.md",
+      "source_location": null
+    },
+    {
+      "id": "_docs_backend_durable_object_room_md_retained_state_concept",
+      "label": "Retained state and events",
+      "file_type": "concept",
+      "source_file": "docs/backend/durable-object-room.md",
+      "source_location": null
+    },
+    {
+      "id": "_docs_backend_durable_object_room_md_catalog_expiry_concept",
+      "label": "Catalog expiry",
+      "file_type": "concept",
+      "source_file": "docs/backend/durable-object-room.md",
+      "source_location": null
+    },
+    {
+      "id": "_docs_backend_durable_object_room_md_learning_context_generation_concept",
+      "label": "Learning context generation",
+      "file_type": "concept",
+      "source_file": "docs/backend/durable-object-room.md",
+      "source_location": null
+    },
+    {
+      "id": "_docs_backend_durable_object_room_md_catalog_version_conflict_concept",
+      "label": "CARD_CATALOG_VERSION_CONFLICT",
+      "file_type": "concept",
+      "source_file": "docs/backend/durable-object-room.md",
+      "source_location": null
+    },
+    {
+      "id": "_docs_backend_durable_object_room_md_match_lobby_initialization_concept",
+      "label": "MatchLobby initialization",
+      "file_type": "concept",
+      "source_file": "docs/backend/durable-object-room.md",
+      "source_location": null
+    },
+    {
+      "id": "_docs_backend_durable_object_room_md_secure_game_id_concept",
+      "label": "Opaque game ID",
+      "file_type": "concept",
+      "source_file": "docs/backend/durable-object-room.md",
+      "source_location": null
+    },
+    {
+      "id": "_docs_backend_durable_object_room_md_initial_catalog_concept",
+      "label": "initial-catalog-v5-learning-content",
+      "file_type": "concept",
+      "source_file": "docs/backend/durable-object-room.md",
+      "source_location": null
+    },
+    {
+      "id": "_docs_backend_durable_object_room_md_starter_deck_factories_concept",
+      "label": "Starter deck factories",
+      "file_type": "concept",
+      "source_file": "docs/backend/durable-object-room.md",
+      "source_location": null
+    },
+    {
+      "id": "_docs_backend_durable_object_room_md_incompatible_data_migration_concept",
+      "label": "Incompatible data migration",
+      "file_type": "concept",
+      "source_file": "docs/backend/durable-object-room.md",
+      "source_location": null
+    },
+    {
+      "id": "_docs_backend_durable_object_room_md_opaque_deterministic_id_concept",
+      "label": "Opaque deterministic ID",
+      "file_type": "concept",
+      "source_file": "docs/backend/durable-object-room.md",
+      "source_location": null
+    },
+    {
+      "id": "_docs_backend_durable_object_room_md_integration_tests_concept",
+      "label": "Worker integration tests",
+      "file_type": "concept",
+      "source_file": "docs/backend/durable-object-room.md",
+      "source_location": null
+    }
+  ],
+  "edges": [
+    {
+      "source": "_docs_backend_durable_object_room_md_document",
+      "target": "_docs_backend_durable_object_room_md_game_session_do_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": "docs/backend/durable-object-room.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_docs_backend_durable_object_room_md_document",
+      "target": "_docs_backend_durable_object_room_md_worker_auth_rpc_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": "docs/backend/durable-object-room.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_docs_backend_durable_object_room_md_document",
+      "target": "_docs_backend_durable_object_room_md_game_engine_api_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": "docs/backend/durable-object-room.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_docs_backend_durable_object_room_md_document",
+      "target": "_docs_backend_durable_object_room_md_public_rpc_methods_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": "docs/backend/durable-object-room.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_docs_backend_durable_object_room_md_document",
+      "target": "_docs_backend_durable_object_room_md_initialize_rpc_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": "docs/backend/durable-object-room.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_docs_backend_durable_object_room_md_document",
+      "target": "_docs_backend_durable_object_room_md_snapshot_rpc_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": "docs/backend/durable-object-room.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_docs_backend_durable_object_room_md_document",
+      "target": "_docs_backend_durable_object_room_md_learning_context_rpc_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": "docs/backend/durable-object-room.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_docs_backend_durable_object_room_md_document",
+      "target": "_docs_backend_durable_object_room_md_submit_rpc_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": "docs/backend/durable-object-room.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_docs_backend_durable_object_room_md_document",
+      "target": "_docs_backend_durable_object_room_md_do_storage_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": "docs/backend/durable-object-room.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_docs_backend_durable_object_room_md_document",
+      "target": "_docs_backend_durable_object_room_md_command_idempotency_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": "docs/backend/durable-object-room.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_docs_backend_durable_object_room_md_document",
+      "target": "_docs_backend_durable_object_room_md_do_alarm_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": "docs/backend/durable-object-room.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_docs_backend_durable_object_room_md_document",
+      "target": "_docs_backend_durable_object_room_md_public_event_sequence_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": "docs/backend/durable-object-room.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_docs_backend_durable_object_room_md_document",
+      "target": "_docs_backend_durable_object_room_md_websocket_hibernation_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": "docs/backend/durable-object-room.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_docs_backend_durable_object_room_md_document",
+      "target": "_docs_backend_durable_object_room_md_presence_update_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": "docs/backend/durable-object-room.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_docs_backend_durable_object_room_md_document",
+      "target": "_docs_backend_durable_object_room_md_disconnect_timeout_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": "docs/backend/durable-object-room.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_docs_backend_durable_object_room_md_document",
+      "target": "_docs_backend_durable_object_room_md_game_updated_notification_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": "docs/backend/durable-object-room.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_docs_backend_durable_object_room_md_document",
+      "target": "_docs_backend_durable_object_room_md_immutable_engine_context_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": "docs/backend/durable-object-room.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_docs_backend_durable_object_room_md_document",
+      "target": "_docs_backend_durable_object_room_md_catalog_archive_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": "docs/backend/durable-object-room.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_docs_backend_durable_object_room_md_document",
+      "target": "_docs_backend_durable_object_room_md_catalog_lease_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": "docs/backend/durable-object-room.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_docs_backend_durable_object_room_md_document",
+      "target": "_docs_backend_durable_object_room_md_reconnect_grace_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": "docs/backend/durable-object-room.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_docs_backend_durable_object_room_md_document",
+      "target": "_docs_backend_durable_object_room_md_retained_state_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": "docs/backend/durable-object-room.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_docs_backend_durable_object_room_md_document",
+      "target": "_docs_backend_durable_object_room_md_catalog_expiry_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": "docs/backend/durable-object-room.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_docs_backend_durable_object_room_md_document",
+      "target": "_docs_backend_durable_object_room_md_learning_context_generation_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": "docs/backend/durable-object-room.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_docs_backend_durable_object_room_md_document",
+      "target": "_docs_backend_durable_object_room_md_catalog_version_conflict_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": "docs/backend/durable-object-room.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_docs_backend_durable_object_room_md_document",
+      "target": "_docs_backend_durable_object_room_md_match_lobby_initialization_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": "docs/backend/durable-object-room.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_docs_backend_durable_object_room_md_document",
+      "target": "_docs_backend_durable_object_room_md_secure_game_id_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": "docs/backend/durable-object-room.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_docs_backend_durable_object_room_md_document",
+      "target": "_docs_backend_durable_object_room_md_initial_catalog_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": "docs/backend/durable-object-room.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_docs_backend_durable_object_room_md_document",
+      "target": "_docs_backend_durable_object_room_md_starter_deck_factories_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": "docs/backend/durable-object-room.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_docs_backend_durable_object_room_md_document",
+      "target": "_docs_backend_durable_object_room_md_incompatible_data_migration_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": "docs/backend/durable-object-room.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_docs_backend_durable_object_room_md_document",
+      "target": "_docs_backend_durable_object_room_md_opaque_deterministic_id_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": "docs/backend/durable-object-room.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_docs_backend_durable_object_room_md_document",
+      "target": "_docs_backend_durable_object_room_md_integration_tests_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": "docs/backend/durable-object-room.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_docs_backend_durable_object_room_md_game_session_do_concept",
+      "target": "_docs_backend_durable_object_room_md_worker_auth_rpc_concept",
+      "relation": "receives",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": "docs/backend/durable-object-room.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_docs_backend_durable_object_room_md_game_session_do_concept",
+      "target": "_docs_backend_durable_object_room_md_game_engine_api_concept",
+      "relation": "delegates_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": "docs/backend/durable-object-room.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_docs_backend_durable_object_room_md_public_rpc_methods_concept",
+      "target": "_docs_backend_durable_object_room_md_initialize_rpc_concept",
+      "relation": "includes",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": "docs/backend/durable-object-room.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_docs_backend_durable_object_room_md_public_rpc_methods_concept",
+      "target": "_docs_backend_durable_object_room_md_snapshot_rpc_concept",
+      "relation": "includes",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": "docs/backend/durable-object-room.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_docs_backend_durable_object_room_md_public_rpc_methods_concept",
+      "target": "_docs_backend_durable_object_room_md_learning_context_rpc_concept",
+      "relation": "includes",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": "docs/backend/durable-object-room.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_docs_backend_durable_object_room_md_public_rpc_methods_concept",
+      "target": "_docs_backend_durable_object_room_md_submit_rpc_concept",
+      "relation": "includes",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": "docs/backend/durable-object-room.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_docs_backend_durable_object_room_md_game_session_do_concept",
+      "target": "_docs_backend_durable_object_room_md_do_storage_concept",
+      "relation": "persists",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": "docs/backend/durable-object-room.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_docs_backend_durable_object_room_md_do_alarm_concept",
+      "target": "_docs_backend_durable_object_room_md_disconnect_timeout_concept",
+      "relation": "triggers",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": "docs/backend/durable-object-room.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_docs_backend_durable_object_room_md_websocket_hibernation_concept",
+      "target": "_docs_backend_durable_object_room_md_presence_update_concept",
+      "relation": "emits",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": "docs/backend/durable-object-room.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_docs_backend_durable_object_room_md_game_updated_notification_concept",
+      "target": "_docs_backend_durable_object_room_md_public_event_sequence_concept",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": "docs/backend/durable-object-room.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_docs_backend_durable_object_room_md_immutable_engine_context_concept",
+      "target": "_docs_backend_durable_object_room_md_game_engine_api_concept",
+      "relation": "resolves",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": "docs/backend/durable-object-room.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_docs_backend_durable_object_room_md_catalog_archive_concept",
+      "target": "_docs_backend_durable_object_room_md_catalog_lease_concept",
+      "relation": "manages",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": "docs/backend/durable-object-room.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_docs_backend_durable_object_room_md_catalog_lease_concept",
+      "target": "_docs_backend_durable_object_room_md_reconnect_grace_concept",
+      "relation": "retains_for",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": "docs/backend/durable-object-room.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_docs_backend_durable_object_room_md_retained_state_concept",
+      "target": "_docs_backend_durable_object_room_md_reconnect_grace_concept",
+      "relation": "required_during",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": "docs/backend/durable-object-room.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_docs_backend_durable_object_room_md_catalog_expiry_concept",
+      "target": "_docs_backend_durable_object_room_md_reconnect_grace_concept",
+      "relation": "ends",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": "docs/backend/durable-object-room.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_docs_backend_durable_object_room_md_learning_context_generation_concept",
+      "target": "_docs_backend_durable_object_room_md_initial_catalog_concept",
+      "relation": "references",
+      "confidence": "INFERRED",
+      "confidence_score": 0.75,
+      "source_file": "docs/backend/durable-object-room.md",
+      "source_location": null,
+      "weight": 0.75
+    },
+    {
+      "source": "_docs_backend_durable_object_room_md_catalog_version_conflict_concept",
+      "target": "_docs_backend_durable_object_room_md_catalog_archive_concept",
+      "relation": "protects",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": "docs/backend/durable-object-room.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_docs_backend_durable_object_room_md_match_lobby_initialization_concept",
+      "target": "_docs_backend_durable_object_room_md_secure_game_id_concept",
+      "relation": "generates",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": "docs/backend/durable-object-room.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_docs_backend_durable_object_room_md_initial_catalog_concept",
+      "target": "_docs_backend_durable_object_room_md_starter_deck_factories_concept",
+      "relation": "defines",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": "docs/backend/durable-object-room.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_docs_backend_durable_object_room_md_incompatible_data_migration_concept",
+      "target": "_docs_backend_durable_object_room_md_immutable_engine_context_concept",
+      "relation": "updates_with",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": "docs/backend/durable-object-room.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_docs_backend_durable_object_room_md_secure_game_id_concept",
+      "target": "_docs_backend_durable_object_room_md_opaque_deterministic_id_concept",
+      "relation": "uses",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": "docs/backend/durable-object-room.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_docs_backend_durable_object_room_md_integration_tests_concept",
+      "target": "_docs_backend_durable_object_room_md_websocket_hibernation_concept",
+      "relation": "verifies",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": "docs/backend/durable-object-room.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_docs_backend_durable_object_room_md_integration_tests_concept",
+      "target": "_docs_backend_durable_object_room_md_reconnect_grace_concept",
+      "relation": "verifies",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": "docs/backend/durable-object-room.md",
+      "source_location": null,
+      "weight": 0.85
+    },
+    {
+      "source": "_docs_backend_durable_object_room_md_game_engine_api_concept",
+      "target": "_docs_backend_client_server_protocol_md_game_engine_contracts_concept",
+      "relation": "uses",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": "docs/backend/durable-object-room.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_docs_backend_durable_object_room_md_reconnect_grace_concept",
+      "target": "_docs_backend_client_server_protocol_md_polling_fallback_concept",
+      "relation": "supports",
+      "confidence": "INFERRED",
+      "confidence_score": 0.75,
+      "source_file": "docs/backend/durable-object-room.md",
+      "source_location": null,
+      "weight": 0.75
+    },
+    {
+      "source": "_docs_backend_durable_object_room_md_command_idempotency_concept",
+      "target": "_docs_backend_client_server_protocol_md_command_result_replay_concept",
+      "relation": "enforces",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/backend/durable-object-room.md",
+      "source_location": null,
+      "weight": 1.0
+    }
+  ],
+  "hyperedges": []
+}
