@@ -3,6 +3,9 @@ import {
   cancelMatchOnPageExit,
   createMatch,
   listPublicMatches,
+  readyMatch,
+  releaseMatch,
+  releaseMatchOnPageExit,
 } from "./matchmaking-api.ts";
 
 const originalFetch = globalThis.fetch;
@@ -68,6 +71,50 @@ describe("公開待機部屋API", () => {
     await Promise.resolve();
 
     expect(fetchMock).toHaveBeenCalledWith("/api/matches/match-1/cancel", {
+      credentials: "include",
+      headers: { Accept: "application/json" },
+      keepalive: true,
+      method: "POST",
+    });
+  });
+
+  it("準備完了APIはゲーム開始前はnullを返す", async () => {
+    const fetchMock = vi
+      .fn()
+      .mockResolvedValue(jsonResponse({ ready: true, gameId: null }));
+    globalThis.fetch = fetchMock;
+
+    await expect(readyMatch("match-1")).resolves.toBeNull();
+
+    expect(fetchMock).toHaveBeenCalledWith("/api/matches/match-1/ready", {
+      credentials: "include",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+      method: "POST",
+    });
+  });
+
+  it("参加状態の解除はleave APIへ送信する", async () => {
+    const fetchMock = vi
+      .fn()
+      .mockResolvedValue(jsonResponse({ released: true }));
+    globalThis.fetch = fetchMock;
+
+    await expect(releaseMatch("match-1")).resolves.toBeUndefined();
+    releaseMatchOnPageExit("match-1");
+    await Promise.resolve();
+
+    expect(fetchMock).toHaveBeenNthCalledWith(1, "/api/matches/match-1/leave", {
+      credentials: "include",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+      method: "POST",
+    });
+    expect(fetchMock).toHaveBeenNthCalledWith(2, "/api/matches/match-1/leave", {
       credentials: "include",
       headers: { Accept: "application/json" },
       keepalive: true,

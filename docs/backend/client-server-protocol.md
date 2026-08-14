@@ -109,15 +109,19 @@ WebSocketは認証済み参加者だけが接続でき、クライアントか�
 
 対戦待機は`MatchLobby` Durable Objectで直列化する。作成者は招待URL専用の`invite`と、認証済み利用者の部屋一覧に表示する`public`を選べる。HTTPアダプターはBetter Authの認証結果からプレイヤーを決定し、保存済みデッキの所有権と陣営を確認してから待機部屋へ渡す。クライアント本文のプレイヤーID、陣営、カード定義ID配列は信用しない。同じ陣営の保存済みデッキ同士では対戦を開始せず、`MATCH_FACTION_CONFLICT`で拒否する。
 
-| 操作             | エンドポイント                      | クライアント本文          | 成功時の応答                             |
-| ---------------- | ----------------------------------- | ------------------------- | ---------------------------------------- |
-| 対戦作成         | `POST /api/matches`                 | `{ deckId, visibility? }` | `201 { matchId }`                        |
-| 公開部屋一覧取得 | `GET /api/matches`                  | なし                      | `{ matches: PublicMatchLobbySummary[] }` |
-| 対戦取得         | `GET /api/matches/:matchId`         | なし                      | `{ match: MatchLobbyView }`              |
-| 対戦参加         | `POST /api/matches/:matchId/accept` | `{ deckId }`              | `{ accepted: true, gameId }`             |
-| 対戦取消         | `POST /api/matches/:matchId/cancel` | なし                      | `{ cancelled: true }`                    |
+| 操作             | エンドポイント                      | クライアント本文          | 成功時の応答                              |
+| ---------------- | ----------------------------------- | ------------------------- | ----------------------------------------- |
+| 対戦作成         | `POST /api/matches`                 | `{ deckId, visibility? }` | `201 { matchId }`                         |
+| 公開部屋一覧取得 | `GET /api/matches`                  | なし                      | `{ matches: PublicMatchLobbySummary[] }`  |
+| 対戦取得         | `GET /api/matches/:matchId`         | なし                      | `{ match: MatchLobbyView }`               |
+| 対戦参加         | `POST /api/matches/:matchId/accept` | `{ deckId }`              | `{ accepted: true }`                      |
+| 準備完了         | `POST /api/matches/:matchId/ready`  | なし                      | `{ ready: true, gameId: string \| null }` |
+| 準備状態解除     | `POST /api/matches/:matchId/leave`  | なし                      | `{ released: true }`                      |
+| 対戦取消         | `POST /api/matches/:matchId/cancel` | なし                      | `{ cancelled: true }`                     |
 
-`visibility`未指定は`invite`として扱う。公開一覧は作成者の`PlayerId`、表示名、メールアドレス、デッキ内容を含めず、作成陣営、作成時刻、待機期限、自分が作成者かだけを返す。D1の一覧候補は`MatchLobby`で再検証し、`waiting`だけを応答へ含める。開始結果が不明な`starting`は一覧から隠すが、再試行可能性を残すため索引行は維持する。開始済み・取消済み・期限切れなどの終端状態だけを索引から削除する。`MatchLobby`の公開状態にデッキ、乱数seed、開始中のゲーム初期化入力を含めない。状態遷移の詳細は[対戦待機・開始の設計](./matchmaking.md)を参照する。
+`accept`は相手の参加枠を確保して`preparing`へ移すだけで、ゲームを生成しない。`ready`は作成者・参加者のどちらからも冪等に送信でき、片方だけの準備完了では`gameId: null`を返す。双方の準備完了で初めてゲームを生成し、成功した呼び出しは`gameId`を返す。参加者だけが`preparing`中に`leave`を呼び、部屋を`waiting`へ戻せる。非参加者の`ready`・`leave`は`403 MATCH_NOT_PARTICIPANT`、`preparing`以外の準備操作は`409 MATCH_NOT_PREPARING`、作成者による`leave`は`403 MATCH_RELEASE_FORBIDDEN`とする。
+
+`visibility`未指定は`invite`として扱う。公開一覧は作成者の`PlayerId`、表示名、メールアドレス、デッキ内容を含めず、作成陣営、作成時刻、待機期限、自分が作成者かだけを返す。D1の一覧候補は`MatchLobby`で再検証し、`waiting`だけを応答へ含める。`preparing`と開始結果が不明な`starting`は一覧から隠すが、待機へ戻る可能性と再試行可能性を残すため索引行は維持する。開始済み・取消済み・期限切れなどの終端状態だけを索引から削除する。`MatchLobby`の公開状態にデッキ、乱数seed、開始中のゲーム初期化入力を含めない。状態遷移の詳細は[対戦待機・開始の設計](./matchmaking.md)を参照する。
 
 ## 保存済みデッキ
 

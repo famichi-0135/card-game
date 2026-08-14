@@ -27,11 +27,18 @@ type MatchLobbyRpc = {
     | {
         visible: true;
         view: {
-          status: "waiting" | "starting" | "started" | "cancelled";
+          status:
+            | "waiting"
+            | "preparing"
+            | "starting"
+            | "started"
+            | "cancelled";
           ownerPlayerId: string;
           ownerFaction: Faction;
           opponentPlayerId: string | null;
           opponentFaction: Faction | null;
+          ownerReady: boolean;
+          opponentReady: boolean;
           gameId: string | null;
         };
       }
@@ -59,6 +66,15 @@ type MatchLobbyRpc = {
     | { accepted: true; gameId: string }
     | { accepted: false; error: { code: string } }
   >;
+  ready(
+    playerId: string,
+  ): Promise<
+    | { ready: true; gameId: string | null }
+    | { ready: false; error: { code: string } }
+  >;
+  release(
+    playerId: string,
+  ): Promise<{ released: true } | { released: false; error: { code: string } }>;
   cancel(
     playerId: string,
   ): Promise<
@@ -199,7 +215,7 @@ describe("MatchLobby Durable Object", () => {
     });
   });
 
-  it("相手の参加を一度だけ受け付け、信頼済みの2デッキからゲームを開始する", async () => {
+  it("相手の参加後、双方の準備完了で信頼済みの2デッキからゲームを開始する", async () => {
     const lobby = getMatchLobby("match-lobby-start");
     await lobby.initialize({
       ownerPlayerId: "player-1",
@@ -214,12 +230,17 @@ describe("MatchLobby Durable Object", () => {
       deckDefinitionIds: createDeck("countermeasure"),
     });
 
-    expect(accepted).toMatchObject({
-      accepted: true,
-      gameId: expect.any(String),
-    });
+    expect(accepted).toEqual({ accepted: true });
     if (!accepted.accepted) {
       throw new Error("対戦参加が受理されませんでした。");
+    }
+    await expect(lobby.ready("player-1")).resolves.toEqual({
+      ready: true,
+      gameId: null,
+    });
+    const started = await lobby.ready("player-2");
+    if (!started.ready || started.gameId === null) {
+      throw new Error("両者の準備完了後に対戦が開始されませんでした。");
     }
 
     await expect(lobby.getView("player-1")).resolves.toEqual({
@@ -230,7 +251,7 @@ describe("MatchLobby Durable Object", () => {
         ownerFaction: "disaster",
         opponentPlayerId: "player-2",
         opponentFaction: "countermeasure",
-        gameId: accepted.gameId,
+        gameId: started.gameId,
       },
     });
     await expect(lobby.getView("player-2")).resolves.toEqual({
@@ -241,11 +262,11 @@ describe("MatchLobby Durable Object", () => {
         ownerFaction: "disaster",
         opponentPlayerId: "player-2",
         opponentFaction: "countermeasure",
-        gameId: accepted.gameId,
+        gameId: started.gameId,
       },
     });
 
-    const snapshotResult = await getGameSession(accepted.gameId).getSnapshot(
+    const snapshotResult = await getGameSession(started.gameId).getSnapshot(
       "player-1",
       0,
     );
@@ -255,7 +276,7 @@ describe("MatchLobby Durable Object", () => {
       );
     }
     const snapshot = snapshotResult.snapshot;
-    expect(snapshot.view.gameId).toBe(accepted.gameId);
+    expect(snapshot.view.gameId).toBe(started.gameId);
     expect(snapshot.view.opponent.playerId).toBe("player-2");
 
     await expect(
@@ -270,7 +291,116 @@ describe("MatchLobby Durable Object", () => {
     });
   });
 
-  it("作成者自身の参加と、失敗したゲーム作成を受理しない", async () => {
+  it("双方が準備完了するまでGameSessionを生成せず、参加者の離脱で待機状態へ戻す", async () => {
+    const lobby = getMatchLobby("match-lobby-preparing");
+    await lobby.initialize({
+      ownerPlayerId: "player-1",
+      ownerFaction: "disaster",
+      ownerDeckDefinitionIds: createDeck(),
+      createdAt: Date.now(),
+    });
+
+    await expect(
+      lobby.accept({
+        playerId: "player-2",
+        faction: "countermeasure",
+        deckDefinitionIds: createDeck("countermeasure"),
+      }),
+    ).resolves.toEqual({ accepted: true });
+    await expect(lobby.getView("player-1")).resolves.toMatchObject({
+      visible: true,
+      view: {
+        status: "preparing",
+        gameId: null,
+      },
+    });
+    await expect(getStoredMatch(lobby)).resolves.not.toHaveProperty(
+      "gameInput",
+    );
+
+    await expect(lobby.ready("player-1")).resolves.toEqual({
+      ready: true,
+      gameId: null,
+    });
+    await expect(lobby.getView("player-2")).resolves.toMatchObject({
+      visible: true,
+      view: {
+        status: "preparing",
+        ownerReady: true,
+        opponentReady: false,
+        gameId: null,
+      },
+    });
+    await expect(lobby.release("player-2")).resolves.toEqual({
+      released: true,
+    });
+    await expect(lobby.getView("player-1")).resolves.toMatchObject({
+      visible: true,
+      view: {
+        status: "waiting",
+        opponentPlayerId: null,
+      },
+    });
+  });
+
+  it("準備中の離脱は非参加者と作成者を区別して拒否する", async () => {
+    const lobby = getMatchLobby("match-lobby-release-permission");
+    await lobby.initialize({
+      ownerPlayerId: "player-1",
+      ownerFaction: "disaster",
+      ownerDeckDefinitionIds: createDeck(),
+      createdAt: 1_000,
+    });
+    await lobby.accept({
+      playerId: "player-2",
+      faction: "countermeasure",
+      deckDefinitionIds: createDeck(),
+    });
+
+    await expect(lobby.ready("player-3")).resolves.toEqual({
+      ready: false,
+      error: { code: "MATCH_NOT_PARTICIPANT" },
+    });
+    await expect(lobby.release("player-3")).resolves.toEqual({
+      released: false,
+      error: { code: "MATCH_NOT_PARTICIPANT" },
+    });
+    await expect(lobby.release("player-1")).resolves.toEqual({
+      released: false,
+      error: { code: "MATCH_RELEASE_FORBIDDEN" },
+    });
+  });
+
+  it("両者の準備完了後にだけGameSessionを生成する", async () => {
+    const lobby = getMatchLobby("match-lobby-ready-start");
+    await lobby.initialize({
+      ownerPlayerId: "player-1",
+      ownerFaction: "disaster",
+      ownerDeckDefinitionIds: createDeck(),
+      createdAt: Date.now(),
+    });
+    await lobby.accept({
+      playerId: "player-2",
+      faction: "countermeasure",
+      deckDefinitionIds: createDeck("countermeasure"),
+    });
+
+    await expect(lobby.ready("player-1")).resolves.toEqual({
+      ready: true,
+      gameId: null,
+    });
+    const started = await lobby.ready("player-2");
+    expect(started).toMatchObject({ ready: true, gameId: expect.any(String) });
+    if (!started.ready || started.gameId === null) {
+      throw new Error("両者の準備完了後に対戦が開始されませんでした。");
+    }
+
+    await expect(
+      getGameSession(started.gameId).getSnapshot("player-1", 0),
+    ).resolves.toMatchObject({ found: true });
+  });
+
+  it("作成者自身の参加と同一陣営の参加を受理しない", async () => {
     const lobby = getMatchLobby("match-lobby-invalid");
     await lobby.initialize({
       ownerPlayerId: "player-1",
@@ -299,23 +429,6 @@ describe("MatchLobby Durable Object", () => {
       accepted: false,
       error: { code: "MATCH_FACTION_CONFLICT" },
     });
-    await expect(
-      lobby.accept({
-        playerId: "player-2",
-        faction: "countermeasure",
-        deckDefinitionIds: [],
-      }),
-    ).resolves.toMatchObject({
-      accepted: false,
-      error: { code: "GAME_CREATION_FAILED" },
-    });
-    await expect(lobby.getView("player-1")).resolves.toMatchObject({
-      visible: true,
-      view: {
-        status: "waiting",
-        opponentPlayerId: null,
-      },
-    });
   });
 
   it("GameSession初期化の結果が不明な場合は同じ参加者だけが開始を再試行できる", async () => {
@@ -332,14 +445,14 @@ describe("MatchLobby Durable Object", () => {
     });
     await failNextGameSessionInitialization(lobby);
 
-    await expect(
-      lobby.accept({
-        playerId: "player-2",
-        faction: "countermeasure",
-        deckDefinitionIds: createDeck("countermeasure"),
-      }),
-    ).resolves.toEqual({
-      accepted: false,
+    await lobby.accept({
+      playerId: "player-2",
+      faction: "countermeasure",
+      deckDefinitionIds: createDeck("countermeasure"),
+    });
+    await lobby.ready("player-1");
+    await expect(lobby.ready("player-2")).resolves.toEqual({
+      ready: false,
       error: { code: "GAME_CREATION_FAILED" },
     });
 
@@ -382,14 +495,8 @@ describe("MatchLobby Durable Object", () => {
       error: { code: "MATCH_NOT_ACCEPTING" },
     });
 
-    await expect(
-      lobby.accept({
-        playerId: "player-2",
-        faction: "countermeasure",
-        deckDefinitionIds: createDeck("countermeasure"),
-      }),
-    ).resolves.toMatchObject({
-      accepted: true,
+    await expect(lobby.ready("player-2")).resolves.toMatchObject({
+      ready: true,
       gameId: expect.any(String),
     });
   });
@@ -404,14 +511,14 @@ describe("MatchLobby Durable Object", () => {
     });
     await failNextGameSessionInitialization(lobby);
 
-    await expect(
-      lobby.accept({
-        playerId: "player-2",
-        faction: "countermeasure",
-        deckDefinitionIds: createDeck("countermeasure"),
-      }),
-    ).resolves.toMatchObject({
-      accepted: false,
+    await lobby.accept({
+      playerId: "player-2",
+      faction: "countermeasure",
+      deckDefinitionIds: createDeck("countermeasure"),
+    });
+    await lobby.ready("player-1");
+    await expect(lobby.ready("player-2")).resolves.toMatchObject({
+      ready: false,
       error: { code: "GAME_CREATION_FAILED" },
     });
     await expect(lobby.cancel("player-1")).resolves.toEqual({
@@ -430,14 +537,14 @@ describe("MatchLobby Durable Object", () => {
     });
     await loseNextGameSessionInitializationResponse(lobby);
 
-    await expect(
-      lobby.accept({
-        playerId: "player-2",
-        faction: "countermeasure",
-        deckDefinitionIds: createDeck("countermeasure"),
-      }),
-    ).resolves.toEqual({
-      accepted: false,
+    await lobby.accept({
+      playerId: "player-2",
+      faction: "countermeasure",
+      deckDefinitionIds: createDeck("countermeasure"),
+    });
+    await lobby.ready("player-1");
+    await expect(lobby.ready("player-2")).resolves.toEqual({
+      ready: false,
       error: { code: "GAME_CREATION_FAILED" },
     });
     const starting = (await getStoredMatch(lobby)) as {

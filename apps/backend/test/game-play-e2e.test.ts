@@ -10,6 +10,7 @@ import type {
 import type {
   CreateMatchResponse,
   MatchAcceptedResponse,
+  MatchReadyResponse,
 } from "@disastar/contracts/match";
 import type {
   GameRealtimeMessage,
@@ -74,7 +75,27 @@ describe("2人対戦 Worker 統合", () => {
     if (!accepted.body.accepted) {
       throw new Error("対戦参加が受理されませんでした。");
     }
-    const gameId = accepted.body.gameId;
+    const ownerReady = await requestJson<MatchReadyResponse>(
+      app,
+      bindings,
+      `/api/matches/${encodeURIComponent(created.body.matchId)}/ready`,
+      owner.cookie,
+      { method: "POST" },
+    );
+    expect(ownerReady.response.status).toBe(200);
+    expect(ownerReady.body).toEqual({ ready: true, gameId: null });
+    const opponentReady = await requestJson<MatchReadyResponse>(
+      app,
+      bindings,
+      `/api/matches/${encodeURIComponent(created.body.matchId)}/ready`,
+      opponent.cookie,
+      { method: "POST" },
+    );
+    expect(opponentReady.response.status).toBe(200);
+    if (!opponentReady.body.ready || opponentReady.body.gameId === null) {
+      throw new Error("両者の準備完了後に対戦が開始されませんでした。");
+    }
+    const gameId = opponentReady.body.gameId;
 
     const ownerSnapshot = await getSnapshot(
       app,

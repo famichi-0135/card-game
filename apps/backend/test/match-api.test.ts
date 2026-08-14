@@ -194,7 +194,8 @@ describe("対戦待機 HTTP API", () => {
             : matchId === "match-starting"
               ? { available: false as const, reason: "starting" as const }
               : { available: false as const, reason: "terminal" as const },
-        accept: async () => ({ accepted: true as const, gameId: "game-1" }),
+        accept: async () => ({ accepted: true as const }),
+        ...readinessRpc(),
         cancel: async () => ({ cancelled: true as const }),
       }),
       publicMatchLobbyIndex: {
@@ -254,7 +255,8 @@ describe("対戦待機 HTTP API", () => {
           visible: false as const,
           error: { code: "MATCH_ACCESS_FORBIDDEN" as const },
         }),
-        accept: async () => ({ accepted: true as const, gameId: "game-1" }),
+        accept: async () => ({ accepted: true as const }),
+        ...readinessRpc(),
         cancel: async () => ({ cancelled: true as const }),
       }),
     });
@@ -267,7 +269,7 @@ describe("対戦待機 HTTP API", () => {
     });
   });
 
-  it("参加時は認証済みプレイヤーの所有デッキを渡し、開始済みゲームIDを返す", async () => {
+  it("参加時は認証済みプレイヤーの所有デッキを渡し、準備状態だけを確保する", async () => {
     const acceptedInputs: Array<{
       playerId: string;
       faction: Faction;
@@ -289,8 +291,9 @@ describe("対戦待機 HTTP API", () => {
           getView: async () => ({ visible: true as const, view: waitingMatch }),
           accept: async (input) => {
             acceptedInputs.push(input);
-            return { accepted: true as const, gameId: "game-started" };
+            return { accepted: true as const };
           },
+          ...readinessRpc(),
           cancel: async () => ({ cancelled: true as const }),
         };
       },
@@ -311,7 +314,6 @@ describe("対戦待機 HTTP API", () => {
     expect(response.status).toBe(200);
     expect(await response.json()).toEqual({
       accepted: true,
-      gameId: "game-started",
     });
     expect(acceptedInputs).toEqual([
       {
@@ -320,39 +322,96 @@ describe("対戦待機 HTTP API", () => {
         deckDefinitionIds,
       },
     ]);
-    expect(removed).toEqual(["match-1"]);
+    expect(removed).toEqual([]);
   });
 
-  it("ゲーム作成失敗時に内部初期化エラーをHTTPレスポンスへ公開しない", async () => {
+  it("準備完了後のゲーム作成失敗時に内部初期化エラーをHTTPレスポンスへ公開しない", async () => {
     const api = createMatchApi({
       authenticate: async () => "player-2",
       resolveAuthorizedDeck: async () => authorizedDeck("countermeasure"),
       getMatchLobby: () => ({
         getView: async () => ({ visible: true as const, view: waitingMatch }),
-        accept: async () => ({
-          accepted: false as const,
+        accept: async () => ({ accepted: true as const }),
+        ready: async () => ({
+          ready: false as const,
           error: {
             code: "GAME_CREATION_FAILED" as const,
-            initializationError: {
-              code: "DEPENDENCY_OUTPUT_INVALID" as const,
-              message: "内部カタログと依存値の詳細",
-            },
           },
         }),
+        release: async () => ({ released: true as const }),
         cancel: async () => ({ cancelled: true as const }),
       }),
     });
 
-    const response = await request(api, "/match-1/accept", {
+    const response = await request(api, "/match-1/ready", {
       method: "POST",
-      body: JSON.stringify({ deckId: "deck-2" }),
     });
 
     expect(response.status).toBe(422);
     expect(await response.json()).toEqual({
-      accepted: false,
+      ready: false,
       error: { code: "GAME_CREATION_FAILED" },
     });
+  });
+
+  it("準備完了は認証済み参加者として中継し、ゲーム開始時に公開部屋を一覧から外す", async () => {
+    const readyBy: string[] = [];
+    const removed: string[] = [];
+    const api = createMatchApi({
+      authenticate: async () => "player-2",
+      resolveAuthorizedDeck: async () => authorizedDeck("countermeasure"),
+      getMatchLobby: () => ({
+        getView: async () => ({ visible: true as const, view: waitingMatch }),
+        accept: async () => ({ accepted: true as const }),
+        ready: async (playerId) => {
+          readyBy.push(playerId);
+          return { ready: true as const, gameId: "game-started" };
+        },
+        release: async () => ({ released: true as const }),
+        cancel: async () => ({ cancelled: true as const }),
+      }),
+      publicMatchLobbyIndex: {
+        publish: async () => {},
+        list: async () => [],
+        remove: async (matchId) => {
+          removed.push(matchId);
+        },
+      },
+    });
+
+    const response = await request(api, "/match-1/ready", { method: "POST" });
+
+    expect(response.status).toBe(200);
+    expect(await response.json()).toEqual({
+      ready: true,
+      gameId: "game-started",
+    });
+    expect(readyBy).toEqual(["player-2"]);
+    expect(removed).toEqual(["match-1"]);
+  });
+
+  it("参加者の離脱は準備状態だけを解除する", async () => {
+    const releasedBy: string[] = [];
+    const api = createMatchApi({
+      authenticate: async () => "player-2",
+      resolveAuthorizedDeck: async () => authorizedDeck("countermeasure"),
+      getMatchLobby: () => ({
+        getView: async () => ({ visible: true as const, view: waitingMatch }),
+        accept: async () => ({ accepted: true as const }),
+        ready: async () => ({ ready: true as const, gameId: null }),
+        release: async (playerId) => {
+          releasedBy.push(playerId);
+          return { released: true as const };
+        },
+        cancel: async () => ({ cancelled: true as const }),
+      }),
+    });
+
+    const response = await request(api, "/match-1/leave", { method: "POST" });
+
+    expect(response.status).toBe(200);
+    expect(await response.json()).toEqual({ released: true });
+    expect(releasedBy).toEqual(["player-2"]);
   });
 
   it("所有していないデッキでは参加処理を呼ばない", async () => {
@@ -386,7 +445,8 @@ describe("対戦待機 HTTP API", () => {
       resolveAuthorizedDeck: async () => authorizedDeck(),
       getMatchLobby: () => ({
         getView: async () => ({ visible: true as const, view: waitingMatch }),
-        accept: async () => ({ accepted: true as const, gameId: "game-1" }),
+        accept: async () => ({ accepted: true as const }),
+        ...readinessRpc(),
         cancel: async (playerId) => {
           cancelledBy.push(playerId);
           return { cancelled: true as const };
@@ -434,4 +494,11 @@ function authorizedDeck(faction: Faction = "disaster"): {
   cardDefinitionIds: CardDefinitionId[];
 } {
   return { faction, cardDefinitionIds: deckDefinitionIds };
+}
+
+function readinessRpc() {
+  return {
+    ready: async () => ({ ready: true as const, gameId: null }),
+    release: async () => ({ released: true as const }),
+  };
 }
