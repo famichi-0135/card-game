@@ -1,5 +1,7 @@
 import { describe, expect, it } from "vitest";
 import {
+  filterLearnArticles,
+  getAvailableTags,
   getLearnArticle,
   getLearnArticles,
   LEARN_CATEGORIES,
@@ -32,5 +34,32 @@ describe("防災情報カタログ", () => {
       expect(article.sourceUrl).toMatch(/^https:\/\//);
       expect(article.reviewedAt).toMatch(/^\d{4}-\d{2}-\d{2}$/);
     }
+  });
+
+  it("記事一覧からユニークなタグ一覧を取得できる", () => {
+    const tags = getAvailableTags(learnArticles);
+    expect(tags.length).toBeGreaterThan(0);
+    expect(new Set(tags).size).toBe(tags.length);
+  });
+
+  it("カテゴリとタグによるフィルタリングが正しく機能する", () => {
+    const allTags = getAvailableTags(learnArticles);
+    const targetTag = allTags[0];
+    expect(targetTag).toBeDefined();
+
+    const filtered = filterLearnArticles(learnArticles, {
+      category: null,
+      tags: [targetTag!],
+    });
+    expect(filtered.length).toBeGreaterThan(0);
+    expect(filtered.every((article) => article.tags.includes(targetTag!))).toBe(
+      true,
+    );
+
+    const emptyFilter = filterLearnArticles(learnArticles, {
+      category: null,
+      tags: [],
+    });
+    expect(emptyFilter).toEqual(learnArticles);
   });
 });
