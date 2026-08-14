@@ -141,6 +141,11 @@ export class GameSession extends DurableObject<CloudflareBindings> {
   private session: StoredGameSession | null = null;
   private abandonment: StoredGameSessionAbandonment | null = null;
   private readonly loadSession: Promise<void>;
+  /**
+   * Durable ObjectのRPCはawait境界で別の呼び出しが進行し得るため、
+   * セッション状態を変更する処理は明示的に直列化する。
+   */
+  private mutationQueue: Promise<void> = Promise.resolve();
 
   constructor(ctx: DurableObjectState, env: CloudflareBindings) {
     super(ctx, env);
@@ -172,6 +177,12 @@ export class GameSession extends DurableObject<CloudflareBindings> {
   }
 
   async initialize(
+    input: InitializeGameInput,
+  ): Promise<InitializeGameSessionResult> {
+    return this.runSerializedMutation(() => this.initializeInternal(input));
+  }
+
+  private async initializeInternal(
     input: InitializeGameInput,
   ): Promise<InitializeGameSessionResult> {
     await this.loadSession;
@@ -234,6 +245,12 @@ export class GameSession extends DurableObject<CloudflareBindings> {
   }
 
   async abandon(input: InitializeGameInput): Promise<AbandonGameSessionResult> {
+    return this.runSerializedMutation(() => this.abandonInternal(input));
+  }
+
+  private async abandonInternal(
+    input: InitializeGameInput,
+  ): Promise<AbandonGameSessionResult> {
     await this.loadSession;
     const existingAbandonment = this.abandonment;
     if (existingAbandonment !== null) {
@@ -375,6 +392,14 @@ export class GameSession extends DurableObject<CloudflareBindings> {
   }
 
   async submit(
+    authenticatedCommand: AuthenticatedGameCommand,
+  ): Promise<SubmitGameCommandResult> {
+    return this.runSerializedMutation(() =>
+      this.submitInternal(authenticatedCommand),
+    );
+  }
+
+  private async submitInternal(
     authenticatedCommand: AuthenticatedGameCommand,
   ): Promise<SubmitGameCommandResult> {
     const session = await this.requireSessionOrNull();
@@ -525,6 +550,10 @@ export class GameSession extends DurableObject<CloudflareBindings> {
   }
 
   async alarm(): Promise<void> {
+    return this.runSerializedMutation(() => this.alarmInternal());
+  }
+
+  private async alarmInternal(): Promise<void> {
     await this.loadSession;
     if (this.abandonment !== null) {
       await this.reconcileAbandonment(this.abandonment);
@@ -718,6 +747,15 @@ export class GameSession extends DurableObject<CloudflareBindings> {
       this.session = null;
     }
     return this.session;
+  }
+
+  private runSerializedMutation<T>(operation: () => Promise<T>): Promise<T> {
+    const current = this.mutationQueue.then(operation, operation);
+    this.mutationQueue = current.then(
+      () => undefined,
+      () => undefined,
+    );
+    return current;
   }
 
   private async persist(session: StoredGameSession): Promise<void> {
