@@ -42,7 +42,8 @@ export const RULE_GUIDE_SECTIONS: readonly RuleGuideSection[] = [
     ],
     illustration: {
       alt: "総パワーの差でスタミナが減る流れを示す図",
-      caption: "総パワーとスタミナの関係を示す図を追加予定です。",
+      caption: "総パワーの比較結果がスタミナへ反映される流れ。",
+      src: "/game-assets/ui/rule-guide/goal.3d79c01916e11f614d8fbd07521014104db045d0763bb7dbbe07b46ea826571b.png",
     },
   },
   {
@@ -58,7 +59,8 @@ export const RULE_GUIDE_SECTIONS: readonly RuleGuideSection[] = [
     ],
     illustration: {
       alt: "みなもと、攻撃、サポートの3種類のカードを示す図",
-      caption: "3種類のカードの役割を示す図を追加予定です。",
+      caption: "みなもと、攻撃、サポートの役割を示す図。",
+      src: "/game-assets/ui/rule-guide/cards-and-sources.af2669520a57cb08403b35c4bbc65aa41872419c9688a3d4590ee2ef921b9617.png",
     },
   },
   {
@@ -74,7 +76,8 @@ export const RULE_GUIDE_SECTIONS: readonly RuleGuideSection[] = [
     ],
     illustration: {
       alt: "1ラウンドの進行順を示す図",
-      caption: "配置から次のラウンドまでの流れを示す図を追加予定です。",
+      caption: "配置から次のラウンド開始までの流れ。",
+      src: "/game-assets/ui/rule-guide/round-flow.06b21f01494c22df3a80f71ee0e852c17f4b41c83948466aee33604d8d6a7bd3.png",
     },
   },
   {
@@ -90,7 +93,8 @@ export const RULE_GUIDE_SECTIONS: readonly RuleGuideSection[] = [
     ],
     illustration: {
       alt: "攻撃カードを空き枠へ配置して連鎖する図",
-      caption: "攻撃グループへの配置と連鎖を示す図を追加予定です。",
+      caption: "空き枠への配置と、合法な連鎖先の強調表示。",
+      src: "/game-assets/ui/rule-guide/attack-and-chain.ea88b6cb45a8b16e355aca87dee7baa5a5ced420a770934487d1e386e253057a.png",
     },
   },
   {
@@ -106,7 +110,8 @@ export const RULE_GUIDE_SECTIONS: readonly RuleGuideSection[] = [
     ],
     illustration: {
       alt: "サポートフェーズで両者がカードを使う図",
-      caption: "サポートカードの使用と終了宣言を示す図を追加予定です。",
+      caption: "両者が任意の順番でサポートを使い、終了を宣言する流れ。",
+      src: "/game-assets/ui/rule-guide/support.10bf0621a4f5bbb3882f8daa30e2081cb1ceb27ed40d4c1c3ac1f2f157058eaa.png",
     },
   },
   {
@@ -122,7 +127,8 @@ export const RULE_GUIDE_SECTIONS: readonly RuleGuideSection[] = [
     ],
     illustration: {
       alt: "スコア計算から勝敗判定までを示す図",
-      caption: "ラウンド終了時の勝敗判定を示す図を追加予定です。",
+      caption: "スコア、山札、引き分けを含む勝敗判定の流れ。",
+      src: "/game-assets/ui/rule-guide/scoring-and-end.9825e20d1a1607031b1324d6be120086d8dd2f7d120e138ef54ec1e4054821a7.png",
     },
   },
 ];
