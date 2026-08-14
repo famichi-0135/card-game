@@ -17,6 +17,8 @@ import {
   cancelMatchOnPageExit,
   createStarterDeck,
   getMatchmakingErrorMessage,
+  readyMatch,
+  releaseMatchOnPageExit,
 } from "./matchmaking-api.ts";
 import { useMatchLobby } from "./hooks/use-matchmaking-data.ts";
 
@@ -36,12 +38,26 @@ export function MatchRoom({
   const lobby = useMatchLobby(matchId);
   const match = lobby.data;
   const isOwner = match?.ownerPlayerId === playerId;
+  const isReady =
+    match?.status === "preparing"
+      ? isOwner
+        ? match.ownerReady
+        : match.opponentReady
+      : false;
   useCancelMatchOnLeave({
     enabled:
-      isOwner && (match?.status === "waiting" || match?.status === "starting"),
+      isOwner &&
+      (match?.status === "waiting" ||
+        match?.status === "preparing" ||
+        match?.status === "starting"),
+    matchId,
+  });
+  useReleaseMatchOnLeave({
+    enabled: !isOwner && match?.status === "preparing",
     matchId,
   });
   const [isAccepting, setIsAccepting] = useState(false);
+  const [isReadying, setIsReadying] = useState(false);
   const [isCancelling, setIsCancelling] = useState(false);
   const [copyStatus, setCopyStatus] = useState<"idle" | "copied" | "failed">(
     "idle",
@@ -83,8 +99,8 @@ export function MatchRoom({
       const deck = await createStarterDeck(
         getOpposingFaction(match.ownerFaction),
       );
-      const gameId = await acceptMatch(matchId, deck.id);
-      navigate(`/games/${encodeURIComponent(gameId)}`, { replace: true });
+      await acceptMatch(matchId, deck.id);
+      await lobby.refetch();
     } catch (requestError) {
       toast.add({
         description: getMatchmakingErrorMessage(
@@ -97,6 +113,30 @@ export function MatchRoom({
       void lobby.refetch();
     } finally {
       setIsAccepting(false);
+    }
+  }
+
+  async function handleReady() {
+    setIsReadying(true);
+    try {
+      const gameId = await readyMatch(matchId);
+      if (gameId !== null) {
+        navigate(`/games/${encodeURIComponent(gameId)}`, { replace: true });
+        return;
+      }
+      await lobby.refetch();
+    } catch (requestError) {
+      toast.add({
+        description: getMatchmakingErrorMessage(
+          requestError,
+          "準備完了を送信できませんでした。最新の状態を確認してください。",
+        ),
+        title: "準備完了を送信できません",
+        type: "error",
+      });
+      void lobby.refetch();
+    } finally {
+      setIsReadying(false);
     }
   }
 
@@ -148,8 +188,8 @@ export function MatchRoom({
           開始結果を確認できませんでした。同じ対戦情報で再試行するか、作成者が部屋を取り消してください。
         </p>
         <StartingMatchRecoveryActions
-          isPending={isOwner ? isCancelling : isAccepting}
-          onAction={() => void (isOwner ? handleCancel() : handleAccept())}
+          isPending={isOwner ? isCancelling : isReadying}
+          onAction={() => void (isOwner ? handleCancel() : handleReady())}
           role={isOwner ? "owner" : "opponent"}
         />
       </RoomLayout>
@@ -162,6 +202,21 @@ export function MatchRoom({
         <p className="text-sm leading-6 text-[#91a5b4]">
           対戦画面の情報を確認しています。しばらくしてから再読み込みしてください。
         </p>
+      </RoomLayout>
+    );
+  }
+
+  if (match.status === "preparing") {
+    return (
+      <RoomLayout title="対戦開始の準備">
+        <PreparingMatchState
+          isOwner={isOwner}
+          isReady={isReady}
+          isReadying={isReadying}
+          opponentReady={match.opponentReady}
+          ownerReady={match.ownerReady}
+          onReady={() => void handleReady()}
+        />
       </RoomLayout>
     );
   }
@@ -197,6 +252,75 @@ export function MatchRoom({
         />
       )}
     </RoomLayout>
+  );
+}
+
+export function PreparingMatchState({
+  isOwner,
+  isReady,
+  isReadying,
+  opponentReady,
+  ownerReady,
+  onReady,
+}: {
+  isOwner: boolean;
+  isReady: boolean;
+  isReadying: boolean;
+  opponentReady: boolean;
+  ownerReady: boolean;
+  onReady: () => void;
+}) {
+  return (
+    <AppPanel label="MATCH PREPARATION">
+      <section className="grid gap-5">
+        <div>
+          <h2 className="text-lg font-semibold text-[#e7eff4]">
+            両者の準備完了を待っています
+          </h2>
+          <p className="mt-1 text-sm leading-6 text-[#91a5b4]">
+            両者が準備完了を送信してから対戦を開始します。ゲームの制限時間はまだ始まりません。
+          </p>
+        </div>
+        <dl className="grid gap-2 text-sm text-[#c9d8e0]">
+          <PreparationStatus label="作成者" ready={ownerReady} />
+          <PreparationStatus label="参加者" ready={opponentReady} />
+        </dl>
+        <button
+          className={`${appButtonClassName.primary} w-fit`}
+          disabled={isReady || isReadying}
+          onClick={onReady}
+          type="button"
+        >
+          {isReadying
+            ? "準備完了を送信しています"
+            : isReady
+              ? "準備完了を送信済みです"
+              : "準備完了"}
+        </button>
+        {!isOwner ? (
+          <p className="text-sm text-[#91a5b4]">
+            この画面を離れると、参加状態は解除されます。
+          </p>
+        ) : null}
+      </section>
+    </AppPanel>
+  );
+}
+
+function PreparationStatus({
+  label,
+  ready,
+}: {
+  label: string;
+  ready: boolean;
+}) {
+  return (
+    <div className="flex items-center justify-between gap-4 rounded border border-[#29465b] px-3 py-2">
+      <dt>{label}</dt>
+      <dd className={ready ? "text-[#9cddb0]" : "text-[#91a5b4]"}>
+        {ready ? "準備完了" : "準備中"}
+      </dd>
+    </div>
   );
 }
 
@@ -267,7 +391,7 @@ function OwnerWaitingState({
           </h2>
           <p className="mt-1 text-sm leading-6 text-[#91a5b4]">
             招待 URL
-            を相手に共有してください。相手が反対ロールで参加すると対戦を開始します。
+            を相手に共有してください。相手が反対ロールで参加した後、双方が準備完了すると対戦を開始します。
           </p>
         </div>
         <button
@@ -402,6 +526,43 @@ function useCancelMatchOnLeave({
       window.removeEventListener("pagehide", cancelOnLeave);
       // Strict Modeの検証用再実行では、直後のeffectがこの送信を取り消す。
       pendingCancellationRef.current = window.setTimeout(cancelOnLeave, 0);
+    };
+  }, [enabled, matchId]);
+}
+
+function useReleaseMatchOnLeave({
+  enabled,
+  matchId,
+}: {
+  enabled: boolean;
+  matchId: string;
+}) {
+  const enabledRef = useRef(enabled);
+  const releaseSentRef = useRef(false);
+  const pendingReleaseRef = useRef<number | null>(null);
+  enabledRef.current = enabled;
+
+  useEffect(() => {
+    if (!enabled) {
+      return;
+    }
+    if (pendingReleaseRef.current !== null) {
+      window.clearTimeout(pendingReleaseRef.current);
+      pendingReleaseRef.current = null;
+    }
+
+    function releaseOnLeave() {
+      if (!enabledRef.current || releaseSentRef.current) {
+        return;
+      }
+      releaseSentRef.current = true;
+      releaseMatchOnPageExit(matchId);
+    }
+
+    window.addEventListener("pagehide", releaseOnLeave);
+    return () => {
+      window.removeEventListener("pagehide", releaseOnLeave);
+      pendingReleaseRef.current = window.setTimeout(releaseOnLeave, 0);
     };
   }, [enabled, matchId]);
 }

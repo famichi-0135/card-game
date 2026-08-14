@@ -10,6 +10,8 @@ import type {
   ListPublicMatchesResponse,
   MatchApiErrorCode,
   MatchLobbyView,
+  MatchReadyResponse,
+  MatchReleasedResponse,
   MatchVisibility,
   PublicMatchLobbySummary,
 } from "@disastar/contracts/match";
@@ -77,7 +79,7 @@ export async function getMatch(matchId: string): Promise<MatchLobbyView> {
 export async function acceptMatch(
   matchId: string,
   deckId: string,
-): Promise<string> {
+): Promise<void> {
   const response = await fetchMatchmakingApi<AcceptMatchResponse>(
     `/api/matches/${encodeURIComponent(matchId)}/accept`,
     {
@@ -89,7 +91,29 @@ export async function acceptMatch(
   if (!response.accepted) {
     throw new MatchmakingApiError(409, response.error.code);
   }
+}
+
+export async function readyMatch(matchId: string): Promise<string | null> {
+  const response = await fetchMatchmakingApi<MatchReadyResponse>(
+    `/api/matches/${encodeURIComponent(matchId)}/ready`,
+    { method: "POST" },
+  );
+
+  if (!response.ready) {
+    throw new MatchmakingApiError(409, response.error.code);
+  }
   return response.gameId;
+}
+
+export async function releaseMatch(matchId: string): Promise<void> {
+  const response = await fetchMatchmakingApi<MatchReleasedResponse>(
+    `/api/matches/${encodeURIComponent(matchId)}/leave`,
+    { method: "POST" },
+  );
+
+  if (!response.released) {
+    throw new MatchmakingApiError(409, response.error.code);
+  }
 }
 
 export async function cancelMatch(matchId: string): Promise<void> {
@@ -112,6 +136,18 @@ export function cancelMatchOnPageExit(matchId: string): void {
     headers: { Accept: "application/json" },
   }).catch(() => {
     // ブラウザ終了時は送信できないことがある。サーバー側の30分期限が最終保証となる。
+  });
+}
+
+/** 参加者が準備画面を離れると、待機部屋を参加可能な状態へ戻す。 */
+export function releaseMatchOnPageExit(matchId: string): void {
+  void fetch(`/api/matches/${encodeURIComponent(matchId)}/leave`, {
+    method: "POST",
+    credentials: "include",
+    keepalive: true,
+    headers: { Accept: "application/json" },
+  }).catch(() => {
+    // ブラウザ終了時の送信失敗は許容する。部屋は作成時の待機期限で最終的に失効する。
   });
 }
 
@@ -138,6 +174,12 @@ export function getMatchmakingErrorMessage(
       return "自分で作成した招待部屋には参加できません。";
     case "MATCH_NOT_ACCEPTING":
       return "この招待部屋は参加を受け付けていません。";
+    case "MATCH_NOT_PARTICIPANT":
+      return "この操作を行うための対戦参加情報がありません。";
+    case "MATCH_NOT_PREPARING":
+      return "この招待部屋は準備完了を受け付ける状態ではありません。";
+    case "MATCH_RELEASE_FORBIDDEN":
+      return "この招待部屋の参加状態を解除する権限がありません。";
     case "MATCH_CANCELLATION_FORBIDDEN":
     case "MATCH_NOT_CANCELLABLE":
       return "この招待部屋は取り消せません。";

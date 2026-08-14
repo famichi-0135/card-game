@@ -7,13 +7,18 @@ import type { DeckId } from "./deck.js";
 
 export type { DeckId } from "./deck.js";
 
-export type MatchLobbyStatus = "waiting" | "starting" | "started" | "cancelled";
+export type MatchLobbyStatus =
+  | "waiting"
+  | "preparing"
+  | "starting"
+  | "started"
+  | "cancelled";
 
 /** 作成者以外が待機部屋を見つける方法。 */
 export type MatchVisibility = "invite" | "public";
 
 /** 参加者にだけ返す、招待式対戦待機部屋の公開状態。 */
-export type MatchLobbyView = {
+type MatchLobbyViewBase = {
   status: MatchLobbyStatus;
   ownerPlayerId: PlayerId;
   ownerFaction: Faction;
@@ -21,6 +26,18 @@ export type MatchLobbyView = {
   opponentFaction: Faction | null;
   gameId: GameId | null;
 };
+
+export type MatchLobbyView =
+  | (MatchLobbyViewBase & {
+      status: "preparing";
+      opponentPlayerId: PlayerId;
+      opponentFaction: Faction;
+      ownerReady: boolean;
+      opponentReady: boolean;
+    })
+  | (MatchLobbyViewBase & {
+      status: "waiting" | "starting" | "started" | "cancelled";
+    });
 
 export type CreateMatchRequest = {
   deckId: DeckId;
@@ -108,12 +125,21 @@ export function parseAcceptMatchRequest(
 
 export type CreateMatchResponse = { matchId: string };
 
-export type MatchAcceptedResponse = { accepted: true; gameId: GameId };
+/** 対戦相手の参加枠を確保したことだけを表す。ゲームは双方の準備完了後に生成する。 */
+export type MatchAcceptedResponse = { accepted: true };
 export type MatchRejectedResponse = {
   accepted: false;
   error: { code: MatchApiErrorCode };
 };
 export type AcceptMatchResponse = MatchAcceptedResponse | MatchRejectedResponse;
+
+export type MatchReadyResponse =
+  | { ready: true; gameId: GameId | null }
+  | { ready: false; error: { code: MatchApiErrorCode } };
+
+export type MatchReleasedResponse =
+  | { released: true }
+  | { released: false; error: { code: MatchApiErrorCode } };
 
 export type CancelMatchResponse =
   | { cancelled: true }
@@ -127,6 +153,9 @@ export type MatchApiErrorCode =
   | "MATCH_ACCESS_FORBIDDEN"
   | "CANNOT_ACCEPT_OWN_MATCH"
   | "MATCH_NOT_ACCEPTING"
+  | "MATCH_NOT_PARTICIPANT"
+  | "MATCH_NOT_PREPARING"
+  | "MATCH_RELEASE_FORBIDDEN"
   | "MATCH_FACTION_CONFLICT"
   | "MATCH_CANCELLATION_FORBIDDEN"
   | "MATCH_NOT_CANCELLABLE"

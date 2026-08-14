@@ -7,7 +7,6 @@ import type {
   CardDefinitionId,
   Faction,
   GameId,
-  InitializeGameError,
   InitializeGameInput,
   PlayerId,
 } from "@disastar/game-engine/contracts";
@@ -26,6 +25,21 @@ type WaitingMatch = {
   ownerPlayerId: PlayerId;
   ownerFaction: Faction;
   ownerDeckDefinitionIds: CardDefinitionId[];
+  createdAt: number;
+  expiresAt: number;
+  visibility: MatchVisibility;
+};
+
+type PreparingMatch = {
+  status: "preparing";
+  ownerPlayerId: PlayerId;
+  ownerFaction: Faction;
+  ownerDeckDefinitionIds: CardDefinitionId[];
+  opponentPlayerId: PlayerId;
+  opponentFaction: Faction;
+  opponentDeckDefinitionIds: CardDefinitionId[];
+  ownerReady: boolean;
+  opponentReady: boolean;
   createdAt: number;
   expiresAt: number;
   visibility: MatchVisibility;
@@ -65,6 +79,7 @@ type CancelledMatch = {
 
 type MatchLobbyState =
   | WaitingMatch
+  | PreparingMatch
   | StartingMatch
   | StartedMatch
   | CancelledMatch;
@@ -102,10 +117,10 @@ export type GetPublicMatchLobbySummaryResult =
         expiresAt: number;
       };
     }
-  | { available: false; reason: "starting" | "terminal" };
+  | { available: false; reason: "preparing" | "starting" | "terminal" };
 
 export type MatchLobbyAcceptResult =
-  | { accepted: true; gameId: GameId }
+  | { accepted: true }
   | {
       accepted: false;
       error: {
@@ -113,9 +128,34 @@ export type MatchLobbyAcceptResult =
           | "CANNOT_ACCEPT_OWN_MATCH"
           | "MATCH_NOT_ACCEPTING"
           | "MATCH_FACTION_CONFLICT"
+          | "MATCH_NOT_FOUND";
+      };
+    };
+
+export type MatchLobbyReadyResult =
+  | { ready: true; gameId: GameId | null }
+  | {
+      ready: false;
+      error: {
+        code:
           | "MATCH_NOT_FOUND"
+          | "MATCH_NOT_PARTICIPANT"
+          | "MATCH_NOT_PREPARING"
+          | "MATCH_NOT_ACCEPTING"
           | "GAME_CREATION_FAILED";
-        initializationError?: InitializeGameError;
+      };
+    };
+
+export type MatchLobbyReleaseResult =
+  | { released: true }
+  | {
+      released: false;
+      error: {
+        code:
+          | "MATCH_NOT_FOUND"
+          | "MATCH_NOT_PARTICIPANT"
+          | "MATCH_NOT_PREPARING"
+          | "MATCH_RELEASE_FORBIDDEN";
       };
     };
 
@@ -203,7 +243,7 @@ export class MatchLobby extends DurableObject<CloudflareBindings> {
       const match = migrateStoredMatch(stored, Date.now());
       if (match !== null && match !== stored) {
         await this.persist(match);
-        if (match.status === "waiting") {
+        if (match.status === "waiting" || match.status === "preparing") {
           await this.ctx.storage.setAlarm(match.expiresAt);
         }
       }
@@ -265,8 +305,11 @@ export class MatchLobby extends DurableObject<CloudflareBindings> {
 
   async getPublicSummary(): Promise<GetPublicMatchLobbySummaryResult> {
     const match = await this.getMatch();
-    if (match?.status === "starting" && match.visibility === "public") {
-      return { available: false, reason: "starting" };
+    if (
+      (match?.status === "preparing" || match?.status === "starting") &&
+      match.visibility === "public"
+    ) {
+      return { available: false, reason: match.status };
     }
     if (
       match === null ||
@@ -298,14 +341,10 @@ export class MatchLobby extends DurableObject<CloudflareBindings> {
     assertNonEmptyIdentifier(input.playerId, "参加者のプレイヤーID");
     assertFaction(input.faction);
 
-    if (match.status === "starting") {
-      if (match.opponentPlayerId !== input.playerId) {
-        return {
-          accepted: false,
-          error: { code: "MATCH_NOT_ACCEPTING" },
-        };
-      }
-      return await this.completeStart(match);
+    if (match.status === "preparing") {
+      return match.opponentPlayerId === input.playerId
+        ? { accepted: true }
+        : { accepted: false, error: { code: "MATCH_NOT_ACCEPTING" } };
     }
     if (match.status !== "waiting") {
       return {
@@ -326,37 +365,82 @@ export class MatchLobby extends DurableObject<CloudflareBindings> {
       };
     }
 
-    const starting: StartingMatch = {
-      status: "starting",
+    const preparing: PreparingMatch = {
+      status: "preparing",
       ownerPlayerId: match.ownerPlayerId,
       ownerFaction: match.ownerFaction,
       ownerDeckDefinitionIds: match.ownerDeckDefinitionIds,
       opponentPlayerId: input.playerId,
       opponentFaction: input.faction,
       opponentDeckDefinitionIds: [...input.deckDefinitionIds],
+      ownerReady: false,
+      opponentReady: false,
       createdAt: match.createdAt,
       expiresAt: match.expiresAt,
       visibility: match.visibility,
-      gameInput: {
-        gameId: `game-${crypto.randomUUID()}`,
-        randomSeed: crypto.randomUUID(),
-        players: [
-          {
-            playerId: match.ownerPlayerId,
-            faction: match.ownerFaction,
-            deckDefinitionIds: [...match.ownerDeckDefinitionIds],
-          },
-          {
-            playerId: input.playerId,
-            faction: input.faction,
-            deckDefinitionIds: [...input.deckDefinitionIds],
-          },
-        ],
-      },
     };
+    await this.persist(preparing);
+    this.match = preparing;
+    return { accepted: true };
+  }
+
+  async ready(playerId: PlayerId): Promise<MatchLobbyReadyResult> {
+    const match = await this.getMatch();
+    if (match === null) {
+      return { ready: false, error: { code: "MATCH_NOT_FOUND" } };
+    }
+    if (!isParticipant(match, playerId)) {
+      return { ready: false, error: { code: "MATCH_NOT_PARTICIPANT" } };
+    }
+    if (match.status === "started") {
+      return { ready: true, gameId: match.gameId };
+    }
+    if (match.status === "starting") {
+      return await this.completeStart(match);
+    }
+    if (match.status !== "preparing") {
+      return { ready: false, error: { code: "MATCH_NOT_PREPARING" } };
+    }
+
+    const preparing: PreparingMatch = {
+      ...match,
+      ownerReady: match.ownerReady || match.ownerPlayerId === playerId,
+      opponentReady: match.opponentReady || match.opponentPlayerId === playerId,
+    };
+    await this.persist(preparing);
+    this.match = preparing;
+    if (!preparing.ownerReady || !preparing.opponentReady) {
+      return { ready: true, gameId: null };
+    }
+
+    const starting = createStartingMatch(preparing);
     await this.persist(starting);
     this.match = starting;
     return await this.completeStart(starting);
+  }
+
+  async release(playerId: PlayerId): Promise<MatchLobbyReleaseResult> {
+    const match = await this.getMatch();
+    if (match === null) {
+      return { released: false, error: { code: "MATCH_NOT_FOUND" } };
+    }
+    if (match.status !== "preparing") {
+      return { released: false, error: { code: "MATCH_NOT_PREPARING" } };
+    }
+    if (!isParticipant(match, playerId)) {
+      return { released: false, error: { code: "MATCH_NOT_PARTICIPANT" } };
+    }
+    if (match.opponentPlayerId !== playerId) {
+      return {
+        released: false,
+        error: { code: "MATCH_RELEASE_FORBIDDEN" },
+      };
+    }
+
+    const waiting = toWaitingMatch(match);
+    await this.persist(waiting);
+    this.match = waiting;
+    return { released: true };
   }
 
   async cancel(playerId: PlayerId): Promise<MatchLobbyCancelResult> {
@@ -370,7 +454,11 @@ export class MatchLobby extends DurableObject<CloudflareBindings> {
         error: { code: "MATCH_CANCELLATION_FORBIDDEN" },
       };
     }
-    if (match.status !== "waiting" && match.status !== "starting") {
+    if (
+      match.status !== "waiting" &&
+      match.status !== "preparing" &&
+      match.status !== "starting"
+    ) {
       return {
         cancelled: false,
         error: { code: "MATCH_NOT_CANCELLABLE" },
@@ -408,7 +496,7 @@ export class MatchLobby extends DurableObject<CloudflareBindings> {
 
   private async completeStart(
     match: StartingMatch,
-  ): Promise<MatchLobbyAcceptResult> {
+  ): Promise<MatchLobbyReadyResult> {
     let initialized: Awaited<
       ReturnType<typeof initializeGameSessionInEnvironment>
     >;
@@ -418,27 +506,24 @@ export class MatchLobby extends DurableObject<CloudflareBindings> {
       return await this.handleUnknownStartResult(match);
     }
     if (!initialized.initialized) {
-      return await this.restoreWaitingAfterStartFailure(
-        match,
-        initialized.error,
-      );
+      return await this.restorePreparingAfterStartFailure(match);
     }
 
     const current = this.match;
     if (current?.status === "started") {
       return current.gameId === match.gameInput.gameId
-        ? { accepted: true, gameId: current.gameId }
-        : { accepted: false, error: { code: "MATCH_NOT_ACCEPTING" } };
+        ? { ready: true, gameId: current.gameId }
+        : { ready: false, error: { code: "MATCH_NOT_ACCEPTING" } };
     }
     if (current?.status === "cancelled") {
       await this.reconcileGameAbandonment(current);
-      return { accepted: false, error: { code: "MATCH_NOT_ACCEPTING" } };
+      return { ready: false, error: { code: "MATCH_NOT_ACCEPTING" } };
     }
     if (!isSameStartingAttempt(current, match)) {
-      return { accepted: false, error: { code: "MATCH_NOT_ACCEPTING" } };
+      return { ready: false, error: { code: "MATCH_NOT_ACCEPTING" } };
     }
     if (await this.expireMatchIfNecessary(current)) {
-      return { accepted: false, error: { code: "MATCH_NOT_ACCEPTING" } };
+      return { ready: false, error: { code: "MATCH_NOT_ACCEPTING" } };
     }
 
     const started: StartedMatch = {
@@ -453,7 +538,7 @@ export class MatchLobby extends DurableObject<CloudflareBindings> {
     await this.persist(started);
     this.match = started;
     await this.clearAlarm();
-    return { accepted: true, gameId: started.gameId };
+    return { ready: true, gameId: started.gameId };
   }
 
   private initializeGameSession(input: InitializeGameInput) {
@@ -462,55 +547,59 @@ export class MatchLobby extends DurableObject<CloudflareBindings> {
 
   private async handleUnknownStartResult(
     match: StartingMatch,
-  ): Promise<MatchLobbyAcceptResult> {
+  ): Promise<MatchLobbyReadyResult> {
     const current = this.match;
     if (current?.status === "started") {
       return current.gameId === match.gameInput.gameId
-        ? { accepted: true, gameId: current.gameId }
-        : { accepted: false, error: { code: "MATCH_NOT_ACCEPTING" } };
+        ? { ready: true, gameId: current.gameId }
+        : { ready: false, error: { code: "MATCH_NOT_ACCEPTING" } };
     }
     if (!isSameStartingAttempt(current, match)) {
-      return { accepted: false, error: { code: "MATCH_NOT_ACCEPTING" } };
+      return { ready: false, error: { code: "MATCH_NOT_ACCEPTING" } };
     }
     if (await this.expireMatchIfNecessary(current)) {
-      return { accepted: false, error: { code: "MATCH_NOT_ACCEPTING" } };
+      return { ready: false, error: { code: "MATCH_NOT_ACCEPTING" } };
     }
 
     // RPC例外では相手側だけ初期化済みの可能性があるため、同じ入力で再試行できる状態を保つ。
     return createGameCreationFailure();
   }
 
-  private async restoreWaitingAfterStartFailure(
+  private async restorePreparingAfterStartFailure(
     match: StartingMatch,
-    initializationError?: InitializeGameError,
-  ): Promise<MatchLobbyAcceptResult> {
+  ): Promise<MatchLobbyReadyResult> {
     const current = this.match;
     if (current?.status === "started") {
       return current.gameId === match.gameInput.gameId
-        ? { accepted: true, gameId: current.gameId }
-        : { accepted: false, error: { code: "MATCH_NOT_ACCEPTING" } };
+        ? { ready: true, gameId: current.gameId }
+        : { ready: false, error: { code: "MATCH_NOT_ACCEPTING" } };
     }
     if (!isSameStartingAttempt(current, match)) {
-      return current?.status === "waiting"
-        ? createGameCreationFailure(initializationError)
-        : { accepted: false, error: { code: "MATCH_NOT_ACCEPTING" } };
+      return current?.status === "preparing"
+        ? createGameCreationFailure()
+        : { ready: false, error: { code: "MATCH_NOT_ACCEPTING" } };
     }
     if (await this.expireMatchIfNecessary(current)) {
-      return { accepted: false, error: { code: "MATCH_NOT_ACCEPTING" } };
+      return { ready: false, error: { code: "MATCH_NOT_ACCEPTING" } };
     }
 
-    const waiting: WaitingMatch = {
-      status: "waiting",
+    const preparing: PreparingMatch = {
+      status: "preparing",
       ownerPlayerId: match.ownerPlayerId,
       ownerFaction: match.ownerFaction,
       ownerDeckDefinitionIds: match.ownerDeckDefinitionIds,
+      opponentPlayerId: match.opponentPlayerId,
+      opponentFaction: match.opponentFaction,
+      opponentDeckDefinitionIds: match.opponentDeckDefinitionIds,
+      ownerReady: true,
+      opponentReady: true,
       createdAt: match.createdAt,
       expiresAt: match.expiresAt,
       visibility: match.visibility,
     };
-    await this.persist(waiting);
-    this.match = waiting;
-    return createGameCreationFailure(initializationError);
+    await this.persist(preparing);
+    this.match = preparing;
+    return createGameCreationFailure();
   }
 
   private async getMatch(): Promise<MatchLobbyState | null> {
@@ -525,7 +614,9 @@ export class MatchLobby extends DurableObject<CloudflareBindings> {
     match: MatchLobbyState,
   ): Promise<boolean> {
     if (
-      (match.status !== "waiting" && match.status !== "starting") ||
+      (match.status !== "waiting" &&
+        match.status !== "preparing" &&
+        match.status !== "starting") ||
       Date.now() < match.expiresAt
     ) {
       return false;
@@ -605,6 +696,17 @@ function toMatchLobbyView(match: MatchLobbyState): MatchLobbyView {
         opponentFaction: null,
         gameId: null,
       };
+    case "preparing":
+      return {
+        status: "preparing",
+        ownerPlayerId: match.ownerPlayerId,
+        ownerFaction: match.ownerFaction,
+        opponentPlayerId: match.opponentPlayerId,
+        opponentFaction: match.opponentFaction,
+        ownerReady: match.ownerReady,
+        opponentReady: match.opponentReady,
+        gameId: null,
+      };
     case "starting":
       return {
         status: "starting",
@@ -629,7 +731,9 @@ function toMatchLobbyView(match: MatchLobbyState): MatchLobbyView {
 function isParticipant(match: MatchLobbyState, playerId: PlayerId): boolean {
   return (
     match.ownerPlayerId === playerId ||
-    ((match.status === "starting" || match.status === "started") &&
+    ((match.status === "preparing" ||
+      match.status === "starting" ||
+      match.status === "started") &&
       match.opponentPlayerId === playerId)
   );
 }
@@ -644,15 +748,55 @@ function isSameStartingAttempt(
   );
 }
 
-function createGameCreationFailure(
-  initializationError?: InitializeGameError,
-): MatchLobbyAcceptResult {
+function createGameCreationFailure(): MatchLobbyReadyResult {
   return {
-    accepted: false,
+    ready: false,
     error: {
       code: "GAME_CREATION_FAILED",
-      ...(initializationError === undefined ? {} : { initializationError }),
     },
+  };
+}
+
+function createStartingMatch(match: PreparingMatch): StartingMatch {
+  return {
+    status: "starting",
+    ownerPlayerId: match.ownerPlayerId,
+    ownerFaction: match.ownerFaction,
+    ownerDeckDefinitionIds: match.ownerDeckDefinitionIds,
+    opponentPlayerId: match.opponentPlayerId,
+    opponentFaction: match.opponentFaction,
+    opponentDeckDefinitionIds: match.opponentDeckDefinitionIds,
+    createdAt: match.createdAt,
+    expiresAt: match.expiresAt,
+    visibility: match.visibility,
+    gameInput: {
+      gameId: `game-${crypto.randomUUID()}`,
+      randomSeed: crypto.randomUUID(),
+      players: [
+        {
+          playerId: match.ownerPlayerId,
+          faction: match.ownerFaction,
+          deckDefinitionIds: [...match.ownerDeckDefinitionIds],
+        },
+        {
+          playerId: match.opponentPlayerId,
+          faction: match.opponentFaction,
+          deckDefinitionIds: [...match.opponentDeckDefinitionIds],
+        },
+      ],
+    },
+  };
+}
+
+function toWaitingMatch(match: PreparingMatch | StartingMatch): WaitingMatch {
+  return {
+    status: "waiting",
+    ownerPlayerId: match.ownerPlayerId,
+    ownerFaction: match.ownerFaction,
+    ownerDeckDefinitionIds: [...match.ownerDeckDefinitionIds],
+    createdAt: match.createdAt,
+    expiresAt: match.expiresAt,
+    visibility: match.visibility,
   };
 }
 
@@ -689,7 +833,11 @@ function migrateStoredMatch(
   if (stored === undefined) {
     return null;
   }
-  if (stored.status === "waiting" || stored.status === "starting") {
+  if (
+    stored.status === "waiting" ||
+    stored.status === "preparing" ||
+    stored.status === "starting"
+  ) {
     const expiresAt = stored.expiresAt;
     const visibility = stored.visibility;
     if (

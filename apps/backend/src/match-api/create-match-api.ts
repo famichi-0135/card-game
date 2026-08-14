@@ -9,6 +9,8 @@ import {
   type MatchApiErrorCode,
   type MatchApiErrorResponse,
   type MatchLobbyView,
+  type MatchReadyResponse,
+  type MatchReleasedResponse,
 } from "@disastar/contracts/match";
 import type {
   CardDefinitionId,
@@ -24,6 +26,8 @@ import {
   type GetPublicMatchLobbySummaryResult,
   type MatchLobbyAcceptResult,
   type MatchLobbyCancelResult,
+  type MatchLobbyReadyResult,
+  type MatchLobbyReleaseResult,
 } from "../match-lobby/match-lobby.js";
 import {
   createPublicMatchLobbyIndex,
@@ -60,6 +64,8 @@ type MatchLobbyRpc = {
     faction: Faction;
     deckDefinitionIds: CardDefinitionId[];
   }): Promise<MatchLobbyAcceptResult>;
+  ready(playerId: PlayerId): Promise<MatchLobbyReadyResult>;
+  release(playerId: PlayerId): Promise<MatchLobbyReleaseResult>;
   cancel(playerId: PlayerId): Promise<MatchLobbyCancelResult>;
 };
 
@@ -262,13 +268,8 @@ export function createMatchApi({
       deckDefinitionIds: deck.cardDefinitionIds,
     });
     if (result.accepted) {
-      await removePublicLobby(
-        getPublicMatchLobbyIndex(c.env, publicMatchLobbyIndex),
-        c.req.param("matchId"),
-      );
       return c.json({
         accepted: true,
-        gameId: result.gameId,
       } satisfies AcceptMatchResponse);
     }
     return c.json(
@@ -276,6 +277,56 @@ export function createMatchApi({
         accepted: false,
         error: { code: result.error.code },
       } satisfies AcceptMatchResponse,
+      statusForMatchError(result.error.code),
+    );
+  });
+
+  api.post("/:matchId/ready", async (c) => {
+    const lobby = tryResolveMatchLobby(
+      c.req.param("matchId"),
+      c.env,
+      getMatchLobby,
+    );
+    if (lobby === null) {
+      return matchError(c, "MATCH_NOT_FOUND", 404);
+    }
+    const result = await lobby.ready(c.var.authenticatedPlayerId);
+    if (result.ready) {
+      if (result.gameId !== null) {
+        await removePublicLobby(
+          getPublicMatchLobbyIndex(c.env, publicMatchLobbyIndex),
+          c.req.param("matchId"),
+        );
+      }
+      return c.json(result satisfies MatchReadyResponse);
+    }
+    return c.json(
+      {
+        ready: false,
+        error: { code: result.error.code },
+      } satisfies MatchReadyResponse,
+      statusForMatchError(result.error.code),
+    );
+  });
+
+  api.post("/:matchId/leave", async (c) => {
+    const lobby = tryResolveMatchLobby(
+      c.req.param("matchId"),
+      c.env,
+      getMatchLobby,
+    );
+    if (lobby === null) {
+      return matchError(c, "MATCH_NOT_FOUND", 404);
+    }
+    const result = await lobby.release(c.var.authenticatedPlayerId);
+    if (result.released) {
+      return c.json({ released: true } satisfies MatchReleasedResponse);
+    }
+    return c.json(
+      {
+        released: false,
+        error: { code: result.error.code },
+      } satisfies MatchReleasedResponse,
       statusForMatchError(result.error.code),
     );
   });
@@ -407,6 +458,8 @@ function statusForMatchError(code: MatchApiErrorCode): 403 | 404 | 409 | 422 {
   switch (code) {
     case "MATCH_ACCESS_FORBIDDEN":
     case "MATCH_CANCELLATION_FORBIDDEN":
+    case "MATCH_NOT_PARTICIPANT":
+    case "MATCH_RELEASE_FORBIDDEN":
       return 403;
     case "MATCH_NOT_FOUND":
       return 404;
