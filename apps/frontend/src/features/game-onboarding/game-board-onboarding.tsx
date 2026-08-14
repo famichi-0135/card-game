@@ -3,7 +3,7 @@ import { usePrefersReducedMotion } from "../game-board/hooks/use-prefers-reduced
 import { GameBoardOnboardingPreview } from "./game-board-onboarding-preview.tsx";
 import { gameBoardOnboardingSteps } from "./game-board-onboarding-steps.ts";
 
-type OnboardingResult = "completed" | "skipped";
+export type OnboardingResult = "completed" | "skipped" | "interrupted";
 
 export function GameBoardOnboarding({
   onFinish,
@@ -18,14 +18,14 @@ export function GameBoardOnboarding({
     let disposed = false;
     let driverInstance: { destroy: () => void } | undefined;
     let reported = false;
-    let result: OnboardingResult | null = null;
+    let userResult: "completed" | "skipped" | null = null;
 
-    const reportFinish = () => {
+    const reportFinish = (result: OnboardingResult) => {
       if (reported) {
         return;
       }
       reported = true;
-      finishRef.current(result ?? "skipped");
+      finishRef.current(result);
     };
 
     void (async () => {
@@ -44,9 +44,15 @@ export function GameBoardOnboarding({
         disableActiveInteraction: true,
         doneBtnText: "完了",
         nextBtnText: "次へ",
-        onDestroyed: reportFinish,
+        onDestroyed: () => {
+          if (disposed) {
+            reportFinish("interrupted");
+          } else {
+            reportFinish(userResult ?? "skipped");
+          }
+        },
         onDoneClick: () => {
-          result = "completed";
+          userResult = "completed";
           instance.destroy();
         },
         onPopoverRender: (popover) => {
@@ -62,7 +68,7 @@ export function GameBoardOnboarding({
           skipButton.textContent = "スキップ";
           skipButton.type = "button";
           skipButton.addEventListener("click", () => {
-            result = "skipped";
+            userResult = "skipped";
             instance.destroy();
           });
           popover.footer.insertBefore(skipButton, popover.footerButtons);
@@ -87,13 +93,17 @@ export function GameBoardOnboarding({
       });
     })().catch(() => {
       if (!disposed) {
-        reportFinish();
+        reportFinish("interrupted");
       }
     });
 
     return () => {
       disposed = true;
-      driverInstance?.destroy();
+      if (driverInstance) {
+        driverInstance.destroy();
+      } else {
+        reportFinish("interrupted");
+      }
     };
   }, [prefersReducedMotion]);
 

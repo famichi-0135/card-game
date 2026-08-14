@@ -1,0 +1,60 @@
+{
+  "nodes": [
+    {
+      "id": "_agents_skills_migrate_radix_to_base_universal_patterns_document",
+      "label": "Universal Radix to Base UI patterns",
+      "file_type": "document",
+      "source_file": ".agents/skills/migrate-radix-to-base/universal-patterns.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_agents_skills_migrate_radix_to_base_universal_patterns_document_render",
+      "label": "asChild to render and useRender",
+      "file_type": "concept",
+      "source_file": ".agents/skills/migrate-radix-to-base/universal-patterns.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_agents_skills_migrate_radix_to_base_universal_patterns_document_positioning",
+      "label": "Portal Positioner Popup composition",
+      "file_type": "concept",
+      "source_file": ".agents/skills/migrate-radix-to-base/universal-patterns.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    }
+  ],
+  "edges": [
+    {
+      "source": "_agents_skills_migrate_radix_to_base_universal_patterns_document_render",
+      "target": "_agents_skills_shadcn_rules_base_vs_radix_document_composition",
+      "relation": "semantically_similar_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".agents/skills/migrate-radix-to-base/universal-patterns.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_agents_skills_migrate_radix_to_base_universal_patterns_document_positioning",
+      "target": "_agents_skills_migrate_radix_to_base_universal_patterns_document_render",
+      "relation": "conceptually_related_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".agents/skills/migrate-radix-to-base/universal-patterns.md",
+      "source_location": null,
+      "weight": 1.0
+    }
+  ],
+  "hyperedges": []
+}

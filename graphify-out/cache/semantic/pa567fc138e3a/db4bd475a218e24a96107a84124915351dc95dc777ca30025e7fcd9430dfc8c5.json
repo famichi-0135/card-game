@@ -1,0 +1,151 @@
+{
+  "nodes": [
+    {
+      "id": "_docs_environment_ai_development_md_document",
+      "label": "AI \u958b\u767a\u904b\u7528\u30ac\u30a4\u30c9",
+      "file_type": "document",
+      "source_file": "docs/environment/ai-development.md",
+      "source_location": null
+    },
+    {
+      "id": "_docs_environment_ai_development_md_human_approval_required_concept",
+      "label": "main\u30de\u30fc\u30b8\u306e\u4eba\u9593\u627f\u8a8d\u5fc5\u9808",
+      "file_type": "concept",
+      "source_file": "docs/environment/ai-development.md",
+      "source_location": "\u76ee\u7684"
+    },
+    {
+      "id": "_docs_environment_ai_development_md_codex_workflow_concept",
+      "label": "Codex \u5b9f\u88c5\u30fb\u30ec\u30d3\u30e5\u30fcworkflow",
+      "file_type": "concept",
+      "source_file": "docs/environment/ai-development.md",
+      "source_location": "\u76ee\u7684"
+    },
+    {
+      "id": "_docs_environment_ai_development_md_action_secrets_variables_concept",
+      "label": "OPENAI_API_KEY\u3068\u6709\u52b9\u5316Variables",
+      "file_type": "concept",
+      "source_file": "docs/environment/ai-development.md",
+      "source_location": "\u6709\u52b9\u5316\u524d\u306e\u8a2d\u5b9a"
+    },
+    {
+      "id": "_docs_environment_ai_development_md_generate_verify_publish_jobs_concept",
+      "label": "generate_patch/verify_patch/publish_draft_pr\u6a29\u9650\u5206\u96e2",
+      "file_type": "concept",
+      "source_file": "docs/environment/ai-development.md",
+      "source_location": "\u6a29\u9650\u5206\u96e2"
+    },
+    {
+      "id": "_docs_environment_ai_development_md_patch_restrictions_concept",
+      "label": "patch\u306b\u3088\u308b.github/.codex/AGENTS\u5909\u66f4\u7981\u6b62",
+      "file_type": "concept",
+      "source_file": "docs/environment/ai-development.md",
+      "source_location": "\u6a29\u9650\u5206\u96e2"
+    },
+    {
+      "id": "_docs_environment_ai_development_md_untrusted_pr_input_concept",
+      "label": "PR\u30fbIssue\u30fb\u30b3\u30fc\u30c9\u3092\u672a\u4fe1\u983c\u5165\u529b\u3068\u3057\u3066\u6271\u3046",
+      "file_type": "concept",
+      "source_file": "docs/environment/ai-development.md",
+      "source_location": "\u6a29\u9650\u5206\u96e2"
+    },
+    {
+      "id": "_docs_environment_ai_development_md_branch_protection_auto_merge_concept",
+      "label": "branch protection\u3068Squash auto-merge",
+      "file_type": "concept",
+      "source_file": "docs/environment/ai-development.md",
+      "source_location": "\u901a\u5e38\u306ePR"
+    },
+    {
+      "id": "_docs_environment_ai_development_md_manual_workflow_steps_concept",
+      "label": "Issue\u78ba\u8a8d\u304b\u3089Draft PR\u30fb\u30ec\u30d3\u30e5\u30fc\u30fb\u627f\u8a8d\u307e\u3067\u306e\u624b\u9806",
+      "file_type": "concept",
+      "source_file": "docs/environment/ai-development.md",
+      "source_location": "Codex \u306b\u5b9f\u88c5\u3092\u4f9d\u983c\u3059\u308b\u624b\u9806"
+    }
+  ],
+  "edges": [
+    {
+      "source": "_docs_environment_ai_development_md_document",
+      "target": "_docs_environment_ai_development_md_human_approval_required_concept",
+      "relation": "requires",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/environment/ai-development.md",
+      "source_location": "\u76ee\u7684"
+    },
+    {
+      "source": "_docs_environment_ai_development_md_document",
+      "target": "_docs_environment_ai_development_md_codex_workflow_concept",
+      "relation": "defines",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/environment/ai-development.md",
+      "source_location": "\u76ee\u7684"
+    },
+    {
+      "source": "_docs_environment_ai_development_md_document",
+      "target": "_docs_environment_ai_development_md_action_secrets_variables_concept",
+      "relation": "requires",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/environment/ai-development.md",
+      "source_location": "\u6709\u52b9\u5316\u524d\u306e\u8a2d\u5b9a"
+    },
+    {
+      "source": "_docs_environment_ai_development_md_document",
+      "target": "_docs_environment_ai_development_md_generate_verify_publish_jobs_concept",
+      "relation": "defines",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/environment/ai-development.md",
+      "source_location": "\u6a29\u9650\u5206\u96e2"
+    },
+    {
+      "source": "_docs_environment_ai_development_md_document",
+      "target": "_docs_environment_ai_development_md_patch_restrictions_concept",
+      "relation": "restricts",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/environment/ai-development.md",
+      "source_location": "\u6a29\u9650\u5206\u96e2"
+    },
+    {
+      "source": "_docs_environment_ai_development_md_document",
+      "target": "_docs_environment_ai_development_md_untrusted_pr_input_concept",
+      "relation": "warns_about",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/environment/ai-development.md",
+      "source_location": "\u6a29\u9650\u5206\u96e2"
+    },
+    {
+      "source": "_docs_environment_ai_development_md_document",
+      "target": "_docs_environment_ai_development_md_branch_protection_auto_merge_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/environment/ai-development.md",
+      "source_location": "\u901a\u5e38\u306ePR"
+    },
+    {
+      "source": "_docs_environment_ai_development_md_document",
+      "target": "_docs_environment_ai_development_md_manual_workflow_steps_concept",
+      "relation": "defines",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/environment/ai-development.md",
+      "source_location": "Codex \u306b\u5b9f\u88c5\u3092\u4f9d\u983c\u3059\u308b\u624b\u9806"
+    },
+    {
+      "source": "_docs_environment_ai_development_md_human_approval_required_concept",
+      "target": "_docs_environment_team_development_md_pr_only_main_concept",
+      "relation": "reinforces",
+      "confidence": "INFERRED",
+      "confidence_score": 0.95,
+      "source_file": "docs/environment/ai-development.md",
+      "source_location": "\u76ee\u7684"
+    }
+  ],
+  "hyperedges": []
+}

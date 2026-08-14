@@ -1,0 +1,215 @@
+{
+  "nodes": [
+    {
+      "id": "_docs_game_gameengine_definition_md_document",
+      "label": "\u30b2\u30fc\u30e0\u30a8\u30f3\u30b8\u30f3\u4ed5\u69d8\u66f8",
+      "file_type": "document",
+      "source_file": "docs/game/gameEngine-definition.md",
+      "source_location": null
+    },
+    {
+      "id": "_docs_game_gameengine_definition_md_deterministic_engine_concept",
+      "label": "\u6c7a\u5b9a\u7684\u30b2\u30fc\u30e0\u30a8\u30f3\u30b8\u30f3",
+      "file_type": "concept",
+      "source_file": "docs/game/gameEngine-definition.md",
+      "source_location": "2\u301c4"
+    },
+    {
+      "id": "_docs_game_gameengine_definition_md_game_engine_context_versions_concept",
+      "label": "GameEngineContext\u3068Ruleset/CardCatalog/EngineSemanticsVersion\u56fa\u5b9a",
+      "file_type": "concept",
+      "source_file": "docs/game/gameEngine-definition.md",
+      "source_location": "4,59,65"
+    },
+    {
+      "id": "_docs_game_gameengine_definition_md_game_constants_concept",
+      "label": "\u521d\u671f\u30b9\u30bf\u30df\u30ca25\u30fb\u624b\u672d5\u30fb\u653b\u6483\u67a05\u7b49\u306e\u57fa\u672c\u5b9a\u6570",
+      "file_type": "concept",
+      "source_file": "docs/game/gameEngine-definition.md",
+      "source_location": "5. \u57fa\u672c\u5b9a\u6570"
+    },
+    {
+      "id": "_docs_game_gameengine_definition_md_state_phase_concept",
+      "label": "GameState\u30fbGameStatus\u30fbGamePhase",
+      "file_type": "concept",
+      "source_file": "docs/game/gameEngine-definition.md",
+      "source_location": "10\u301c12"
+    },
+    {
+      "id": "_docs_game_gameengine_definition_md_command_model_concept",
+      "label": "\u30d7\u30ec\u30a4\u30e4\u30fc/\u30b7\u30b9\u30c6\u30e0\u30b3\u30de\u30f3\u30c9\u30e2\u30c7\u30eb",
+      "file_type": "concept",
+      "source_file": "docs/game/gameEngine-definition.md",
+      "source_location": "22\u301c30"
+    },
+    {
+      "id": "_docs_game_gameengine_definition_md_attack_support_commands_concept",
+      "label": "PLACE/CHAIN/DISCARD/PLAY_SUPPORT/FINISH\u30b3\u30de\u30f3\u30c9",
+      "file_type": "concept",
+      "source_file": "docs/game/gameEngine-definition.md",
+      "source_location": "23\u301c30"
+    },
+    {
+      "id": "_docs_game_gameengine_definition_md_command_validation_idempotency_concept",
+      "label": "phaseSequence\u30fbclientStateVersion\u691c\u8a3c\u3068commandId\u51aa\u7b49\u6027",
+      "file_type": "concept",
+      "source_file": "docs/game/gameEngine-definition.md",
+      "source_location": "22,31\u301c34"
+    },
+    {
+      "id": "_docs_game_gameengine_definition_md_power_score_winner_concept",
+      "label": "\u653b\u6483\u529b\u30fb\u7dcf\u30d1\u30ef\u30fc\u30fb\u30b9\u30b3\u30a2\u30fb\u52dd\u6557\u5224\u5b9a",
+      "file_type": "concept",
+      "source_file": "docs/game/gameEngine-definition.md",
+      "source_location": "39\u301c46"
+    },
+    {
+      "id": "_docs_game_gameengine_definition_md_public_projection_hidden_info_concept",
+      "label": "PlayerGameView\u516c\u958b\u6295\u5f71\u3068\u975e\u516c\u958b\u60c5\u5831",
+      "file_type": "concept",
+      "source_file": "docs/game/gameEngine-definition.md",
+      "source_location": "61"
+    },
+    {
+      "id": "_docs_game_gameengine_definition_md_error_codes_invariants_concept",
+      "label": "\u5b89\u5b9a\u30a8\u30e9\u30fc\u30b3\u30fc\u30c9\u3068\u72b6\u614b\u4e0d\u5909\u6761\u4ef6",
+      "file_type": "concept",
+      "source_file": "docs/game/gameEngine-definition.md",
+      "source_location": "62\u301c64"
+    },
+    {
+      "id": "_docs_game_gameengine_definition_md_timer_alarm_reconnect_concept",
+      "label": "\u30d5\u30a7\u30fc\u30ba\u30bf\u30a4\u30de\u30fc\u30fbAlarm\u30fb\u518d\u63a5\u7d9a",
+      "file_type": "concept",
+      "source_file": "docs/game/gameEngine-definition.md",
+      "source_location": "66\u301c67"
+    },
+    {
+      "id": "_docs_game_gameengine_definition_md_persistence_boundary_tests_api_concept",
+      "label": "\u6c38\u7d9a\u5316\u5883\u754c\u30fb\u30c6\u30b9\u30c8\u65b9\u91dd\u30fb\u516c\u958bAPI",
+      "file_type": "concept",
+      "source_file": "docs/game/gameEngine-definition.md",
+      "source_location": "65,68\u301c70"
+    }
+  ],
+  "edges": [
+    {
+      "source": "_docs_game_gameengine_definition_md_document",
+      "target": "_docs_game_gameengine_definition_md_deterministic_engine_concept",
+      "relation": "defines",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/game/gameEngine-definition.md",
+      "source_location": "2\u301c4"
+    },
+    {
+      "source": "_docs_game_gameengine_definition_md_document",
+      "target": "_docs_game_gameengine_definition_md_game_engine_context_versions_concept",
+      "relation": "defines",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/game/gameEngine-definition.md",
+      "source_location": "4,59,65"
+    },
+    {
+      "source": "_docs_game_gameengine_definition_md_document",
+      "target": "_docs_game_gameengine_definition_md_game_constants_concept",
+      "relation": "defines",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/game/gameEngine-definition.md",
+      "source_location": "5. \u57fa\u672c\u5b9a\u6570"
+    },
+    {
+      "source": "_docs_game_gameengine_definition_md_document",
+      "target": "_docs_game_gameengine_definition_md_state_phase_concept",
+      "relation": "defines",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/game/gameEngine-definition.md",
+      "source_location": "10\u301c12"
+    },
+    {
+      "source": "_docs_game_gameengine_definition_md_document",
+      "target": "_docs_game_gameengine_definition_md_command_model_concept",
+      "relation": "defines",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/game/gameEngine-definition.md",
+      "source_location": "22\u301c30"
+    },
+    {
+      "source": "_docs_game_gameengine_definition_md_document",
+      "target": "_docs_game_gameengine_definition_md_attack_support_commands_concept",
+      "relation": "defines",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/game/gameEngine-definition.md",
+      "source_location": "23\u301c30"
+    },
+    {
+      "source": "_docs_game_gameengine_definition_md_document",
+      "target": "_docs_game_gameengine_definition_md_command_validation_idempotency_concept",
+      "relation": "defines",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/game/gameEngine-definition.md",
+      "source_location": "22,31\u301c34"
+    },
+    {
+      "source": "_docs_game_gameengine_definition_md_document",
+      "target": "_docs_game_gameengine_definition_md_power_score_winner_concept",
+      "relation": "defines",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/game/gameEngine-definition.md",
+      "source_location": "39\u301c46"
+    },
+    {
+      "source": "_docs_game_gameengine_definition_md_document",
+      "target": "_docs_game_gameengine_definition_md_public_projection_hidden_info_concept",
+      "relation": "defines",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/game/gameEngine-definition.md",
+      "source_location": "61"
+    },
+    {
+      "source": "_docs_game_gameengine_definition_md_document",
+      "target": "_docs_game_gameengine_definition_md_error_codes_invariants_concept",
+      "relation": "defines",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/game/gameEngine-definition.md",
+      "source_location": "62\u301c64"
+    },
+    {
+      "source": "_docs_game_gameengine_definition_md_document",
+      "target": "_docs_game_gameengine_definition_md_timer_alarm_reconnect_concept",
+      "relation": "defines",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/game/gameEngine-definition.md",
+      "source_location": "66\u301c67"
+    },
+    {
+      "source": "_docs_game_gameengine_definition_md_document",
+      "target": "_docs_game_gameengine_definition_md_persistence_boundary_tests_api_concept",
+      "relation": "defines",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/game/gameEngine-definition.md",
+      "source_location": "65,68\u301c70"
+    },
+    {
+      "source": "_docs_game_gameengine_definition_md_public_projection_hidden_info_concept",
+      "target": "_docs_frontend_frontend_requirements_md_public_private_info_boundary_concept",
+      "relation": "supports",
+      "confidence": "INFERRED",
+      "confidence_score": 0.95,
+      "source_file": "docs/game/gameEngine-definition.md",
+      "source_location": "61"
+    }
+  ],
+  "hyperedges": []
+}

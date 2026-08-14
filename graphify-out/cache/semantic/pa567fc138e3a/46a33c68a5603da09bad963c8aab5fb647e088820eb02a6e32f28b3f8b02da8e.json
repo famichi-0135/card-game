@@ -1,0 +1,39 @@
+{
+  "nodes": [
+    {
+      "id": "_agents_skills_better_auth_security_best_practices_skill_document",
+      "label": "Better Auth security best practices",
+      "file_type": "document",
+      "source_file": ".agents/skills/better-auth-security-best-practices/SKILL.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_agents_skills_better_auth_security_best_practices_skill_rate_limiting",
+      "label": "Better Auth rate limiting",
+      "file_type": "concept",
+      "source_file": ".agents/skills/better-auth-security-best-practices/SKILL.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    }
+  ],
+  "edges": [
+    {
+      "source": "_agents_skills_better_auth_security_best_practices_skill_document",
+      "target": "_agents_skills_better_auth_security_best_practices_skill_rate_limiting",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".agents/skills/better-auth-security-best-practices/SKILL.md",
+      "source_location": null,
+      "weight": 1.0
+    }
+  ],
+  "hyperedges": []
+}

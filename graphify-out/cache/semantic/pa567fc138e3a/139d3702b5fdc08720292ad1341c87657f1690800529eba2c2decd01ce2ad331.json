@@ -1,0 +1,201 @@
+{
+  "nodes": [
+    {
+      "id": "_agents_skills_turborepo_references_environment_rule_md_document",
+      "label": "Environment Variables in Turborepo",
+      "file_type": "document",
+      "source_file": ".agents/skills/turborepo/references/environment/RULE.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_agents_skills_turborepo_references_environment_rule_md_task_env_concept",
+      "label": "Task-specific env",
+      "file_type": "concept",
+      "source_file": ".agents/skills/turborepo/references/environment/RULE.md",
+      "source_location": null
+    },
+    {
+      "id": "_agents_skills_turborepo_references_environment_rule_md_global_env_concept",
+      "label": "Global env",
+      "file_type": "concept",
+      "source_file": ".agents/skills/turborepo/references/environment/RULE.md",
+      "source_location": null
+    },
+    {
+      "id": "_agents_skills_turborepo_references_environment_rule_md_passthrough_env_concept",
+      "label": "Runtime-only passThroughEnv",
+      "file_type": "concept",
+      "source_file": ".agents/skills/turborepo/references/environment/RULE.md",
+      "source_location": null
+    },
+    {
+      "id": "_agents_skills_turborepo_references_environment_rule_md_global_passthrough_env_concept",
+      "label": "Global passThroughEnv",
+      "file_type": "concept",
+      "source_file": ".agents/skills/turborepo/references/environment/RULE.md",
+      "source_location": null
+    },
+    {
+      "id": "_agents_skills_turborepo_references_environment_rule_md_wildcard_env_concept",
+      "label": "Wildcard environment patterns",
+      "file_type": "concept",
+      "source_file": ".agents/skills/turborepo/references/environment/RULE.md",
+      "source_location": null
+    },
+    {
+      "id": "_agents_skills_turborepo_references_environment_rule_md_negated_env_concept",
+      "label": "Negated environment patterns",
+      "file_type": "concept",
+      "source_file": ".agents/skills/turborepo/references/environment/RULE.md",
+      "source_location": null
+    },
+    {
+      "id": "_agents_skills_turborepo_references_environment_rule_md_global_configuration_flag_concept",
+      "label": "globalConfiguration future flag",
+      "file_type": "concept",
+      "source_file": ".agents/skills/turborepo/references/environment/RULE.md",
+      "source_location": null
+    },
+    {
+      "id": "_agents_skills_turborepo_references_environment_rule_md_global_namespace_concept",
+      "label": "Global environment namespace",
+      "file_type": "concept",
+      "source_file": ".agents/skills/turborepo/references/environment/RULE.md",
+      "source_location": null
+    },
+    {
+      "id": "_agents_skills_turborepo_references_environment_rule_md_task_hash_effect_concept",
+      "label": "Environment hash invalidation",
+      "file_type": "concept",
+      "source_file": ".agents/skills/turborepo/references/environment/RULE.md",
+      "source_location": null
+    }
+  ],
+  "edges": [
+    {
+      "source": "_agents_skills_turborepo_references_environment_rule_md_document",
+      "target": "_agents_skills_turborepo_references_environment_rule_md_task_env_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": ".agents/skills/turborepo/references/environment/RULE.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_agents_skills_turborepo_references_environment_rule_md_document",
+      "target": "_agents_skills_turborepo_references_environment_rule_md_global_env_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": ".agents/skills/turborepo/references/environment/RULE.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_agents_skills_turborepo_references_environment_rule_md_document",
+      "target": "_agents_skills_turborepo_references_environment_rule_md_passthrough_env_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": ".agents/skills/turborepo/references/environment/RULE.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_agents_skills_turborepo_references_environment_rule_md_document",
+      "target": "_agents_skills_turborepo_references_environment_rule_md_global_passthrough_env_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": ".agents/skills/turborepo/references/environment/RULE.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_agents_skills_turborepo_references_environment_rule_md_document",
+      "target": "_agents_skills_turborepo_references_environment_rule_md_wildcard_env_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": ".agents/skills/turborepo/references/environment/RULE.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_agents_skills_turborepo_references_environment_rule_md_document",
+      "target": "_agents_skills_turborepo_references_environment_rule_md_negated_env_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": ".agents/skills/turborepo/references/environment/RULE.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_agents_skills_turborepo_references_environment_rule_md_document",
+      "target": "_agents_skills_turborepo_references_environment_rule_md_global_configuration_flag_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": ".agents/skills/turborepo/references/environment/RULE.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_agents_skills_turborepo_references_environment_rule_md_document",
+      "target": "_agents_skills_turborepo_references_environment_rule_md_global_namespace_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": ".agents/skills/turborepo/references/environment/RULE.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_agents_skills_turborepo_references_environment_rule_md_document",
+      "target": "_agents_skills_turborepo_references_environment_rule_md_task_hash_effect_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": ".agents/skills/turborepo/references/environment/RULE.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_agents_skills_turborepo_references_environment_rule_md_global_configuration_flag_concept",
+      "target": "_agents_skills_turborepo_references_environment_rule_md_global_namespace_concept",
+      "relation": "renames_keys",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": ".agents/skills/turborepo/references/environment/RULE.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_agents_skills_turborepo_references_environment_rule_md_global_configuration_flag_concept",
+      "target": "_agents_skills_turborepo_references_environment_rule_md_global_env_concept",
+      "relation": "organizes",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": ".agents/skills/turborepo/references/environment/RULE.md",
+      "source_location": null,
+      "weight": 0.85
+    },
+    {
+      "source": "_agents_skills_turborepo_references_environment_rule_md_global_configuration_flag_concept",
+      "target": "_agents_skills_turborepo_references_environment_rule_md_global_passthrough_env_concept",
+      "relation": "organizes",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": ".agents/skills/turborepo/references/environment/RULE.md",
+      "source_location": null,
+      "weight": 0.85
+    }
+  ],
+  "hyperedges": []
+}

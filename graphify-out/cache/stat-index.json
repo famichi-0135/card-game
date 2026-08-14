@@ -1,0 +1,2139 @@
+{
+  ".agents/skills/better-auth-best-practices/SKILL.md": {
+    "size": 7590,
+    "mtime_ns": 1784644472493744000,
+    "word_count": 869,
+    "hashes": {
+      ".agents/skills/better-auth-best-practices/skill.md": "f18383efe33560107a43729e06e19b2048a777fd492d95f1c4f1b3a86fd651d8"
+    }
+  },
+  ".agents/skills/better-auth-security-best-practices/SKILL.md": {
+    "size": 11024,
+    "mtime_ns": 1784644472494745500,
+    "word_count": 1331,
+    "hashes": {
+      ".agents/skills/better-auth-security-best-practices/skill.md": "46a33c68a5603da09bad963c8aab5fb647e088820eb02a6e32f28b3f8b02da8e"
+    }
+  },
+  ".agents/skills/create-auth/SKILL.md": {
+    "size": 14739,
+    "mtime_ns": 1784644472496743200,
+    "word_count": 1989,
+    "hashes": {
+      ".agents/skills/create-auth/skill.md": "485c1d143bb4efec95a2eb7866fe1f90208335e2fa7bd2ed713f6929d4b92dff"
+    }
+  },
+  ".agents/skills/email-and-password-best-practices/SKILL.md": {
+    "size": 6251,
+    "mtime_ns": 1784644472497742600,
+    "word_count": 769,
+    "hashes": {
+      ".agents/skills/email-and-password-best-practices/skill.md": "948a685a787da4abcd69c5bc6e532b72bb7f6bd44c63bf455b03d96cea92b3ea"
+    }
+  },
+  ".agents/skills/migrate-radix-to-base/SKILL.md": {
+    "size": 9486,
+    "mtime_ns": 1785161874383449300,
+    "word_count": 1237,
+    "hashes": {
+      ".agents/skills/migrate-radix-to-base/skill.md": "509d833c68f5e4e28a39a6194893266817bff39a1e5bb51d197561e307f18cab"
+    }
+  },
+  ".agents/skills/migrate-radix-to-base/class-mapping.md": {
+    "size": 2900,
+    "mtime_ns": 1785161874383449300,
+    "word_count": 308,
+    "hashes": {
+      ".agents/skills/migrate-radix-to-base/class-mapping.md": "d971dd7e17398994398de2f939272769f7e3f8560fae1331bac02db2055dadc6"
+    }
+  },
+  ".agents/skills/migrate-radix-to-base/consumer-props.md": {
+    "size": 4540,
+    "mtime_ns": 1785161874385558900,
+    "word_count": 621,
+    "hashes": {
+      ".agents/skills/migrate-radix-to-base/consumer-props.md": "c7f6192d2c08aca6bef1598a490318aedfc044aad09a6c9eac762c83f0439dea"
+    }
+  },
+  ".agents/skills/migrate-radix-to-base/disclosure.md": {
+    "size": 21249,
+    "mtime_ns": 1785161874385558900,
+    "word_count": 3068,
+    "hashes": {
+      ".agents/skills/migrate-radix-to-base/disclosure.md": "02a505a56be25acb5d8ee19eb126c58e42b1999ca03a9111b17d6cc88187300e"
+    }
+  },
+  ".agents/skills/migrate-radix-to-base/display-misc.md": {
+    "size": 26103,
+    "mtime_ns": 1785161874385558900,
+    "word_count": 3753,
+    "hashes": {
+      ".agents/skills/migrate-radix-to-base/display-misc.md": "369644e1fac1cf0d7e2e1827d5c1d5652eca65fd50b07e2ab7f7d7d6184cdfb4"
+    }
+  },
+  ".agents/skills/migrate-radix-to-base/form-controls.md": {
+    "size": 30005,
+    "mtime_ns": 1785161874385558900,
+    "word_count": 4354,
+    "hashes": {
+      ".agents/skills/migrate-radix-to-base/form-controls.md": "dc42a4dba011e2ab5bf1800d8cb1e7bf227d8f948ed172e26e3950053b7d20f2"
+    }
+  },
+  ".agents/skills/migrate-radix-to-base/menus.md": {
+    "size": 33507,
+    "mtime_ns": 1785161874385558900,
+    "word_count": 4771,
+    "hashes": {
+      ".agents/skills/migrate-radix-to-base/menus.md": "26b962052ea12f2944e984eadf4ac6b9f135f722ce92b8c0b16faf6234245a76"
+    }
+  },
+  ".agents/skills/migrate-radix-to-base/overlays.md": {
+    "size": 31925,
+    "mtime_ns": 1785161874385558900,
+    "word_count": 4713,
+    "hashes": {
+      ".agents/skills/migrate-radix-to-base/overlays.md": "9a88d2522460461c5f15895abe66e6276d49be7ec31a062a79d108b321ef6132"
+    }
+  },
+  ".agents/skills/migrate-radix-to-base/universal-patterns.md": {
+    "size": 14788,
+    "mtime_ns": 1785161874385558900,
+    "word_count": 1880,
+    "hashes": {
+      ".agents/skills/migrate-radix-to-base/universal-patterns.md": "3ea31ba22d3b500807e8ca541d8e2f9e452e90c1469db04e16fdd73b2de7831b"
+    }
+  },
+  ".agents/skills/migrate-radix-to-base/wrapper-shapes.md": {
+    "size": 4852,
+    "mtime_ns": 1785161874391312300,
+    "word_count": 563,
+    "hashes": {
+      ".agents/skills/migrate-radix-to-base/wrapper-shapes.md": "ed5a5c5f1823baeb6182de6ee412cfd76770b8396b88c1672a9e03e9868573ee"
+    }
+  },
+  ".agents/skills/organization-best-practices/SKILL.md": {
+    "size": 11551,
+    "mtime_ns": 1784644472498743700,
+    "word_count": 1305,
+    "hashes": {
+      ".agents/skills/organization-best-practices/skill.md": "9b8a813cdd9289378580d7c3b7cd8d7e18144a3731aea44a6a0b0dba3ffc8bce"
+    }
+  },
+  ".agents/skills/shadcn/SKILL.md": {
+    "size": 19804,
+    "mtime_ns": 1785161874391312300,
+    "word_count": 2430,
+    "hashes": {
+      ".agents/skills/shadcn/skill.md": "3babc52fece9801b9f9c99a8cc92c195246f0b702169c8cd340d515ed4913a03"
+    }
+  },
+  ".agents/skills/shadcn/agents/openai.yml": {
+    "size": 243,
+    "mtime_ns": 1785161874391312300,
+    "word_count": 20,
+    "hashes": {
+      ".agents/skills/shadcn/agents/openai.yml": "11a714cbeb933a3bfffbdadb0a363a0e8e58356df29d7e1d6c84169f55de52e0"
+    }
+  },
+  ".agents/skills/shadcn/assets/shadcn-small.png": {
+    "size": 1049,
+    "mtime_ns": 1785161874393840300,
+    "word_count": 44,
+    "hashes": {
+      ".agents/skills/shadcn/assets/shadcn-small.png": "70e38b5f44a919feb09b083928970673a0ea7ab1433c44b0987d9344003143e5"
+    }
+  },
+  ".agents/skills/shadcn/assets/shadcn.png": {
+    "size": 3852,
+    "mtime_ns": 1785161874393840300,
+    "word_count": 155,
+    "hashes": {
+      ".agents/skills/shadcn/assets/shadcn.png": "9d4cb5f54cb7c9f880e2d4ff7efa0dc9475941bae7ac6475f59f579ac66dcbfb"
+    }
+  },
+  ".agents/skills/shadcn/cli.md": {
+    "size": 17594,
+    "mtime_ns": 1785161874395807700,
+    "word_count": 2063,
+    "hashes": {
+      ".agents/skills/shadcn/cli.md": "1bebb7348497747470a2a5ceee9c63a5e6224f738804c92ac1c561b4b773ec95"
+    }
+  },
+  ".agents/skills/shadcn/customization.md": {
+    "size": 6283,
+    "mtime_ns": 1785161874395807700,
+    "word_count": 688,
+    "hashes": {
+      ".agents/skills/shadcn/customization.md": "c22f13264eadddd438c173aed002614a45fac2ebf1a302085b18fb6a82d461aa"
+    }
+  },
+  ".agents/skills/shadcn/evals/evals.json": {
+    "size": 6407,
+    "mtime_ns": 1785161874395807700,
+    "word_count": 788,
+    "hashes": {
+      ".agents/skills/shadcn/evals/evals.json": "05d1a652f9d991a9cf34646d454c4eb699aef7e12b3141605fd51f818f3e2722"
+    }
+  },
+  ".agents/skills/shadcn/mcp.md": {
+    "size": 3615,
+    "mtime_ns": 1785161874395807700,
+    "word_count": 422,
+    "hashes": {
+      ".agents/skills/shadcn/mcp.md": "26ee8ecc727dc8671e7505649287f23ba0d69799a47e43f39563178376eed199"
+    }
+  },
+  ".agents/skills/shadcn/registry.md": {
+    "size": 9094,
+    "mtime_ns": 1785161874395807700,
+    "word_count": 1131,
+    "hashes": {
+      ".agents/skills/shadcn/registry.md": "7971b7742dd1969cbbb3934838f4b18b0fa81009929b35da9bf4282af053ca16"
+    }
+  },
+  ".agents/skills/shadcn/rules/base-vs-radix.md": {
+    "size": 7260,
+    "mtime_ns": 1785161874399075500,
+    "word_count": 693,
+    "hashes": {
+      ".agents/skills/shadcn/rules/base-vs-radix.md": "90b76bfba73303b82536715dcfd99f102da6c451256639b31e858a7c53e0c3fc"
+    }
+  },
+  ".agents/skills/shadcn/rules/chat.md": {
+    "size": 7172,
+    "mtime_ns": 1785161874399075500,
+    "word_count": 779,
+    "hashes": {
+      ".agents/skills/shadcn/rules/chat.md": "91362a43d765027d9e4b7aeef6197f19421a702d830aae51a0779f31161ffff7"
+    }
+  },
+  ".agents/skills/shadcn/rules/composition.md": {
+    "size": 5105,
+    "mtime_ns": 1785161874399075500,
+    "word_count": 568,
+    "hashes": {
+      ".agents/skills/shadcn/rules/composition.md": "26b63ded32871c75678ff99e7a6ef63e70c15eb13145408b1f2db924303a4102"
+    }
+  },
+  ".agents/skills/shadcn/rules/forms.md": {
+    "size": 5049,
+    "mtime_ns": 1785161874399075500,
+    "word_count": 481,
+    "hashes": {
+      ".agents/skills/shadcn/rules/forms.md": "51a5c5b59467eeb0952e733ea2ff1d9e3a9f4b8d7ac13610510f090c2c1033b5"
+    }
+  },
+  ".agents/skills/shadcn/rules/icons.md": {
+    "size": 2059,
+    "mtime_ns": 1785161874399075500,
+    "word_count": 236,
+    "hashes": {
+      ".agents/skills/shadcn/rules/icons.md": "417de3a3adaeab6c5c43546e168689cd3818b425271a9cc16bd413c5ac2ce971"
+    }
+  },
+  ".agents/skills/shadcn/rules/styling.md": {
+    "size": 4869,
+    "mtime_ns": 1785161874399075500,
+    "word_count": 541,
+    "hashes": {
+      ".agents/skills/shadcn/rules/styling.md": "327f14ea9615f952eae44b574930a4e6efb7f6418c8fce76923463ae2ef94c5c"
+    }
+  },
+  ".agents/skills/turborepo/SKILL.md": {
+    "size": 28453,
+    "mtime_ns": 1784113974485501300,
+    "word_count": 3402,
+    "hashes": {
+      ".agents/skills/turborepo/skill.md": "9ceeda75eac6936d2adef2aeaf2c9ad46888db258239be30b65a7f3518b369a0"
+    }
+  },
+  ".agents/skills/turborepo/command/turborepo.md": {
+    "size": 2785,
+    "mtime_ns": 1784113974454068200,
+    "word_count": 353,
+    "hashes": {
+      ".agents/skills/turborepo/command/turborepo.md": "6964dcf2e237cbaa5b9b229fec2a011fd6d9e400e8f2c66f878134f0521e19fa"
+    }
+  },
+  ".agents/skills/turborepo/references/best-practices/RULE.md": {
+    "size": 4907,
+    "mtime_ns": 1784113974454068200,
+    "word_count": 644,
+    "hashes": {
+      ".agents/skills/turborepo/references/best-practices/rule.md": "2ba63dfe2afafbbccf4a7cafd7312876f25b758c9447eca4b79df392a790d441"
+    }
+  },
+  ".agents/skills/turborepo/references/best-practices/dependencies.md": {
+    "size": 4255,
+    "mtime_ns": 1784113974454068200,
+    "word_count": 585,
+    "hashes": {
+      ".agents/skills/turborepo/references/best-practices/dependencies.md": "5adba72b1c7f783ccedf27c43f862899a9d1807380f519045ae2be48e559fdb9"
+    }
+  },
+  ".agents/skills/turborepo/references/best-practices/packages.md": {
+    "size": 6289,
+    "mtime_ns": 1784113974454068200,
+    "word_count": 775,
+    "hashes": {
+      ".agents/skills/turborepo/references/best-practices/packages.md": "31b7d9bf45332b88c50f40f88841ba9f166a2856cc8b48a3a80da1e3fa5c0c7f"
+    }
+  },
+  ".agents/skills/turborepo/references/best-practices/structure.md": {
+    "size": 5529,
+    "mtime_ns": 1784113974454068200,
+    "word_count": 659,
+    "hashes": {
+      ".agents/skills/turborepo/references/best-practices/structure.md": "5c9bb5e0019de9884ec139643396e5062218f61f88aa6e32015becd904e3767b"
+    }
+  },
+  ".agents/skills/turborepo/references/boundaries/RULE.md": {
+    "size": 1948,
+    "mtime_ns": 1784113974454068200,
+    "word_count": 243,
+    "hashes": {
+      ".agents/skills/turborepo/references/boundaries/rule.md": "3089e9cba7363c7de41d7f431dfc61c66bac618a6f4bbab9daea4f3ddbadbcf2"
+    }
+  },
+  ".agents/skills/turborepo/references/caching/RULE.md": {
+    "size": 4199,
+    "mtime_ns": 1784113974454068200,
+    "word_count": 562,
+    "hashes": {
+      ".agents/skills/turborepo/references/caching/rule.md": "ffc0d3617b74dcc7ae48f975b5a23833d0950e00027b940755bf2899cec962fd"
+    }
+  },
+  ".agents/skills/turborepo/references/caching/gotchas.md": {
+    "size": 3935,
+    "mtime_ns": 1784113974454068200,
+    "word_count": 565,
+    "hashes": {
+      ".agents/skills/turborepo/references/caching/gotchas.md": "84ff4e8dd988b72a5dc5b78cf48f3ad3228e04f7c18ddbe3479605aa2957cfd2"
+    }
+  },
+  ".agents/skills/turborepo/references/caching/remote-cache.md": {
+    "size": 2538,
+    "mtime_ns": 1784113974454068200,
+    "word_count": 346,
+    "hashes": {
+      ".agents/skills/turborepo/references/caching/remote-cache.md": "804d5221ad9b87fa5bfe55d4ed77786091a9f14330ed26a9c8a48e74173c30e4"
+    }
+  },
+  ".agents/skills/turborepo/references/ci/RULE.md": {
+    "size": 2189,
+    "mtime_ns": 1784113974469703300,
+    "word_count": 312,
+    "hashes": {
+      ".agents/skills/turborepo/references/ci/rule.md": "a8ffb8592625e2e3c6e47b3538ee196a073ebcfa9cc4c707d516de1b45c8a74b"
+    }
+  },
+  ".agents/skills/turborepo/references/ci/github-actions.md": {
+    "size": 2813,
+    "mtime_ns": 1784113974469703300,
+    "word_count": 336,
+    "hashes": {
+      ".agents/skills/turborepo/references/ci/github-actions.md": "7c8de20fca0a7bb987a7ee91feb0ccedcfefc2267cbfddb66dda469f83628fd8"
+    }
+  },
+  ".agents/skills/turborepo/references/ci/patterns.md": {
+    "size": 2583,
+    "mtime_ns": 1784113974469703300,
+    "word_count": 352,
+    "hashes": {
+      ".agents/skills/turborepo/references/ci/patterns.md": "493238fcfd6c1b397c198975e2c11742a33b84b01201f3a022a79fbd4567dd3c"
+    }
+  },
+  ".agents/skills/turborepo/references/ci/vercel.md": {
+    "size": 2143,
+    "mtime_ns": 1784113974469703300,
+    "word_count": 310,
+    "hashes": {
+      ".agents/skills/turborepo/references/ci/vercel.md": "a08aafc58c195bfc4ebe2d9550b960390c6c0e335ed96eb2aba4b278ee42d49e"
+    }
+  },
+  ".agents/skills/turborepo/references/cli/RULE.md": {
+    "size": 2113,
+    "mtime_ns": 1784113974475192800,
+    "word_count": 326,
+    "hashes": {
+      ".agents/skills/turborepo/references/cli/rule.md": "40f5b3cab4bd193de8c5ee2e892e2dee2ddee41926ae61216f3139d9d91c7933"
+    }
+  },
+  ".agents/skills/turborepo/references/cli/commands.md": {
+    "size": 5569,
+    "mtime_ns": 1784113974475192800,
+    "word_count": 748,
+    "hashes": {
+      ".agents/skills/turborepo/references/cli/commands.md": "efcbeaa7dd028b7ec6ad52ff2097ea9d6cbe3c19482b166ba741c560fcb1be10"
+    }
+  },
+  ".agents/skills/turborepo/references/configuration/RULE.md": {
+    "size": 5158,
+    "mtime_ns": 1784113974475192800,
+    "word_count": 628,
+    "hashes": {
+      ".agents/skills/turborepo/references/configuration/rule.md": "835addb1f10039ab6e5b3cf61d45e699e0dabd9ad1f4dbfdb53b502ebbd40eff"
+    }
+  },
+  ".agents/skills/turborepo/references/configuration/global-options.md": {
+    "size": 7158,
+    "mtime_ns": 1784113974475192800,
+    "word_count": 808,
+    "hashes": {
+      ".agents/skills/turborepo/references/configuration/global-options.md": "694c9055ef6661d6b3c3d3053acf5aa0342c49664c5d98d7869e96a3c58c4a24"
+    }
+  },
+  ".agents/skills/turborepo/references/configuration/gotchas.md": {
+    "size": 9318,
+    "mtime_ns": 1784113974475192800,
+    "word_count": 1357,
+    "hashes": {
+      ".agents/skills/turborepo/references/configuration/gotchas.md": "82de1d8913f7fece458d5cda1ce658aa49a15511538aa956463ff6a524a11dbd"
+    }
+  },
+  ".agents/skills/turborepo/references/configuration/tasks.md": {
+    "size": 6945,
+    "mtime_ns": 1784113974475192800,
+    "word_count": 916,
+    "hashes": {
+      ".agents/skills/turborepo/references/configuration/tasks.md": "7142357f33ee2b88d89bf4408cd61a05406502ce15ca014e97570a64653e5a80"
+    }
+  },
+  ".agents/skills/turborepo/references/environment/RULE.md": {
+    "size": 2584,
+    "mtime_ns": 1784113974485501300,
+    "word_count": 301,
+    "hashes": {
+      ".agents/skills/turborepo/references/environment/rule.md": "139d3702b5fdc08720292ad1341c87657f1690800529eba2c2decd01ce2ad331"
+    }
+  },
+  ".agents/skills/turborepo/references/environment/gotchas.md": {
+    "size": 4135,
+    "mtime_ns": 1784113974483481900,
+    "word_count": 465,
+    "hashes": {
+      ".agents/skills/turborepo/references/environment/gotchas.md": "e543f4d3b911a295c8c0901fa2c2808ad7ebb7220d27f751227e607e9b133d11"
+    }
+  },
+  ".agents/skills/turborepo/references/environment/modes.md": {
+    "size": 2419,
+    "mtime_ns": 1784113974485501300,
+    "word_count": 329,
+    "hashes": {
+      ".agents/skills/turborepo/references/environment/modes.md": "4255b95fd98e4d4a92a3eca34347e64d257ab841cfe212805cf972fdb6c89f30"
+    }
+  },
+  ".agents/skills/turborepo/references/filtering/RULE.md": {
+    "size": 4160,
+    "mtime_ns": 1784113974485501300,
+    "word_count": 541,
+    "hashes": {
+      ".agents/skills/turborepo/references/filtering/rule.md": "f1a79b5600567385d1aba1a7df805a4d6bd7acf5e9a6d4c4b73921d38f8c34bb"
+    }
+  },
+  ".agents/skills/turborepo/references/filtering/patterns.md": {
+    "size": 2412,
+    "mtime_ns": 1784113974485501300,
+    "word_count": 334,
+    "hashes": {
+      ".agents/skills/turborepo/references/filtering/patterns.md": "f7cdbd1cea35f4691507b9ba61ae6b98db5cc774835b871a6bc5164a757d7186"
+    }
+  },
+  ".agents/skills/turborepo/references/watch/RULE.md": {
+    "size": 1989,
+    "mtime_ns": 1784113974485501300,
+    "word_count": 290,
+    "hashes": {
+      ".agents/skills/turborepo/references/watch/rule.md": "73cc63cf356bd58eb10fbd2ccf769e2945e2737e7db21f1b6f203f450d5c3f98"
+    }
+  },
+  ".agents/skills/two-factor-authentication-best-practices/SKILL.md": {
+    "size": 7974,
+    "mtime_ns": 1784644472499741700,
+    "word_count": 996,
+    "hashes": {
+      ".agents/skills/two-factor-authentication-best-practices/skill.md": "1c1a7e22e52d3615350cf47fab2ae92346118de61137ecd1dd49073cbad081c5"
+    }
+  },
+  ".github/ISSUE_TEMPLATE/implementation.yml": {
+    "size": 1352,
+    "mtime_ns": 1785040020268950500,
+    "word_count": 82,
+    "hashes": {
+      ".github/issue_template/implementation.yml": "96d03338f2a20145a26f096d57e00899e7d2216293c9259c326826fad0a70774"
+    }
+  },
+  ".github/PULL_REQUEST_TEMPLATE.md": {
+    "size": 447,
+    "mtime_ns": 1785040020276942500,
+    "word_count": 52,
+    "hashes": {
+      ".github/pull_request_template.md": "ef74df670801229f404530bce9dfdd3f4fbf625d410fe24e99264a2819649656"
+    }
+  },
+  ".github/codex/prompts/review.md": {
+    "size": 913,
+    "mtime_ns": 1785040020237116800,
+    "word_count": 28,
+    "hashes": {
+      ".github/codex/prompts/review.md": "45b3351bc0b6eea13632353492e08ea76c1c06b6648c4e2244e39244862086a6"
+    }
+  },
+  ".github/workflows/ci.yml": {
+    "size": 1074,
+    "mtime_ns": 1785040020286212900,
+    "word_count": 112,
+    "hashes": {
+      ".github/workflows/ci.yml": "de16c685fc23603c473a73abc794df52c333ba72568f8466830c32fdcbff6807"
+    }
+  },
+  ".github/workflows/codex-create-pr.yml": {
+    "size": 8822,
+    "mtime_ns": 1785040020306745400,
+    "word_count": 740,
+    "hashes": {
+      ".github/workflows/codex-create-pr.yml": "4eef8d6d8a88e8e309ec5dbfbbe59bb48778710ff3e7fcda09737cf4595f5445"
+    }
+  },
+  ".github/workflows/codex-review.yml": {
+    "size": 2951,
+    "mtime_ns": 1785040020321970000,
+    "word_count": 225,
+    "hashes": {
+      ".github/workflows/codex-review.yml": "02b91da96a3c7f5403c827bc5b22c7cbd77a604841fe13060de4ef4c28d1553c"
+    }
+  },
+  ".zed/debug.json": {
+    "size": 0,
+    "mtime_ns": 1785037060406296800,
+    "word_count": 0,
+    "hashes": {
+      ".zed/debug.json": "00a2a4cd1fc8a963c9a791a3c3278e2c29836d27943b5d847b181ea9a7b0271f"
+    }
+  },
+  "AGENTS.md": {
+    "size": 7065,
+    "mtime_ns": 1785040020390205600,
+    "word_count": 162,
+    "hashes": {
+      "agents.md": "491b63af28540ffcb4169265717754c4278c37c1ed2d4d66701197a7927d8a38"
+    }
+  },
+  "README.md": {
+    "size": 1586,
+    "mtime_ns": 1785040024800733400,
+    "word_count": 149,
+    "hashes": {
+      "readme.md": "6302e62054c0c47cf03f78b55a24fffdf0822121ce0906ed2e9918714d03fb94"
+    }
+  },
+  "apps/backend/README.md": {
+    "size": 1439,
+    "mtime_ns": 1784711274496379500,
+    "word_count": 60,
+    "hashes": {
+      "apps/backend/readme.md": "8569cebceb522e920dd330cb21edc10a33f78d284b064b813754b54da185d844"
+    }
+  },
+  "apps/backend/auth.cli.ts": {
+    "size": 498,
+    "mtime_ns": 1785040020440777300,
+    "word_count": 33
+  },
+  "apps/backend/drizzle.config.ts": {
+    "size": 666,
+    "mtime_ns": 1785390680158921600,
+    "word_count": 58
+  },
+  "apps/backend/drizzle/0000_awesome_scrambler.sql": {
+    "size": 2433,
+    "mtime_ns": 1784644472503006300,
+    "word_count": 283,
+    "hashes": {
+      "apps/backend/drizzle/0000_awesome_scrambler.sql": "e3456ecb925d14bbe31b407ecb33f6b2c1521595c960ad55433674bae3d8c49a"
+    }
+  },
+  "apps/backend/drizzle/0001_curved_doctor_octopus.sql": {
+    "size": 533,
+    "mtime_ns": 1785155198898377300,
+    "word_count": 56,
+    "hashes": {
+      "apps/backend/drizzle/0001_curved_doctor_octopus.sql": "ed3e7bf61c0d8688ad1335c4c1cd2eb20b4ca7e4b154fb9d144ad4a5e13a8c4d"
+    }
+  },
+  "apps/backend/drizzle/0002_bouncy_oracle.sql": {
+    "size": 60,
+    "mtime_ns": 1785155198900384100,
+    "word_count": 8,
+    "hashes": {
+      "apps/backend/drizzle/0002_bouncy_oracle.sql": "bd933c803980019feab63273a7fe16f99b164ba29a97d0ba12d9a09ce03f62ec"
+    }
+  },
+  "apps/backend/drizzle/0003_workable_captain_marvel.sql": {
+    "size": 346,
+    "mtime_ns": 1785390680159448300,
+    "word_count": 35,
+    "hashes": {
+      "apps/backend/drizzle/0003_workable_captain_marvel.sql": "fd7414de8b96f3967b518f987a532c1221d559ad2ddc9774e1c5d747caaccc05"
+    }
+  },
+  "apps/backend/drizzle/meta/0000_snapshot.json": {
+    "size": 10320,
+    "mtime_ns": 1785040020484930600,
+    "word_count": 750,
+    "hashes": {
+      "apps/backend/drizzle/meta/0000_snapshot.json": "641fad4a197cfe59cb10fc3d0308bfc754d5a138fd037ddb4b947e0185c4496b"
+    }
+  },
+  "apps/backend/drizzle/meta/0001_snapshot.json": {
+    "size": 11630,
+    "mtime_ns": 1785165027402503000,
+    "word_count": 842,
+    "hashes": {
+      "apps/backend/drizzle/meta/0001_snapshot.json": "a9a2461fafd2257363c6b28bfc4d2567f1571eba8e0666cdbc042e5ca6de71a6"
+    }
+  },
+  "apps/backend/drizzle/meta/0002_snapshot.json": {
+    "size": 11850,
+    "mtime_ns": 1785165027410437000,
+    "word_count": 857,
+    "hashes": {
+      "apps/backend/drizzle/meta/0002_snapshot.json": "b42d902c605fbc1174d832b892688f11af4b6034551084481f4dbf972dd66966"
+    }
+  },
+  "apps/backend/drizzle/meta/0003_snapshot.json": {
+    "size": 13734,
+    "mtime_ns": 1785390680159976200,
+    "word_count": 951,
+    "hashes": {
+      "apps/backend/drizzle/meta/0003_snapshot.json": "9bb70c9fd0ba447d5d0159acc604e1bbd0d43ac77c7beb7bded019dbe1e888d2"
+    }
+  },
+  "apps/backend/drizzle/meta/_journal.json": {
+    "size": 683,
+    "mtime_ns": 1785390680161048600,
+    "word_count": 57,
+    "hashes": {
+      "apps/backend/drizzle/meta/_journal.json": "56112411123ab7f43b0a6a1831619d58f5c3ebdde78d33713267825dfa1d0a42"
+    }
+  },
+  "apps/backend/eslint.config.mjs": {
+    "size": 203,
+    "mtime_ns": 1785429759101032300,
+    "word_count": 25
+  },
+  "apps/backend/package.json": {
+    "size": 1790,
+    "mtime_ns": 1785427622513125800,
+    "word_count": 155,
+    "hashes": {
+      "apps/backend/package.json": "759f6fc2abb2437523f4b56194bc1f466ac912ec4331d7b3664826442ba2539f"
+    }
+  },
+  "apps/backend/scripts/setup-local-dev.mjs": {
+    "size": 1198,
+    "mtime_ns": 1784711127655628700,
+    "word_count": 126
+  },
+  "apps/backend/scripts/start-e2e.mjs": {
+    "size": 3209,
+    "mtime_ns": 1785429716158313800,
+    "word_count": 312
+  },
+  "apps/backend/src/auth/account-link-error.ts": {
+    "size": 703,
+    "mtime_ns": 1785336618160559600,
+    "word_count": 45
+  },
+  "apps/backend/src/auth/create-auth.ts": {
+    "size": 3403,
+    "mtime_ns": 1785336618192523900,
+    "word_count": 309
+  },
+  "apps/backend/src/auth/request-authenticator.ts": {
+    "size": 411,
+    "mtime_ns": 1785040020560604800,
+    "word_count": 39
+  },
+  "apps/backend/src/auth/runtime-auth.ts": {
+    "size": 2871,
+    "mtime_ns": 1785336618225771000,
+    "word_count": 253
+  },
+  "apps/backend/src/card-catalog-api/create-card-catalog-api.ts": {
+    "size": 2080,
+    "mtime_ns": 1785040020597673500,
+    "word_count": 175
+  },
+  "apps/backend/src/catalog-archive/catalog-archive.ts": {
+    "size": 5435,
+    "mtime_ns": 1785040020639061500,
+    "word_count": 501
+  },
+  "apps/backend/src/db/migration.ts": {
+    "size": 268,
+    "mtime_ns": 1785040020645967100,
+    "word_count": 36
+  },
+  "apps/backend/src/db/runtime.ts": {
+    "size": 265,
+    "mtime_ns": 1785040020651076800,
+    "word_count": 29
+  },
+  "apps/backend/src/db/schema/auth.ts": {
+    "size": 3888,
+    "mtime_ns": 1785165027696271100,
+    "word_count": 337
+  },
+  "apps/backend/src/db/schema/index.ts": {
+    "size": 109,
+    "mtime_ns": 1785390680162182100,
+    "word_count": 12
+  },
+  "apps/backend/src/db/schema/player-identity.ts": {
+    "size": 927,
+    "mtime_ns": 1785165027709257300,
+    "word_count": 67
+  },
+  "apps/backend/src/db/schema/public-match-lobby.ts": {
+    "size": 907,
+    "mtime_ns": 1785390680163112500,
+    "word_count": 60
+  },
+  "apps/backend/src/deck-api/create-deck-api.ts": {
+    "size": 7286,
+    "mtime_ns": 1785040020710525600,
+    "word_count": 664
+  },
+  "apps/backend/src/game-api/create-game-api.ts": {
+    "size": 6115,
+    "mtime_ns": 1785165027776759700,
+    "word_count": 537
+  },
+  "apps/backend/src/game-creation/create-game-session.ts": {
+    "size": 3533,
+    "mtime_ns": 1785429511095402400,
+    "word_count": 268
+  },
+  "apps/backend/src/game-engine/initial-card-catalog.ts": {
+    "size": 22295,
+    "mtime_ns": 1785165027845587000,
+    "word_count": 1099
+  },
+  "apps/backend/src/game-engine/legacy-card-catalog.ts": {
+    "size": 8910,
+    "mtime_ns": 1785040020803918300,
+    "word_count": 643
+  },
+  "apps/backend/src/game-engine/runtime.ts": {
+    "size": 3521,
+    "mtime_ns": 1785165027893372200,
+    "word_count": 291
+  },
+  "apps/backend/src/game-learning/game-learning-context.ts": {
+    "size": 3323,
+    "mtime_ns": 1785165027912588900,
+    "word_count": 265
+  },
+  "apps/backend/src/game-session/game-session.ts": {
+    "size": 27253,
+    "mtime_ns": 1785165027989400900,
+    "word_count": 2199
+  },
+  "apps/backend/src/index.ts": {
+    "size": 3402,
+    "mtime_ns": 1785165028012794100,
+    "word_count": 271
+  },
+  "apps/backend/src/match-api/create-match-api.ts": {
+    "size": 11918,
+    "mtime_ns": 1785390680164197700,
+    "word_count": 983
+  },
+  "apps/backend/src/match-lobby/match-lobby.ts": {
+    "size": 16166,
+    "mtime_ns": 1785390680165883400,
+    "word_count": 1349
+  },
+  "apps/backend/src/match-lobby/public-match-lobby-index.ts": {
+    "size": 2274,
+    "mtime_ns": 1785390680166744300,
+    "word_count": 158
+  },
+  "apps/backend/src/player-decks/player-decks.ts": {
+    "size": 5189,
+    "mtime_ns": 1785040020968591200,
+    "word_count": 447
+  },
+  "apps/backend/src/player-decks/resolve-authorized-deck.ts": {
+    "size": 1244,
+    "mtime_ns": 1785040020978490400,
+    "word_count": 95
+  },
+  "apps/backend/src/player-identity/resolve-player-id.ts": {
+    "size": 2952,
+    "mtime_ns": 1785165028124703500,
+    "word_count": 238
+  },
+  "apps/backend/test/apply-migrations.ts": {
+    "size": 288,
+    "mtime_ns": 1785040020983902600,
+    "word_count": 27
+  },
+  "apps/backend/test/auth-foundation.test.ts": {
+    "size": 3637,
+    "mtime_ns": 1785336618859228000,
+    "word_count": 269
+  },
+  "apps/backend/test/auth-google.test.ts": {
+    "size": 3417,
+    "mtime_ns": 1785040021009893800,
+    "word_count": 215
+  },
+  "apps/backend/test/auth-http-integration.test.ts": {
+    "size": 9888,
+    "mtime_ns": 1785336618920754200,
+    "word_count": 684
+  },
+  "apps/backend/test/auth-test-bindings.ts": {
+    "size": 2114,
+    "mtime_ns": 1785336618942728000,
+    "word_count": 192
+  },
+  "apps/backend/test/card-catalog-api.test.ts": {
+    "size": 4229,
+    "mtime_ns": 1785040021046873600,
+    "word_count": 339
+  },
+  "apps/backend/test/catalog-archive.test.ts": {
+    "size": 3233,
+    "mtime_ns": 1785040021058973600,
+    "word_count": 238
+  },
+  "apps/backend/test/deck-api.test.ts": {
+    "size": 10239,
+    "mtime_ns": 1785165028288005600,
+    "word_count": 875
+  },
+  "apps/backend/test/disconnect-timeout-alarm.test.ts": {
+    "size": 4243,
+    "mtime_ns": 1785390680167249200,
+    "word_count": 309
+  },
+  "apps/backend/test/game-api.test.ts": {
+    "size": 13795,
+    "mtime_ns": 1785165028334881400,
+    "word_count": 1180
+  },
+  "apps/backend/test/game-command-request.test.ts": {
+    "size": 1421,
+    "mtime_ns": 1785040021126438100,
+    "word_count": 109
+  },
+  "apps/backend/test/game-creation.test.ts": {
+    "size": 4814,
+    "mtime_ns": 1785165028360225100,
+    "word_count": 309
+  },
+  "apps/backend/test/game-learning-context.test.ts": {
+    "size": 1805,
+    "mtime_ns": 1785165028366667500,
+    "word_count": 113
+  },
+  "apps/backend/test/game-play-e2e.test.ts": {
+    "size": 9412,
+    "mtime_ns": 1785040021157662100,
+    "word_count": 758
+  },
+  "apps/backend/test/game-session-recovery.test.ts": {
+    "size": 12832,
+    "mtime_ns": 1785424432132719800,
+    "word_count": 851
+  },
+  "apps/backend/test/game-session.test.ts": {
+    "size": 19631,
+    "mtime_ns": 1785165028474694600,
+    "word_count": 1295
+  },
+  "apps/backend/test/health.test.ts": {
+    "size": 595,
+    "mtime_ns": 1785040021208309300,
+    "word_count": 57
+  },
+  "apps/backend/test/initial-card-catalog.test.ts": {
+    "size": 6594,
+    "mtime_ns": 1785165028497459900,
+    "word_count": 385
+  },
+  "apps/backend/test/learning-content-index.test.ts": {
+    "size": 645,
+    "mtime_ns": 1785165028503505800,
+    "word_count": 48
+  },
+  "apps/backend/test/match-api.test.ts": {
+    "size": 13744,
+    "mtime_ns": 1785390680168501600,
+    "word_count": 1193
+  },
+  "apps/backend/test/match-lobby.test.ts": {
+    "size": 11409,
+    "mtime_ns": 1785390680168501600,
+    "word_count": 835
+  },
+  "apps/backend/test/player-decks.test.ts": {
+    "size": 4349,
+    "mtime_ns": 1785040021280918800,
+    "word_count": 322
+  },
+  "apps/backend/test/player-identity.test.ts": {
+    "size": 2130,
+    "mtime_ns": 1785165028613256000,
+    "word_count": 140
+  },
+  "apps/backend/test/public-match-lobby-index.test.ts": {
+    "size": 1947,
+    "mtime_ns": 1785390680170114300,
+    "word_count": 126
+  },
+  "apps/backend/test/rejected-command-idempotency.test.ts": {
+    "size": 4276,
+    "mtime_ns": 1785390680171496200,
+    "word_count": 300
+  },
+  "apps/backend/test/tsconfig.json": {
+    "size": 216,
+    "mtime_ns": 1785040021294871000,
+    "word_count": 16,
+    "hashes": {
+      "apps/backend/test/tsconfig.json": "e2f1439b93cdce933615eb8cbedc4c91f60419d935515914f33a0fb01e2b4a4b"
+    }
+  },
+  "apps/backend/tsconfig.json": {
+    "size": 264,
+    "mtime_ns": 1785040021301842300,
+    "word_count": 23,
+    "hashes": {
+      "apps/backend/tsconfig.json": "de803cbf4645639a7c97122f1d2702554e50e11ee91de2ffda0260de6869084b"
+    }
+  },
+  "apps/backend/vitest.config.ts": {
+    "size": 692,
+    "mtime_ns": 1785040021310133300,
+    "word_count": 68
+  },
+  "apps/backend/worker-configuration.d.ts": {
+    "size": 552298,
+    "mtime_ns": 1784807144397118600,
+    "word_count": 62301
+  },
+  "apps/frontend/@/components/ui/button.tsx": {
+    "size": 3247,
+    "mtime_ns": 1785165028682430400,
+    "word_count": 192
+  },
+  "apps/frontend/@/components/ui/dialog.tsx": {
+    "size": 4072,
+    "mtime_ns": 1785165028701783900,
+    "word_count": 316
+  },
+  "apps/frontend/@/components/ui/drawer.tsx": {
+    "size": 11378,
+    "mtime_ns": 1785165028755642400,
+    "word_count": 566
+  },
+  "apps/frontend/@/components/ui/hover-card.tsx": {
+    "size": 1848,
+    "mtime_ns": 1785165028767059500,
+    "word_count": 124
+  },
+  "apps/frontend/@/components/ui/navigation-menu.tsx": {
+    "size": 7436,
+    "mtime_ns": 1785165028785476700,
+    "word_count": 388
+  },
+  "apps/frontend/@/components/ui/toast.tsx": {
+    "size": 7338,
+    "mtime_ns": 1785165028798770800,
+    "word_count": 469
+  },
+  "apps/frontend/README.md": {
+    "size": 449,
+    "mtime_ns": 1784121763353493200,
+    "word_count": 38,
+    "hashes": {
+      "apps/frontend/readme.md": "9aa4381b3a4d01554eae50073230d269f82585e06c859dd8210253b9007cb4b9"
+    }
+  },
+  "apps/frontend/components.json": {
+    "size": 515,
+    "mtime_ns": 1785165028810753100,
+    "word_count": 46,
+    "hashes": {
+      "apps/frontend/components.json": "8827633cc7dd083c5a24f491285ed469fdbcb9e28a95e020f9f7c83d0c55f3d9"
+    }
+  },
+  "apps/frontend/eslint.config.mjs": {
+    "size": 138,
+    "mtime_ns": 1784116984085052000,
+    "word_count": 13
+  },
+  "apps/frontend/index.html": {
+    "size": 361,
+    "mtime_ns": 1784767730147645900,
+    "word_count": 28,
+    "hashes": {
+      "apps/frontend/index.html": "660ec58c0e4956009007a7ee65be771e5bd1511189decd17b0863461661a658f"
+    }
+  },
+  "apps/frontend/package.json": {
+    "size": 1825,
+    "mtime_ns": 1785427623941194300,
+    "word_count": 154,
+    "hashes": {
+      "apps/frontend/package.json": "9131f894c2dc2eee0a00eeb3ed88ccd3cdac46f9f8b91a261c10767fb7baf5cd"
+    }
+  },
+  "apps/frontend/public/favicon.svg": {
+    "size": 9522,
+    "mtime_ns": 1784114801839104300,
+    "word_count": 491,
+    "hashes": {
+      "apps/frontend/public/favicon.svg": "8f42c0118fa9fe01615985bf9a28c8b0c63c2f3870037f660de49cbf21aa2116"
+    }
+  },
+  "apps/frontend/public/icons.svg": {
+    "size": 5031,
+    "mtime_ns": 1784114801839104300,
+    "word_count": 382,
+    "hashes": {
+      "apps/frontend/public/icons.svg": "5beff052bfa5c69b4547708af0a3af9ea7860e99b8ffeec5c91da9584ce85a6b"
+    }
+  },
+  "apps/frontend/src/app/api-client.ts": {
+    "size": 640,
+    "mtime_ns": 1785040021361254600,
+    "word_count": 69
+  },
+  "apps/frontend/src/app/query-client.ts": {
+    "size": 195,
+    "mtime_ns": 1785040021370791300,
+    "word_count": 23
+  },
+  "apps/frontend/src/app/return-to.ts": {
+    "size": 787,
+    "mtime_ns": 1785040021375628100,
+    "word_count": 90
+  },
+  "apps/frontend/src/app/router.tsx": {
+    "size": 7446,
+    "mtime_ns": 1785336619585823800,
+    "word_count": 647
+  },
+  "apps/frontend/src/app/session.ts": {
+    "size": 604,
+    "mtime_ns": 1785165028891968800,
+    "word_count": 65
+  },
+  "apps/frontend/src/assets/cloudflare.svg": {
+    "size": 1181,
+    "mtime_ns": 1784114796200615500,
+    "word_count": 127,
+    "hashes": {
+      "apps/frontend/src/assets/cloudflare.svg": "6c2383f11382d0b29ae49997d15cb19550c0f8cf9b666a2019d9b877dc4e1787"
+    }
+  },
+  "apps/frontend/src/assets/hero.png": {
+    "size": 13057,
+    "mtime_ns": 1784114801839104300,
+    "word_count": 437,
+    "hashes": {
+      "apps/frontend/src/assets/hero.png": "f023dde3b99531cc489e19283717082400698d4b9f0f258746fbeec7e57c48e4"
+    }
+  },
+  "apps/frontend/src/assets/react.svg": {
+    "size": 4126,
+    "mtime_ns": 1784114801839104300,
+    "word_count": 366,
+    "hashes": {
+      "apps/frontend/src/assets/react.svg": "d8c35da67c9f11d98c29d8324421fdbbb4cf14951b5987754a1d5fbc4abb797b"
+    }
+  },
+  "apps/frontend/src/assets/vite.svg": {
+    "size": 8709,
+    "mtime_ns": 1784114801854983600,
+    "word_count": 439,
+    "hashes": {
+      "apps/frontend/src/assets/vite.svg": "f65e0246d8f4eaef6697e2d9f1f7c66da1ca2691a7b8ca393ee938123c419e37"
+    }
+  },
+  "apps/frontend/src/components/ui/alert-dialog.tsx": {
+    "size": 5283,
+    "mtime_ns": 1785336619656471300,
+    "word_count": 354
+  },
+  "apps/frontend/src/components/ui/avatar.tsx": {
+    "size": 3041,
+    "mtime_ns": 1785336619672715600,
+    "word_count": 221
+  },
+  "apps/frontend/src/components/ui/button.tsx": {
+    "size": 3247,
+    "mtime_ns": 1785165028938586400,
+    "word_count": 192
+  },
+  "apps/frontend/src/components/ui/card.tsx": {
+    "size": 2645,
+    "mtime_ns": 1785336619719545700,
+    "word_count": 204
+  },
+  "apps/frontend/src/components/ui/hover-card.tsx": {
+    "size": 1863,
+    "mtime_ns": 1785336619749244000,
+    "word_count": 126
+  },
+  "apps/frontend/src/components/ui/toast.tsx": {
+    "size": 7625,
+    "mtime_ns": 1785340124234970100,
+    "word_count": 471
+  },
+  "apps/frontend/src/features/account/account-menu.tsx": {
+    "size": 3051,
+    "mtime_ns": 1785336619899049300,
+    "word_count": 246
+  },
+  "apps/frontend/src/features/account/my-page.tsx": {
+    "size": 6503,
+    "mtime_ns": 1785336619948722400,
+    "word_count": 376
+  },
+  "apps/frontend/src/features/auth/auth-api.test.ts": {
+    "size": 1552,
+    "mtime_ns": 1785336619970350400,
+    "word_count": 127
+  },
+  "apps/frontend/src/features/auth/auth-api.ts": {
+    "size": 1734,
+    "mtime_ns": 1785336619985968400,
+    "word_count": 160
+  },
+  "apps/frontend/src/features/auth/auth-layout.tsx": {
+    "size": 2286,
+    "mtime_ns": 1785040021433235900,
+    "word_count": 200
+  },
+  "apps/frontend/src/features/auth/auth-routes.tsx": {
+    "size": 6020,
+    "mtime_ns": 1785336620029741200,
+    "word_count": 442
+  },
+  "apps/frontend/src/features/game-board/components/attack-group-row.tsx": {
+    "size": 3047,
+    "mtime_ns": 1785426716979682500,
+    "word_count": 219
+  },
+  "apps/frontend/src/features/game-board/components/attack-group-slot.test.ts": {
+    "size": 1531,
+    "mtime_ns": 1785340124235478600,
+    "word_count": 120
+  },
+  "apps/frontend/src/features/game-board/components/attack-group-slot.tsx": {
+    "size": 4328,
+    "mtime_ns": 1785426716981693600,
+    "word_count": 370
+  },
+  "apps/frontend/src/features/game-board/components/card-field.tsx": {
+    "size": 1585,
+    "mtime_ns": 1785426716981693600,
+    "word_count": 94
+  },
+  "apps/frontend/src/features/game-board/components/card-presentation.test.ts": {
+    "size": 701,
+    "mtime_ns": 1785165029088080100,
+    "word_count": 38
+  },
+  "apps/frontend/src/features/game-board/components/card-presentation.ts": {
+    "size": 1409,
+    "mtime_ns": 1785165029097143900,
+    "word_count": 132
+  },
+  "apps/frontend/src/features/game-board/components/connection-status.tsx": {
+    "size": 1287,
+    "mtime_ns": 1785040021499582100,
+    "word_count": 111
+  },
+  "apps/frontend/src/features/game-board/components/desktop-only-notice.tsx": {
+    "size": 629,
+    "mtime_ns": 1785040021521294500,
+    "word_count": 48
+  },
+  "apps/frontend/src/features/game-board/components/discard-zone.tsx": {
+    "size": 1611,
+    "mtime_ns": 1785426716981693600,
+    "word_count": 135
+  },
+  "apps/frontend/src/features/game-board/components/game-progress-bar.tsx": {
+    "size": 4190,
+    "mtime_ns": 1785426716986949700,
+    "word_count": 290
+  },
+  "apps/frontend/src/features/game-board/components/game-result-dialog.tsx": {
+    "size": 7305,
+    "mtime_ns": 1785165029168837100,
+    "word_count": 486
+  },
+  "apps/frontend/src/features/game-board/components/hand-card.tsx": {
+    "size": 6048,
+    "mtime_ns": 1785426716986949700,
+    "word_count": 394
+  },
+  "apps/frontend/src/features/game-board/components/mana-panel.tsx": {
+    "size": 1676,
+    "mtime_ns": 1785165029220439900,
+    "word_count": 133
+  },
+  "apps/frontend/src/features/game-board/components/opponent-zone.tsx": {
+    "size": 1909,
+    "mtime_ns": 1785040021589715500,
+    "word_count": 138
+  },
+  "apps/frontend/src/features/game-board/components/phase-end-dialog.tsx": {
+    "size": 1973,
+    "mtime_ns": 1785040021598301000,
+    "word_count": 139
+  },
+  "apps/frontend/src/features/game-board/components/player-action-area.tsx": {
+    "size": 4367,
+    "mtime_ns": 1785426716988960800,
+    "word_count": 287
+  },
+  "apps/frontend/src/features/game-board/components/player-status-column.tsx": {
+    "size": 747,
+    "mtime_ns": 1785040021613722600,
+    "word_count": 59
+  },
+  "apps/frontend/src/features/game-board/components/player-summary.tsx": {
+    "size": 1426,
+    "mtime_ns": 1785040021620899300,
+    "word_count": 109
+  },
+  "apps/frontend/src/features/game-board/components/public-event-feed.tsx": {
+    "size": 2313,
+    "mtime_ns": 1785165029286946200,
+    "word_count": 186
+  },
+  "apps/frontend/src/features/game-board/components/resource-column.tsx": {
+    "size": 1055,
+    "mtime_ns": 1785040021633267300,
+    "word_count": 75
+  },
+  "apps/frontend/src/features/game-board/components/support-target-dialog.tsx": {
+    "size": 7593,
+    "mtime_ns": 1785040021671801000,
+    "word_count": 552
+  },
+  "apps/frontend/src/features/game-board/components/support-zone.tsx": {
+    "size": 1640,
+    "mtime_ns": 1785426716990820400,
+    "word_count": 135
+  },
+  "apps/frontend/src/features/game-board/components/zone-button.tsx": {
+    "size": 558,
+    "mtime_ns": 1785040021696325100,
+    "word_count": 45
+  },
+  "apps/frontend/src/features/game-board/components/zone-dialog.tsx": {
+    "size": 3745,
+    "mtime_ns": 1785165029380160000,
+    "word_count": 282
+  },
+  "apps/frontend/src/features/game-board/fixtures/game-board-fixture.ts": {
+    "size": 12219,
+    "mtime_ns": 1785165029431553900,
+    "word_count": 827
+  },
+  "apps/frontend/src/features/game-board/game-board-accessibility.test.ts": {
+    "size": 2250,
+    "mtime_ns": 1785426716992329000,
+    "word_count": 121
+  },
+  "apps/frontend/src/features/game-board/game-board-action-feedback.test.ts": {
+    "size": 8098,
+    "mtime_ns": 1785426716992329000,
+    "word_count": 582
+  },
+  "apps/frontend/src/features/game-board/game-board-layout.test.ts": {
+    "size": 2097,
+    "mtime_ns": 1785165029449428400,
+    "word_count": 93
+  },
+  "apps/frontend/src/features/game-board/game-board-view.tsx": {
+    "size": 10308,
+    "mtime_ns": 1785426716992329000,
+    "word_count": 684
+  },
+  "apps/frontend/src/features/game-board/game-board.tsx": {
+    "size": 10759,
+    "mtime_ns": 1785426716992329000,
+    "word_count": 739
+  },
+  "apps/frontend/src/features/game-board/hooks/use-game-board-actions.ts": {
+    "size": 16709,
+    "mtime_ns": 1785426716998905200,
+    "word_count": 1307
+  },
+  "apps/frontend/src/features/game-board/hooks/use-game-board-data.test.ts": {
+    "size": 3271,
+    "mtime_ns": 1785426717000435200,
+    "word_count": 222
+  },
+  "apps/frontend/src/features/game-board/hooks/use-game-board-data.ts": {
+    "size": 7991,
+    "mtime_ns": 1785426717001985700,
+    "word_count": 575
+  },
+  "apps/frontend/src/features/game-board/hooks/use-game-realtime.ts": {
+    "size": 3771,
+    "mtime_ns": 1785040021859102600,
+    "word_count": 354
+  },
+  "apps/frontend/src/features/game-board/hooks/use-online-status.ts": {
+    "size": 768,
+    "mtime_ns": 1785040021871903500,
+    "word_count": 65
+  },
+  "apps/frontend/src/features/game-board/hooks/use-page-visibility.ts": {
+    "size": 607,
+    "mtime_ns": 1785040021877605500,
+    "word_count": 51
+  },
+  "apps/frontend/src/features/game-board/hooks/use-prefers-reduced-motion.ts": {
+    "size": 755,
+    "mtime_ns": 1785040021884576600,
+    "word_count": 61
+  },
+  "apps/frontend/src/features/game-board/hooks/use-public-event-feed.ts": {
+    "size": 6460,
+    "mtime_ns": 1785040021900084000,
+    "word_count": 474
+  },
+  "apps/frontend/src/features/game-board/hooks/use-public-event-playback.ts": {
+    "size": 1934,
+    "mtime_ns": 1785040021908710700,
+    "word_count": 188
+  },
+  "apps/frontend/src/features/game-board/phase-presentation.test.ts": {
+    "size": 1610,
+    "mtime_ns": 1785040021915762800,
+    "word_count": 124
+  },
+  "apps/frontend/src/features/game-board/phase-presentation.ts": {
+    "size": 2561,
+    "mtime_ns": 1785040021922325300,
+    "word_count": 183
+  },
+  "apps/frontend/src/features/game-learning/game-learning-page.tsx": {
+    "size": 7451,
+    "mtime_ns": 1785336620944387000,
+    "word_count": 461
+  },
+  "apps/frontend/src/features/learn/learn-article-body.tsx": {
+    "size": 915,
+    "mtime_ns": 1785040021991891500,
+    "word_count": 88
+  },
+  "apps/frontend/src/features/learn/learn-catalog.test.ts": {
+    "size": 1231,
+    "mtime_ns": 1785040022007911100,
+    "word_count": 73
+  },
+  "apps/frontend/src/features/learn/learn-catalog.ts": {
+    "size": 1230,
+    "mtime_ns": 1785165029786476700,
+    "word_count": 112
+  },
+  "apps/frontend/src/features/learn/learn-routes.tsx": {
+    "size": 8931,
+    "mtime_ns": 1785336621057126500,
+    "word_count": 607
+  },
+  "apps/frontend/src/features/matchmaking/components/deck-selector.tsx": {
+    "size": 2001,
+    "mtime_ns": 1785040022064236200,
+    "word_count": 141
+  },
+  "apps/frontend/src/features/matchmaking/components/public-room-list.tsx": {
+    "size": 3377,
+    "mtime_ns": 1785390680173522700,
+    "word_count": 233
+  },
+  "apps/frontend/src/features/matchmaking/components/room-join-form.tsx": {
+    "size": 1900,
+    "mtime_ns": 1785040022074922100,
+    "word_count": 158
+  },
+  "apps/frontend/src/features/matchmaking/hooks/use-matchmaking-data.ts": {
+    "size": 1055,
+    "mtime_ns": 1785390680174543300,
+    "word_count": 108
+  },
+  "apps/frontend/src/features/matchmaking/lobby-home.tsx": {
+    "size": 11798,
+    "mtime_ns": 1785390680175565400,
+    "word_count": 780
+  },
+  "apps/frontend/src/features/matchmaking/match-id.ts": {
+    "size": 730,
+    "mtime_ns": 1785040022118856900,
+    "word_count": 82
+  },
+  "apps/frontend/src/features/matchmaking/match-room.tsx": {
+    "size": 11482,
+    "mtime_ns": 1785390680176580100,
+    "word_count": 840
+  },
+  "apps/frontend/src/features/matchmaking/matchmaking-api.test.ts": {
+    "size": 2307,
+    "mtime_ns": 1785390680177595800,
+    "word_count": 175
+  },
+  "apps/frontend/src/features/matchmaking/matchmaking-api.ts": {
+    "size": 5951,
+    "mtime_ns": 1785390680178614000,
+    "word_count": 448
+  },
+  "apps/frontend/src/features/rule/rule-guide-route.tsx": {
+    "size": 5893,
+    "mtime_ns": 1785336621226054500,
+    "word_count": 350
+  },
+  "apps/frontend/src/features/rule/rule-guide.test.ts": {
+    "size": 962,
+    "mtime_ns": 1785165030012284900,
+    "word_count": 63
+  },
+  "apps/frontend/src/features/rule/rule-guide.ts": {
+    "size": 5950,
+    "mtime_ns": 1785165030038521100,
+    "word_count": 224
+  },
+  "apps/frontend/src/features/rule/rule-illustration.tsx": {
+    "size": 890,
+    "mtime_ns": 1785165030056588700,
+    "word_count": 70
+  },
+  "apps/frontend/src/lib/utils.ts": {
+    "size": 169,
+    "mtime_ns": 1785165030074789000,
+    "word_count": 22
+  },
+  "apps/frontend/src/main.tsx": {
+    "size": 597,
+    "mtime_ns": 1785340124251287100,
+    "word_count": 56
+  },
+  "apps/frontend/tsconfig.app.json": {
+    "size": 702,
+    "mtime_ns": 1785163866007492500,
+    "word_count": 54,
+    "hashes": {
+      "apps/frontend/tsconfig.app.json": "76c9df555b62f0d5c65b4ecc3f8d7aa7044e0d0b2286a1021b6cda7d1127e045"
+    }
+  },
+  "apps/frontend/tsconfig.json": {
+    "size": 265,
+    "mtime_ns": 1785336621317332600,
+    "word_count": 27,
+    "hashes": {
+      "apps/frontend/tsconfig.json": "72b4631d1d7dfc892b17e78a681254a10a63777c43b81959621620fef29f95a1"
+    }
+  },
+  "apps/frontend/tsconfig.node.json": {
+    "size": 605,
+    "mtime_ns": 1785165030122550700,
+    "word_count": 47,
+    "hashes": {
+      "apps/frontend/tsconfig.node.json": "c72f600801964fc0cb2dc0e169f2903849f6059abad0a668ec7409a680047968"
+    }
+  },
+  "apps/frontend/tsconfig.worker.json": {
+    "size": 303,
+    "mtime_ns": 1785165030167598000,
+    "word_count": 20,
+    "hashes": {
+      "apps/frontend/tsconfig.worker.json": "25f0f91b1dbeef4560351d407cd8346eb6bfe44bf7798b0ff612a96ae329063d"
+    }
+  },
+  "apps/frontend/turbo.json": {
+    "size": 233,
+    "mtime_ns": 1784116765499922200,
+    "word_count": 21,
+    "hashes": {
+      "apps/frontend/turbo.json": "14a6c1d484b4ab94e18c668bf987b1aa7e4e60a7458150c1b9807022aa0d0ac4"
+    }
+  },
+  "apps/frontend/vite.config.ts": {
+    "size": 462,
+    "mtime_ns": 1785165030198265300,
+    "word_count": 50
+  },
+  "apps/frontend/vitest.config.ts": {
+    "size": 339,
+    "mtime_ns": 1785340124252840600,
+    "word_count": 35
+  },
+  "apps/frontend/worker-configuration.d.ts": {
+    "size": 565649,
+    "mtime_ns": 1784803482275451600,
+    "word_count": 62232
+  },
+  "apps/frontend/worker/index.test.ts": {
+    "size": 2138,
+    "mtime_ns": 1785336621364513700,
+    "word_count": 139
+  },
+  "apps/frontend/worker/index.ts": {
+    "size": 1643,
+    "mtime_ns": 1785336621385129700,
+    "word_count": 159
+  },
+  "docs/README.md": {
+    "size": 2645,
+    "mtime_ns": 1785390680181174500,
+    "word_count": 83,
+    "hashes": {
+      "docs/readme.md": "0f9b09ffcfec86ee5993e5484117b0a08f55f01e5359bd15637f47fceee1159c"
+    }
+  },
+  "docs/backend/client-server-protocol.md": {
+    "size": 15891,
+    "mtime_ns": 1785390680182693900,
+    "word_count": 460,
+    "hashes": {
+      "docs/backend/client-server-protocol.md": "f23db5783bd1666543e8d8d32925ddfebc9eaa95f80b7fcfffb3c076eaab9feb"
+    }
+  },
+  "docs/backend/database-and-auth.md": {
+    "size": 13280,
+    "mtime_ns": 1785390680183710000,
+    "word_count": 437,
+    "hashes": {
+      "docs/backend/database-and-auth.md": "de07796e8a5431314fd543ac20ff1e55c45bb6cf09ddf8f2b086a9906ec97efd"
+    }
+  },
+  "docs/backend/durable-object-room.md": {
+    "size": 8410,
+    "mtime_ns": 1785165030590055900,
+    "word_count": 101,
+    "hashes": {
+      "docs/backend/durable-object-room.md": "5e0a98ac3c828ae0b4863d21a329dbf8009c9c4b88cf0ac9c6003addc29c42b0"
+    }
+  },
+  "docs/backend/matchmaking.md": {
+    "size": 8712,
+    "mtime_ns": 1785390680185235800,
+    "word_count": 278,
+    "hashes": {
+      "docs/backend/matchmaking.md": "e5123e947631959726a5811477ff4ac718be07f082d1b58ef6c070b9877aa512"
+    }
+  },
+  "docs/environment/ai-development.md": {
+    "size": 7086,
+    "mtime_ns": 1785040022426653800,
+    "word_count": 400,
+    "hashes": {
+      "docs/environment/ai-development.md": "db4bd475a218e24a96107a84124915351dc95dc777ca30025e7fcd9430dfc8c5"
+    }
+  },
+  "docs/environment/development-environment.md": {
+    "size": 13166,
+    "mtime_ns": 1785165030759723100,
+    "word_count": 587,
+    "hashes": {
+      "docs/environment/development-environment.md": "7c8c122b8c20fe5649f7a281916ae691d4806999ef803050daff986eeb5d623c"
+    }
+  },
+  "docs/environment/staging-deployment.md": {
+    "size": 8101,
+    "mtime_ns": 1785165030807570100,
+    "word_count": 435,
+    "hashes": {
+      "docs/environment/staging-deployment.md": "a70b9e3b9c3a768882753e541a7334e82db5bcd16dd7bb852e977ffe4b1ad436"
+    }
+  },
+  "docs/environment/team-development.md": {
+    "size": 11733,
+    "mtime_ns": 1785040022538106800,
+    "word_count": 640,
+    "hashes": {
+      "docs/environment/team-development.md": "42640e72aa65e13114c905436117e57c9fefab12b11afec1fa825567a7f7f000"
+    }
+  },
+  "docs/frontend/card-game-ui-image/image.png": {
+    "size": 163122,
+    "mtime_ns": 1784723187388098500,
+    "word_count": 4128,
+    "hashes": {
+      "docs/frontend/card-game-ui-image/image.png": "3ea9ef3c5886fd8d47d492dbe5056cda970e39e1a224bc0edeb5c21975382257"
+    }
+  },
+  "docs/frontend/frontend-integration-plan.md": {
+    "size": 17487,
+    "mtime_ns": 1785165031007598700,
+    "word_count": 697,
+    "hashes": {
+      "docs/frontend/frontend-integration-plan.md": "159fa414080e51d650778b3d660e4d3c16ca7dafbf55192915ee85e5c713f7e6"
+    }
+  },
+  "docs/frontend/frontend-requirements.md": {
+    "size": 38902,
+    "mtime_ns": 1785390680186623700,
+    "word_count": 1067,
+    "hashes": {
+      "docs/frontend/frontend-requirements.md": "cbf84db6dcce142716311457fbab1ed7b177b1f57400e8adf3fccbfec28345a5"
+    }
+  },
+  "docs/frontend/game-board-ui-requirements.md": {
+    "size": 14753,
+    "mtime_ns": 1785165031274396100,
+    "word_count": 536,
+    "hashes": {
+      "docs/frontend/game-board-ui-requirements.md": "bd8846a7f6da0b6a919affbfad06adc4018ed151e93244b35ab412820d3d1f3c"
+    }
+  },
+  "docs/game/card-type-definition.md": {
+    "size": 50538,
+    "mtime_ns": 1785165031564225300,
+    "word_count": 2256,
+    "hashes": {
+      "docs/game/card-type-definition.md": "dc16e176611376ad12c2bff7ddfd30880a504f423f125879a42271cbf8f835c0"
+    }
+  },
+  "docs/game/gameEngine-definition.md": {
+    "size": 76295,
+    "mtime_ns": 1785165032013997100,
+    "word_count": 4150,
+    "hashes": {
+      "docs/game/gameengine-definition.md": "028bf63010571690b987b174bfc81811e12a9e58d0efd90baeb14f6998b3b284"
+    }
+  },
+  "docs/game/rule-definition.md": {
+    "size": 34210,
+    "mtime_ns": 1785165032124995900,
+    "word_count": 1136,
+    "hashes": {
+      "docs/game/rule-definition.md": "6a6774eabbc107569ae9567a83053e7fcac54138db7765a693a076acedf77815"
+    }
+  },
+  "docs/testing/test-automation-plan.md": {
+    "size": 8415,
+    "mtime_ns": 1785430051948163100,
+    "word_count": 265,
+    "hashes": {
+      "docs/testing/test-automation-plan.md": "195610a06f0ca18e796e2510c782d1100b8c418513116af0bbf5c5b6445862ed"
+    }
+  },
+  "e2e/game-board-dnd.spec.ts": {
+    "size": 844,
+    "mtime_ns": 1785430050465977400,
+    "word_count": 56
+  },
+  "e2e/match-flow.spec.ts": {
+    "size": 18230,
+    "mtime_ns": 1785430255947917100,
+    "word_count": 1490
+  },
+  "package.json": {
+    "size": 623,
+    "mtime_ns": 1785427699091631200,
+    "word_count": 58,
+    "hashes": {
+      "package.json": "34528e264bf164e1bb9472ba0e9dbd6442914768592efde1698a241d5b7a2381"
+    }
+  },
+  "packages/contracts/eslint.config.mjs": {
+    "size": 79,
+    "mtime_ns": 1784121066422838600,
+    "word_count": 9
+  },
+  "packages/contracts/package.json": {
+    "size": 637,
+    "mtime_ns": 1785165032152635800,
+    "word_count": 52,
+    "hashes": {
+      "packages/contracts/package.json": "ebeb7b7947c0256d11dc0f0ab56a3552f7e4cc63af63fc8de73d697aab3d74ba"
+    }
+  },
+  "packages/contracts/src/deck.ts": {
+    "size": 4573,
+    "mtime_ns": 1785040023544727000,
+    "word_count": 415
+  },
+  "packages/contracts/src/game.ts": {
+    "size": 4685,
+    "mtime_ns": 1785165032211818100,
+    "word_count": 371
+  },
+  "packages/contracts/src/health.ts": {
+    "size": 104,
+    "mtime_ns": 1784121066423713300,
+    "word_count": 13
+  },
+  "packages/contracts/src/match.ts": {
+    "size": 4965,
+    "mtime_ns": 1785390680189555200,
+    "word_count": 464
+  },
+  "packages/contracts/src/session.ts": {
+    "size": 489,
+    "mtime_ns": 1785336623962732100,
+    "word_count": 47
+  },
+  "packages/contracts/tsconfig.json": {
+    "size": 165,
+    "mtime_ns": 1784121066420829400,
+    "word_count": 14,
+    "hashes": {
+      "packages/contracts/tsconfig.json": "419fa82d4f53f39eaac606e928c5520eaad1fa262016b841f91dbd3cd110c602"
+    }
+  },
+  "packages/eslint-config/README.md": {
+    "size": 72,
+    "mtime_ns": 1784117786370782100,
+    "word_count": 7,
+    "hashes": {
+      "packages/eslint-config/readme.md": "7e408dc283dfdc7a92c2e7074eee874d4b985b14087da3044420b5a69392124a"
+    }
+  },
+  "packages/eslint-config/base.js": {
+    "size": 669,
+    "mtime_ns": 1784122045488457800,
+    "word_count": 67
+  },
+  "packages/eslint-config/next.js": {
+    "size": 1497,
+    "mtime_ns": 1784122045495815000,
+    "word_count": 134
+  },
+  "packages/eslint-config/package.json": {
+    "size": 638,
+    "mtime_ns": 1784122045499335800,
+    "word_count": 44,
+    "hashes": {
+      "packages/eslint-config/package.json": "7e340bcdbbd206405bc5ce0f0f3e9e7887921c4664a167ff0ec31474e31701a1"
+    }
+  },
+  "packages/eslint-config/react-internal.js": {
+    "size": 1090,
+    "mtime_ns": 1784122045505565300,
+    "word_count": 101
+  },
+  "packages/game-engine/eslint.config.mjs": {
+    "size": 79,
+    "mtime_ns": 1785040023699617800,
+    "word_count": 9
+  },
+  "packages/game-engine/package.json": {
+    "size": 574,
+    "mtime_ns": 1785040023704003200,
+    "word_count": 51,
+    "hashes": {
+      "packages/game-engine/package.json": "1ac81bea6620a289e40de61b9a2fffd66f332e6e9807e71f236a6bb7603a7032"
+    }
+  },
+  "packages/game-engine/src/actions/attack-availability.ts": {
+    "size": 872,
+    "mtime_ns": 1785040023715565800,
+    "word_count": 68
+  },
+  "packages/game-engine/src/actions/get-available-game-actions.ts": {
+    "size": 12742,
+    "mtime_ns": 1785040023763193700,
+    "word_count": 965
+  },
+  "packages/game-engine/src/actions/placement-phase.ts": {
+    "size": 420,
+    "mtime_ns": 1785040023767376600,
+    "word_count": 47
+  },
+  "packages/game-engine/src/catalog/create-card-catalog.ts": {
+    "size": 13962,
+    "mtime_ns": 1785040023831905000,
+    "word_count": 1064
+  },
+  "packages/game-engine/src/catalog/deep-freeze.ts": {
+    "size": 264,
+    "mtime_ns": 1785040023837352300,
+    "word_count": 33
+  },
+  "packages/game-engine/src/catalog/project-public-card-catalog.ts": {
+    "size": 3958,
+    "mtime_ns": 1785040023850552000,
+    "word_count": 258
+  },
+  "packages/game-engine/src/catalog/validate-game-rules.ts": {
+    "size": 3107,
+    "mtime_ns": 1785165032479156600,
+    "word_count": 212
+  },
+  "packages/game-engine/src/commands/execute-command.ts": {
+    "size": 40999,
+    "mtime_ns": 1785165032617903000,
+    "word_count": 3315
+  },
+  "packages/game-engine/src/commands/parse-game-command.ts": {
+    "size": 3315,
+    "mtime_ns": 1785040023979952400,
+    "word_count": 248
+  },
+  "packages/game-engine/src/contracts/available-game-actions.ts": {
+    "size": 2212,
+    "mtime_ns": 1785040023990511000,
+    "word_count": 187
+  },
+  "packages/game-engine/src/contracts/card-definition.ts": {
+    "size": 2467,
+    "mtime_ns": 1785040023999826200,
+    "word_count": 242
+  },
+  "packages/game-engine/src/contracts/commands.ts": {
+    "size": 4179,
+    "mtime_ns": 1785040024015927800,
+    "word_count": 386
+  },
+  "packages/game-engine/src/contracts/deep-readonly.ts": {
+    "size": 234,
+    "mtime_ns": 1785040024023607200,
+    "word_count": 36
+  },
+  "packages/game-engine/src/contracts/effect-definition.ts": {
+    "size": 1570,
+    "mtime_ns": 1785040024029252600,
+    "word_count": 162
+  },
+  "packages/game-engine/src/contracts/effect-target.ts": {
+    "size": 805,
+    "mtime_ns": 1785040024034163200,
+    "word_count": 89
+  },
+  "packages/game-engine/src/contracts/effects.ts": {
+    "size": 3320,
+    "mtime_ns": 1785040024041929800,
+    "word_count": 301
+  },
+  "packages/game-engine/src/contracts/engine.ts": {
+    "size": 408,
+    "mtime_ns": 1785040024053886700,
+    "word_count": 42
+  },
+  "packages/game-engine/src/contracts/errors.ts": {
+    "size": 907,
+    "mtime_ns": 1785040024063550100,
+    "word_count": 75
+  },
+  "packages/game-engine/src/contracts/events.ts": {
+    "size": 3922,
+    "mtime_ns": 1785165032797754600,
+    "word_count": 356
+  },
+  "packages/game-engine/src/contracts/game-state.ts": {
+    "size": 3492,
+    "mtime_ns": 1785040024087260200,
+    "word_count": 355
+  },
+  "packages/game-engine/src/contracts/identifiers.ts": {
+    "size": 397,
+    "mtime_ns": 1785040024099309700,
+    "word_count": 55
+  },
+  "packages/game-engine/src/contracts/index.ts": {
+    "size": 535,
+    "mtime_ns": 1785040024115956600,
+    "word_count": 64
+  },
+  "packages/game-engine/src/contracts/json.ts": {
+    "size": 214,
+    "mtime_ns": 1785040024130786700,
+    "word_count": 34
+  },
+  "packages/game-engine/src/contracts/public-card-catalog.ts": {
+    "size": 1589,
+    "mtime_ns": 1785040024138465300,
+    "word_count": 133
+  },
+  "packages/game-engine/src/contracts/rules.ts": {
+    "size": 1924,
+    "mtime_ns": 1785165032884379100,
+    "word_count": 168
+  },
+  "packages/game-engine/src/contracts/views.ts": {
+    "size": 2017,
+    "mtime_ns": 1785040024166727200,
+    "word_count": 195
+  },
+  "packages/game-engine/src/deck/validate-deck.ts": {
+    "size": 5010,
+    "mtime_ns": 1785165032927114000,
+    "word_count": 388
+  },
+  "packages/game-engine/src/effects/apply-effect-resolution-plan.ts": {
+    "size": 15932,
+    "mtime_ns": 1785040024234294200,
+    "word_count": 1241
+  },
+  "packages/game-engine/src/effects/plan-card-effect.ts": {
+    "size": 18511,
+    "mtime_ns": 1785040024285065000,
+    "word_count": 1467
+  },
+  "packages/game-engine/src/index.ts": {
+    "size": 762,
+    "mtime_ns": 1785040024290181500,
+    "word_count": 64
+  },
+  "packages/game-engine/src/initialize/initialize-game.ts": {
+    "size": 13014,
+    "mtime_ns": 1785040024332178800,
+    "word_count": 1025
+  },
+  "packages/game-engine/src/mana/calculate-mana.ts": {
+    "size": 2246,
+    "mtime_ns": 1785040024347069600,
+    "word_count": 203
+  },
+  "packages/game-engine/src/power/calculate-power.ts": {
+    "size": 3665,
+    "mtime_ns": 1785040024376236700,
+    "word_count": 337
+  },
+  "packages/game-engine/src/random/shuffle.ts": {
+    "size": 804,
+    "mtime_ns": 1785040024383150300,
+    "word_count": 94
+  },
+  "packages/game-engine/src/state/card-access.ts": {
+    "size": 1268,
+    "mtime_ns": 1785040024391403500,
+    "word_count": 114
+  },
+  "packages/game-engine/src/state/validate-game-state.ts": {
+    "size": 17698,
+    "mtime_ns": 1785040024436659000,
+    "word_count": 1282
+  },
+  "packages/game-engine/src/views/project-event-for-player.ts": {
+    "size": 665,
+    "mtime_ns": 1785040024444595300,
+    "word_count": 61
+  },
+  "packages/game-engine/src/views/project-player-view.ts": {
+    "size": 4204,
+    "mtime_ns": 1785040024456534100,
+    "word_count": 306
+  },
+  "packages/game-engine/test/available-game-actions.test.ts": {
+    "size": 13042,
+    "mtime_ns": 1785040024483680600,
+    "word_count": 963
+  },
+  "packages/game-engine/test/card-effects.test.ts": {
+    "size": 31024,
+    "mtime_ns": 1785165033463718400,
+    "word_count": 2152
+  },
+  "packages/game-engine/test/catalog-and-initialization.test.ts": {
+    "size": 15615,
+    "mtime_ns": 1785165033518145000,
+    "word_count": 1041
+  },
+  "packages/game-engine/test/client-state-version-revalidation.test.ts": {
+    "size": 2944,
+    "mtime_ns": 1785390680190572200,
+    "word_count": 204
+  },
+  "packages/game-engine/test/contracts.test.ts": {
+    "size": 1013,
+    "mtime_ns": 1785165033527961700,
+    "word_count": 67
+  },
+  "packages/game-engine/test/fixtures.ts": {
+    "size": 6310,
+    "mtime_ns": 1785165033553052800,
+    "word_count": 607
+  },
+  "packages/game-engine/test/game-action-boundaries.test.ts": {
+    "size": 13983,
+    "mtime_ns": 1785426717002811600,
+    "word_count": 1030
+  },
+  "packages/game-engine/test/game-progression.test.ts": {
+    "size": 19053,
+    "mtime_ns": 1785165033610876800,
+    "word_count": 1452
+  },
+  "packages/game-engine/test/parse-game-command.test.ts": {
+    "size": 3295,
+    "mtime_ns": 1785040024687985900,
+    "word_count": 272
+  },
+  "packages/game-engine/test/player-view.test.ts": {
+    "size": 5574,
+    "mtime_ns": 1785165033695933200,
+    "word_count": 365
+  },
+  "packages/game-engine/test/public-card-catalog.test.ts": {
+    "size": 2330,
+    "mtime_ns": 1785040024718278600,
+    "word_count": 155
+  },
+  "packages/game-engine/tsconfig.json": {
+    "size": 173,
+    "mtime_ns": 1785040024728140000,
+    "word_count": 15,
+    "hashes": {
+      "packages/game-engine/tsconfig.json": "5a81ee20eb67a75a30200fb2733dfe76e695c3890d359903d7dc5fd7a1ac7fae"
+    }
+  },
+  "packages/learning-content/eslint.config.mjs": {
+    "size": 79,
+    "mtime_ns": 1785165033729637700,
+    "word_count": 9
+  },
+  "packages/learning-content/package.json": {
+    "size": 555,
+    "mtime_ns": 1785165033735231800,
+    "word_count": 49,
+    "hashes": {
+      "packages/learning-content/package.json": "c5fdcdb9f32031842a1b9fa5a75d1c8191f62289df8726d87ae9efdfe038e876"
+    }
+  },
+  "packages/learning-content/src/article-types.ts": {
+    "size": 744,
+    "mtime_ns": 1785165033745292700,
+    "word_count": 69
+  },
+  "packages/learning-content/src/index.ts": {
+    "size": 307,
+    "mtime_ns": 1785165033766546700,
+    "word_count": 25
+  },
+  "packages/learning-content/src/learning-articles.ts": {
+    "size": 5410,
+    "mtime_ns": 1785165033782282900,
+    "word_count": 168
+  },
+  "packages/learning-content/src/select-learning-articles.ts": {
+    "size": 1158,
+    "mtime_ns": 1785165033793285400,
+    "word_count": 87
+  },
+  "packages/learning-content/test/select-learning-articles.test.ts": {
+    "size": 2370,
+    "mtime_ns": 1785165033800968500,
+    "word_count": 142
+  },
+  "packages/learning-content/tsconfig.json": {
+    "size": 173,
+    "mtime_ns": 1785165033800968500,
+    "word_count": 15,
+    "hashes": {
+      "packages/learning-content/tsconfig.json": "d722181596093bdc8f6514d2f78e8c0ccb2799e4b02a427e00c0173c21366674"
+    }
+  },
+  "packages/typescript-config/base.json": {
+    "size": 500,
+    "mtime_ns": 1784122045529713500,
+    "word_count": 37,
+    "hashes": {
+      "packages/typescript-config/base.json": "93a30a7e723c5feea200c248c349989bd1f24232c999113b04c9a629b511d647"
+    }
+  },
+  "packages/typescript-config/nextjs.json": {
+    "size": 272,
+    "mtime_ns": 1784122045534435400,
+    "word_count": 24,
+    "hashes": {
+      "packages/typescript-config/nextjs.json": "1ce81642386e720b195b33a2228549bb35828e5f2a44e8c3a6bc3f007d271819"
+    }
+  },
+  "packages/typescript-config/package.json": {
+    "size": 154,
+    "mtime_ns": 1784122045539465100,
+    "word_count": 15,
+    "hashes": {
+      "packages/typescript-config/package.json": "29a2d39299038de4333ccdc0f202104b5f3b8998e4c424d8e3849f94396e6254"
+    }
+  },
+  "packages/typescript-config/react-library.json": {
+    "size": 136,
+    "mtime_ns": 1784122045548818500,
+    "word_count": 11,
+    "hashes": {
+      "packages/typescript-config/react-library.json": "59d1cc647fa1f89e302c83884badfb7efaaffa359c00d0231797df193f5d2c4a"
+    }
+  },
+  "packages/ui/eslint.config.mjs": {
+    "size": 135,
+    "mtime_ns": 1784122045568533300,
+    "word_count": 13
+  },
+  "packages/ui/package.json": {
+    "size": 612,
+    "mtime_ns": 1784122045575339300,
+    "word_count": 52,
+    "hashes": {
+      "packages/ui/package.json": "ce0480ddffef73ad3c16adb1099b25dd03874f8a6ae1a451a11534e0f7512a8b"
+    }
+  },
+  "packages/ui/src/button.tsx": {
+    "size": 376,
+    "mtime_ns": 1784117786386295700,
+    "word_count": 46
+  },
+  "packages/ui/src/card.tsx": {
+    "size": 502,
+    "mtime_ns": 1784117786392986700,
+    "word_count": 44
+  },
+  "packages/ui/src/code.tsx": {
+    "size": 215,
+    "mtime_ns": 1784117786402207800,
+    "word_count": 25
+  },
+  "packages/ui/tsconfig.json": {
+    "size": 206,
+    "mtime_ns": 1784122045604953400,
+    "word_count": 16,
+    "hashes": {
+      "packages/ui/tsconfig.json": "bd275b10d5b3d17c452611c5ca3687df5f1598bd6ef88c630fa03797619339ca"
+    }
+  },
+  "playwright.config.ts": {
+    "size": 780,
+    "mtime_ns": 1785430192271493100,
+    "word_count": 75
+  },
+  "pnpm-workspace.yaml": {
+    "size": 99,
+    "mtime_ns": 1784115283363049100,
+    "word_count": 12,
+    "hashes": {
+      "pnpm-workspace.yaml": "b788edba0e6341164a8f057f36052d21a39fdc4b009d3b2cafdd0c847192cb57"
+    }
+  },
+  "skills-lock.json": {
+    "size": 2266,
+    "mtime_ns": 1785161960651237300,
+    "word_count": 106,
+    "hashes": {
+      "skills-lock.json": "a69b7ceea99bd511df0483601ed896d4cd73ce3ce8e8f722e3275a4b35514b00"
+    }
+  },
+  "turbo.json": {
+    "size": 632,
+    "mtime_ns": 1785040024805582800,
+    "word_count": 55,
+    "hashes": {
+      "turbo.json": "65773413fe26dec590a5978345226022ffeadc60c4880fafce28c80c209245e4"
+    }
+  }
+}

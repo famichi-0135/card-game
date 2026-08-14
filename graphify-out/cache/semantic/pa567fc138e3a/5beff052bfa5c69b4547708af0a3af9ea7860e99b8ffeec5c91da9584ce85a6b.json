@@ -1,0 +1,13 @@
+{
+  "nodes": [
+    {
+      "id": "_apps_frontend_public_icons_svg_image",
+      "label": "Bluesky\u30fbDiscord\u30fbDocumentation\u30fbGitHub\u30fbSocial\u30fbX\u306eSVG\u30b7\u30f3\u30dc\u30eb\u30b9\u30d7\u30e9\u30a4\u30c8",
+      "file_type": "image",
+      "source_file": "apps/frontend/public/icons.svg",
+      "source_location": null
+    }
+  ],
+  "edges": [],
+  "hyperedges": []
+}

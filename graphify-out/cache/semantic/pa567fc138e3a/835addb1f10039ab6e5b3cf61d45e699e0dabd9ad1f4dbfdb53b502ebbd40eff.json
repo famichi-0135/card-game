@@ -1,0 +1,69 @@
+{
+  "nodes": [
+    {
+      "id": "_agents_skills_turborepo_references_configuration_rule_document",
+      "label": "turbo.json Configuration Overview",
+      "file_type": "document",
+      "source_file": ".agents/skills/turborepo/references/configuration/RULE.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_agents_skills_turborepo_references_configuration_rule_location_concept",
+      "label": "Root turbo.json location",
+      "file_type": "concept",
+      "source_file": ".agents/skills/turborepo/references/configuration/RULE.md",
+      "source_location": null
+    },
+    {
+      "id": "_agents_skills_turborepo_references_configuration_rule_package_tasks_concept",
+      "label": "Package task configuration",
+      "file_type": "concept",
+      "source_file": ".agents/skills/turborepo/references/configuration/RULE.md",
+      "source_location": null
+    },
+    {
+      "id": "_agents_skills_turborepo_references_configuration_rule_extends_concept",
+      "label": "Package turbo.json extends",
+      "file_type": "concept",
+      "source_file": ".agents/skills/turborepo/references/configuration/RULE.md",
+      "source_location": null
+    }
+  ],
+  "edges": [
+    {
+      "source": "_agents_skills_turborepo_references_configuration_rule_document",
+      "target": "_agents_skills_turborepo_references_configuration_rule_location_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".agents/skills/turborepo/references/configuration/RULE.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_agents_skills_turborepo_references_configuration_rule_document",
+      "target": "_agents_skills_turborepo_references_configuration_rule_package_tasks_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".agents/skills/turborepo/references/configuration/RULE.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_agents_skills_turborepo_references_configuration_rule_document",
+      "target": "_agents_skills_turborepo_references_configuration_rule_extends_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".agents/skills/turborepo/references/configuration/RULE.md",
+      "source_location": null,
+      "weight": 1.0
+    }
+  ],
+  "hyperedges": []
+}

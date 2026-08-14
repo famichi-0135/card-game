@@ -1,0 +1,86 @@
+{
+  "nodes": [
+    {
+      "id": "_agents_skills_turborepo_references_ci_patterns_document",
+      "label": "CI Optimization Patterns",
+      "file_type": "document",
+      "source_file": ".agents/skills/turborepo/references/ci/patterns.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_agents_skills_turborepo_references_ci_patterns_pr_main_concept",
+      "label": "Affected PR versus full main builds",
+      "file_type": "concept",
+      "source_file": ".agents/skills/turborepo/references/ci/patterns.md",
+      "source_location": null
+    },
+    {
+      "id": "_agents_skills_turborepo_references_ci_patterns_git_ranges_concept",
+      "label": "Git range filters",
+      "file_type": "concept",
+      "source_file": ".agents/skills/turborepo/references/ci/patterns.md",
+      "source_location": null
+    },
+    {
+      "id": "_agents_skills_turborepo_references_ci_patterns_cache_fallback_concept",
+      "label": "Remote cache and actions cache fallback",
+      "file_type": "concept",
+      "source_file": ".agents/skills/turborepo/references/ci/patterns.md",
+      "source_location": null
+    },
+    {
+      "id": "_agents_skills_turborepo_references_ci_patterns_matrix_concept",
+      "label": "Matrix and parallel CI jobs",
+      "file_type": "concept",
+      "source_file": ".agents/skills/turborepo/references/ci/patterns.md",
+      "source_location": null
+    }
+  ],
+  "edges": [
+    {
+      "source": "_agents_skills_turborepo_references_ci_patterns_document",
+      "target": "_agents_skills_turborepo_references_ci_patterns_pr_main_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".agents/skills/turborepo/references/ci/patterns.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_agents_skills_turborepo_references_ci_patterns_document",
+      "target": "_agents_skills_turborepo_references_ci_patterns_git_ranges_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".agents/skills/turborepo/references/ci/patterns.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_agents_skills_turborepo_references_ci_patterns_document",
+      "target": "_agents_skills_turborepo_references_ci_patterns_cache_fallback_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".agents/skills/turborepo/references/ci/patterns.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_agents_skills_turborepo_references_ci_patterns_document",
+      "target": "_agents_skills_turborepo_references_ci_patterns_matrix_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".agents/skills/turborepo/references/ci/patterns.md",
+      "source_location": null,
+      "weight": 1.0
+    }
+  ],
+  "hyperedges": []
+}

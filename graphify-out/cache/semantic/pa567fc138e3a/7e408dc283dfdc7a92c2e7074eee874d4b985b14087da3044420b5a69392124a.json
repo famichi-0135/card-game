@@ -1,0 +1,30 @@
+{
+  "nodes": [
+    {
+      "id": "_packages_eslint_config_readme_md_document",
+      "label": "@turbo/eslint-config README",
+      "file_type": "document",
+      "source_file": "packages/eslint-config/README.md",
+      "source_location": null
+    },
+    {
+      "id": "_packages_eslint_config_readme_md_internal_eslint_config_concept",
+      "label": "\u5185\u90e8ESLint\u8a2d\u5b9a\u30b3\u30ec\u30af\u30b7\u30e7\u30f3",
+      "file_type": "concept",
+      "source_file": "packages/eslint-config/README.md",
+      "source_location": "\u672c\u6587"
+    }
+  ],
+  "edges": [
+    {
+      "source": "_packages_eslint_config_readme_md_document",
+      "target": "_packages_eslint_config_readme_md_internal_eslint_config_concept",
+      "relation": "defines",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "packages/eslint-config/README.md",
+      "source_location": "\u672c\u6587"
+    }
+  ],
+  "hyperedges": []
+}

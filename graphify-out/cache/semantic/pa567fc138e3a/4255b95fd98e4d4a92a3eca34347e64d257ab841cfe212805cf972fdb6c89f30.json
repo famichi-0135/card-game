@@ -1,0 +1,204 @@
+{
+  "nodes": [
+    {
+      "id": "_agents_skills_turborepo_references_environment_modes_md_document",
+      "label": "Environment Modes",
+      "file_type": "document",
+      "source_file": ".agents/skills/turborepo/references/environment/modes.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_agents_skills_turborepo_references_environment_modes_md_strict_mode_concept",
+      "label": "Strict env mode",
+      "file_type": "concept",
+      "source_file": ".agents/skills/turborepo/references/environment/modes.md",
+      "source_location": null
+    },
+    {
+      "id": "_agents_skills_turborepo_references_environment_modes_md_loose_mode_concept",
+      "label": "Loose env mode",
+      "file_type": "concept",
+      "source_file": ".agents/skills/turborepo/references/environment/modes.md",
+      "source_location": null
+    },
+    {
+      "id": "_agents_skills_turborepo_references_environment_modes_md_framework_inference_concept",
+      "label": "Framework env inference",
+      "file_type": "concept",
+      "source_file": ".agents/skills/turborepo/references/environment/modes.md",
+      "source_location": null
+    },
+    {
+      "id": "_agents_skills_turborepo_references_environment_modes_md_framework_env_patterns_concept",
+      "label": "Framework env variable patterns",
+      "file_type": "concept",
+      "source_file": ".agents/skills/turborepo/references/environment/modes.md",
+      "source_location": null
+    },
+    {
+      "id": "_agents_skills_turborepo_references_environment_modes_md_disable_framework_inference_concept",
+      "label": "Disable framework inference",
+      "file_type": "concept",
+      "source_file": ".agents/skills/turborepo/references/environment/modes.md",
+      "source_location": null
+    },
+    {
+      "id": "_agents_skills_turborepo_references_environment_modes_md_dry_json_check_concept",
+      "label": "Dry JSON environment check",
+      "file_type": "concept",
+      "source_file": ".agents/skills/turborepo/references/environment/modes.md",
+      "source_location": null
+    },
+    {
+      "id": "_agents_skills_turborepo_references_environment_modes_md_cache_correctness_concept",
+      "label": "Cache correctness",
+      "file_type": "concept",
+      "source_file": ".agents/skills/turborepo/references/environment/modes.md",
+      "source_location": null
+    },
+    {
+      "id": "_agents_skills_turborepo_references_environment_modes_md_reproducible_builds_concept",
+      "label": "Reproducible builds",
+      "file_type": "concept",
+      "source_file": ".agents/skills/turborepo/references/environment/modes.md",
+      "source_location": null
+    }
+  ],
+  "edges": [
+    {
+      "source": "_agents_skills_turborepo_references_environment_modes_md_document",
+      "target": "_agents_skills_turborepo_references_environment_modes_md_strict_mode_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": ".agents/skills/turborepo/references/environment/modes.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_agents_skills_turborepo_references_environment_modes_md_document",
+      "target": "_agents_skills_turborepo_references_environment_modes_md_loose_mode_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": ".agents/skills/turborepo/references/environment/modes.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_agents_skills_turborepo_references_environment_modes_md_document",
+      "target": "_agents_skills_turborepo_references_environment_modes_md_framework_inference_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": ".agents/skills/turborepo/references/environment/modes.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_agents_skills_turborepo_references_environment_modes_md_document",
+      "target": "_agents_skills_turborepo_references_environment_modes_md_framework_env_patterns_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": ".agents/skills/turborepo/references/environment/modes.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_agents_skills_turborepo_references_environment_modes_md_document",
+      "target": "_agents_skills_turborepo_references_environment_modes_md_disable_framework_inference_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": ".agents/skills/turborepo/references/environment/modes.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_agents_skills_turborepo_references_environment_modes_md_document",
+      "target": "_agents_skills_turborepo_references_environment_modes_md_dry_json_check_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": ".agents/skills/turborepo/references/environment/modes.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_agents_skills_turborepo_references_environment_modes_md_document",
+      "target": "_agents_skills_turborepo_references_environment_modes_md_cache_correctness_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": ".agents/skills/turborepo/references/environment/modes.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_agents_skills_turborepo_references_environment_modes_md_document",
+      "target": "_agents_skills_turborepo_references_environment_modes_md_reproducible_builds_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": ".agents/skills/turborepo/references/environment/modes.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_agents_skills_turborepo_references_environment_modes_md_strict_mode_concept",
+      "target": "_agents_skills_turborepo_references_environment_modes_md_cache_correctness_concept",
+      "relation": "supports",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": ".agents/skills/turborepo/references/environment/modes.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_agents_skills_turborepo_references_environment_modes_md_loose_mode_concept",
+      "target": "_agents_skills_turborepo_references_environment_modes_md_cache_correctness_concept",
+      "relation": "risks",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": ".agents/skills/turborepo/references/environment/modes.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_agents_skills_turborepo_references_environment_modes_md_framework_inference_concept",
+      "target": "_agents_skills_turborepo_references_environment_modes_md_framework_env_patterns_concept",
+      "relation": "uses",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": ".agents/skills/turborepo/references/environment/modes.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_agents_skills_turborepo_references_environment_modes_md_disable_framework_inference_concept",
+      "target": "_agents_skills_turborepo_references_environment_modes_md_framework_inference_concept",
+      "relation": "disables",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": ".agents/skills/turborepo/references/environment/modes.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_agents_skills_turborepo_references_environment_modes_md_strict_mode_concept",
+      "target": "_agents_skills_turborepo_references_configuration_tasks_md_environment_hash_concept",
+      "relation": "controls",
+      "confidence": "INFERRED",
+      "confidence_score": 0.75,
+      "source_file": ".agents/skills/turborepo/references/environment/modes.md",
+      "source_location": null,
+      "weight": 0.75
+    }
+  ],
+  "hyperedges": []
+}

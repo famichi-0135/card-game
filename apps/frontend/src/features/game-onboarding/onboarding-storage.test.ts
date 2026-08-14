@@ -49,6 +49,24 @@ describe("ゲームボードオンボーディングの初回表示", () => {
     expect(shouldAutoStartGameBoardOnboarding()).toBe(false);
     expect(() => saveGameBoardOnboardingState("skipped")).not.toThrow();
   });
+
+  it("getItem呼び出し時にSecurityErrorが発生しても待機部屋を妨げない", () => {
+    Object.defineProperty(globalThis, "localStorage", {
+      configurable: true,
+      value: {
+        getItem() {
+          throw new DOMException("The operation is insecure.", "SecurityError");
+        },
+        setItem() {
+          throw new DOMException("The operation is insecure.", "SecurityError");
+        },
+      } as unknown as Storage,
+    });
+
+    expect(getGameBoardOnboardingState()).toBeNull();
+    expect(shouldAutoStartGameBoardOnboarding()).toBe(false);
+    expect(() => saveGameBoardOnboardingState("completed")).not.toThrow();
+  });
 });
 
 function useStorage(): Storage {

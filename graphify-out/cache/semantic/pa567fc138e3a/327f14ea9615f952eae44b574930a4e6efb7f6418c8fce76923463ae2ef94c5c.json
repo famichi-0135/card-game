@@ -1,0 +1,120 @@
+{
+  "nodes": [
+    {
+      "id": "_agents_skills_shadcn_rules_styling_document",
+      "label": "Styling and Customization",
+      "file_type": "document",
+      "source_file": ".agents/skills/shadcn/rules/styling.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_agents_skills_shadcn_rules_styling_semantic_colors_concept",
+      "label": "Semantic color tokens",
+      "file_type": "concept",
+      "source_file": ".agents/skills/shadcn/rules/styling.md",
+      "source_location": null
+    },
+    {
+      "id": "_agents_skills_shadcn_rules_styling_builtin_variants_concept",
+      "label": "Prefer built-in component variants",
+      "file_type": "concept",
+      "source_file": ".agents/skills/shadcn/rules/styling.md",
+      "source_location": null
+    },
+    {
+      "id": "_agents_skills_shadcn_rules_styling_layout_classes_concept",
+      "label": "className is for layout only",
+      "file_type": "concept",
+      "source_file": ".agents/skills/shadcn/rules/styling.md",
+      "source_location": null
+    },
+    {
+      "id": "_agents_skills_shadcn_rules_styling_utility_preferences_concept",
+      "label": "Utility preferences for size truncate and spacing",
+      "file_type": "concept",
+      "source_file": ".agents/skills/shadcn/rules/styling.md",
+      "source_location": null
+    },
+    {
+      "id": "_agents_skills_shadcn_rules_styling_cn_conditionals_concept",
+      "label": "cn for conditional classes",
+      "file_type": "concept",
+      "source_file": ".agents/skills/shadcn/rules/styling.md",
+      "source_location": null
+    },
+    {
+      "id": "_agents_skills_shadcn_rules_styling_overlay_zindex_concept",
+      "label": "Avoid manual overlay z-index",
+      "file_type": "concept",
+      "source_file": ".agents/skills/shadcn/rules/styling.md",
+      "source_location": null
+    }
+  ],
+  "edges": [
+    {
+      "source": "_agents_skills_shadcn_rules_styling_document",
+      "target": "_agents_skills_shadcn_rules_styling_semantic_colors_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".agents/skills/shadcn/rules/styling.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_agents_skills_shadcn_rules_styling_document",
+      "target": "_agents_skills_shadcn_rules_styling_builtin_variants_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".agents/skills/shadcn/rules/styling.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_agents_skills_shadcn_rules_styling_document",
+      "target": "_agents_skills_shadcn_rules_styling_layout_classes_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".agents/skills/shadcn/rules/styling.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_agents_skills_shadcn_rules_styling_document",
+      "target": "_agents_skills_shadcn_rules_styling_utility_preferences_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".agents/skills/shadcn/rules/styling.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_agents_skills_shadcn_rules_styling_document",
+      "target": "_agents_skills_shadcn_rules_styling_cn_conditionals_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".agents/skills/shadcn/rules/styling.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_agents_skills_shadcn_rules_styling_document",
+      "target": "_agents_skills_shadcn_rules_styling_overlay_zindex_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".agents/skills/shadcn/rules/styling.md",
+      "source_location": null,
+      "weight": 1.0
+    }
+  ],
+  "hyperedges": []
+}

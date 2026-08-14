@@ -1,0 +1,13 @@
+{
+  "nodes": [
+    {
+      "id": "_agents_skills_shadcn_assets_shadcn_png_image",
+      "label": "\u9ed2\u80cc\u666f\u306b\u767d\u3044\u659c\u3081\u4e8c\u672c\u30d0\u30fc\u306eshadcn\u30de\u30fc\u30af",
+      "file_type": "image",
+      "source_file": ".agents/skills/shadcn/assets/shadcn.png",
+      "source_location": null
+    }
+  ],
+  "edges": [],
+  "hyperedges": []
+}

@@ -1,0 +1,252 @@
+{
+  "nodes": [
+    {
+      "id": "_github_codex_prompts_review_md_document",
+      "label": "Codex Review Prompt",
+      "file_type": "document",
+      "source_file": ".github/codex/prompts/review.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_github_codex_prompts_review_md_codex_review_concept",
+      "label": "Codex pull request review",
+      "file_type": "concept",
+      "source_file": ".github/codex/prompts/review.md",
+      "source_location": null
+    },
+    {
+      "id": "_github_codex_prompts_review_md_review_correctness_concept",
+      "label": "Correctness review",
+      "file_type": "concept",
+      "source_file": ".github/codex/prompts/review.md",
+      "source_location": null
+    },
+    {
+      "id": "_github_codex_prompts_review_md_review_regressions_concept",
+      "label": "Regression review",
+      "file_type": "concept",
+      "source_file": ".github/codex/prompts/review.md",
+      "source_location": null
+    },
+    {
+      "id": "_github_codex_prompts_review_md_review_type_safety_concept",
+      "label": "Type safety review",
+      "file_type": "concept",
+      "source_file": ".github/codex/prompts/review.md",
+      "source_location": null
+    },
+    {
+      "id": "_github_codex_prompts_review_md_review_test_gaps_concept",
+      "label": "Test gap review",
+      "file_type": "concept",
+      "source_file": ".github/codex/prompts/review.md",
+      "source_location": null
+    },
+    {
+      "id": "_github_codex_prompts_review_md_review_security_concept",
+      "label": "Security review",
+      "file_type": "concept",
+      "source_file": ".github/codex/prompts/review.md",
+      "source_location": null
+    },
+    {
+      "id": "_github_codex_prompts_review_md_review_monorepo_boundaries_concept",
+      "label": "Monorepo boundary review",
+      "file_type": "concept",
+      "source_file": ".github/codex/prompts/review.md",
+      "source_location": null
+    },
+    {
+      "id": "_github_codex_prompts_review_md_read_only_review_concept",
+      "label": "Read-only review constraint",
+      "file_type": "concept",
+      "source_file": ".github/codex/prompts/review.md",
+      "source_location": null
+    },
+    {
+      "id": "_github_codex_prompts_review_md_untrusted_instructions_concept",
+      "label": "Untrusted PR and source instructions",
+      "file_type": "concept",
+      "source_file": ".github/codex/prompts/review.md",
+      "source_location": null
+    },
+    {
+      "id": "_github_codex_prompts_review_md_secret_protection_concept",
+      "label": "Secret and token protection",
+      "file_type": "concept",
+      "source_file": ".github/codex/prompts/review.md",
+      "source_location": null
+    },
+    {
+      "id": "_github_codex_prompts_review_md_japanese_feedback_concept",
+      "label": "Japanese review feedback",
+      "file_type": "concept",
+      "source_file": ".github/codex/prompts/review.md",
+      "source_location": null
+    },
+    {
+      "id": "_github_codex_prompts_review_md_human_approval_concept",
+      "label": "Human approval requirement",
+      "file_type": "concept",
+      "source_file": ".github/codex/prompts/review.md",
+      "source_location": null
+    }
+  ],
+  "edges": [
+    {
+      "source": "_github_codex_prompts_review_md_document",
+      "target": "_github_codex_prompts_review_md_codex_review_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": ".github/codex/prompts/review.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_github_codex_prompts_review_md_document",
+      "target": "_github_codex_prompts_review_md_review_correctness_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": ".github/codex/prompts/review.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_github_codex_prompts_review_md_document",
+      "target": "_github_codex_prompts_review_md_review_regressions_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": ".github/codex/prompts/review.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_github_codex_prompts_review_md_document",
+      "target": "_github_codex_prompts_review_md_review_type_safety_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": ".github/codex/prompts/review.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_github_codex_prompts_review_md_document",
+      "target": "_github_codex_prompts_review_md_review_test_gaps_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": ".github/codex/prompts/review.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_github_codex_prompts_review_md_document",
+      "target": "_github_codex_prompts_review_md_review_security_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": ".github/codex/prompts/review.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_github_codex_prompts_review_md_document",
+      "target": "_github_codex_prompts_review_md_review_monorepo_boundaries_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": ".github/codex/prompts/review.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_github_codex_prompts_review_md_document",
+      "target": "_github_codex_prompts_review_md_read_only_review_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": ".github/codex/prompts/review.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_github_codex_prompts_review_md_document",
+      "target": "_github_codex_prompts_review_md_untrusted_instructions_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": ".github/codex/prompts/review.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_github_codex_prompts_review_md_document",
+      "target": "_github_codex_prompts_review_md_secret_protection_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": ".github/codex/prompts/review.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_github_codex_prompts_review_md_document",
+      "target": "_github_codex_prompts_review_md_japanese_feedback_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": ".github/codex/prompts/review.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_github_codex_prompts_review_md_document",
+      "target": "_github_codex_prompts_review_md_human_approval_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": ".github/codex/prompts/review.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_github_codex_prompts_review_md_codex_review_concept",
+      "target": "_github_codex_prompts_review_md_untrusted_instructions_concept",
+      "relation": "treats_as",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": ".github/codex/prompts/review.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_github_codex_prompts_review_md_codex_review_concept",
+      "target": "_github_codex_prompts_review_md_human_approval_concept",
+      "relation": "does_not_replace",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": ".github/codex/prompts/review.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_github_codex_prompts_review_md_read_only_review_concept",
+      "target": "_github_workflows_codex_review_yml_read_only_codex_action_concept",
+      "relation": "aligns_with",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": ".github/codex/prompts/review.md",
+      "source_location": null,
+      "weight": 1
+    }
+  ],
+  "hyperedges": []
+}

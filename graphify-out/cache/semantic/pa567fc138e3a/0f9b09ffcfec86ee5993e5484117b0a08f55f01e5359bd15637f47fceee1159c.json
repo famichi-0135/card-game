@@ -1,0 +1,241 @@
+{
+  "nodes": [
+    {
+      "id": "_docs_readme_md_document",
+      "label": "Documentation Index",
+      "file_type": "document",
+      "source_file": "docs/README.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_docs_readme_md_frontend_documentation_concept",
+      "label": "Frontend documentation",
+      "file_type": "concept",
+      "source_file": "docs/README.md",
+      "source_location": null
+    },
+    {
+      "id": "_docs_readme_md_backend_documentation_concept",
+      "label": "Backend documentation",
+      "file_type": "concept",
+      "source_file": "docs/README.md",
+      "source_location": null
+    },
+    {
+      "id": "_docs_readme_md_testing_documentation_concept",
+      "label": "Testing documentation",
+      "file_type": "concept",
+      "source_file": "docs/README.md",
+      "source_location": null
+    },
+    {
+      "id": "_docs_readme_md_environment_documentation_concept",
+      "label": "Environment documentation",
+      "file_type": "concept",
+      "source_file": "docs/README.md",
+      "source_location": null
+    },
+    {
+      "id": "_docs_readme_md_game_documentation_concept",
+      "label": "Game documentation",
+      "file_type": "concept",
+      "source_file": "docs/README.md",
+      "source_location": null
+    },
+    {
+      "id": "_docs_readme_md_protocol_document_concept",
+      "label": "Client-server protocol document",
+      "file_type": "concept",
+      "source_file": "docs/README.md",
+      "source_location": null
+    },
+    {
+      "id": "_docs_readme_md_database_auth_document_concept",
+      "label": "Database and auth document",
+      "file_type": "concept",
+      "source_file": "docs/README.md",
+      "source_location": null
+    },
+    {
+      "id": "_docs_readme_md_durable_object_document_concept",
+      "label": "Durable Object room document",
+      "file_type": "concept",
+      "source_file": "docs/README.md",
+      "source_location": null
+    },
+    {
+      "id": "_docs_readme_md_team_agreement_concept",
+      "label": "Team agreement on document sync",
+      "file_type": "concept",
+      "source_file": "docs/README.md",
+      "source_location": null
+    }
+  ],
+  "edges": [
+    {
+      "source": "_docs_readme_md_document",
+      "target": "_docs_readme_md_frontend_documentation_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": "docs/README.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_docs_readme_md_document",
+      "target": "_docs_readme_md_backend_documentation_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": "docs/README.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_docs_readme_md_document",
+      "target": "_docs_readme_md_testing_documentation_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": "docs/README.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_docs_readme_md_document",
+      "target": "_docs_readme_md_environment_documentation_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": "docs/README.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_docs_readme_md_document",
+      "target": "_docs_readme_md_game_documentation_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": "docs/README.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_docs_readme_md_document",
+      "target": "_docs_readme_md_protocol_document_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": "docs/README.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_docs_readme_md_document",
+      "target": "_docs_readme_md_database_auth_document_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": "docs/README.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_docs_readme_md_document",
+      "target": "_docs_readme_md_durable_object_document_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": "docs/README.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_docs_readme_md_document",
+      "target": "_docs_readme_md_team_agreement_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": "docs/README.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_docs_readme_md_frontend_documentation_concept",
+      "target": "_docs_readme_md_protocol_document_concept",
+      "relation": "lists",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": "docs/README.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_docs_readme_md_backend_documentation_concept",
+      "target": "_docs_readme_md_database_auth_document_concept",
+      "relation": "lists",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": "docs/README.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_docs_readme_md_backend_documentation_concept",
+      "target": "_docs_readme_md_durable_object_document_concept",
+      "relation": "lists",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": "docs/README.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_docs_readme_md_team_agreement_concept",
+      "target": "_docs_readme_md_frontend_documentation_concept",
+      "relation": "covers",
+      "confidence": "INFERRED",
+      "confidence_score": 0.75,
+      "source_file": "docs/README.md",
+      "source_location": null,
+      "weight": 0.75
+    },
+    {
+      "source": "_docs_readme_md_protocol_document_concept",
+      "target": "_docs_backend_client_server_protocol_md_communication_boundary_concept",
+      "relation": "documents",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": "docs/README.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_docs_readme_md_database_auth_document_concept",
+      "target": "_docs_backend_database_and_auth_md_better_auth_concept",
+      "relation": "documents",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": "docs/README.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_docs_readme_md_durable_object_document_concept",
+      "target": "_docs_backend_durable_object_room_md_game_session_do_concept",
+      "relation": "documents",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": "docs/README.md",
+      "source_location": null,
+      "weight": 1
+    }
+  ],
+  "hyperedges": []
+}

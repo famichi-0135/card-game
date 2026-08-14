@@ -1,0 +1,23 @@
+{
+  "nodes": [
+    {
+      "id": "_agents_skills_shadcn_assets_shadcn_small_png_image",
+      "label": "\u767d\u3044\u659c\u3081\u4e8c\u672c\u30d0\u30fc\u306e\u5c0f\u578b\u30a2\u30a4\u30b3\u30f3",
+      "file_type": "image",
+      "source_file": ".agents/skills/shadcn/assets/shadcn-small.png",
+      "source_location": null
+    }
+  ],
+  "edges": [
+    {
+      "source": "_agents_skills_shadcn_assets_shadcn_small_png_image",
+      "target": "_agents_skills_shadcn_assets_shadcn_png_image",
+      "relation": "is_variant_of",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".agents/skills/shadcn/assets/shadcn-small.png",
+      "source_location": null
+    }
+  ],
+  "hyperedges": []
+}

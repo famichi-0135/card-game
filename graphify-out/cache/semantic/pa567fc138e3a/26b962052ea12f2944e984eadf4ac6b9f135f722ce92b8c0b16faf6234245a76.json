@@ -1,0 +1,39 @@
+{
+  "nodes": [
+    {
+      "id": "_agents_skills_migrate_radix_to_base_menus_document",
+      "label": "Menu family mappings",
+      "file_type": "document",
+      "source_file": ".agents/skills/migrate-radix-to-base/menus.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_agents_skills_migrate_radix_to_base_menus_document_dropdown_context",
+      "label": "Dropdown and Context menu mappings",
+      "file_type": "concept",
+      "source_file": ".agents/skills/migrate-radix-to-base/menus.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    }
+  ],
+  "edges": [
+    {
+      "source": "_agents_skills_migrate_radix_to_base_menus_document",
+      "target": "_agents_skills_migrate_radix_to_base_menus_document_dropdown_context",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".agents/skills/migrate-radix-to-base/menus.md",
+      "source_location": null,
+      "weight": 1.0
+    }
+  ],
+  "hyperedges": []
+}

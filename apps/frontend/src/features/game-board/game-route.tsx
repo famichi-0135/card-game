@@ -7,7 +7,6 @@ import {
 import { createAuthPath } from "../../app/return-to.ts";
 import { RouteMessage } from "../../app/route-message.tsx";
 import { useSession } from "../../app/session.ts";
-import { Toaster } from "../../components/ui/toast.tsx";
 import {
   FIXTURE_GAME_ID,
   createGameBoardFixture,
@@ -28,19 +27,11 @@ export function GameRoute() {
         ? requestedScenario
         : "placement";
     return (
-      <>
-        <FixtureGameBoard fixture={createGameBoardFixture(gameId, scenario)} />
-        <Toaster />
-      </>
+      <FixtureGameBoard fixture={createGameBoardFixture(gameId, scenario)} />
     );
   }
 
-  return (
-    <>
-      <AuthenticatedGameRoute gameId={gameId} />
-      <Toaster />
-    </>
-  );
+  return <AuthenticatedGameRoute gameId={gameId} />;
 }
 
 function AuthenticatedGameRoute({ gameId }: { gameId: string }) {

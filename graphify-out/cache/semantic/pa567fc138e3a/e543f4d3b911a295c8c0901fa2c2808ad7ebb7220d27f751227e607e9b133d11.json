@@ -1,0 +1,238 @@
+{
+  "nodes": [
+    {
+      "id": "_agents_skills_turborepo_references_environment_gotchas_md_document",
+      "label": "Environment Variable Gotchas",
+      "file_type": "document",
+      "source_file": ".agents/skills/turborepo/references/environment/gotchas.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_agents_skills_turborepo_references_environment_gotchas_md_env_inputs_requirement_concept",
+      "label": "Environment files in inputs",
+      "file_type": "concept",
+      "source_file": ".agents/skills/turborepo/references/environment/gotchas.md",
+      "source_location": null
+    },
+    {
+      "id": "_agents_skills_turborepo_references_environment_gotchas_md_turbo_ignores_env_files_concept",
+      "label": "Turbo does not load env files",
+      "file_type": "concept",
+      "source_file": ".agents/skills/turborepo/references/environment/gotchas.md",
+      "source_location": null
+    },
+    {
+      "id": "_agents_skills_turborepo_references_environment_gotchas_md_strict_ci_filter_concept",
+      "label": "Strict mode CI variable filtering",
+      "file_type": "concept",
+      "source_file": ".agents/skills/turborepo/references/environment/gotchas.md",
+      "source_location": null
+    },
+    {
+      "id": "_agents_skills_turborepo_references_environment_gotchas_md_passthrough_not_hashed_concept",
+      "label": "passThroughEnv is not hashed",
+      "file_type": "concept",
+      "source_file": ".agents/skills/turborepo/references/environment/gotchas.md",
+      "source_location": null
+    },
+    {
+      "id": "_agents_skills_turborepo_references_environment_gotchas_md_cache_staleness_risk_concept",
+      "label": "Cache staleness risk",
+      "file_type": "concept",
+      "source_file": ".agents/skills/turborepo/references/environment/gotchas.md",
+      "source_location": null
+    },
+    {
+      "id": "_agents_skills_turborepo_references_environment_gotchas_md_runtime_env_invisibility_concept",
+      "label": "Runtime-created variables are invisible",
+      "file_type": "concept",
+      "source_file": ".agents/skills/turborepo/references/environment/gotchas.md",
+      "source_location": null
+    },
+    {
+      "id": "_agents_skills_turborepo_references_environment_gotchas_md_environment_specific_files_concept",
+      "label": "Environment-specific env files",
+      "file_type": "concept",
+      "source_file": ".agents/skills/turborepo/references/environment/gotchas.md",
+      "source_location": null
+    },
+    {
+      "id": "_agents_skills_turborepo_references_environment_gotchas_md_nextjs_example_concept",
+      "label": "Next.js env configuration",
+      "file_type": "concept",
+      "source_file": ".agents/skills/turborepo/references/environment/gotchas.md",
+      "source_location": null
+    },
+    {
+      "id": "_agents_skills_turborepo_references_environment_gotchas_md_global_inputs_concept",
+      "label": "Global input globs",
+      "file_type": "concept",
+      "source_file": ".agents/skills/turborepo/references/environment/gotchas.md",
+      "source_location": null
+    },
+    {
+      "id": "_agents_skills_turborepo_references_environment_gotchas_md_negated_global_input_concept",
+      "label": "Negated global input",
+      "file_type": "concept",
+      "source_file": ".agents/skills/turborepo/references/environment/gotchas.md",
+      "source_location": null
+    }
+  ],
+  "edges": [
+    {
+      "source": "_agents_skills_turborepo_references_environment_gotchas_md_document",
+      "target": "_agents_skills_turborepo_references_environment_gotchas_md_env_inputs_requirement_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": ".agents/skills/turborepo/references/environment/gotchas.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_agents_skills_turborepo_references_environment_gotchas_md_document",
+      "target": "_agents_skills_turborepo_references_environment_gotchas_md_turbo_ignores_env_files_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": ".agents/skills/turborepo/references/environment/gotchas.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_agents_skills_turborepo_references_environment_gotchas_md_document",
+      "target": "_agents_skills_turborepo_references_environment_gotchas_md_strict_ci_filter_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": ".agents/skills/turborepo/references/environment/gotchas.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_agents_skills_turborepo_references_environment_gotchas_md_document",
+      "target": "_agents_skills_turborepo_references_environment_gotchas_md_passthrough_not_hashed_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": ".agents/skills/turborepo/references/environment/gotchas.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_agents_skills_turborepo_references_environment_gotchas_md_document",
+      "target": "_agents_skills_turborepo_references_environment_gotchas_md_cache_staleness_risk_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": ".agents/skills/turborepo/references/environment/gotchas.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_agents_skills_turborepo_references_environment_gotchas_md_document",
+      "target": "_agents_skills_turborepo_references_environment_gotchas_md_runtime_env_invisibility_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": ".agents/skills/turborepo/references/environment/gotchas.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_agents_skills_turborepo_references_environment_gotchas_md_document",
+      "target": "_agents_skills_turborepo_references_environment_gotchas_md_environment_specific_files_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": ".agents/skills/turborepo/references/environment/gotchas.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_agents_skills_turborepo_references_environment_gotchas_md_document",
+      "target": "_agents_skills_turborepo_references_environment_gotchas_md_nextjs_example_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": ".agents/skills/turborepo/references/environment/gotchas.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_agents_skills_turborepo_references_environment_gotchas_md_document",
+      "target": "_agents_skills_turborepo_references_environment_gotchas_md_global_inputs_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": ".agents/skills/turborepo/references/environment/gotchas.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_agents_skills_turborepo_references_environment_gotchas_md_document",
+      "target": "_agents_skills_turborepo_references_environment_gotchas_md_negated_global_input_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": ".agents/skills/turborepo/references/environment/gotchas.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_agents_skills_turborepo_references_environment_gotchas_md_turbo_ignores_env_files_concept",
+      "target": "_agents_skills_turborepo_references_environment_gotchas_md_env_inputs_requirement_concept",
+      "relation": "requires",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": ".agents/skills/turborepo/references/environment/gotchas.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_agents_skills_turborepo_references_environment_gotchas_md_passthrough_not_hashed_concept",
+      "target": "_agents_skills_turborepo_references_environment_gotchas_md_cache_staleness_risk_concept",
+      "relation": "causes",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": ".agents/skills/turborepo/references/environment/gotchas.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_agents_skills_turborepo_references_environment_gotchas_md_runtime_env_invisibility_concept",
+      "target": "_agents_skills_turborepo_references_environment_gotchas_md_env_inputs_requirement_concept",
+      "relation": "motivates",
+      "confidence": "INFERRED",
+      "confidence_score": 0.75,
+      "source_file": ".agents/skills/turborepo/references/environment/gotchas.md",
+      "source_location": null,
+      "weight": 0.75
+    },
+    {
+      "source": "_agents_skills_turborepo_references_environment_gotchas_md_global_inputs_concept",
+      "target": "_agents_skills_turborepo_references_environment_gotchas_md_negated_global_input_concept",
+      "relation": "supports_exclusion",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": ".agents/skills/turborepo/references/environment/gotchas.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_agents_skills_turborepo_references_environment_gotchas_md_strict_ci_filter_concept",
+      "target": "_github_workflows_ci_yml_ci_workflow_concept",
+      "relation": "affects",
+      "confidence": "INFERRED",
+      "confidence_score": 0.75,
+      "source_file": ".agents/skills/turborepo/references/environment/gotchas.md",
+      "source_location": null,
+      "weight": 0.75
+    }
+  ],
+  "hyperedges": []
+}

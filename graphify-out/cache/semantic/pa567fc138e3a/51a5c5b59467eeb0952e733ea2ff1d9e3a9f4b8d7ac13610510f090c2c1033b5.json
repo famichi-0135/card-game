@@ -1,0 +1,103 @@
+{
+  "nodes": [
+    {
+      "id": "_agents_skills_shadcn_rules_forms_document",
+      "label": "Forms and Inputs",
+      "file_type": "document",
+      "source_file": ".agents/skills/shadcn/rules/forms.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_agents_skills_shadcn_rules_forms_field_group_concept",
+      "label": "FieldGroup and Field form structure",
+      "file_type": "concept",
+      "source_file": ".agents/skills/shadcn/rules/forms.md",
+      "source_location": null
+    },
+    {
+      "id": "_agents_skills_shadcn_rules_forms_input_group_controls_concept",
+      "label": "InputGroup requires specialized input controls",
+      "file_type": "concept",
+      "source_file": ".agents/skills/shadcn/rules/forms.md",
+      "source_location": null
+    },
+    {
+      "id": "_agents_skills_shadcn_rules_forms_toggle_group_concept",
+      "label": "ToggleGroup for small option sets",
+      "file_type": "concept",
+      "source_file": ".agents/skills/shadcn/rules/forms.md",
+      "source_location": null
+    },
+    {
+      "id": "_agents_skills_shadcn_rules_forms_fieldset_legend_concept",
+      "label": "FieldSet and FieldLegend grouping",
+      "file_type": "concept",
+      "source_file": ".agents/skills/shadcn/rules/forms.md",
+      "source_location": null
+    },
+    {
+      "id": "_agents_skills_shadcn_rules_forms_validation_disabled_concept",
+      "label": "Field validation and disabled states",
+      "file_type": "concept",
+      "source_file": ".agents/skills/shadcn/rules/forms.md",
+      "source_location": null
+    }
+  ],
+  "edges": [
+    {
+      "source": "_agents_skills_shadcn_rules_forms_document",
+      "target": "_agents_skills_shadcn_rules_forms_field_group_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".agents/skills/shadcn/rules/forms.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_agents_skills_shadcn_rules_forms_document",
+      "target": "_agents_skills_shadcn_rules_forms_input_group_controls_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".agents/skills/shadcn/rules/forms.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_agents_skills_shadcn_rules_forms_document",
+      "target": "_agents_skills_shadcn_rules_forms_toggle_group_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".agents/skills/shadcn/rules/forms.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_agents_skills_shadcn_rules_forms_document",
+      "target": "_agents_skills_shadcn_rules_forms_fieldset_legend_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".agents/skills/shadcn/rules/forms.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_agents_skills_shadcn_rules_forms_document",
+      "target": "_agents_skills_shadcn_rules_forms_validation_disabled_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".agents/skills/shadcn/rules/forms.md",
+      "source_location": null,
+      "weight": 1.0
+    }
+  ],
+  "hyperedges": []
+}

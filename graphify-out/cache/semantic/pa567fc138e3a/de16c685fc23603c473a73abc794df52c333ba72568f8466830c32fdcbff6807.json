@@ -1,0 +1,377 @@
+{
+  "nodes": [
+    {
+      "id": "_github_workflows_ci_yml_document",
+      "label": "CI Workflow",
+      "file_type": "document",
+      "source_file": ".github/workflows/ci.yml",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_github_workflows_ci_yml_ci_workflow_concept",
+      "label": "GitHub CI workflow",
+      "file_type": "concept",
+      "source_file": ".github/workflows/ci.yml",
+      "source_location": null
+    },
+    {
+      "id": "_github_workflows_ci_yml_pull_request_main_concept",
+      "label": "Pull request to main trigger",
+      "file_type": "concept",
+      "source_file": ".github/workflows/ci.yml",
+      "source_location": null
+    },
+    {
+      "id": "_github_workflows_ci_yml_push_main_concept",
+      "label": "Push to main trigger",
+      "file_type": "concept",
+      "source_file": ".github/workflows/ci.yml",
+      "source_location": null
+    },
+    {
+      "id": "_github_workflows_ci_yml_manual_dispatch_concept",
+      "label": "Manual workflow dispatch",
+      "file_type": "concept",
+      "source_file": ".github/workflows/ci.yml",
+      "source_location": null
+    },
+    {
+      "id": "_github_workflows_ci_yml_read_permissions_concept",
+      "label": "Contents read permission",
+      "file_type": "concept",
+      "source_file": ".github/workflows/ci.yml",
+      "source_location": null
+    },
+    {
+      "id": "_github_workflows_ci_yml_concurrency_control_concept",
+      "label": "Concurrency cancellation",
+      "file_type": "concept",
+      "source_file": ".github/workflows/ci.yml",
+      "source_location": null
+    },
+    {
+      "id": "_github_workflows_ci_yml_telemetry_disabled_concept",
+      "label": "Turbo telemetry disabled",
+      "file_type": "concept",
+      "source_file": ".github/workflows/ci.yml",
+      "source_location": null
+    },
+    {
+      "id": "_github_workflows_ci_yml_quality_job_concept",
+      "label": "Quality job",
+      "file_type": "concept",
+      "source_file": ".github/workflows/ci.yml",
+      "source_location": null
+    },
+    {
+      "id": "_github_workflows_ci_yml_ubuntu_runner_concept",
+      "label": "Ubuntu runner",
+      "file_type": "concept",
+      "source_file": ".github/workflows/ci.yml",
+      "source_location": null
+    },
+    {
+      "id": "_github_workflows_ci_yml_pnpm_setup_concept",
+      "label": "pnpm setup",
+      "file_type": "concept",
+      "source_file": ".github/workflows/ci.yml",
+      "source_location": null
+    },
+    {
+      "id": "_github_workflows_ci_yml_node_setup_concept",
+      "label": "Node.js setup",
+      "file_type": "concept",
+      "source_file": ".github/workflows/ci.yml",
+      "source_location": null
+    },
+    {
+      "id": "_github_workflows_ci_yml_frozen_install_concept",
+      "label": "Frozen lockfile install",
+      "file_type": "concept",
+      "source_file": ".github/workflows/ci.yml",
+      "source_location": null
+    },
+    {
+      "id": "_github_workflows_ci_yml_format_step_concept",
+      "label": "Formatting step",
+      "file_type": "concept",
+      "source_file": ".github/workflows/ci.yml",
+      "source_location": null
+    },
+    {
+      "id": "_github_workflows_ci_yml_lint_step_concept",
+      "label": "Lint step",
+      "file_type": "concept",
+      "source_file": ".github/workflows/ci.yml",
+      "source_location": null
+    },
+    {
+      "id": "_github_workflows_ci_yml_types_step_concept",
+      "label": "Type check step",
+      "file_type": "concept",
+      "source_file": ".github/workflows/ci.yml",
+      "source_location": null
+    },
+    {
+      "id": "_github_workflows_ci_yml_test_step_concept",
+      "label": "Test step",
+      "file_type": "concept",
+      "source_file": ".github/workflows/ci.yml",
+      "source_location": null
+    },
+    {
+      "id": "_github_workflows_ci_yml_build_step_concept",
+      "label": "Build step",
+      "file_type": "concept",
+      "source_file": ".github/workflows/ci.yml",
+      "source_location": null
+    }
+  ],
+  "edges": [
+    {
+      "source": "_github_workflows_ci_yml_document",
+      "target": "_github_workflows_ci_yml_ci_workflow_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": ".github/workflows/ci.yml",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_github_workflows_ci_yml_document",
+      "target": "_github_workflows_ci_yml_pull_request_main_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": ".github/workflows/ci.yml",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_github_workflows_ci_yml_document",
+      "target": "_github_workflows_ci_yml_push_main_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": ".github/workflows/ci.yml",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_github_workflows_ci_yml_document",
+      "target": "_github_workflows_ci_yml_manual_dispatch_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": ".github/workflows/ci.yml",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_github_workflows_ci_yml_document",
+      "target": "_github_workflows_ci_yml_read_permissions_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": ".github/workflows/ci.yml",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_github_workflows_ci_yml_document",
+      "target": "_github_workflows_ci_yml_concurrency_control_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": ".github/workflows/ci.yml",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_github_workflows_ci_yml_document",
+      "target": "_github_workflows_ci_yml_telemetry_disabled_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": ".github/workflows/ci.yml",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_github_workflows_ci_yml_document",
+      "target": "_github_workflows_ci_yml_quality_job_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": ".github/workflows/ci.yml",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_github_workflows_ci_yml_document",
+      "target": "_github_workflows_ci_yml_ubuntu_runner_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": ".github/workflows/ci.yml",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_github_workflows_ci_yml_document",
+      "target": "_github_workflows_ci_yml_pnpm_setup_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": ".github/workflows/ci.yml",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_github_workflows_ci_yml_document",
+      "target": "_github_workflows_ci_yml_node_setup_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": ".github/workflows/ci.yml",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_github_workflows_ci_yml_document",
+      "target": "_github_workflows_ci_yml_frozen_install_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": ".github/workflows/ci.yml",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_github_workflows_ci_yml_document",
+      "target": "_github_workflows_ci_yml_format_step_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": ".github/workflows/ci.yml",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_github_workflows_ci_yml_document",
+      "target": "_github_workflows_ci_yml_lint_step_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": ".github/workflows/ci.yml",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_github_workflows_ci_yml_document",
+      "target": "_github_workflows_ci_yml_types_step_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": ".github/workflows/ci.yml",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_github_workflows_ci_yml_document",
+      "target": "_github_workflows_ci_yml_test_step_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": ".github/workflows/ci.yml",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_github_workflows_ci_yml_document",
+      "target": "_github_workflows_ci_yml_build_step_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": ".github/workflows/ci.yml",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_github_workflows_ci_yml_ci_workflow_concept",
+      "target": "_github_workflows_ci_yml_quality_job_concept",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": ".github/workflows/ci.yml",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_github_workflows_ci_yml_quality_job_concept",
+      "target": "_github_workflows_ci_yml_format_step_concept",
+      "relation": "runs",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": ".github/workflows/ci.yml",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_github_workflows_ci_yml_quality_job_concept",
+      "target": "_github_workflows_ci_yml_lint_step_concept",
+      "relation": "runs",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": ".github/workflows/ci.yml",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_github_workflows_ci_yml_quality_job_concept",
+      "target": "_github_workflows_ci_yml_types_step_concept",
+      "relation": "runs",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": ".github/workflows/ci.yml",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_github_workflows_ci_yml_quality_job_concept",
+      "target": "_github_workflows_ci_yml_test_step_concept",
+      "relation": "runs",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": ".github/workflows/ci.yml",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_github_workflows_ci_yml_quality_job_concept",
+      "target": "_github_workflows_ci_yml_build_step_concept",
+      "relation": "runs",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": ".github/workflows/ci.yml",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_github_workflows_ci_yml_concurrency_control_concept",
+      "target": "_github_workflows_ci_yml_ci_workflow_concept",
+      "relation": "cancels_previous",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": ".github/workflows/ci.yml",
+      "source_location": null,
+      "weight": 1
+    }
+  ],
+  "hyperedges": []
+}

@@ -1,0 +1,177 @@
+{
+  "nodes": [
+    {
+      "id": "_github_issue_template_implementation_yml_document",
+      "label": "Implementation Issue Template",
+      "file_type": "document",
+      "source_file": ".github/ISSUE_TEMPLATE/implementation.yml",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_github_issue_template_implementation_yml_implementation_issue_concept",
+      "label": "Implementation task issue",
+      "file_type": "concept",
+      "source_file": ".github/ISSUE_TEMPLATE/implementation.yml",
+      "source_location": null
+    },
+    {
+      "id": "_github_issue_template_implementation_yml_codex_implement_label_concept",
+      "label": "codex:implement label",
+      "file_type": "concept",
+      "source_file": ".github/ISSUE_TEMPLATE/implementation.yml",
+      "source_location": null
+    },
+    {
+      "id": "_github_issue_template_implementation_yml_purpose_background_concept",
+      "label": "Purpose and background field",
+      "file_type": "concept",
+      "source_file": ".github/ISSUE_TEMPLATE/implementation.yml",
+      "source_location": null
+    },
+    {
+      "id": "_github_issue_template_implementation_yml_acceptance_conditions_concept",
+      "label": "Acceptance conditions field",
+      "file_type": "concept",
+      "source_file": ".github/ISSUE_TEMPLATE/implementation.yml",
+      "source_location": null
+    },
+    {
+      "id": "_github_issue_template_implementation_yml_out_of_scope_concept",
+      "label": "Out-of-scope field",
+      "file_type": "concept",
+      "source_file": ".github/ISSUE_TEMPLATE/implementation.yml",
+      "source_location": null
+    },
+    {
+      "id": "_github_issue_template_implementation_yml_related_files_concept",
+      "label": "Related screens and files field",
+      "file_type": "concept",
+      "source_file": ".github/ISSUE_TEMPLATE/implementation.yml",
+      "source_location": null
+    },
+    {
+      "id": "_github_issue_template_implementation_yml_required_validations_concept",
+      "label": "Required field validations",
+      "file_type": "concept",
+      "source_file": ".github/ISSUE_TEMPLATE/implementation.yml",
+      "source_location": null
+    }
+  ],
+  "edges": [
+    {
+      "source": "_github_issue_template_implementation_yml_document",
+      "target": "_github_issue_template_implementation_yml_implementation_issue_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": ".github/ISSUE_TEMPLATE/implementation.yml",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_github_issue_template_implementation_yml_document",
+      "target": "_github_issue_template_implementation_yml_codex_implement_label_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": ".github/ISSUE_TEMPLATE/implementation.yml",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_github_issue_template_implementation_yml_document",
+      "target": "_github_issue_template_implementation_yml_purpose_background_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": ".github/ISSUE_TEMPLATE/implementation.yml",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_github_issue_template_implementation_yml_document",
+      "target": "_github_issue_template_implementation_yml_acceptance_conditions_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": ".github/ISSUE_TEMPLATE/implementation.yml",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_github_issue_template_implementation_yml_document",
+      "target": "_github_issue_template_implementation_yml_out_of_scope_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": ".github/ISSUE_TEMPLATE/implementation.yml",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_github_issue_template_implementation_yml_document",
+      "target": "_github_issue_template_implementation_yml_related_files_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": ".github/ISSUE_TEMPLATE/implementation.yml",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_github_issue_template_implementation_yml_document",
+      "target": "_github_issue_template_implementation_yml_required_validations_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": ".github/ISSUE_TEMPLATE/implementation.yml",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_github_issue_template_implementation_yml_implementation_issue_concept",
+      "target": "_github_issue_template_implementation_yml_codex_implement_label_concept",
+      "relation": "uses",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": ".github/ISSUE_TEMPLATE/implementation.yml",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_github_issue_template_implementation_yml_implementation_issue_concept",
+      "target": "_github_issue_template_implementation_yml_acceptance_conditions_concept",
+      "relation": "requires",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": ".github/ISSUE_TEMPLATE/implementation.yml",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_github_issue_template_implementation_yml_implementation_issue_concept",
+      "target": "_github_issue_template_implementation_yml_out_of_scope_concept",
+      "relation": "requires",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": ".github/ISSUE_TEMPLATE/implementation.yml",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_github_issue_template_implementation_yml_implementation_issue_concept",
+      "target": "_github_issue_template_implementation_yml_related_files_concept",
+      "relation": "requires",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": ".github/ISSUE_TEMPLATE/implementation.yml",
+      "source_location": null,
+      "weight": 1
+    }
+  ],
+  "hyperedges": []
+}

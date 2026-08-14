@@ -1,0 +1,225 @@
+{
+  "nodes": [
+    {
+      "id": "_agents_skills_turborepo_references_filtering_patterns_md_document",
+      "label": "Common Filter Patterns",
+      "file_type": "document",
+      "source_file": ".agents/skills/turborepo/references/filtering/patterns.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_agents_skills_turborepo_references_filtering_patterns_md_single_package_pattern_concept",
+      "label": "Single package filter pattern",
+      "file_type": "concept",
+      "source_file": ".agents/skills/turborepo/references/filtering/patterns.md",
+      "source_location": null
+    },
+    {
+      "id": "_agents_skills_turborepo_references_filtering_patterns_md_dependencies_pattern_concept",
+      "label": "Package with dependencies pattern",
+      "file_type": "concept",
+      "source_file": ".agents/skills/turborepo/references/filtering/patterns.md",
+      "source_location": null
+    },
+    {
+      "id": "_agents_skills_turborepo_references_filtering_patterns_md_dependents_pattern_concept",
+      "label": "Package dependents pattern",
+      "file_type": "concept",
+      "source_file": ".agents/skills/turborepo/references/filtering/patterns.md",
+      "source_location": null
+    },
+    {
+      "id": "_agents_skills_turborepo_references_filtering_patterns_md_changed_pattern_concept",
+      "label": "Changed package pattern",
+      "file_type": "concept",
+      "source_file": ".agents/skills/turborepo/references/filtering/patterns.md",
+      "source_location": null
+    },
+    {
+      "id": "_agents_skills_turborepo_references_filtering_patterns_md_changed_dependents_pattern_concept",
+      "label": "Changed plus dependents PR pattern",
+      "file_type": "concept",
+      "source_file": ".agents/skills/turborepo/references/filtering/patterns.md",
+      "source_location": null
+    },
+    {
+      "id": "_agents_skills_turborepo_references_filtering_patterns_md_directory_pattern_concept",
+      "label": "Directory-based pattern",
+      "file_type": "concept",
+      "source_file": ".agents/skills/turborepo/references/filtering/patterns.md",
+      "source_location": null
+    },
+    {
+      "id": "_agents_skills_turborepo_references_filtering_patterns_md_scope_pattern_concept",
+      "label": "Scope-based pattern",
+      "file_type": "concept",
+      "source_file": ".agents/skills/turborepo/references/filtering/patterns.md",
+      "source_location": null
+    },
+    {
+      "id": "_agents_skills_turborepo_references_filtering_patterns_md_exclusion_pattern_concept",
+      "label": "Exclusion pattern",
+      "file_type": "concept",
+      "source_file": ".agents/skills/turborepo/references/filtering/patterns.md",
+      "source_location": null
+    },
+    {
+      "id": "_agents_skills_turborepo_references_filtering_patterns_md_complex_pattern_concept",
+      "label": "Complex filter combination",
+      "file_type": "concept",
+      "source_file": ".agents/skills/turborepo/references/filtering/patterns.md",
+      "source_location": null
+    },
+    {
+      "id": "_agents_skills_turborepo_references_filtering_patterns_md_debug_pattern_concept",
+      "label": "Dry-run debugging pattern",
+      "file_type": "concept",
+      "source_file": ".agents/skills/turborepo/references/filtering/patterns.md",
+      "source_location": null
+    },
+    {
+      "id": "_agents_skills_turborepo_references_filtering_patterns_md_ci_pattern_concept",
+      "label": "CI/CD filter patterns",
+      "file_type": "concept",
+      "source_file": ".agents/skills/turborepo/references/filtering/patterns.md",
+      "source_location": null
+    }
+  ],
+  "edges": [
+    {
+      "source": "_agents_skills_turborepo_references_filtering_patterns_md_document",
+      "target": "_agents_skills_turborepo_references_filtering_patterns_md_single_package_pattern_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": ".agents/skills/turborepo/references/filtering/patterns.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_agents_skills_turborepo_references_filtering_patterns_md_document",
+      "target": "_agents_skills_turborepo_references_filtering_patterns_md_dependencies_pattern_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": ".agents/skills/turborepo/references/filtering/patterns.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_agents_skills_turborepo_references_filtering_patterns_md_document",
+      "target": "_agents_skills_turborepo_references_filtering_patterns_md_dependents_pattern_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": ".agents/skills/turborepo/references/filtering/patterns.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_agents_skills_turborepo_references_filtering_patterns_md_document",
+      "target": "_agents_skills_turborepo_references_filtering_patterns_md_changed_pattern_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": ".agents/skills/turborepo/references/filtering/patterns.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_agents_skills_turborepo_references_filtering_patterns_md_document",
+      "target": "_agents_skills_turborepo_references_filtering_patterns_md_changed_dependents_pattern_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": ".agents/skills/turborepo/references/filtering/patterns.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_agents_skills_turborepo_references_filtering_patterns_md_document",
+      "target": "_agents_skills_turborepo_references_filtering_patterns_md_directory_pattern_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": ".agents/skills/turborepo/references/filtering/patterns.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_agents_skills_turborepo_references_filtering_patterns_md_document",
+      "target": "_agents_skills_turborepo_references_filtering_patterns_md_scope_pattern_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": ".agents/skills/turborepo/references/filtering/patterns.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_agents_skills_turborepo_references_filtering_patterns_md_document",
+      "target": "_agents_skills_turborepo_references_filtering_patterns_md_exclusion_pattern_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": ".agents/skills/turborepo/references/filtering/patterns.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_agents_skills_turborepo_references_filtering_patterns_md_document",
+      "target": "_agents_skills_turborepo_references_filtering_patterns_md_complex_pattern_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": ".agents/skills/turborepo/references/filtering/patterns.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_agents_skills_turborepo_references_filtering_patterns_md_document",
+      "target": "_agents_skills_turborepo_references_filtering_patterns_md_debug_pattern_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": ".agents/skills/turborepo/references/filtering/patterns.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_agents_skills_turborepo_references_filtering_patterns_md_document",
+      "target": "_agents_skills_turborepo_references_filtering_patterns_md_ci_pattern_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": ".agents/skills/turborepo/references/filtering/patterns.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_agents_skills_turborepo_references_filtering_patterns_md_changed_dependents_pattern_concept",
+      "target": "_agents_skills_turborepo_references_filtering_rule_md_affected_filter_concept",
+      "relation": "shortcuts",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": ".agents/skills/turborepo/references/filtering/patterns.md",
+      "source_location": null,
+      "weight": 0.85
+    },
+    {
+      "source": "_agents_skills_turborepo_references_filtering_patterns_md_debug_pattern_concept",
+      "target": "_agents_skills_turborepo_references_filtering_rule_md_filter_union_concept",
+      "relation": "diagnoses",
+      "confidence": "INFERRED",
+      "confidence_score": 0.75,
+      "source_file": ".agents/skills/turborepo/references/filtering/patterns.md",
+      "source_location": null,
+      "weight": 0.75
+    }
+  ],
+  "hyperedges": []
+}

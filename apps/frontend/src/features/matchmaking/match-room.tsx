@@ -16,7 +16,10 @@ import {
 } from "../../components/application-ui.tsx";
 import { toast } from "../../components/ui/toast.tsx";
 import { AuthStatus } from "../auth/auth-layout.tsx";
-import { GameBoardOnboarding } from "../game-onboarding/game-board-onboarding.tsx";
+import {
+  GameBoardOnboarding,
+  type OnboardingResult,
+} from "../game-onboarding/game-board-onboarding.tsx";
 import {
   saveGameBoardOnboardingState,
   shouldAutoStartGameBoardOnboarding,
@@ -94,8 +97,10 @@ export function MatchRoom({
     setIsOnboardingOpen(true);
   }
 
-  function finishOnboarding(result: "completed" | "skipped") {
-    saveGameBoardOnboardingState(result);
+  function finishOnboarding(result: OnboardingResult) {
+    if (result !== "interrupted") {
+      saveGameBoardOnboardingState(result);
+    }
     setIsOnboardingOpen(false);
     window.requestAnimationFrame(() => onboardingTriggerRef.current?.focus());
   }

@@ -1,0 +1,177 @@
+{
+  "nodes": [
+    {
+      "id": "_apps_frontend_readme_md_document",
+      "label": "Frontend Worker README",
+      "file_type": "document",
+      "source_file": "apps/frontend/README.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_apps_frontend_readme_md_react_vite_worker_concept",
+      "label": "React and Vite Worker",
+      "file_type": "concept",
+      "source_file": "apps/frontend/README.md",
+      "source_location": null
+    },
+    {
+      "id": "_apps_frontend_readme_md_static_assets_concept",
+      "label": "Static asset delivery",
+      "file_type": "concept",
+      "source_file": "apps/frontend/README.md",
+      "source_location": null
+    },
+    {
+      "id": "_apps_frontend_readme_md_api_proxy_concept",
+      "label": "API proxying",
+      "file_type": "concept",
+      "source_file": "apps/frontend/README.md",
+      "source_location": null
+    },
+    {
+      "id": "_apps_frontend_readme_md_backend_binding_concept",
+      "label": "BACKEND Service Binding",
+      "file_type": "concept",
+      "source_file": "apps/frontend/README.md",
+      "source_location": null
+    },
+    {
+      "id": "_apps_frontend_readme_md_frontend_dev_commands_concept",
+      "label": "Frontend development commands",
+      "file_type": "concept",
+      "source_file": "apps/frontend/README.md",
+      "source_location": null
+    },
+    {
+      "id": "_apps_frontend_readme_md_cf_typegen_concept",
+      "label": "cf-typegen",
+      "file_type": "concept",
+      "source_file": "apps/frontend/README.md",
+      "source_location": null
+    },
+    {
+      "id": "_apps_frontend_readme_md_worker_configuration_types_concept",
+      "label": "Generated worker configuration types",
+      "file_type": "concept",
+      "source_file": "apps/frontend/README.md",
+      "source_location": null
+    }
+  ],
+  "edges": [
+    {
+      "source": "_apps_frontend_readme_md_document",
+      "target": "_apps_frontend_readme_md_react_vite_worker_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": "apps/frontend/README.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_apps_frontend_readme_md_document",
+      "target": "_apps_frontend_readme_md_static_assets_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": "apps/frontend/README.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_apps_frontend_readme_md_document",
+      "target": "_apps_frontend_readme_md_api_proxy_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": "apps/frontend/README.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_apps_frontend_readme_md_document",
+      "target": "_apps_frontend_readme_md_backend_binding_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": "apps/frontend/README.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_apps_frontend_readme_md_document",
+      "target": "_apps_frontend_readme_md_frontend_dev_commands_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": "apps/frontend/README.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_apps_frontend_readme_md_document",
+      "target": "_apps_frontend_readme_md_cf_typegen_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": "apps/frontend/README.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_apps_frontend_readme_md_document",
+      "target": "_apps_frontend_readme_md_worker_configuration_types_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": "apps/frontend/README.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_apps_frontend_readme_md_react_vite_worker_concept",
+      "target": "_apps_frontend_readme_md_static_assets_concept",
+      "relation": "delivers",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": "apps/frontend/README.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_apps_frontend_readme_md_react_vite_worker_concept",
+      "target": "_apps_frontend_readme_md_api_proxy_concept",
+      "relation": "provides",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": "apps/frontend/README.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_apps_frontend_readme_md_api_proxy_concept",
+      "target": "_apps_frontend_readme_md_backend_binding_concept",
+      "relation": "uses",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": "apps/frontend/README.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_apps_frontend_readme_md_cf_typegen_concept",
+      "target": "_apps_frontend_readme_md_worker_configuration_types_concept",
+      "relation": "generates",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": "apps/frontend/README.md",
+      "source_location": null,
+      "weight": 1
+    }
+  ],
+  "hyperedges": []
+}

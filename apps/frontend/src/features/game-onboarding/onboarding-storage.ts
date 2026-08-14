@@ -4,16 +4,24 @@ export const GAME_BOARD_ONBOARDING_STORAGE_KEY =
 export type GameBoardOnboardingState = "completed" | "skipped";
 
 export function getGameBoardOnboardingState(): GameBoardOnboardingState | null {
-  const value = getStorage()?.getItem(GAME_BOARD_ONBOARDING_STORAGE_KEY);
-  return value === "completed" || value === "skipped" ? value : null;
+  try {
+    const value = getStorage()?.getItem(GAME_BOARD_ONBOARDING_STORAGE_KEY);
+    return value === "completed" || value === "skipped" ? value : null;
+  } catch {
+    return null;
+  }
 }
 
 export function shouldAutoStartGameBoardOnboarding(): boolean {
-  const storage = getStorage();
-  return (
-    storage !== null &&
-    storage.getItem(GAME_BOARD_ONBOARDING_STORAGE_KEY) === null
-  );
+  try {
+    const storage = getStorage();
+    if (storage === null) {
+      return false;
+    }
+    return storage.getItem(GAME_BOARD_ONBOARDING_STORAGE_KEY) === null;
+  } catch {
+    return false;
+  }
 }
 
 export function saveGameBoardOnboardingState(

@@ -1,0 +1,13 @@
+{
+  "nodes": [
+    {
+      "id": "_apps_frontend_src_assets_hero_png_image",
+      "label": "\u9ed2\u80cc\u666f\u4e0a\u306e\u7d2b\u82723D\u7a4d\u5c64\u30ab\u30fc\u30c9\u5f62\u72b6",
+      "file_type": "image",
+      "source_file": "apps/frontend/src/assets/hero.png",
+      "source_location": null
+    }
+  ],
+  "edges": [],
+  "hyperedges": []
+}

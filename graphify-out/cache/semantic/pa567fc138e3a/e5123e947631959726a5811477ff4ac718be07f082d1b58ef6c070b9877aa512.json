@@ -1,0 +1,217 @@
+{
+  "nodes": [
+    {
+      "id": "_docs_backend_matchmaking_md_document",
+      "label": "\u5bfe\u6226\u5f85\u6a5f\u30fb\u958b\u59cb\u306e\u8a2d\u8a08",
+      "file_type": "document",
+      "source_file": "docs/backend/matchmaking.md",
+      "source_location": null
+    },
+    {
+      "id": "_docs_backend_matchmaking_md_match_lobby_durable_object_concept",
+      "label": "MatchLobby Durable Object",
+      "file_type": "concept",
+      "source_file": "docs/backend/matchmaking.md",
+      "source_location": "\u76ee\u7684"
+    },
+    {
+      "id": "_docs_backend_matchmaking_md_player_decks_durable_object_concept",
+      "label": "PlayerDecks Durable Object",
+      "file_type": "concept",
+      "source_file": "docs/backend/matchmaking.md",
+      "source_location": "\u76ee\u7684"
+    },
+    {
+      "id": "_docs_backend_matchmaking_md_match_lobby_states_concept",
+      "label": "waiting/starting/started/cancelled \u72b6\u614b\u9077\u79fb",
+      "file_type": "concept",
+      "source_file": "docs/backend/matchmaking.md",
+      "source_location": "\u72b6\u614b\u9077\u79fb"
+    },
+    {
+      "id": "_docs_backend_matchmaking_md_authenticated_player_id_boundary_concept",
+      "label": "\u8a8d\u8a3c\u6e08\u307fPlayerId\u4fe1\u983c\u5883\u754c",
+      "file_type": "concept",
+      "source_file": "docs/backend/matchmaking.md",
+      "source_location": "\u4fe1\u983c\u5883\u754c"
+    },
+    {
+      "id": "_docs_backend_matchmaking_md_deck_revalidation_concept",
+      "label": "\u73fe\u5728\u30eb\u30fc\u30eb\u3067\u306e\u30c7\u30c3\u30ad\u518d\u691c\u8a3c",
+      "file_type": "concept",
+      "source_file": "docs/backend/matchmaking.md",
+      "source_location": "\u6c38\u7d9a\u5316\u306e\u5206\u62c5"
+    },
+    {
+      "id": "_docs_backend_matchmaking_md_game_session_initialize_concept",
+      "label": "GameSession.initialize \u3068\u51aa\u7b49\u958b\u59cb",
+      "file_type": "concept",
+      "source_file": "docs/backend/matchmaking.md",
+      "source_location": "\u72b6\u614b\u9077\u79fb"
+    },
+    {
+      "id": "_docs_backend_matchmaking_md_thirty_minute_expiry_alarm_concept",
+      "label": "30\u5206\u5f85\u6a5f\u671f\u9650\u3068Alarm",
+      "file_type": "concept",
+      "source_file": "docs/backend/matchmaking.md",
+      "source_location": "\u72b6\u614b\u9077\u79fb"
+    },
+    {
+      "id": "_docs_backend_matchmaking_md_public_match_lobby_d1_index_concept",
+      "label": "D1 public_match_lobby \u691c\u7d22\u30a4\u30f3\u30c7\u30c3\u30af\u30b9",
+      "file_type": "concept",
+      "source_file": "docs/backend/matchmaking.md",
+      "source_location": "\u6c38\u7d9a\u5316\u306e\u5206\u62c5"
+    },
+    {
+      "id": "_docs_backend_matchmaking_md_match_http_api_concept",
+      "label": "\u5bfe\u6226\u30fb\u30c7\u30c3\u30adHTTP API",
+      "file_type": "concept",
+      "source_file": "docs/backend/matchmaking.md",
+      "source_location": "HTTP\u5883\u754c"
+    },
+    {
+      "id": "_docs_backend_matchmaking_md_starter_deck_concept",
+      "label": "\u6b63\u898f30\u679a\u30b9\u30bf\u30fc\u30bf\u30fc\u30c7\u30c3\u30ad\u81ea\u52d5\u751f\u6210",
+      "file_type": "concept",
+      "source_file": "docs/backend/matchmaking.md",
+      "source_location": "HTTP\u5883\u754c"
+    },
+    {
+      "id": "_docs_backend_matchmaking_md_polling_five_seconds_concept",
+      "label": "\u516c\u958b\u90e8\u5c4b\u4e00\u89a75\u79d2\u30dd\u30fc\u30ea\u30f3\u30b0",
+      "file_type": "concept",
+      "source_file": "docs/backend/matchmaking.md",
+      "source_location": "HTTP\u5883\u754c"
+    }
+  ],
+  "edges": [
+    {
+      "source": "_docs_backend_matchmaking_md_document",
+      "target": "_docs_backend_matchmaking_md_match_lobby_durable_object_concept",
+      "relation": "defines",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/backend/matchmaking.md",
+      "source_location": "\u76ee\u7684"
+    },
+    {
+      "source": "_docs_backend_matchmaking_md_document",
+      "target": "_docs_backend_matchmaking_md_player_decks_durable_object_concept",
+      "relation": "defines",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/backend/matchmaking.md",
+      "source_location": "\u76ee\u7684"
+    },
+    {
+      "source": "_docs_backend_matchmaking_md_document",
+      "target": "_docs_backend_matchmaking_md_match_lobby_states_concept",
+      "relation": "defines",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/backend/matchmaking.md",
+      "source_location": "\u72b6\u614b\u9077\u79fb"
+    },
+    {
+      "source": "_docs_backend_matchmaking_md_document",
+      "target": "_docs_backend_matchmaking_md_authenticated_player_id_boundary_concept",
+      "relation": "requires",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/backend/matchmaking.md",
+      "source_location": "\u4fe1\u983c\u5883\u754c"
+    },
+    {
+      "source": "_docs_backend_matchmaking_md_document",
+      "target": "_docs_backend_matchmaking_md_deck_revalidation_concept",
+      "relation": "requires",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/backend/matchmaking.md",
+      "source_location": "\u6c38\u7d9a\u5316\u306e\u5206\u62c5"
+    },
+    {
+      "source": "_docs_backend_matchmaking_md_document",
+      "target": "_docs_backend_matchmaking_md_game_session_initialize_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/backend/matchmaking.md",
+      "source_location": "\u72b6\u614b\u9077\u79fb"
+    },
+    {
+      "source": "_docs_backend_matchmaking_md_document",
+      "target": "_docs_backend_matchmaking_md_thirty_minute_expiry_alarm_concept",
+      "relation": "defines",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/backend/matchmaking.md",
+      "source_location": "\u72b6\u614b\u9077\u79fb"
+    },
+    {
+      "source": "_docs_backend_matchmaking_md_document",
+      "target": "_docs_backend_matchmaking_md_public_match_lobby_d1_index_concept",
+      "relation": "defines",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/backend/matchmaking.md",
+      "source_location": "\u6c38\u7d9a\u5316\u306e\u5206\u62c5"
+    },
+    {
+      "source": "_docs_backend_matchmaking_md_document",
+      "target": "_docs_backend_matchmaking_md_match_http_api_concept",
+      "relation": "defines",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/backend/matchmaking.md",
+      "source_location": "HTTP\u5883\u754c"
+    },
+    {
+      "source": "_docs_backend_matchmaking_md_document",
+      "target": "_docs_backend_matchmaking_md_starter_deck_concept",
+      "relation": "defines",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/backend/matchmaking.md",
+      "source_location": "HTTP\u5883\u754c"
+    },
+    {
+      "source": "_docs_backend_matchmaking_md_document",
+      "target": "_docs_backend_matchmaking_md_polling_five_seconds_concept",
+      "relation": "defines",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/backend/matchmaking.md",
+      "source_location": "HTTP\u5883\u754c"
+    },
+    {
+      "source": "_docs_backend_matchmaking_md_match_lobby_durable_object_concept",
+      "target": "_docs_backend_matchmaking_md_player_decks_durable_object_concept",
+      "relation": "uses",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/backend/matchmaking.md",
+      "source_location": "\u76ee\u7684"
+    },
+    {
+      "source": "_docs_backend_matchmaking_md_match_lobby_durable_object_concept",
+      "target": "_docs_backend_matchmaking_md_game_session_initialize_concept",
+      "relation": "initializes",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/backend/matchmaking.md",
+      "source_location": "\u72b6\u614b\u9077\u79fb"
+    },
+    {
+      "source": "_docs_backend_matchmaking_md_public_match_lobby_d1_index_concept",
+      "target": "_docs_backend_matchmaking_md_match_lobby_durable_object_concept",
+      "relation": "indexes",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/backend/matchmaking.md",
+      "source_location": "\u6c38\u7d9a\u5316\u306e\u5206\u62c5"
+    }
+  ],
+  "hyperedges": []
+}

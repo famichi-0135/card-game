@@ -1,0 +1,238 @@
+{
+  "nodes": [
+    {
+      "id": "_github_pull_request_template_md_document",
+      "label": "Pull Request Template",
+      "file_type": "document",
+      "source_file": ".github/PULL_REQUEST_TEMPLATE.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_github_pull_request_template_md_pr_purpose_concept",
+      "label": "Pull request purpose",
+      "file_type": "concept",
+      "source_file": ".github/PULL_REQUEST_TEMPLATE.md",
+      "source_location": null
+    },
+    {
+      "id": "_github_pull_request_template_md_pr_change_content_concept",
+      "label": "Pull request change content",
+      "file_type": "concept",
+      "source_file": ".github/PULL_REQUEST_TEMPLATE.md",
+      "source_location": null
+    },
+    {
+      "id": "_github_pull_request_template_md_verification_checklist_concept",
+      "label": "Verification checklist",
+      "file_type": "concept",
+      "source_file": ".github/PULL_REQUEST_TEMPLATE.md",
+      "source_location": null
+    },
+    {
+      "id": "_github_pull_request_template_md_format_check_concept",
+      "label": "Format check",
+      "file_type": "concept",
+      "source_file": ".github/PULL_REQUEST_TEMPLATE.md",
+      "source_location": null
+    },
+    {
+      "id": "_github_pull_request_template_md_lint_check_concept",
+      "label": "Lint check",
+      "file_type": "concept",
+      "source_file": ".github/PULL_REQUEST_TEMPLATE.md",
+      "source_location": null
+    },
+    {
+      "id": "_github_pull_request_template_md_type_check_concept",
+      "label": "Type check",
+      "file_type": "concept",
+      "source_file": ".github/PULL_REQUEST_TEMPLATE.md",
+      "source_location": null
+    },
+    {
+      "id": "_github_pull_request_template_md_test_check_concept",
+      "label": "Test check",
+      "file_type": "concept",
+      "source_file": ".github/PULL_REQUEST_TEMPLATE.md",
+      "source_location": null
+    },
+    {
+      "id": "_github_pull_request_template_md_build_check_concept",
+      "label": "Build check",
+      "file_type": "concept",
+      "source_file": ".github/PULL_REQUEST_TEMPLATE.md",
+      "source_location": null
+    },
+    {
+      "id": "_github_pull_request_template_md_unresolved_items_concept",
+      "label": "Unresolved items",
+      "file_type": "concept",
+      "source_file": ".github/PULL_REQUEST_TEMPLATE.md",
+      "source_location": null
+    },
+    {
+      "id": "_github_pull_request_template_md_issue_closure_concept",
+      "label": "Issue closure reference",
+      "file_type": "concept",
+      "source_file": ".github/PULL_REQUEST_TEMPLATE.md",
+      "source_location": null
+    }
+  ],
+  "edges": [
+    {
+      "source": "_github_pull_request_template_md_document",
+      "target": "_github_pull_request_template_md_pr_purpose_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": ".github/PULL_REQUEST_TEMPLATE.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_github_pull_request_template_md_document",
+      "target": "_github_pull_request_template_md_pr_change_content_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": ".github/PULL_REQUEST_TEMPLATE.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_github_pull_request_template_md_document",
+      "target": "_github_pull_request_template_md_verification_checklist_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": ".github/PULL_REQUEST_TEMPLATE.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_github_pull_request_template_md_document",
+      "target": "_github_pull_request_template_md_format_check_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": ".github/PULL_REQUEST_TEMPLATE.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_github_pull_request_template_md_document",
+      "target": "_github_pull_request_template_md_lint_check_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": ".github/PULL_REQUEST_TEMPLATE.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_github_pull_request_template_md_document",
+      "target": "_github_pull_request_template_md_type_check_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": ".github/PULL_REQUEST_TEMPLATE.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_github_pull_request_template_md_document",
+      "target": "_github_pull_request_template_md_test_check_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": ".github/PULL_REQUEST_TEMPLATE.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_github_pull_request_template_md_document",
+      "target": "_github_pull_request_template_md_build_check_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": ".github/PULL_REQUEST_TEMPLATE.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_github_pull_request_template_md_document",
+      "target": "_github_pull_request_template_md_unresolved_items_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": ".github/PULL_REQUEST_TEMPLATE.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_github_pull_request_template_md_document",
+      "target": "_github_pull_request_template_md_issue_closure_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": ".github/PULL_REQUEST_TEMPLATE.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_github_pull_request_template_md_verification_checklist_concept",
+      "target": "_github_pull_request_template_md_format_check_concept",
+      "relation": "includes",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": ".github/PULL_REQUEST_TEMPLATE.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_github_pull_request_template_md_verification_checklist_concept",
+      "target": "_github_pull_request_template_md_lint_check_concept",
+      "relation": "includes",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": ".github/PULL_REQUEST_TEMPLATE.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_github_pull_request_template_md_verification_checklist_concept",
+      "target": "_github_pull_request_template_md_type_check_concept",
+      "relation": "includes",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": ".github/PULL_REQUEST_TEMPLATE.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_github_pull_request_template_md_verification_checklist_concept",
+      "target": "_github_pull_request_template_md_test_check_concept",
+      "relation": "includes",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": ".github/PULL_REQUEST_TEMPLATE.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_github_pull_request_template_md_verification_checklist_concept",
+      "target": "_github_pull_request_template_md_build_check_concept",
+      "relation": "includes",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": ".github/PULL_REQUEST_TEMPLATE.md",
+      "source_location": null,
+      "weight": 1
+    }
+  ],
+  "hyperedges": []
+}

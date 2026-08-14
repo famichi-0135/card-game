@@ -1,0 +1,1270 @@
+{
+  "nodes": [
+    {
+      "id": "_docs_backend_client_server_protocol_md_document",
+      "label": "Client-Server Communication Boundary",
+      "file_type": "document",
+      "source_file": "docs/backend/client-server-protocol.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_docs_backend_client_server_protocol_md_communication_boundary_concept",
+      "label": "Client-server communication boundary",
+      "file_type": "concept",
+      "source_file": "docs/backend/client-server-protocol.md",
+      "source_location": null
+    },
+    {
+      "id": "_docs_backend_client_server_protocol_md_dependency_direction_concept",
+      "label": "Engine-contracts-apps dependency direction",
+      "file_type": "concept",
+      "source_file": "docs/backend/client-server-protocol.md",
+      "source_location": null
+    },
+    {
+      "id": "_docs_backend_client_server_protocol_md_game_engine_contracts_concept",
+      "label": "Game engine contracts",
+      "file_type": "concept",
+      "source_file": "docs/backend/client-server-protocol.md",
+      "source_location": null
+    },
+    {
+      "id": "_docs_backend_client_server_protocol_md_contracts_dto_concept",
+      "label": "Contracts DTO-only boundary",
+      "file_type": "concept",
+      "source_file": "docs/backend/client-server-protocol.md",
+      "source_location": null
+    },
+    {
+      "id": "_docs_backend_client_server_protocol_md_authenticated_session_concept",
+      "label": "AuthenticatedSessionResponse",
+      "file_type": "concept",
+      "source_file": "docs/backend/client-server-protocol.md",
+      "source_location": null
+    },
+    {
+      "id": "_docs_backend_client_server_protocol_md_player_id_distinction_concept",
+      "label": "User ID versus stable PlayerId",
+      "file_type": "concept",
+      "source_file": "docs/backend/client-server-protocol.md",
+      "source_location": null
+    },
+    {
+      "id": "_docs_backend_client_server_protocol_md_anonymous_session_concept",
+      "label": "Anonymous guest session",
+      "file_type": "concept",
+      "source_file": "docs/backend/client-server-protocol.md",
+      "source_location": null
+    },
+    {
+      "id": "_docs_backend_client_server_protocol_md_backend_authorization_concept",
+      "label": "Backend session authorization",
+      "file_type": "concept",
+      "source_file": "docs/backend/client-server-protocol.md",
+      "source_location": null
+    },
+    {
+      "id": "_docs_backend_client_server_protocol_md_unauthenticated_error_concept",
+      "label": "UNAUTHENTICATED error",
+      "file_type": "concept",
+      "source_file": "docs/backend/client-server-protocol.md",
+      "source_location": null
+    },
+    {
+      "id": "_docs_backend_client_server_protocol_md_submit_command_request_concept",
+      "label": "SubmitGameCommandRequest",
+      "file_type": "concept",
+      "source_file": "docs/backend/client-server-protocol.md",
+      "source_location": null
+    },
+    {
+      "id": "_docs_backend_client_server_protocol_md_command_fields_concept",
+      "label": "GameCommand required fields",
+      "file_type": "concept",
+      "source_file": "docs/backend/client-server-protocol.md",
+      "source_location": null
+    },
+    {
+      "id": "_docs_backend_client_server_protocol_md_command_id_idempotency_concept",
+      "label": "commandId idempotency",
+      "file_type": "concept",
+      "source_file": "docs/backend/client-server-protocol.md",
+      "source_location": null
+    },
+    {
+      "id": "_docs_backend_client_server_protocol_md_phase_sequence_concept",
+      "label": "Phase sequence validation",
+      "file_type": "concept",
+      "source_file": "docs/backend/client-server-protocol.md",
+      "source_location": null
+    },
+    {
+      "id": "_docs_backend_client_server_protocol_md_client_state_version_concept",
+      "label": "Client state version",
+      "file_type": "concept",
+      "source_file": "docs/backend/client-server-protocol.md",
+      "source_location": null
+    },
+    {
+      "id": "_docs_backend_client_server_protocol_md_card_instance_target_concept",
+      "label": "Card instance target",
+      "file_type": "concept",
+      "source_file": "docs/backend/client-server-protocol.md",
+      "source_location": null
+    },
+    {
+      "id": "_docs_backend_client_server_protocol_md_parse_game_command_concept",
+      "label": "Runtime command parsing",
+      "file_type": "concept",
+      "source_file": "docs/backend/client-server-protocol.md",
+      "source_location": null
+    },
+    {
+      "id": "_docs_backend_client_server_protocol_md_input_validation_concept",
+      "label": "Command input validation",
+      "file_type": "concept",
+      "source_file": "docs/backend/client-server-protocol.md",
+      "source_location": null
+    },
+    {
+      "id": "_docs_backend_client_server_protocol_md_authenticated_command_concept",
+      "label": "AuthenticatedGameCommand",
+      "file_type": "concept",
+      "source_file": "docs/backend/client-server-protocol.md",
+      "source_location": null
+    },
+    {
+      "id": "_docs_backend_client_server_protocol_md_authenticated_player_id_concept",
+      "label": "Authenticated player ID",
+      "file_type": "concept",
+      "source_file": "docs/backend/client-server-protocol.md",
+      "source_location": null
+    },
+    {
+      "id": "_docs_backend_client_server_protocol_md_received_at_concept",
+      "label": "Trusted receivedAt",
+      "file_type": "concept",
+      "source_file": "docs/backend/client-server-protocol.md",
+      "source_location": null
+    },
+    {
+      "id": "_docs_backend_client_server_protocol_md_command_serialization_concept",
+      "label": "Per-game command serialization",
+      "file_type": "concept",
+      "source_file": "docs/backend/client-server-protocol.md",
+      "source_location": null
+    },
+    {
+      "id": "_docs_backend_client_server_protocol_md_command_result_replay_concept",
+      "label": "Saved first command result",
+      "file_type": "concept",
+      "source_file": "docs/backend/client-server-protocol.md",
+      "source_location": null
+    },
+    {
+      "id": "_docs_backend_client_server_protocol_md_submit_response_concept",
+      "label": "SubmitGameCommandResponse",
+      "file_type": "concept",
+      "source_file": "docs/backend/client-server-protocol.md",
+      "source_location": null
+    },
+    {
+      "id": "_docs_backend_client_server_protocol_md_player_game_view_concept",
+      "label": "PlayerGameView",
+      "file_type": "concept",
+      "source_file": "docs/backend/client-server-protocol.md",
+      "source_location": null
+    },
+    {
+      "id": "_docs_backend_client_server_protocol_md_visible_event_envelope_concept",
+      "label": "PlayerVisibleEventEnvelope",
+      "file_type": "concept",
+      "source_file": "docs/backend/client-server-protocol.md",
+      "source_location": null
+    },
+    {
+      "id": "_docs_backend_client_server_protocol_md_snapshot_response_concept",
+      "label": "GameSnapshotResponse",
+      "file_type": "concept",
+      "source_file": "docs/backend/client-server-protocol.md",
+      "source_location": null
+    },
+    {
+      "id": "_docs_backend_client_server_protocol_md_information_hiding_concept",
+      "label": "Private information omission",
+      "file_type": "concept",
+      "source_file": "docs/backend/client-server-protocol.md",
+      "source_location": null
+    },
+    {
+      "id": "_docs_backend_client_server_protocol_md_cards_drawn_visibility_concept",
+      "label": "CARDS_DRAWN visibility",
+      "file_type": "concept",
+      "source_file": "docs/backend/client-server-protocol.md",
+      "source_location": null
+    },
+    {
+      "id": "_docs_backend_client_server_protocol_md_http_adapter_concept",
+      "label": "HTTP adapter",
+      "file_type": "concept",
+      "source_file": "docs/backend/client-server-protocol.md",
+      "source_location": null
+    },
+    {
+      "id": "_docs_backend_client_server_protocol_md_game_endpoints_concept",
+      "label": "Game HTTP endpoints",
+      "file_type": "concept",
+      "source_file": "docs/backend/client-server-protocol.md",
+      "source_location": null
+    },
+    {
+      "id": "_docs_backend_client_server_protocol_md_game_id_mismatch_concept",
+      "label": "GAME_ID_MISMATCH",
+      "file_type": "concept",
+      "source_file": "docs/backend/client-server-protocol.md",
+      "source_location": null
+    },
+    {
+      "id": "_docs_backend_client_server_protocol_md_authenticated_player_mismatch_concept",
+      "label": "AUTHENTICATED_PLAYER_MISMATCH",
+      "file_type": "concept",
+      "source_file": "docs/backend/client-server-protocol.md",
+      "source_location": null
+    },
+    {
+      "id": "_docs_backend_client_server_protocol_md_rule_rejection_200_concept",
+      "label": "Accepted false rule rejection",
+      "file_type": "concept",
+      "source_file": "docs/backend/client-server-protocol.md",
+      "source_location": null
+    },
+    {
+      "id": "_docs_backend_client_server_protocol_md_game_not_found_concept",
+      "label": "GAME_NOT_FOUND",
+      "file_type": "concept",
+      "source_file": "docs/backend/client-server-protocol.md",
+      "source_location": null
+    },
+    {
+      "id": "_docs_backend_client_server_protocol_md_game_access_forbidden_concept",
+      "label": "GAME_ACCESS_FORBIDDEN",
+      "file_type": "concept",
+      "source_file": "docs/backend/client-server-protocol.md",
+      "source_location": null
+    },
+    {
+      "id": "_docs_backend_client_server_protocol_md_learning_context_concept",
+      "label": "GameLearningContextResponse",
+      "file_type": "concept",
+      "source_file": "docs/backend/client-server-protocol.md",
+      "source_location": null
+    },
+    {
+      "id": "_docs_backend_client_server_protocol_md_game_not_finished_concept",
+      "label": "GAME_NOT_FINISHED",
+      "file_type": "concept",
+      "source_file": "docs/backend/client-server-protocol.md",
+      "source_location": null
+    },
+    {
+      "id": "_docs_backend_client_server_protocol_md_learning_content_index_concept",
+      "label": "Learning content index",
+      "file_type": "concept",
+      "source_file": "docs/backend/client-server-protocol.md",
+      "source_location": null
+    },
+    {
+      "id": "_docs_backend_client_server_protocol_md_websocket_updates_concept",
+      "label": "WebSocket realtime updates",
+      "file_type": "concept",
+      "source_file": "docs/backend/client-server-protocol.md",
+      "source_location": null
+    },
+    {
+      "id": "_docs_backend_client_server_protocol_md_realtime_presence_concept",
+      "label": "GameRealtimePresence",
+      "file_type": "concept",
+      "source_file": "docs/backend/client-server-protocol.md",
+      "source_location": null
+    },
+    {
+      "id": "_docs_backend_client_server_protocol_md_http_resync_concept",
+      "label": "HTTP snapshot resynchronization",
+      "file_type": "concept",
+      "source_file": "docs/backend/client-server-protocol.md",
+      "source_location": null
+    },
+    {
+      "id": "_docs_backend_client_server_protocol_md_public_card_catalog_concept",
+      "label": "PublicCardCatalog",
+      "file_type": "concept",
+      "source_file": "docs/backend/client-server-protocol.md",
+      "source_location": null
+    },
+    {
+      "id": "_docs_backend_client_server_protocol_md_catalog_endpoint_concept",
+      "label": "Card catalog endpoint",
+      "file_type": "concept",
+      "source_file": "docs/backend/client-server-protocol.md",
+      "source_location": null
+    },
+    {
+      "id": "_docs_backend_client_server_protocol_md_card_catalog_version_concept",
+      "label": "CardCatalogVersion",
+      "file_type": "concept",
+      "source_file": "docs/backend/client-server-protocol.md",
+      "source_location": null
+    },
+    {
+      "id": "_docs_backend_client_server_protocol_md_catalog_projection_concept",
+      "label": "Catalog projection security",
+      "file_type": "concept",
+      "source_file": "docs/backend/client-server-protocol.md",
+      "source_location": null
+    },
+    {
+      "id": "_docs_backend_client_server_protocol_md_match_lobby_concept",
+      "label": "MatchLobby",
+      "file_type": "concept",
+      "source_file": "docs/backend/client-server-protocol.md",
+      "source_location": null
+    },
+    {
+      "id": "_docs_backend_client_server_protocol_md_match_visibility_concept",
+      "label": "Invite and public match visibility",
+      "file_type": "concept",
+      "source_file": "docs/backend/client-server-protocol.md",
+      "source_location": null
+    },
+    {
+      "id": "_docs_backend_client_server_protocol_md_match_endpoints_concept",
+      "label": "Match endpoints",
+      "file_type": "concept",
+      "source_file": "docs/backend/client-server-protocol.md",
+      "source_location": null
+    },
+    {
+      "id": "_docs_backend_client_server_protocol_md_faction_conflict_concept",
+      "label": "MATCH_FACTION_CONFLICT",
+      "file_type": "concept",
+      "source_file": "docs/backend/client-server-protocol.md",
+      "source_location": null
+    },
+    {
+      "id": "_docs_backend_client_server_protocol_md_saved_decks_concept",
+      "label": "Saved deck API",
+      "file_type": "concept",
+      "source_file": "docs/backend/client-server-protocol.md",
+      "source_location": null
+    },
+    {
+      "id": "_docs_backend_client_server_protocol_md_deck_validation_concept",
+      "label": "Deck validation",
+      "file_type": "concept",
+      "source_file": "docs/backend/client-server-protocol.md",
+      "source_location": null
+    },
+    {
+      "id": "_docs_backend_client_server_protocol_md_starter_deck_concept",
+      "label": "30-card starter deck",
+      "file_type": "concept",
+      "source_file": "docs/backend/client-server-protocol.md",
+      "source_location": null
+    },
+    {
+      "id": "_docs_backend_client_server_protocol_md_ordering_resync_concept",
+      "label": "Ordering and resynchronization",
+      "file_type": "concept",
+      "source_file": "docs/backend/client-server-protocol.md",
+      "source_location": null
+    },
+    {
+      "id": "_docs_backend_client_server_protocol_md_polling_fallback_concept",
+      "label": "Two-second snapshot polling",
+      "file_type": "concept",
+      "source_file": "docs/backend/client-server-protocol.md",
+      "source_location": null
+    },
+    {
+      "id": "_docs_backend_client_server_protocol_md_command_retry_concept",
+      "label": "Same command retry",
+      "file_type": "concept",
+      "source_file": "docs/backend/client-server-protocol.md",
+      "source_location": null
+    },
+    {
+      "id": "_docs_backend_client_server_protocol_md_undecided_topics_concept",
+      "label": "Undecided communication topics",
+      "file_type": "concept",
+      "source_file": "docs/backend/client-server-protocol.md",
+      "source_location": null
+    }
+  ],
+  "edges": [
+    {
+      "source": "_docs_backend_client_server_protocol_md_document",
+      "target": "_docs_backend_client_server_protocol_md_communication_boundary_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": "docs/backend/client-server-protocol.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_docs_backend_client_server_protocol_md_document",
+      "target": "_docs_backend_client_server_protocol_md_dependency_direction_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": "docs/backend/client-server-protocol.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_docs_backend_client_server_protocol_md_document",
+      "target": "_docs_backend_client_server_protocol_md_game_engine_contracts_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": "docs/backend/client-server-protocol.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_docs_backend_client_server_protocol_md_document",
+      "target": "_docs_backend_client_server_protocol_md_contracts_dto_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": "docs/backend/client-server-protocol.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_docs_backend_client_server_protocol_md_document",
+      "target": "_docs_backend_client_server_protocol_md_authenticated_session_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": "docs/backend/client-server-protocol.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_docs_backend_client_server_protocol_md_document",
+      "target": "_docs_backend_client_server_protocol_md_player_id_distinction_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": "docs/backend/client-server-protocol.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_docs_backend_client_server_protocol_md_document",
+      "target": "_docs_backend_client_server_protocol_md_anonymous_session_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": "docs/backend/client-server-protocol.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_docs_backend_client_server_protocol_md_document",
+      "target": "_docs_backend_client_server_protocol_md_backend_authorization_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": "docs/backend/client-server-protocol.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_docs_backend_client_server_protocol_md_document",
+      "target": "_docs_backend_client_server_protocol_md_unauthenticated_error_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": "docs/backend/client-server-protocol.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_docs_backend_client_server_protocol_md_document",
+      "target": "_docs_backend_client_server_protocol_md_submit_command_request_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": "docs/backend/client-server-protocol.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_docs_backend_client_server_protocol_md_document",
+      "target": "_docs_backend_client_server_protocol_md_command_fields_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": "docs/backend/client-server-protocol.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_docs_backend_client_server_protocol_md_document",
+      "target": "_docs_backend_client_server_protocol_md_command_id_idempotency_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": "docs/backend/client-server-protocol.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_docs_backend_client_server_protocol_md_document",
+      "target": "_docs_backend_client_server_protocol_md_phase_sequence_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": "docs/backend/client-server-protocol.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_docs_backend_client_server_protocol_md_document",
+      "target": "_docs_backend_client_server_protocol_md_client_state_version_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": "docs/backend/client-server-protocol.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_docs_backend_client_server_protocol_md_document",
+      "target": "_docs_backend_client_server_protocol_md_card_instance_target_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": "docs/backend/client-server-protocol.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_docs_backend_client_server_protocol_md_document",
+      "target": "_docs_backend_client_server_protocol_md_parse_game_command_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": "docs/backend/client-server-protocol.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_docs_backend_client_server_protocol_md_document",
+      "target": "_docs_backend_client_server_protocol_md_input_validation_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": "docs/backend/client-server-protocol.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_docs_backend_client_server_protocol_md_document",
+      "target": "_docs_backend_client_server_protocol_md_authenticated_command_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": "docs/backend/client-server-protocol.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_docs_backend_client_server_protocol_md_document",
+      "target": "_docs_backend_client_server_protocol_md_authenticated_player_id_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": "docs/backend/client-server-protocol.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_docs_backend_client_server_protocol_md_document",
+      "target": "_docs_backend_client_server_protocol_md_received_at_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": "docs/backend/client-server-protocol.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_docs_backend_client_server_protocol_md_document",
+      "target": "_docs_backend_client_server_protocol_md_command_serialization_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": "docs/backend/client-server-protocol.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_docs_backend_client_server_protocol_md_document",
+      "target": "_docs_backend_client_server_protocol_md_command_result_replay_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": "docs/backend/client-server-protocol.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_docs_backend_client_server_protocol_md_document",
+      "target": "_docs_backend_client_server_protocol_md_submit_response_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": "docs/backend/client-server-protocol.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_docs_backend_client_server_protocol_md_document",
+      "target": "_docs_backend_client_server_protocol_md_player_game_view_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": "docs/backend/client-server-protocol.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_docs_backend_client_server_protocol_md_document",
+      "target": "_docs_backend_client_server_protocol_md_visible_event_envelope_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": "docs/backend/client-server-protocol.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_docs_backend_client_server_protocol_md_document",
+      "target": "_docs_backend_client_server_protocol_md_snapshot_response_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": "docs/backend/client-server-protocol.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_docs_backend_client_server_protocol_md_document",
+      "target": "_docs_backend_client_server_protocol_md_information_hiding_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": "docs/backend/client-server-protocol.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_docs_backend_client_server_protocol_md_document",
+      "target": "_docs_backend_client_server_protocol_md_cards_drawn_visibility_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": "docs/backend/client-server-protocol.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_docs_backend_client_server_protocol_md_document",
+      "target": "_docs_backend_client_server_protocol_md_http_adapter_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": "docs/backend/client-server-protocol.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_docs_backend_client_server_protocol_md_document",
+      "target": "_docs_backend_client_server_protocol_md_game_endpoints_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": "docs/backend/client-server-protocol.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_docs_backend_client_server_protocol_md_document",
+      "target": "_docs_backend_client_server_protocol_md_game_id_mismatch_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": "docs/backend/client-server-protocol.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_docs_backend_client_server_protocol_md_document",
+      "target": "_docs_backend_client_server_protocol_md_authenticated_player_mismatch_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": "docs/backend/client-server-protocol.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_docs_backend_client_server_protocol_md_document",
+      "target": "_docs_backend_client_server_protocol_md_rule_rejection_200_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": "docs/backend/client-server-protocol.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_docs_backend_client_server_protocol_md_document",
+      "target": "_docs_backend_client_server_protocol_md_game_not_found_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": "docs/backend/client-server-protocol.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_docs_backend_client_server_protocol_md_document",
+      "target": "_docs_backend_client_server_protocol_md_game_access_forbidden_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": "docs/backend/client-server-protocol.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_docs_backend_client_server_protocol_md_document",
+      "target": "_docs_backend_client_server_protocol_md_learning_context_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": "docs/backend/client-server-protocol.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_docs_backend_client_server_protocol_md_document",
+      "target": "_docs_backend_client_server_protocol_md_game_not_finished_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": "docs/backend/client-server-protocol.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_docs_backend_client_server_protocol_md_document",
+      "target": "_docs_backend_client_server_protocol_md_learning_content_index_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": "docs/backend/client-server-protocol.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_docs_backend_client_server_protocol_md_document",
+      "target": "_docs_backend_client_server_protocol_md_websocket_updates_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": "docs/backend/client-server-protocol.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_docs_backend_client_server_protocol_md_document",
+      "target": "_docs_backend_client_server_protocol_md_realtime_presence_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": "docs/backend/client-server-protocol.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_docs_backend_client_server_protocol_md_document",
+      "target": "_docs_backend_client_server_protocol_md_http_resync_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": "docs/backend/client-server-protocol.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_docs_backend_client_server_protocol_md_document",
+      "target": "_docs_backend_client_server_protocol_md_public_card_catalog_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": "docs/backend/client-server-protocol.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_docs_backend_client_server_protocol_md_document",
+      "target": "_docs_backend_client_server_protocol_md_catalog_endpoint_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": "docs/backend/client-server-protocol.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_docs_backend_client_server_protocol_md_document",
+      "target": "_docs_backend_client_server_protocol_md_card_catalog_version_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": "docs/backend/client-server-protocol.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_docs_backend_client_server_protocol_md_document",
+      "target": "_docs_backend_client_server_protocol_md_catalog_projection_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": "docs/backend/client-server-protocol.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_docs_backend_client_server_protocol_md_document",
+      "target": "_docs_backend_client_server_protocol_md_match_lobby_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": "docs/backend/client-server-protocol.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_docs_backend_client_server_protocol_md_document",
+      "target": "_docs_backend_client_server_protocol_md_match_visibility_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": "docs/backend/client-server-protocol.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_docs_backend_client_server_protocol_md_document",
+      "target": "_docs_backend_client_server_protocol_md_match_endpoints_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": "docs/backend/client-server-protocol.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_docs_backend_client_server_protocol_md_document",
+      "target": "_docs_backend_client_server_protocol_md_faction_conflict_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": "docs/backend/client-server-protocol.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_docs_backend_client_server_protocol_md_document",
+      "target": "_docs_backend_client_server_protocol_md_saved_decks_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": "docs/backend/client-server-protocol.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_docs_backend_client_server_protocol_md_document",
+      "target": "_docs_backend_client_server_protocol_md_deck_validation_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": "docs/backend/client-server-protocol.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_docs_backend_client_server_protocol_md_document",
+      "target": "_docs_backend_client_server_protocol_md_starter_deck_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": "docs/backend/client-server-protocol.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_docs_backend_client_server_protocol_md_document",
+      "target": "_docs_backend_client_server_protocol_md_ordering_resync_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": "docs/backend/client-server-protocol.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_docs_backend_client_server_protocol_md_document",
+      "target": "_docs_backend_client_server_protocol_md_polling_fallback_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": "docs/backend/client-server-protocol.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_docs_backend_client_server_protocol_md_document",
+      "target": "_docs_backend_client_server_protocol_md_command_retry_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": "docs/backend/client-server-protocol.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_docs_backend_client_server_protocol_md_document",
+      "target": "_docs_backend_client_server_protocol_md_undecided_topics_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": "docs/backend/client-server-protocol.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_docs_backend_client_server_protocol_md_dependency_direction_concept",
+      "target": "_docs_backend_client_server_protocol_md_game_engine_contracts_concept",
+      "relation": "points_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": "docs/backend/client-server-protocol.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_docs_backend_client_server_protocol_md_game_engine_contracts_concept",
+      "target": "_docs_backend_client_server_protocol_md_contracts_dto_concept",
+      "relation": "separates",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": "docs/backend/client-server-protocol.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_docs_backend_client_server_protocol_md_authenticated_session_concept",
+      "target": "_docs_backend_client_server_protocol_md_player_id_distinction_concept",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": "docs/backend/client-server-protocol.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_docs_backend_client_server_protocol_md_backend_authorization_concept",
+      "target": "_docs_backend_client_server_protocol_md_unauthenticated_error_concept",
+      "relation": "returns",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": "docs/backend/client-server-protocol.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_docs_backend_client_server_protocol_md_submit_command_request_concept",
+      "target": "_docs_backend_client_server_protocol_md_command_fields_concept",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": "docs/backend/client-server-protocol.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_docs_backend_client_server_protocol_md_command_fields_concept",
+      "target": "_docs_backend_client_server_protocol_md_phase_sequence_concept",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": "docs/backend/client-server-protocol.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_docs_backend_client_server_protocol_md_command_fields_concept",
+      "target": "_docs_backend_client_server_protocol_md_client_state_version_concept",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": "docs/backend/client-server-protocol.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_docs_backend_client_server_protocol_md_parse_game_command_concept",
+      "target": "_docs_backend_client_server_protocol_md_input_validation_concept",
+      "relation": "performs_before",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": "docs/backend/client-server-protocol.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_docs_backend_client_server_protocol_md_authenticated_command_concept",
+      "target": "_docs_backend_client_server_protocol_md_authenticated_player_id_concept",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": "docs/backend/client-server-protocol.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_docs_backend_client_server_protocol_md_authenticated_command_concept",
+      "target": "_docs_backend_client_server_protocol_md_received_at_concept",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": "docs/backend/client-server-protocol.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_docs_backend_client_server_protocol_md_command_serialization_concept",
+      "target": "_docs_backend_client_server_protocol_md_command_result_replay_concept",
+      "relation": "enables",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": "docs/backend/client-server-protocol.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_docs_backend_client_server_protocol_md_submit_response_concept",
+      "target": "_docs_backend_client_server_protocol_md_player_game_view_concept",
+      "relation": "returns",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": "docs/backend/client-server-protocol.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_docs_backend_client_server_protocol_md_submit_response_concept",
+      "target": "_docs_backend_client_server_protocol_md_visible_event_envelope_concept",
+      "relation": "returns",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": "docs/backend/client-server-protocol.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_docs_backend_client_server_protocol_md_information_hiding_concept",
+      "target": "_docs_backend_client_server_protocol_md_player_game_view_concept",
+      "relation": "protects",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": "docs/backend/client-server-protocol.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_docs_backend_client_server_protocol_md_http_adapter_concept",
+      "target": "_docs_backend_client_server_protocol_md_game_endpoints_concept",
+      "relation": "exposes",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": "docs/backend/client-server-protocol.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_docs_backend_client_server_protocol_md_game_id_mismatch_concept",
+      "target": "_docs_backend_client_server_protocol_md_http_adapter_concept",
+      "relation": "rejects",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": "docs/backend/client-server-protocol.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_docs_backend_client_server_protocol_md_authenticated_player_mismatch_concept",
+      "target": "_docs_backend_client_server_protocol_md_http_adapter_concept",
+      "relation": "rejects",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": "docs/backend/client-server-protocol.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_docs_backend_client_server_protocol_md_learning_context_concept",
+      "target": "_docs_backend_client_server_protocol_md_learning_content_index_concept",
+      "relation": "uses",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": "docs/backend/client-server-protocol.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_docs_backend_client_server_protocol_md_websocket_updates_concept",
+      "target": "_docs_backend_client_server_protocol_md_http_resync_concept",
+      "relation": "requires",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": "docs/backend/client-server-protocol.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_docs_backend_client_server_protocol_md_catalog_endpoint_concept",
+      "target": "_docs_backend_client_server_protocol_md_catalog_projection_concept",
+      "relation": "enforces",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": "docs/backend/client-server-protocol.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_docs_backend_client_server_protocol_md_card_catalog_version_concept",
+      "target": "_docs_backend_client_server_protocol_md_catalog_endpoint_concept",
+      "relation": "selects",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": "docs/backend/client-server-protocol.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_docs_backend_client_server_protocol_md_match_lobby_concept",
+      "target": "_docs_backend_client_server_protocol_md_match_visibility_concept",
+      "relation": "supports",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": "docs/backend/client-server-protocol.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_docs_backend_client_server_protocol_md_match_lobby_concept",
+      "target": "_docs_backend_client_server_protocol_md_faction_conflict_concept",
+      "relation": "rejects",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": "docs/backend/client-server-protocol.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_docs_backend_client_server_protocol_md_saved_decks_concept",
+      "target": "_docs_backend_client_server_protocol_md_deck_validation_concept",
+      "relation": "requires",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": "docs/backend/client-server-protocol.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_docs_backend_client_server_protocol_md_ordering_resync_concept",
+      "target": "_docs_backend_client_server_protocol_md_polling_fallback_concept",
+      "relation": "uses",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": "docs/backend/client-server-protocol.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_docs_backend_client_server_protocol_md_command_retry_concept",
+      "target": "_docs_backend_client_server_protocol_md_command_id_idempotency_concept",
+      "relation": "relies_on",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": "docs/backend/client-server-protocol.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_docs_backend_client_server_protocol_md_backend_authorization_concept",
+      "target": "_docs_backend_database_and_auth_md_better_auth_concept",
+      "relation": "uses_session_from",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": "docs/backend/client-server-protocol.md",
+      "source_location": null,
+      "weight": 0.85
+    },
+    {
+      "source": "_docs_backend_client_server_protocol_md_http_adapter_concept",
+      "target": "_docs_backend_durable_object_room_md_game_session_do_concept",
+      "relation": "invokes",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": "docs/backend/client-server-protocol.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_docs_backend_client_server_protocol_md_learning_context_concept",
+      "target": "_docs_backend_durable_object_room_md_learning_context_generation_concept",
+      "relation": "implemented_by",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": "docs/backend/client-server-protocol.md",
+      "source_location": null,
+      "weight": 1
+    },
+    {
+      "source": "_docs_backend_client_server_protocol_md_card_catalog_version_concept",
+      "target": "_docs_backend_durable_object_room_md_catalog_archive_concept",
+      "relation": "resolved_by",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1,
+      "source_file": "docs/backend/client-server-protocol.md",
+      "source_location": null,
+      "weight": 1
+    }
+  ],
+  "hyperedges": []
+}

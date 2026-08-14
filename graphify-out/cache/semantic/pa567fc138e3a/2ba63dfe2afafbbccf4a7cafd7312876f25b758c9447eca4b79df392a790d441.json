@@ -1,0 +1,86 @@
+{
+  "nodes": [
+    {
+      "id": "_agents_skills_turborepo_references_best_practices_rule_document",
+      "label": "Monorepo Best Practices",
+      "file_type": "document",
+      "source_file": ".agents/skills/turborepo/references/best-practices/RULE.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_agents_skills_turborepo_references_best_practices_rule_layout_concept",
+      "label": "apps and packages monorepo layout",
+      "file_type": "concept",
+      "source_file": ".agents/skills/turborepo/references/best-practices/RULE.md",
+      "source_location": null
+    },
+    {
+      "id": "_agents_skills_turborepo_references_best_practices_rule_package_purpose_concept",
+      "label": "One purpose per package",
+      "file_type": "concept",
+      "source_file": ".agents/skills/turborepo/references/best-practices/RULE.md",
+      "source_location": null
+    },
+    {
+      "id": "_agents_skills_turborepo_references_best_practices_rule_jit_compiled_concept",
+      "label": "JIT and compiled package strategies",
+      "file_type": "concept",
+      "source_file": ".agents/skills/turborepo/references/best-practices/RULE.md",
+      "source_location": null
+    },
+    {
+      "id": "_agents_skills_turborepo_references_best_practices_rule_exports_concept",
+      "label": "Exports field and namespaced packages",
+      "file_type": "concept",
+      "source_file": ".agents/skills/turborepo/references/best-practices/RULE.md",
+      "source_location": null
+    }
+  ],
+  "edges": [
+    {
+      "source": "_agents_skills_turborepo_references_best_practices_rule_document",
+      "target": "_agents_skills_turborepo_references_best_practices_rule_layout_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".agents/skills/turborepo/references/best-practices/RULE.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_agents_skills_turborepo_references_best_practices_rule_document",
+      "target": "_agents_skills_turborepo_references_best_practices_rule_package_purpose_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".agents/skills/turborepo/references/best-practices/RULE.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_agents_skills_turborepo_references_best_practices_rule_document",
+      "target": "_agents_skills_turborepo_references_best_practices_rule_jit_compiled_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".agents/skills/turborepo/references/best-practices/RULE.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_agents_skills_turborepo_references_best_practices_rule_document",
+      "target": "_agents_skills_turborepo_references_best_practices_rule_exports_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".agents/skills/turborepo/references/best-practices/RULE.md",
+      "source_location": null,
+      "weight": 1.0
+    }
+  ],
+  "hyperedges": []
+}

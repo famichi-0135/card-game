@@ -1,0 +1,120 @@
+{
+  "nodes": [
+    {
+      "id": "_agents_skills_shadcn_rules_composition_document",
+      "label": "Component Composition",
+      "file_type": "document",
+      "source_file": ".agents/skills/shadcn/rules/composition.md",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "_agents_skills_shadcn_rules_composition_group_containment_concept",
+      "label": "Group containment for item components",
+      "file_type": "concept",
+      "source_file": ".agents/skills/shadcn/rules/composition.md",
+      "source_location": null
+    },
+    {
+      "id": "_agents_skills_shadcn_rules_composition_alert_callouts_concept",
+      "label": "Alert component for callouts",
+      "file_type": "concept",
+      "source_file": ".agents/skills/shadcn/rules/composition.md",
+      "source_location": null
+    },
+    {
+      "id": "_agents_skills_shadcn_rules_composition_empty_component_concept",
+      "label": "Empty component for empty states",
+      "file_type": "concept",
+      "source_file": ".agents/skills/shadcn/rules/composition.md",
+      "source_location": null
+    },
+    {
+      "id": "_agents_skills_shadcn_rules_composition_overlay_title_concept",
+      "label": "Title required for Dialog Sheet and Drawer",
+      "file_type": "concept",
+      "source_file": ".agents/skills/shadcn/rules/composition.md",
+      "source_location": null
+    },
+    {
+      "id": "_agents_skills_shadcn_rules_composition_tabs_list_concept",
+      "label": "TabsTrigger must be inside TabsList",
+      "file_type": "concept",
+      "source_file": ".agents/skills/shadcn/rules/composition.md",
+      "source_location": null
+    },
+    {
+      "id": "_agents_skills_shadcn_rules_composition_existing_components_concept",
+      "label": "Prefer existing components over custom markup",
+      "file_type": "concept",
+      "source_file": ".agents/skills/shadcn/rules/composition.md",
+      "source_location": null
+    }
+  ],
+  "edges": [
+    {
+      "source": "_agents_skills_shadcn_rules_composition_document",
+      "target": "_agents_skills_shadcn_rules_composition_group_containment_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".agents/skills/shadcn/rules/composition.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_agents_skills_shadcn_rules_composition_document",
+      "target": "_agents_skills_shadcn_rules_composition_alert_callouts_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".agents/skills/shadcn/rules/composition.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_agents_skills_shadcn_rules_composition_document",
+      "target": "_agents_skills_shadcn_rules_composition_empty_component_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".agents/skills/shadcn/rules/composition.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_agents_skills_shadcn_rules_composition_document",
+      "target": "_agents_skills_shadcn_rules_composition_overlay_title_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".agents/skills/shadcn/rules/composition.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_agents_skills_shadcn_rules_composition_document",
+      "target": "_agents_skills_shadcn_rules_composition_tabs_list_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".agents/skills/shadcn/rules/composition.md",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "_agents_skills_shadcn_rules_composition_document",
+      "target": "_agents_skills_shadcn_rules_composition_existing_components_concept",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".agents/skills/shadcn/rules/composition.md",
+      "source_location": null,
+      "weight": 1.0
+    }
+  ],
+  "hyperedges": []
+}

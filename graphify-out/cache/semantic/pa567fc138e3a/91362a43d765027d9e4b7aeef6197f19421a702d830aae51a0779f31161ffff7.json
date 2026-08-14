@@ -1,0 +1,2325 @@
+{
+  "nodes": [
+    {
+      "id": "_agents_skills_shadcn_rules_chat_md_document",
+      "label": "Chat & Messaging",
+      "norm_label": "chat_messaging",
+      "file_type": "document",
+      "source_file": ".agents/skills/shadcn/rules/chat.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "_agents_skills_shadcn_rules_chat_md_chat_messaging",
+      "label": "Chat & Messaging",
+      "norm_label": "chat_messaging",
+      "file_type": "concept",
+      "source_file": ".agents/skills/shadcn/rules/chat.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "_agents_skills_shadcn_rules_chat_md_conversation_chat_ui",
+      "label": "conversation and chat UI",
+      "norm_label": "conversation_chat_ui",
+      "file_type": "concept",
+      "source_file": ".agents/skills/shadcn/rules/chat.md",
+      "source_location": "L3"
+    },
+    {
+      "id": "_agents_skills_shadcn_rules_chat_md_system_notes",
+      "label": "system notes",
+      "norm_label": "system_notes",
+      "file_type": "concept",
+      "source_file": ".agents/skills/shadcn/rules/chat.md",
+      "source_location": "L167"
+    },
+    {
+      "id": "_agents_skills_shadcn_rules_chat_md_dividers",
+      "label": "dividers",
+      "norm_label": "dividers",
+      "file_type": "concept",
+      "source_file": ".agents/skills/shadcn/rules/chat.md",
+      "source_location": "L167"
+    },
+    {
+      "id": "_agents_skills_shadcn_rules_chat_md_status_lines",
+      "label": "status lines",
+      "norm_label": "status_lines",
+      "file_type": "concept",
+      "source_file": ".agents/skills/shadcn/rules/chat.md",
+      "source_location": "L169"
+    },
+    {
+      "id": "_agents_skills_shadcn_rules_chat_md_date_dividers",
+      "label": "date dividers",
+      "norm_label": "date_dividers",
+      "file_type": "concept",
+      "source_file": ".agents/skills/shadcn/rules/chat.md",
+      "source_location": "L169"
+    },
+    {
+      "id": "_agents_skills_shadcn_rules_chat_md_labeled_separators",
+      "label": "labeled separators",
+      "norm_label": "labeled_separators",
+      "file_type": "concept",
+      "source_file": ".agents/skills/shadcn/rules/chat.md",
+      "source_location": "L169"
+    },
+    {
+      "id": "_agents_skills_shadcn_rules_chat_md_shadcn_components",
+      "label": "shadcn components",
+      "norm_label": "shadcn_components",
+      "file_type": "concept",
+      "source_file": ".agents/skills/shadcn/rules/chat.md",
+      "source_location": "L3"
+    },
+    {
+      "id": "_agents_skills_shadcn_rules_chat_md_shadcn_cli_install",
+      "label": "npx shadcn@latest add message-scroller message bubble attachment marker",
+      "norm_label": "shadcn_cli_install",
+      "file_type": "concept",
+      "source_file": ".agents/skills/shadcn/rules/chat.md",
+      "source_location": "L6"
+    },
+    {
+      "id": "_agents_skills_shadcn_rules_chat_md_base_vs_radix_document",
+      "label": "base-vs-radix.md",
+      "norm_label": "base_vs_radix_document",
+      "file_type": "document",
+      "source_file": ".agents/skills/shadcn/rules/chat.md",
+      "source_location": "L9"
+    },
+    {
+      "id": "_agents_skills_shadcn_rules_chat_md_styling_document",
+      "label": "styling.md",
+      "norm_label": "styling_document",
+      "file_type": "document",
+      "source_file": ".agents/skills/shadcn/rules/chat.md",
+      "source_location": "L214"
+    },
+    {
+      "id": "_agents_skills_shadcn_rules_chat_md_base",
+      "label": "base",
+      "norm_label": "base",
+      "file_type": "concept",
+      "source_file": ".agents/skills/shadcn/rules/chat.md",
+      "source_location": "L8"
+    },
+    {
+      "id": "_agents_skills_shadcn_rules_chat_md_radix",
+      "label": "radix",
+      "norm_label": "radix",
+      "file_type": "concept",
+      "source_file": ".agents/skills/shadcn/rules/chat.md",
+      "source_location": "L8"
+    },
+    {
+      "id": "_agents_skills_shadcn_rules_chat_md_render",
+      "label": "render",
+      "norm_label": "render",
+      "file_type": "concept",
+      "source_file": ".agents/skills/shadcn/rules/chat.md",
+      "source_location": "L9"
+    },
+    {
+      "id": "_agents_skills_shadcn_rules_chat_md_as_child",
+      "label": "asChild",
+      "norm_label": "as_child",
+      "file_type": "concept",
+      "source_file": ".agents/skills/shadcn/rules/chat.md",
+      "source_location": "L9"
+    },
+    {
+      "id": "_agents_skills_shadcn_rules_chat_md_message_scroller",
+      "label": "MessageScroller",
+      "norm_label": "message_scroller",
+      "file_type": "concept",
+      "source_file": ".agents/skills/shadcn/rules/chat.md",
+      "source_location": "L13"
+    },
+    {
+      "id": "_agents_skills_shadcn_rules_chat_md_scrollable_threads",
+      "label": "scrollable threads",
+      "norm_label": "scrollable_threads",
+      "file_type": "concept",
+      "source_file": ".agents/skills/shadcn/rules/chat.md",
+      "source_location": "L13"
+    },
+    {
+      "id": "_agents_skills_shadcn_rules_chat_md_message_scroller_provider",
+      "label": "MessageScrollerProvider",
+      "norm_label": "message_scroller_provider",
+      "file_type": "concept",
+      "source_file": ".agents/skills/shadcn/rules/chat.md",
+      "source_location": "L50"
+    },
+    {
+      "id": "_agents_skills_shadcn_rules_chat_md_message_scroller_viewport",
+      "label": "MessageScrollerViewport",
+      "norm_label": "message_scroller_viewport",
+      "file_type": "concept",
+      "source_file": ".agents/skills/shadcn/rules/chat.md",
+      "source_location": "L52"
+    },
+    {
+      "id": "_agents_skills_shadcn_rules_chat_md_message_scroller_content",
+      "label": "MessageScrollerContent",
+      "norm_label": "message_scroller_content",
+      "file_type": "concept",
+      "source_file": ".agents/skills/shadcn/rules/chat.md",
+      "source_location": "L54"
+    },
+    {
+      "id": "_agents_skills_shadcn_rules_chat_md_message_scroller_item",
+      "label": "MessageScrollerItem",
+      "norm_label": "message_scroller_item",
+      "file_type": "concept",
+      "source_file": ".agents/skills/shadcn/rules/chat.md",
+      "source_location": "L30"
+    },
+    {
+      "id": "_agents_skills_shadcn_rules_chat_md_measure",
+      "label": "measure",
+      "norm_label": "measure",
+      "file_type": "concept",
+      "source_file": ".agents/skills/shadcn/rules/chat.md",
+      "source_location": "L30"
+    },
+    {
+      "id": "_agents_skills_shadcn_rules_chat_md_position_preservation",
+      "label": "position preservation",
+      "norm_label": "position_preservation",
+      "file_type": "concept",
+      "source_file": ".agents/skills/shadcn/rules/chat.md",
+      "source_location": "L30"
+    },
+    {
+      "id": "_agents_skills_shadcn_rules_chat_md_visibility_tracking",
+      "label": "visibility tracking",
+      "norm_label": "visibility_tracking",
+      "file_type": "concept",
+      "source_file": ".agents/skills/shadcn/rules/chat.md",
+      "source_location": "L31"
+    },
+    {
+      "id": "_agents_skills_shadcn_rules_chat_md_jump_to_message",
+      "label": "jump to a message",
+      "norm_label": "jump_to_message",
+      "file_type": "concept",
+      "source_file": ".agents/skills/shadcn/rules/chat.md",
+      "source_location": "L31"
+    },
+    {
+      "id": "_agents_skills_shadcn_rules_chat_md_message_scroller_button",
+      "label": "MessageScrollerButton",
+      "norm_label": "message_scroller_button",
+      "file_type": "concept",
+      "source_file": ".agents/skills/shadcn/rules/chat.md",
+      "source_location": "L31"
+    },
+    {
+      "id": "_agents_skills_shadcn_rules_chat_md_message",
+      "label": "Message",
+      "norm_label": "message",
+      "file_type": "concept",
+      "source_file": ".agents/skills/shadcn/rules/chat.md",
+      "source_location": "L14"
+    },
+    {
+      "id": "_agents_skills_shadcn_rules_chat_md_message_rows",
+      "label": "message rows",
+      "norm_label": "message_rows",
+      "file_type": "concept",
+      "source_file": ".agents/skills/shadcn/rules/chat.md",
+      "source_location": "L14"
+    },
+    {
+      "id": "_agents_skills_shadcn_rules_chat_md_message_group",
+      "label": "MessageGroup",
+      "norm_label": "message_group",
+      "file_type": "concept",
+      "source_file": ".agents/skills/shadcn/rules/chat.md",
+      "source_location": "L77"
+    },
+    {
+      "id": "_agents_skills_shadcn_rules_chat_md_message_avatar",
+      "label": "MessageAvatar",
+      "norm_label": "message_avatar",
+      "file_type": "concept",
+      "source_file": ".agents/skills/shadcn/rules/chat.md",
+      "source_location": "L84"
+    },
+    {
+      "id": "_agents_skills_shadcn_rules_chat_md_message_content",
+      "label": "MessageContent",
+      "norm_label": "message_content",
+      "file_type": "concept",
+      "source_file": ".agents/skills/shadcn/rules/chat.md",
+      "source_location": "L90"
+    },
+    {
+      "id": "_agents_skills_shadcn_rules_chat_md_message_header",
+      "label": "MessageHeader",
+      "norm_label": "message_header",
+      "file_type": "concept",
+      "source_file": ".agents/skills/shadcn/rules/chat.md",
+      "source_location": "L91"
+    },
+    {
+      "id": "_agents_skills_shadcn_rules_chat_md_message_footer",
+      "label": "MessageFooter",
+      "norm_label": "message_footer",
+      "file_type": "concept",
+      "source_file": ".agents/skills/shadcn/rules/chat.md",
+      "source_location": "L95"
+    },
+    {
+      "id": "_agents_skills_shadcn_rules_chat_md_avatar",
+      "label": "Avatar",
+      "norm_label": "avatar",
+      "file_type": "concept",
+      "source_file": ".agents/skills/shadcn/rules/chat.md",
+      "source_location": "L85"
+    },
+    {
+      "id": "_agents_skills_shadcn_rules_chat_md_avatar_image",
+      "label": "AvatarImage",
+      "norm_label": "avatar_image",
+      "file_type": "concept",
+      "source_file": ".agents/skills/shadcn/rules/chat.md",
+      "source_location": "L86"
+    },
+    {
+      "id": "_agents_skills_shadcn_rules_chat_md_avatar_fallback",
+      "label": "AvatarFallback",
+      "norm_label": "avatar_fallback",
+      "file_type": "concept",
+      "source_file": ".agents/skills/shadcn/rules/chat.md",
+      "source_location": "L87"
+    },
+    {
+      "id": "_agents_skills_shadcn_rules_chat_md_bubble",
+      "label": "Bubble",
+      "norm_label": "bubble",
+      "file_type": "concept",
+      "source_file": ".agents/skills/shadcn/rules/chat.md",
+      "source_location": "L15"
+    },
+    {
+      "id": "_agents_skills_shadcn_rules_chat_md_bubble_content",
+      "label": "BubbleContent",
+      "norm_label": "bubble_content",
+      "file_type": "concept",
+      "source_file": ".agents/skills/shadcn/rules/chat.md",
+      "source_location": "L93"
+    },
+    {
+      "id": "_agents_skills_shadcn_rules_chat_md_bubble_reactions",
+      "label": "BubbleReactions",
+      "norm_label": "bubble_reactions",
+      "file_type": "concept",
+      "source_file": ".agents/skills/shadcn/rules/chat.md",
+      "source_location": "L110"
+    },
+    {
+      "id": "_agents_skills_shadcn_rules_chat_md_badge",
+      "label": "Badge",
+      "norm_label": "badge",
+      "file_type": "concept",
+      "source_file": ".agents/skills/shadcn/rules/chat.md",
+      "source_location": "L112"
+    },
+    {
+      "id": "_agents_skills_shadcn_rules_chat_md_reaction_cluster",
+      "label": "reaction cluster",
+      "norm_label": "reaction_cluster",
+      "file_type": "concept",
+      "source_file": ".agents/skills/shadcn/rules/chat.md",
+      "source_location": "L110"
+    },
+    {
+      "id": "_agents_skills_shadcn_rules_chat_md_absolutely_positioned_badges",
+      "label": "absolutely-positioned Badges",
+      "norm_label": "absolutely_positioned_badges",
+      "file_type": "concept",
+      "source_file": ".agents/skills/shadcn/rules/chat.md",
+      "source_location": "L112"
+    },
+    {
+      "id": "_agents_skills_shadcn_rules_chat_md_attachment",
+      "label": "Attachment",
+      "norm_label": "attachment",
+      "file_type": "concept",
+      "source_file": ".agents/skills/shadcn/rules/chat.md",
+      "source_location": "L16"
+    },
+    {
+      "id": "_agents_skills_shadcn_rules_chat_md_file_image_attachments",
+      "label": "file and image attachments",
+      "norm_label": "file_image_attachments",
+      "file_type": "concept",
+      "source_file": ".agents/skills/shadcn/rules/chat.md",
+      "source_location": "L137"
+    },
+    {
+      "id": "_agents_skills_shadcn_rules_chat_md_item",
+      "label": "Item",
+      "norm_label": "item",
+      "file_type": "concept",
+      "source_file": ".agents/skills/shadcn/rules/chat.md",
+      "source_location": "L137"
+    },
+    {
+      "id": "_agents_skills_shadcn_rules_chat_md_custom_card",
+      "label": "custom card",
+      "norm_label": "custom_card",
+      "file_type": "concept",
+      "source_file": ".agents/skills/shadcn/rules/chat.md",
+      "source_location": "L137"
+    },
+    {
+      "id": "_agents_skills_shadcn_rules_chat_md_attachment_group",
+      "label": "AttachmentGroup",
+      "norm_label": "attachment_group",
+      "file_type": "concept",
+      "source_file": ".agents/skills/shadcn/rules/chat.md",
+      "source_location": "L144"
+    },
+    {
+      "id": "_agents_skills_shadcn_rules_chat_md_attachment_media",
+      "label": "AttachmentMedia",
+      "norm_label": "attachment_media",
+      "file_type": "concept",
+      "source_file": ".agents/skills/shadcn/rules/chat.md",
+      "source_location": "L148"
+    },
+    {
+      "id": "_agents_skills_shadcn_rules_chat_md_attachment_media_variant",
+      "label": "AttachmentMedia variant",
+      "norm_label": "attachment_media_variant",
+      "file_type": "concept",
+      "source_file": ".agents/skills/shadcn/rules/chat.md",
+      "source_location": "L148-L163"
+    },
+    {
+      "id": "_agents_skills_shadcn_rules_chat_md_attachment_media_variant_icon",
+      "label": "icon",
+      "norm_label": "attachment_media_variant_icon",
+      "file_type": "concept",
+      "source_file": ".agents/skills/shadcn/rules/chat.md",
+      "source_location": "L148"
+    },
+    {
+      "id": "_agents_skills_shadcn_rules_chat_md_attachment_media_variant_image",
+      "label": "image",
+      "norm_label": "attachment_media_variant_image",
+      "file_type": "concept",
+      "source_file": ".agents/skills/shadcn/rules/chat.md",
+      "source_location": "L163"
+    },
+    {
+      "id": "_agents_skills_shadcn_rules_chat_md_attachment_content",
+      "label": "AttachmentContent",
+      "norm_label": "attachment_content",
+      "file_type": "concept",
+      "source_file": ".agents/skills/shadcn/rules/chat.md",
+      "source_location": "L151"
+    },
+    {
+      "id": "_agents_skills_shadcn_rules_chat_md_attachment_title",
+      "label": "AttachmentTitle",
+      "norm_label": "attachment_title",
+      "file_type": "concept",
+      "source_file": ".agents/skills/shadcn/rules/chat.md",
+      "source_location": "L152"
+    },
+    {
+      "id": "_agents_skills_shadcn_rules_chat_md_attachment_description",
+      "label": "AttachmentDescription",
+      "norm_label": "attachment_description",
+      "file_type": "concept",
+      "source_file": ".agents/skills/shadcn/rules/chat.md",
+      "source_location": "L153"
+    },
+    {
+      "id": "_agents_skills_shadcn_rules_chat_md_attachment_actions",
+      "label": "AttachmentActions",
+      "norm_label": "attachment_actions",
+      "file_type": "concept",
+      "source_file": ".agents/skills/shadcn/rules/chat.md",
+      "source_location": "L155"
+    },
+    {
+      "id": "_agents_skills_shadcn_rules_chat_md_attachment_action",
+      "label": "AttachmentAction",
+      "norm_label": "attachment_action",
+      "file_type": "concept",
+      "source_file": ".agents/skills/shadcn/rules/chat.md",
+      "source_location": "L156"
+    },
+    {
+      "id": "_agents_skills_shadcn_rules_chat_md_file_text_icon",
+      "label": "FileTextIcon",
+      "norm_label": "file_text_icon",
+      "file_type": "concept",
+      "source_file": ".agents/skills/shadcn/rules/chat.md",
+      "source_location": "L149"
+    },
+    {
+      "id": "_agents_skills_shadcn_rules_chat_md_download_icon",
+      "label": "DownloadIcon",
+      "norm_label": "download_icon",
+      "file_type": "concept",
+      "source_file": ".agents/skills/shadcn/rules/chat.md",
+      "source_location": "L157"
+    },
+    {
+      "id": "_agents_skills_shadcn_rules_chat_md_marker",
+      "label": "Marker",
+      "norm_label": "marker",
+      "file_type": "concept",
+      "source_file": ".agents/skills/shadcn/rules/chat.md",
+      "source_location": "L17"
+    },
+    {
+      "id": "_agents_skills_shadcn_rules_chat_md_marker_variant",
+      "label": "Marker variant",
+      "norm_label": "marker_variant",
+      "file_type": "concept",
+      "source_file": ".agents/skills/shadcn/rules/chat.md",
+      "source_location": "L172"
+    },
+    {
+      "id": "_agents_skills_shadcn_rules_chat_md_marker_variant_default",
+      "label": "default",
+      "norm_label": "marker_variant_default",
+      "file_type": "concept",
+      "source_file": ".agents/skills/shadcn/rules/chat.md",
+      "source_location": "L172"
+    },
+    {
+      "id": "_agents_skills_shadcn_rules_chat_md_marker_variant_separator",
+      "label": "separator",
+      "norm_label": "marker_variant_separator",
+      "file_type": "concept",
+      "source_file": ".agents/skills/shadcn/rules/chat.md",
+      "source_location": "L172"
+    },
+    {
+      "id": "_agents_skills_shadcn_rules_chat_md_marker_variant_border",
+      "label": "border",
+      "norm_label": "marker_variant_border",
+      "file_type": "concept",
+      "source_file": ".agents/skills/shadcn/rules/chat.md",
+      "source_location": "L173"
+    },
+    {
+      "id": "_agents_skills_shadcn_rules_chat_md_separator",
+      "label": "Separator",
+      "norm_label": "separator",
+      "file_type": "concept",
+      "source_file": ".agents/skills/shadcn/rules/chat.md",
+      "source_location": "L170"
+    },
+    {
+      "id": "_agents_skills_shadcn_rules_chat_md_marker_icon",
+      "label": "MarkerIcon",
+      "norm_label": "marker_icon",
+      "file_type": "concept",
+      "source_file": ".agents/skills/shadcn/rules/chat.md",
+      "source_location": "L174"
+    },
+    {
+      "id": "_agents_skills_shadcn_rules_chat_md_marker_content",
+      "label": "MarkerContent",
+      "norm_label": "marker_content",
+      "file_type": "concept",
+      "source_file": ".agents/skills/shadcn/rules/chat.md",
+      "source_location": "L174"
+    },
+    {
+      "id": "_agents_skills_shadcn_rules_chat_md_scroll_area",
+      "label": "ScrollArea",
+      "norm_label": "scroll_area",
+      "file_type": "concept",
+      "source_file": ".agents/skills/shadcn/rules/chat.md",
+      "source_location": "L27"
+    },
+    {
+      "id": "_agents_skills_shadcn_rules_chat_md_raw_overflow_container",
+      "label": "raw overflow container",
+      "norm_label": "raw_overflow_container",
+      "file_type": "concept",
+      "source_file": ".agents/skills/shadcn/rules/chat.md",
+      "source_location": "L26"
+    },
+    {
+      "id": "_agents_skills_shadcn_rules_chat_md_manual_scroll_wiring",
+      "label": "manual scroll wiring",
+      "norm_label": "manual_scroll_wiring",
+      "file_type": "concept",
+      "source_file": ".agents/skills/shadcn/rules/chat.md",
+      "source_location": "L26"
+    },
+    {
+      "id": "_agents_skills_shadcn_rules_chat_md_use_stick_to_bottom",
+      "label": "useStickToBottom",
+      "norm_label": "use_stick_to_bottom",
+      "file_type": "concept",
+      "source_file": ".agents/skills/shadcn/rules/chat.md",
+      "source_location": "L199"
+    },
+    {
+      "id": "_agents_skills_shadcn_rules_chat_md_resize_observer",
+      "label": "ResizeObserver",
+      "norm_label": "resize_observer",
+      "file_type": "concept",
+      "source_file": ".agents/skills/shadcn/rules/chat.md",
+      "source_location": "L199"
+    },
+    {
+      "id": "_agents_skills_shadcn_rules_chat_md_scroll_top_math",
+      "label": "scrollTop math",
+      "norm_label": "scroll_top_math",
+      "file_type": "concept",
+      "source_file": ".agents/skills/shadcn/rules/chat.md",
+      "source_location": "L199"
+    },
+    {
+      "id": "_agents_skills_shadcn_rules_chat_md_streaming",
+      "label": "streaming",
+      "norm_label": "streaming",
+      "file_type": "concept",
+      "source_file": ".agents/skills/shadcn/rules/chat.md",
+      "source_location": "L18"
+    },
+    {
+      "id": "_agents_skills_shadcn_rules_chat_md_streaming_token_updates",
+      "label": "streaming token updates",
+      "norm_label": "streaming_token_updates",
+      "file_type": "concept",
+      "source_file": ".agents/skills/shadcn/rules/chat.md",
+      "source_location": "L203"
+    },
+    {
+      "id": "_agents_skills_shadcn_rules_chat_md_last_message",
+      "label": "last message",
+      "norm_label": "last_message",
+      "file_type": "concept",
+      "source_file": ".agents/skills/shadcn/rules/chat.md",
+      "source_location": "L203"
+    },
+    {
+      "id": "_agents_skills_shadcn_rules_chat_md_anchoring",
+      "label": "anchoring",
+      "norm_label": "anchoring",
+      "file_type": "concept",
+      "source_file": ".agents/skills/shadcn/rules/chat.md",
+      "source_location": "L18"
+    },
+    {
+      "id": "_agents_skills_shadcn_rules_chat_md_jump_to_latest",
+      "label": "jump-to-latest",
+      "norm_label": "jump_to_latest",
+      "file_type": "concept",
+      "source_file": ".agents/skills/shadcn/rules/chat.md",
+      "source_location": "L18"
+    },
+    {
+      "id": "_agents_skills_shadcn_rules_chat_md_auto_scroll",
+      "label": "autoScroll",
+      "norm_label": "auto_scroll",
+      "file_type": "concept",
+      "source_file": ".agents/skills/shadcn/rules/chat.md",
+      "source_location": "L50"
+    },
+    {
+      "id": "_agents_skills_shadcn_rules_chat_md_scroll_anchor",
+      "label": "scrollAnchor",
+      "norm_label": "scroll_anchor",
+      "file_type": "concept",
+      "source_file": ".agents/skills/shadcn/rules/chat.md",
+      "source_location": "L58"
+    },
+    {
+      "id": "_agents_skills_shadcn_rules_chat_md_message_id",
+      "label": "messageId",
+      "norm_label": "message_id",
+      "file_type": "concept",
+      "source_file": ".agents/skills/shadcn/rules/chat.md",
+      "source_location": "L57"
+    },
+    {
+      "id": "_agents_skills_shadcn_rules_chat_md_direction",
+      "label": "direction",
+      "norm_label": "direction",
+      "file_type": "concept",
+      "source_file": ".agents/skills/shadcn/rules/chat.md",
+      "source_location": "L208"
+    },
+    {
+      "id": "_agents_skills_shadcn_rules_chat_md_shimmer",
+      "label": "shimmer",
+      "norm_label": "shimmer",
+      "file_type": "concept",
+      "source_file": ".agents/skills/shadcn/rules/chat.md",
+      "source_location": "L142"
+    },
+    {
+      "id": "_agents_skills_shadcn_rules_chat_md_thinking_indicator",
+      "label": "thinking indicator",
+      "norm_label": "thinking_indicator",
+      "file_type": "concept",
+      "source_file": ".agents/skills/shadcn/rules/chat.md",
+      "source_location": "L212"
+    },
+    {
+      "id": "_agents_skills_shadcn_rules_chat_md_new_messages",
+      "label": "new messages",
+      "norm_label": "new_messages",
+      "file_type": "concept",
+      "source_file": ".agents/skills/shadcn/rules/chat.md",
+      "source_location": "L25"
+    },
+    {
+      "id": "_agents_skills_shadcn_rules_chat_md_position_restore",
+      "label": "position restore",
+      "norm_label": "position_restore",
+      "file_type": "concept",
+      "source_file": ".agents/skills/shadcn/rules/chat.md",
+      "source_location": "L25"
+    },
+    {
+      "id": "_agents_skills_shadcn_rules_chat_md_user_scroll_up",
+      "label": "user scrolls up",
+      "norm_label": "user_scroll_up",
+      "file_type": "concept",
+      "source_file": ".agents/skills/shadcn/rules/chat.md",
+      "source_location": "L203"
+    },
+    {
+      "id": "_agents_skills_shadcn_rules_chat_md_scroll_away",
+      "label": "user scrolls away",
+      "norm_label": "scroll_away",
+      "file_type": "concept",
+      "source_file": ".agents/skills/shadcn/rules/chat.md",
+      "source_location": "L207"
+    },
+    {
+      "id": "_agents_skills_shadcn_rules_chat_md_own_scroll_position_state",
+      "label": "own scroll-position state",
+      "norm_label": "own_scroll_position_state",
+      "file_type": "concept",
+      "source_file": ".agents/skills/shadcn/rules/chat.md",
+      "source_location": "L209"
+    },
+    {
+      "id": "_agents_skills_shadcn_rules_chat_md_real_upload_status",
+      "label": "real upload status",
+      "norm_label": "real_upload_status",
+      "file_type": "concept",
+      "source_file": ".agents/skills/shadcn/rules/chat.md",
+      "source_location": "L138"
+    },
+    {
+      "id": "_agents_skills_shadcn_rules_chat_md_separate_spinner",
+      "label": "separate spinner",
+      "norm_label": "separate_spinner",
+      "file_type": "concept",
+      "source_file": ".agents/skills/shadcn/rules/chat.md",
+      "source_location": "L139"
+    },
+    {
+      "id": "_agents_skills_shadcn_rules_chat_md_custom_keyframe_animation",
+      "label": "custom keyframe animation",
+      "norm_label": "custom_keyframe_animation",
+      "file_type": "concept",
+      "source_file": ".agents/skills/shadcn/rules/chat.md",
+      "source_location": "L213"
+    },
+    {
+      "id": "_agents_skills_shadcn_rules_chat_md_use_message_scroller",
+      "label": "useMessageScroller",
+      "norm_label": "use_message_scroller",
+      "file_type": "concept",
+      "source_file": ".agents/skills/shadcn/rules/chat.md",
+      "source_location": "L221"
+    },
+    {
+      "id": "_agents_skills_shadcn_rules_chat_md_use_message_scroller_visibility",
+      "label": "useMessageScrollerVisibility",
+      "norm_label": "use_message_scroller_visibility",
+      "file_type": "concept",
+      "source_file": ".agents/skills/shadcn/rules/chat.md",
+      "source_location": "L222"
+    },
+    {
+      "id": "_agents_skills_shadcn_rules_chat_md_use_message_scroller_scrollable",
+      "label": "useMessageScrollerScrollable",
+      "norm_label": "use_message_scroller_scrollable",
+      "file_type": "concept",
+      "source_file": ".agents/skills/shadcn/rules/chat.md",
+      "source_location": "L222"
+    },
+    {
+      "id": "_agents_skills_shadcn_rules_chat_md_shadcn_react",
+      "label": "@shadcn/react",
+      "norm_label": "shadcn_react",
+      "file_type": "concept",
+      "source_file": ".agents/skills/shadcn/rules/chat.md",
+      "source_location": "L223"
+    },
+    {
+      "id": "_agents_skills_shadcn_rules_chat_md_img",
+      "label": "img",
+      "norm_label": "img",
+      "file_type": "concept",
+      "source_file": ".agents/skills/shadcn/rules/chat.md",
+      "source_location": "L163"
+    },
+    {
+      "id": "_agents_skills_shadcn_rules_chat_md_state",
+      "label": "state",
+      "norm_label": "state",
+      "file_type": "concept",
+      "source_file": ".agents/skills/shadcn/rules/chat.md",
+      "source_location": "L141"
+    },
+    {
+      "id": "_agents_skills_shadcn_rules_chat_md_idle",
+      "label": "idle",
+      "norm_label": "idle",
+      "file_type": "concept",
+      "source_file": ".agents/skills/shadcn/rules/chat.md",
+      "source_location": "L141"
+    },
+    {
+      "id": "_agents_skills_shadcn_rules_chat_md_uploading",
+      "label": "uploading",
+      "norm_label": "uploading",
+      "file_type": "concept",
+      "source_file": ".agents/skills/shadcn/rules/chat.md",
+      "source_location": "L141"
+    },
+    {
+      "id": "_agents_skills_shadcn_rules_chat_md_processing",
+      "label": "processing",
+      "norm_label": "processing",
+      "file_type": "concept",
+      "source_file": ".agents/skills/shadcn/rules/chat.md",
+      "source_location": "L141"
+    },
+    {
+      "id": "_agents_skills_shadcn_rules_chat_md_error",
+      "label": "error",
+      "norm_label": "error",
+      "file_type": "concept",
+      "source_file": ".agents/skills/shadcn/rules/chat.md",
+      "source_location": "L141"
+    },
+    {
+      "id": "_agents_skills_shadcn_rules_chat_md_done",
+      "label": "done",
+      "norm_label": "done",
+      "file_type": "concept",
+      "source_file": ".agents/skills/shadcn/rules/chat.md",
+      "source_location": "L141"
+    },
+    {
+      "id": "_agents_skills_shadcn_rules_chat_md_size",
+      "label": "size",
+      "norm_label": "size",
+      "file_type": "concept",
+      "source_file": ".agents/skills/shadcn/rules/chat.md",
+      "source_location": "L143"
+    },
+    {
+      "id": "_agents_skills_shadcn_rules_chat_md_size_default",
+      "label": "default",
+      "norm_label": "size_default",
+      "file_type": "concept",
+      "source_file": ".agents/skills/shadcn/rules/chat.md",
+      "source_location": "L143"
+    },
+    {
+      "id": "_agents_skills_shadcn_rules_chat_md_size_sm",
+      "label": "sm",
+      "norm_label": "size_sm",
+      "file_type": "concept",
+      "source_file": ".agents/skills/shadcn/rules/chat.md",
+      "source_location": "L143"
+    },
+    {
+      "id": "_agents_skills_shadcn_rules_chat_md_size_xs",
+      "label": "xs",
+      "norm_label": "size_xs",
+      "file_type": "concept",
+      "source_file": ".agents/skills/shadcn/rules/chat.md",
+      "source_location": "L143"
+    },
+    {
+      "id": "_agents_skills_shadcn_rules_chat_md_orientation",
+      "label": "orientation",
+      "norm_label": "orientation",
+      "file_type": "concept",
+      "source_file": ".agents/skills/shadcn/rules/chat.md",
+      "source_location": "L143"
+    },
+    {
+      "id": "_agents_skills_shadcn_rules_chat_md_horizontal",
+      "label": "horizontal",
+      "norm_label": "horizontal",
+      "file_type": "concept",
+      "source_file": ".agents/skills/shadcn/rules/chat.md",
+      "source_location": "L143"
+    },
+    {
+      "id": "_agents_skills_shadcn_rules_chat_md_vertical",
+      "label": "vertical",
+      "norm_label": "vertical",
+      "file_type": "concept",
+      "source_file": ".agents/skills/shadcn/rules/chat.md",
+      "source_location": "L143"
+    },
+    {
+      "id": "_agents_skills_shadcn_rules_chat_md_variant",
+      "label": "variant",
+      "norm_label": "variant",
+      "file_type": "concept",
+      "source_file": ".agents/skills/shadcn/rules/chat.md",
+      "source_location": "L107"
+    },
+    {
+      "id": "_agents_skills_shadcn_rules_chat_md_variant_default",
+      "label": "default",
+      "norm_label": "variant_default",
+      "file_type": "concept",
+      "source_file": ".agents/skills/shadcn/rules/chat.md",
+      "source_location": "L107"
+    },
+    {
+      "id": "_agents_skills_shadcn_rules_chat_md_variant_secondary",
+      "label": "secondary",
+      "norm_label": "variant_secondary",
+      "file_type": "concept",
+      "source_file": ".agents/skills/shadcn/rules/chat.md",
+      "source_location": "L107"
+    },
+    {
+      "id": "_agents_skills_shadcn_rules_chat_md_variant_muted",
+      "label": "muted",
+      "norm_label": "variant_muted",
+      "file_type": "concept",
+      "source_file": ".agents/skills/shadcn/rules/chat.md",
+      "source_location": "L107"
+    },
+    {
+      "id": "_agents_skills_shadcn_rules_chat_md_variant_tinted",
+      "label": "tinted",
+      "norm_label": "variant_tinted",
+      "file_type": "concept",
+      "source_file": ".agents/skills/shadcn/rules/chat.md",
+      "source_location": "L107"
+    },
+    {
+      "id": "_agents_skills_shadcn_rules_chat_md_variant_outline",
+      "label": "outline",
+      "norm_label": "variant_outline",
+      "file_type": "concept",
+      "source_file": ".agents/skills/shadcn/rules/chat.md",
+      "source_location": "L107"
+    },
+    {
+      "id": "_agents_skills_shadcn_rules_chat_md_variant_ghost",
+      "label": "ghost",
+      "norm_label": "variant_ghost",
+      "file_type": "concept",
+      "source_file": ".agents/skills/shadcn/rules/chat.md",
+      "source_location": "L107"
+    },
+    {
+      "id": "_agents_skills_shadcn_rules_chat_md_variant_destructive",
+      "label": "destructive",
+      "norm_label": "variant_destructive",
+      "file_type": "concept",
+      "source_file": ".agents/skills/shadcn/rules/chat.md",
+      "source_location": "L107"
+    },
+    {
+      "id": "_agents_skills_shadcn_rules_chat_md_align",
+      "label": "align",
+      "norm_label": "align",
+      "file_type": "concept",
+      "source_file": ".agents/skills/shadcn/rules/chat.md",
+      "source_location": "L108"
+    },
+    {
+      "id": "_agents_skills_shadcn_rules_chat_md_align_start",
+      "label": "start",
+      "norm_label": "align_start",
+      "file_type": "concept",
+      "source_file": ".agents/skills/shadcn/rules/chat.md",
+      "source_location": "L108"
+    },
+    {
+      "id": "_agents_skills_shadcn_rules_chat_md_align_end",
+      "label": "end",
+      "norm_label": "align_end",
+      "file_type": "concept",
+      "source_file": ".agents/skills/shadcn/rules/chat.md",
+      "source_location": "L108"
+    },
+    {
+      "id": "_agents_skills_shadcn_rules_chat_md_side",
+      "label": "side",
+      "norm_label": "side",
+      "file_type": "concept",
+      "source_file": ".agents/skills/shadcn/rules/chat.md",
+      "source_location": "L110"
+    },
+    {
+      "id": "_agents_skills_shadcn_rules_chat_md_side_top",
+      "label": "top",
+      "norm_label": "side_top",
+      "file_type": "concept",
+      "source_file": ".agents/skills/shadcn/rules/chat.md",
+      "source_location": "L110"
+    },
+    {
+      "id": "_agents_skills_shadcn_rules_chat_md_side_bottom",
+      "label": "bottom",
+      "norm_label": "side_bottom",
+      "file_type": "concept",
+      "source_file": ".agents/skills/shadcn/rules/chat.md",
+      "source_location": "L110"
+    },
+    {
+      "id": "_agents_skills_shadcn_rules_chat_md_direction_end",
+      "label": "end (default)",
+      "norm_label": "direction_end_default",
+      "file_type": "concept",
+      "source_file": ".agents/skills/shadcn/rules/chat.md",
+      "source_location": "L208"
+    },
+    {
+      "id": "_agents_skills_shadcn_rules_chat_md_direction_start",
+      "label": "start",
+      "norm_label": "direction_start",
+      "file_type": "concept",
+      "source_file": ".agents/skills/shadcn/rules/chat.md",
+      "source_location": "L208"
+    }
+  ],
+  "edges": [
+    {
+      "source": "_agents_skills_shadcn_rules_chat_md_document",
+      "target": "_agents_skills_shadcn_rules_chat_md_chat_messaging",
+      "relation": "describes",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".agents/skills/shadcn/rules/chat.md",
+      "source_location": "L1-L3",
+      "weight": 1.0
+    },
+    {
+      "source": "_agents_skills_shadcn_rules_chat_md_document",
+      "target": "_agents_skills_shadcn_rules_chat_md_shadcn_cli_install",
+      "relation": "specifies_install_command",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".agents/skills/shadcn/rules/chat.md",
+      "source_location": "L6",
+      "weight": 1.0
+    },
+    {
+      "source": "_agents_skills_shadcn_rules_chat_md_document",
+      "target": "_agents_skills_shadcn_rules_chat_md_base_vs_radix_document",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".agents/skills/shadcn/rules/chat.md",
+      "source_location": "L9",
+      "weight": 1.0
+    },
+    {
+      "source": "_agents_skills_shadcn_rules_chat_md_document",
+      "target": "_agents_skills_shadcn_rules_chat_md_styling_document",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".agents/skills/shadcn/rules/chat.md",
+      "source_location": "L214",
+      "weight": 1.0
+    },
+    {
+      "source": "_agents_skills_shadcn_rules_chat_md_chat_messaging",
+      "target": "_agents_skills_shadcn_rules_chat_md_conversation_chat_ui",
+      "relation": "targets",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".agents/skills/shadcn/rules/chat.md",
+      "source_location": "L3",
+      "weight": 1.0
+    },
+    {
+      "source": "_agents_skills_shadcn_rules_chat_md_conversation_chat_ui",
+      "target": "_agents_skills_shadcn_rules_chat_md_shadcn_components",
+      "relation": "composes",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".agents/skills/shadcn/rules/chat.md",
+      "source_location": "L3-L4",
+      "weight": 1.0
+    },
+    {
+      "source": "_agents_skills_shadcn_rules_chat_md_system_notes",
+      "target": "_agents_skills_shadcn_rules_chat_md_marker",
+      "relation": "uses",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".agents/skills/shadcn/rules/chat.md",
+      "source_location": "L167-L170",
+      "weight": 1.0
+    },
+    {
+      "source": "_agents_skills_shadcn_rules_chat_md_dividers",
+      "target": "_agents_skills_shadcn_rules_chat_md_marker",
+      "relation": "uses",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".agents/skills/shadcn/rules/chat.md",
+      "source_location": "L167-L170",
+      "weight": 1.0
+    },
+    {
+      "source": "_agents_skills_shadcn_rules_chat_md_status_lines",
+      "target": "_agents_skills_shadcn_rules_chat_md_marker",
+      "relation": "rendered_with",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".agents/skills/shadcn/rules/chat.md",
+      "source_location": "L169-L170",
+      "weight": 1.0
+    },
+    {
+      "source": "_agents_skills_shadcn_rules_chat_md_date_dividers",
+      "target": "_agents_skills_shadcn_rules_chat_md_marker",
+      "relation": "rendered_with",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".agents/skills/shadcn/rules/chat.md",
+      "source_location": "L169-L170",
+      "weight": 1.0
+    },
+    {
+      "source": "_agents_skills_shadcn_rules_chat_md_labeled_separators",
+      "target": "_agents_skills_shadcn_rules_chat_md_marker",
+      "relation": "rendered_with",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".agents/skills/shadcn/rules/chat.md",
+      "source_location": "L169-L170",
+      "weight": 1.0
+    },
+    {
+      "source": "_agents_skills_shadcn_rules_chat_md_base",
+      "target": "_agents_skills_shadcn_rules_chat_md_render",
+      "relation": "uses_composition",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".agents/skills/shadcn/rules/chat.md",
+      "source_location": "L8-L9",
+      "weight": 1.0
+    },
+    {
+      "source": "_agents_skills_shadcn_rules_chat_md_radix",
+      "target": "_agents_skills_shadcn_rules_chat_md_as_child",
+      "relation": "uses_composition",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".agents/skills/shadcn/rules/chat.md",
+      "source_location": "L8-L9",
+      "weight": 1.0
+    },
+    {
+      "source": "_agents_skills_shadcn_rules_chat_md_base",
+      "target": "_agents_skills_shadcn_rules_chat_md_shadcn_components",
+      "relation": "ships_component_names_and_props",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".agents/skills/shadcn/rules/chat.md",
+      "source_location": "L8-L9",
+      "weight": 1.0
+    },
+    {
+      "source": "_agents_skills_shadcn_rules_chat_md_radix",
+      "target": "_agents_skills_shadcn_rules_chat_md_shadcn_components",
+      "relation": "ships_component_names_and_props",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".agents/skills/shadcn/rules/chat.md",
+      "source_location": "L8-L9",
+      "weight": 1.0
+    },
+    {
+      "source": "_agents_skills_shadcn_rules_chat_md_scrollable_threads",
+      "target": "_agents_skills_shadcn_rules_chat_md_message_scroller",
+      "relation": "uses",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".agents/skills/shadcn/rules/chat.md",
+      "source_location": "L23-L27",
+      "weight": 1.0
+    },
+    {
+      "source": "_agents_skills_shadcn_rules_chat_md_message_scroller",
+      "target": "_agents_skills_shadcn_rules_chat_md_new_messages",
+      "relation": "follows",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".agents/skills/shadcn/rules/chat.md",
+      "source_location": "L25-L26",
+      "weight": 1.0
+    },
+    {
+      "source": "_agents_skills_shadcn_rules_chat_md_message_scroller",
+      "target": "_agents_skills_shadcn_rules_chat_md_position_restore",
+      "relation": "restores",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".agents/skills/shadcn/rules/chat.md",
+      "source_location": "L25-L26",
+      "weight": 1.0
+    },
+    {
+      "source": "_agents_skills_shadcn_rules_chat_md_message_scroller",
+      "target": "_agents_skills_shadcn_rules_chat_md_message_scroller_viewport",
+      "relation": "contains_in_order",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".agents/skills/shadcn/rules/chat.md",
+      "source_location": "L51-L53",
+      "weight": 1.0
+    },
+    {
+      "source": "_agents_skills_shadcn_rules_chat_md_message_scroller_viewport",
+      "target": "_agents_skills_shadcn_rules_chat_md_message_scroller_content",
+      "relation": "contains_in_order",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".agents/skills/shadcn/rules/chat.md",
+      "source_location": "L52-L54",
+      "weight": 1.0
+    },
+    {
+      "source": "_agents_skills_shadcn_rules_chat_md_message_scroller_content",
+      "target": "_agents_skills_shadcn_rules_chat_md_message_scroller_item",
+      "relation": "wraps_each_direct_child_with",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".agents/skills/shadcn/rules/chat.md",
+      "source_location": "L29-L31",
+      "weight": 1.0
+    },
+    {
+      "source": "_agents_skills_shadcn_rules_chat_md_message_scroller",
+      "target": "_agents_skills_shadcn_rules_chat_md_message_scroller_button",
+      "relation": "contains_after_viewport",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".agents/skills/shadcn/rules/chat.md",
+      "source_location": "L31-L32",
+      "weight": 1.0
+    },
+    {
+      "source": "_agents_skills_shadcn_rules_chat_md_message_scroller_item",
+      "target": "_agents_skills_shadcn_rules_chat_md_message_id",
+      "relation": "accepts_prop",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".agents/skills/shadcn/rules/chat.md",
+      "source_location": "L55-L58",
+      "weight": 1.0
+    },
+    {
+      "source": "_agents_skills_shadcn_rules_chat_md_message_scroller_item",
+      "target": "_agents_skills_shadcn_rules_chat_md_scroll_anchor",
+      "relation": "accepts_prop",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".agents/skills/shadcn/rules/chat.md",
+      "source_location": "L55-L58",
+      "weight": 1.0
+    },
+    {
+      "source": "_agents_skills_shadcn_rules_chat_md_message_scroller_item",
+      "target": "_agents_skills_shadcn_rules_chat_md_measure",
+      "relation": "enables",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".agents/skills/shadcn/rules/chat.md",
+      "source_location": "L29-L31",
+      "weight": 1.0
+    },
+    {
+      "source": "_agents_skills_shadcn_rules_chat_md_message_scroller_item",
+      "target": "_agents_skills_shadcn_rules_chat_md_anchoring",
+      "relation": "enables",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".agents/skills/shadcn/rules/chat.md",
+      "source_location": "L29-L31",
+      "weight": 1.0
+    },
+    {
+      "source": "_agents_skills_shadcn_rules_chat_md_message_scroller_item",
+      "target": "_agents_skills_shadcn_rules_chat_md_position_preservation",
+      "relation": "enables",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".agents/skills/shadcn/rules/chat.md",
+      "source_location": "L29-L31",
+      "weight": 1.0
+    },
+    {
+      "source": "_agents_skills_shadcn_rules_chat_md_message_scroller_item",
+      "target": "_agents_skills_shadcn_rules_chat_md_visibility_tracking",
+      "relation": "enables",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".agents/skills/shadcn/rules/chat.md",
+      "source_location": "L29-L31",
+      "weight": 1.0
+    },
+    {
+      "source": "_agents_skills_shadcn_rules_chat_md_message_scroller_item",
+      "target": "_agents_skills_shadcn_rules_chat_md_jump_to_message",
+      "relation": "enables",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".agents/skills/shadcn/rules/chat.md",
+      "source_location": "L29-L31",
+      "weight": 1.0
+    },
+    {
+      "source": "_agents_skills_shadcn_rules_chat_md_message_scroller",
+      "target": "_agents_skills_shadcn_rules_chat_md_raw_overflow_container",
+      "relation": "replaces",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".agents/skills/shadcn/rules/chat.md",
+      "source_location": "L25-L27",
+      "weight": 1.0
+    },
+    {
+      "source": "_agents_skills_shadcn_rules_chat_md_message_scroller",
+      "target": "_agents_skills_shadcn_rules_chat_md_manual_scroll_wiring",
+      "relation": "replaces",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".agents/skills/shadcn/rules/chat.md",
+      "source_location": "L25-L27",
+      "weight": 1.0
+    },
+    {
+      "source": "_agents_skills_shadcn_rules_chat_md_message_scroller",
+      "target": "_agents_skills_shadcn_rules_chat_md_scroll_area",
+      "relation": "preferred_over",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".agents/skills/shadcn/rules/chat.md",
+      "source_location": "L25-L27",
+      "weight": 1.0
+    },
+    {
+      "source": "_agents_skills_shadcn_rules_chat_md_message_rows",
+      "target": "_agents_skills_shadcn_rules_chat_md_message",
+      "relation": "uses",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".agents/skills/shadcn/rules/chat.md",
+      "source_location": "L74-L78",
+      "weight": 1.0
+    },
+    {
+      "source": "_agents_skills_shadcn_rules_chat_md_message",
+      "target": "_agents_skills_shadcn_rules_chat_md_message_avatar",
+      "relation": "lays_out",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".agents/skills/shadcn/rules/chat.md",
+      "source_location": "L76-L77",
+      "weight": 1.0
+    },
+    {
+      "source": "_agents_skills_shadcn_rules_chat_md_message",
+      "target": "_agents_skills_shadcn_rules_chat_md_message_header",
+      "relation": "lays_out",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".agents/skills/shadcn/rules/chat.md",
+      "source_location": "L76-L77",
+      "weight": 1.0
+    },
+    {
+      "source": "_agents_skills_shadcn_rules_chat_md_message",
+      "target": "_agents_skills_shadcn_rules_chat_md_message_content",
+      "relation": "lays_out",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".agents/skills/shadcn/rules/chat.md",
+      "source_location": "L76-L77",
+      "weight": 1.0
+    },
+    {
+      "source": "_agents_skills_shadcn_rules_chat_md_message",
+      "target": "_agents_skills_shadcn_rules_chat_md_message_footer",
+      "relation": "lays_out",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".agents/skills/shadcn/rules/chat.md",
+      "source_location": "L76-L77",
+      "weight": 1.0
+    },
+    {
+      "source": "_agents_skills_shadcn_rules_chat_md_message",
+      "target": "_agents_skills_shadcn_rules_chat_md_align",
+      "relation": "accepts_prop",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".agents/skills/shadcn/rules/chat.md",
+      "source_location": "L76-L80",
+      "weight": 1.0
+    },
+    {
+      "source": "_agents_skills_shadcn_rules_chat_md_message",
+      "target": "_agents_skills_shadcn_rules_chat_md_message_group",
+      "relation": "groups_with",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".agents/skills/shadcn/rules/chat.md",
+      "source_location": "L76-L78",
+      "weight": 1.0
+    },
+    {
+      "source": "_agents_skills_shadcn_rules_chat_md_message_avatar",
+      "target": "_agents_skills_shadcn_rules_chat_md_avatar",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".agents/skills/shadcn/rules/chat.md",
+      "source_location": "L84-L89",
+      "weight": 1.0
+    },
+    {
+      "source": "_agents_skills_shadcn_rules_chat_md_avatar",
+      "target": "_agents_skills_shadcn_rules_chat_md_avatar_image",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".agents/skills/shadcn/rules/chat.md",
+      "source_location": "L85-L87",
+      "weight": 1.0
+    },
+    {
+      "source": "_agents_skills_shadcn_rules_chat_md_avatar",
+      "target": "_agents_skills_shadcn_rules_chat_md_avatar_fallback",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".agents/skills/shadcn/rules/chat.md",
+      "source_location": "L85-L88",
+      "weight": 1.0
+    },
+    {
+      "source": "_agents_skills_shadcn_rules_chat_md_message_content",
+      "target": "_agents_skills_shadcn_rules_chat_md_message_header",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".agents/skills/shadcn/rules/chat.md",
+      "source_location": "L90-L95",
+      "weight": 1.0
+    },
+    {
+      "source": "_agents_skills_shadcn_rules_chat_md_message_content",
+      "target": "_agents_skills_shadcn_rules_chat_md_bubble",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".agents/skills/shadcn/rules/chat.md",
+      "source_location": "L90-L95",
+      "weight": 1.0
+    },
+    {
+      "source": "_agents_skills_shadcn_rules_chat_md_message_content",
+      "target": "_agents_skills_shadcn_rules_chat_md_message_footer",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".agents/skills/shadcn/rules/chat.md",
+      "source_location": "L90-L95",
+      "weight": 1.0
+    },
+    {
+      "source": "_agents_skills_shadcn_rules_chat_md_bubble",
+      "target": "_agents_skills_shadcn_rules_chat_md_bubble_content",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".agents/skills/shadcn/rules/chat.md",
+      "source_location": "L104-L105",
+      "weight": 1.0
+    },
+    {
+      "source": "_agents_skills_shadcn_rules_chat_md_bubble",
+      "target": "_agents_skills_shadcn_rules_chat_md_variant",
+      "relation": "accepts_prop",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".agents/skills/shadcn/rules/chat.md",
+      "source_location": "L107",
+      "weight": 1.0
+    },
+    {
+      "source": "_agents_skills_shadcn_rules_chat_md_bubble",
+      "target": "_agents_skills_shadcn_rules_chat_md_align",
+      "relation": "accepts_prop",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".agents/skills/shadcn/rules/chat.md",
+      "source_location": "L108",
+      "weight": 1.0
+    },
+    {
+      "source": "_agents_skills_shadcn_rules_chat_md_bubble_reactions",
+      "target": "_agents_skills_shadcn_rules_chat_md_bubble",
+      "relation": "positions_against",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".agents/skills/shadcn/rules/chat.md",
+      "source_location": "L110-L112",
+      "weight": 1.0
+    },
+    {
+      "source": "_agents_skills_shadcn_rules_chat_md_bubble_reactions",
+      "target": "_agents_skills_shadcn_rules_chat_md_reaction_cluster",
+      "relation": "renders",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".agents/skills/shadcn/rules/chat.md",
+      "source_location": "L110",
+      "weight": 1.0
+    },
+    {
+      "source": "_agents_skills_shadcn_rules_chat_md_bubble_reactions",
+      "target": "_agents_skills_shadcn_rules_chat_md_side",
+      "relation": "accepts_prop",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".agents/skills/shadcn/rules/chat.md",
+      "source_location": "L110-L111",
+      "weight": 1.0
+    },
+    {
+      "source": "_agents_skills_shadcn_rules_chat_md_bubble_reactions",
+      "target": "_agents_skills_shadcn_rules_chat_md_align",
+      "relation": "accepts_prop",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".agents/skills/shadcn/rules/chat.md",
+      "source_location": "L110-L111",
+      "weight": 1.0
+    },
+    {
+      "source": "_agents_skills_shadcn_rules_chat_md_bubble_reactions",
+      "target": "_agents_skills_shadcn_rules_chat_md_badge",
+      "relation": "replaces_absolute_badges_with",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".agents/skills/shadcn/rules/chat.md",
+      "source_location": "L110-L112",
+      "weight": 1.0
+    },
+    {
+      "source": "_agents_skills_shadcn_rules_chat_md_bubble_reactions",
+      "target": "_agents_skills_shadcn_rules_chat_md_absolutely_positioned_badges",
+      "relation": "avoids",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".agents/skills/shadcn/rules/chat.md",
+      "source_location": "L110-L112",
+      "weight": 1.0
+    },
+    {
+      "source": "_agents_skills_shadcn_rules_chat_md_file_image_attachments",
+      "target": "_agents_skills_shadcn_rules_chat_md_attachment",
+      "relation": "uses",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".agents/skills/shadcn/rules/chat.md",
+      "source_location": "L135-L138",
+      "weight": 1.0
+    },
+    {
+      "source": "_agents_skills_shadcn_rules_chat_md_attachment",
+      "target": "_agents_skills_shadcn_rules_chat_md_state",
+      "relation": "carries",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".agents/skills/shadcn/rules/chat.md",
+      "source_location": "L137-L139",
+      "weight": 1.0
+    },
+    {
+      "source": "_agents_skills_shadcn_rules_chat_md_attachment",
+      "target": "_agents_skills_shadcn_rules_chat_md_item",
+      "relation": "preferred_over",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".agents/skills/shadcn/rules/chat.md",
+      "source_location": "L137-L138",
+      "weight": 1.0
+    },
+    {
+      "source": "_agents_skills_shadcn_rules_chat_md_attachment",
+      "target": "_agents_skills_shadcn_rules_chat_md_custom_card",
+      "relation": "preferred_over",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".agents/skills/shadcn/rules/chat.md",
+      "source_location": "L137-L138",
+      "weight": 1.0
+    },
+    {
+      "source": "_agents_skills_shadcn_rules_chat_md_attachment",
+      "target": "_agents_skills_shadcn_rules_chat_md_real_upload_status",
+      "relation": "wires_state_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".agents/skills/shadcn/rules/chat.md",
+      "source_location": "L138-L139",
+      "weight": 1.0
+    },
+    {
+      "source": "_agents_skills_shadcn_rules_chat_md_attachment",
+      "target": "_agents_skills_shadcn_rules_chat_md_separate_spinner",
+      "relation": "avoids",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".agents/skills/shadcn/rules/chat.md",
+      "source_location": "L138-L139",
+      "weight": 1.0
+    },
+    {
+      "source": "_agents_skills_shadcn_rules_chat_md_uploading",
+      "target": "_agents_skills_shadcn_rules_chat_md_shimmer",
+      "relation": "applies_to_title",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".agents/skills/shadcn/rules/chat.md",
+      "source_location": "L141-L142",
+      "weight": 1.0
+    },
+    {
+      "source": "_agents_skills_shadcn_rules_chat_md_processing",
+      "target": "_agents_skills_shadcn_rules_chat_md_shimmer",
+      "relation": "applies_to_title",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".agents/skills/shadcn/rules/chat.md",
+      "source_location": "L141-L142",
+      "weight": 1.0
+    },
+    {
+      "source": "_agents_skills_shadcn_rules_chat_md_attachment",
+      "target": "_agents_skills_shadcn_rules_chat_md_size",
+      "relation": "accepts_prop",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".agents/skills/shadcn/rules/chat.md",
+      "source_location": "L143",
+      "weight": 1.0
+    },
+    {
+      "source": "_agents_skills_shadcn_rules_chat_md_attachment",
+      "target": "_agents_skills_shadcn_rules_chat_md_orientation",
+      "relation": "accepts_prop",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".agents/skills/shadcn/rules/chat.md",
+      "source_location": "L143",
+      "weight": 1.0
+    },
+    {
+      "source": "_agents_skills_shadcn_rules_chat_md_attachment_group",
+      "target": "_agents_skills_shadcn_rules_chat_md_attachment",
+      "relation": "lays_out_several_in_scrolling_row",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".agents/skills/shadcn/rules/chat.md",
+      "source_location": "L144",
+      "weight": 1.0
+    },
+    {
+      "source": "_agents_skills_shadcn_rules_chat_md_attachment",
+      "target": "_agents_skills_shadcn_rules_chat_md_attachment_media",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".agents/skills/shadcn/rules/chat.md",
+      "source_location": "L147-L151",
+      "weight": 1.0
+    },
+    {
+      "source": "_agents_skills_shadcn_rules_chat_md_attachment",
+      "target": "_agents_skills_shadcn_rules_chat_md_attachment_content",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".agents/skills/shadcn/rules/chat.md",
+      "source_location": "L151-L154",
+      "weight": 1.0
+    },
+    {
+      "source": "_agents_skills_shadcn_rules_chat_md_attachment",
+      "target": "_agents_skills_shadcn_rules_chat_md_attachment_actions",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".agents/skills/shadcn/rules/chat.md",
+      "source_location": "L155-L159",
+      "weight": 1.0
+    },
+    {
+      "source": "_agents_skills_shadcn_rules_chat_md_attachment_content",
+      "target": "_agents_skills_shadcn_rules_chat_md_attachment_title",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".agents/skills/shadcn/rules/chat.md",
+      "source_location": "L151-L153",
+      "weight": 1.0
+    },
+    {
+      "source": "_agents_skills_shadcn_rules_chat_md_attachment_content",
+      "target": "_agents_skills_shadcn_rules_chat_md_attachment_description",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".agents/skills/shadcn/rules/chat.md",
+      "source_location": "L151-L154",
+      "weight": 1.0
+    },
+    {
+      "source": "_agents_skills_shadcn_rules_chat_md_attachment_actions",
+      "target": "_agents_skills_shadcn_rules_chat_md_attachment_action",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".agents/skills/shadcn/rules/chat.md",
+      "source_location": "L155-L159",
+      "weight": 1.0
+    },
+    {
+      "source": "_agents_skills_shadcn_rules_chat_md_attachment_media",
+      "target": "_agents_skills_shadcn_rules_chat_md_file_text_icon",
+      "relation": "contains_for_icon_variant",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".agents/skills/shadcn/rules/chat.md",
+      "source_location": "L147-L150",
+      "weight": 1.0
+    },
+    {
+      "source": "_agents_skills_shadcn_rules_chat_md_attachment_media",
+      "target": "_agents_skills_shadcn_rules_chat_md_attachment_media_variant",
+      "relation": "accepts_prop",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".agents/skills/shadcn/rules/chat.md",
+      "source_location": "L148-L163",
+      "weight": 1.0
+    },
+    {
+      "source": "_agents_skills_shadcn_rules_chat_md_attachment_media_variant",
+      "target": "_agents_skills_shadcn_rules_chat_md_attachment_media_variant_icon",
+      "relation": "allows_value",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".agents/skills/shadcn/rules/chat.md",
+      "source_location": "L148",
+      "weight": 1.0
+    },
+    {
+      "source": "_agents_skills_shadcn_rules_chat_md_attachment_media_variant",
+      "target": "_agents_skills_shadcn_rules_chat_md_attachment_media_variant_image",
+      "relation": "allows_value",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".agents/skills/shadcn/rules/chat.md",
+      "source_location": "L163",
+      "weight": 1.0
+    },
+    {
+      "source": "_agents_skills_shadcn_rules_chat_md_attachment_action",
+      "target": "_agents_skills_shadcn_rules_chat_md_download_icon",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".agents/skills/shadcn/rules/chat.md",
+      "source_location": "L156-L158",
+      "weight": 1.0
+    },
+    {
+      "source": "_agents_skills_shadcn_rules_chat_md_attachment_media",
+      "target": "_agents_skills_shadcn_rules_chat_md_img",
+      "relation": "contains_for_image_variant",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".agents/skills/shadcn/rules/chat.md",
+      "source_location": "L163",
+      "weight": 1.0
+    },
+    {
+      "source": "_agents_skills_shadcn_rules_chat_md_marker",
+      "target": "_agents_skills_shadcn_rules_chat_md_separator",
+      "relation": "preferred_over",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".agents/skills/shadcn/rules/chat.md",
+      "source_location": "L167-L170",
+      "weight": 1.0
+    },
+    {
+      "source": "_agents_skills_shadcn_rules_chat_md_marker",
+      "target": "_agents_skills_shadcn_rules_chat_md_marker_variant",
+      "relation": "accepts_prop",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".agents/skills/shadcn/rules/chat.md",
+      "source_location": "L172-L173",
+      "weight": 1.0
+    },
+    {
+      "source": "_agents_skills_shadcn_rules_chat_md_marker_variant",
+      "target": "_agents_skills_shadcn_rules_chat_md_marker_variant_default",
+      "relation": "allows_value",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".agents/skills/shadcn/rules/chat.md",
+      "source_location": "L172",
+      "weight": 1.0
+    },
+    {
+      "source": "_agents_skills_shadcn_rules_chat_md_marker_variant",
+      "target": "_agents_skills_shadcn_rules_chat_md_marker_variant_separator",
+      "relation": "allows_value",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".agents/skills/shadcn/rules/chat.md",
+      "source_location": "L172",
+      "weight": 1.0
+    },
+    {
+      "source": "_agents_skills_shadcn_rules_chat_md_marker_variant",
+      "target": "_agents_skills_shadcn_rules_chat_md_marker_variant_border",
+      "relation": "allows_value",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".agents/skills/shadcn/rules/chat.md",
+      "source_location": "L173",
+      "weight": 1.0
+    },
+    {
+      "source": "_agents_skills_shadcn_rules_chat_md_marker",
+      "target": "_agents_skills_shadcn_rules_chat_md_marker_icon",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".agents/skills/shadcn/rules/chat.md",
+      "source_location": "L172-L174",
+      "weight": 1.0
+    },
+    {
+      "source": "_agents_skills_shadcn_rules_chat_md_marker",
+      "target": "_agents_skills_shadcn_rules_chat_md_marker_content",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".agents/skills/shadcn/rules/chat.md",
+      "source_location": "L172-L174",
+      "weight": 1.0
+    },
+    {
+      "source": "_agents_skills_shadcn_rules_chat_md_message_scroller",
+      "target": "_agents_skills_shadcn_rules_chat_md_streaming",
+      "relation": "handles",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".agents/skills/shadcn/rules/chat.md",
+      "source_location": "L196-L203",
+      "weight": 1.0
+    },
+    {
+      "source": "_agents_skills_shadcn_rules_chat_md_message_scroller",
+      "target": "_agents_skills_shadcn_rules_chat_md_anchoring",
+      "relation": "handles",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".agents/skills/shadcn/rules/chat.md",
+      "source_location": "L196-L206",
+      "weight": 1.0
+    },
+    {
+      "source": "_agents_skills_shadcn_rules_chat_md_message_scroller",
+      "target": "_agents_skills_shadcn_rules_chat_md_jump_to_latest",
+      "relation": "handles",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".agents/skills/shadcn/rules/chat.md",
+      "source_location": "L196-L210",
+      "weight": 1.0
+    },
+    {
+      "source": "_agents_skills_shadcn_rules_chat_md_message_scroller_provider",
+      "target": "_agents_skills_shadcn_rules_chat_md_auto_scroll",
+      "relation": "accepts_prop",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".agents/skills/shadcn/rules/chat.md",
+      "source_location": "L201-L204",
+      "weight": 1.0
+    },
+    {
+      "source": "_agents_skills_shadcn_rules_chat_md_auto_scroll",
+      "target": "_agents_skills_shadcn_rules_chat_md_streaming",
+      "relation": "follows_live_edge_during",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".agents/skills/shadcn/rules/chat.md",
+      "source_location": "L201-L204",
+      "weight": 1.0
+    },
+    {
+      "source": "_agents_skills_shadcn_rules_chat_md_auto_scroll",
+      "target": "_agents_skills_shadcn_rules_chat_md_user_scroll_up",
+      "relation": "yields_on",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".agents/skills/shadcn/rules/chat.md",
+      "source_location": "L201-L203",
+      "weight": 1.0
+    },
+    {
+      "source": "_agents_skills_shadcn_rules_chat_md_streaming_token_updates",
+      "target": "_agents_skills_shadcn_rules_chat_md_last_message",
+      "relation": "grows",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".agents/skills/shadcn/rules/chat.md",
+      "source_location": "L203",
+      "weight": 1.0
+    },
+    {
+      "source": "_agents_skills_shadcn_rules_chat_md_auto_scroll",
+      "target": "_agents_skills_shadcn_rules_chat_md_streaming_token_updates",
+      "relation": "follows",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".agents/skills/shadcn/rules/chat.md",
+      "source_location": "L201-L204",
+      "weight": 1.0
+    },
+    {
+      "source": "_agents_skills_shadcn_rules_chat_md_scroll_anchor",
+      "target": "_agents_skills_shadcn_rules_chat_md_anchoring",
+      "relation": "marks_row_for",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".agents/skills/shadcn/rules/chat.md",
+      "source_location": "L205-L206",
+      "weight": 1.0
+    },
+    {
+      "source": "_agents_skills_shadcn_rules_chat_md_message_scroller_button",
+      "target": "_agents_skills_shadcn_rules_chat_md_jump_to_latest",
+      "relation": "provides",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".agents/skills/shadcn/rules/chat.md",
+      "source_location": "L207-L210",
+      "weight": 1.0
+    },
+    {
+      "source": "_agents_skills_shadcn_rules_chat_md_message_scroller_button",
+      "target": "_agents_skills_shadcn_rules_chat_md_scroll_away",
+      "relation": "appears_after",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".agents/skills/shadcn/rules/chat.md",
+      "source_location": "L207-L208",
+      "weight": 1.0
+    },
+    {
+      "source": "_agents_skills_shadcn_rules_chat_md_message_scroller_button",
+      "target": "_agents_skills_shadcn_rules_chat_md_direction",
+      "relation": "accepts_prop",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".agents/skills/shadcn/rules/chat.md",
+      "source_location": "L207-L208",
+      "weight": 1.0
+    },
+    {
+      "source": "_agents_skills_shadcn_rules_chat_md_message_scroller_button",
+      "target": "_agents_skills_shadcn_rules_chat_md_own_scroll_position_state",
+      "relation": "self_manages_visibility_without",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".agents/skills/shadcn/rules/chat.md",
+      "source_location": "L207-L210",
+      "weight": 1.0
+    },
+    {
+      "source": "_agents_skills_shadcn_rules_chat_md_thinking_indicator",
+      "target": "_agents_skills_shadcn_rules_chat_md_shimmer",
+      "relation": "uses",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".agents/skills/shadcn/rules/chat.md",
+      "source_location": "L212-L214",
+      "weight": 1.0
+    },
+    {
+      "source": "_agents_skills_shadcn_rules_chat_md_message_scroller",
+      "target": "_agents_skills_shadcn_rules_chat_md_use_stick_to_bottom",
+      "relation": "replaces_manual_hook",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".agents/skills/shadcn/rules/chat.md",
+      "source_location": "L198-L199",
+      "weight": 1.0
+    },
+    {
+      "source": "_agents_skills_shadcn_rules_chat_md_message_scroller",
+      "target": "_agents_skills_shadcn_rules_chat_md_resize_observer",
+      "relation": "replaces_manual_logic",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".agents/skills/shadcn/rules/chat.md",
+      "source_location": "L198-L199",
+      "weight": 1.0
+    },
+    {
+      "source": "_agents_skills_shadcn_rules_chat_md_message_scroller",
+      "target": "_agents_skills_shadcn_rules_chat_md_scroll_top_math",
+      "relation": "replaces_manual_logic",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".agents/skills/shadcn/rules/chat.md",
+      "source_location": "L198-L199",
+      "weight": 1.0
+    },
+    {
+      "source": "_agents_skills_shadcn_rules_chat_md_use_message_scroller",
+      "target": "_agents_skills_shadcn_rules_chat_md_shadcn_react",
+      "relation": "provided_by",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".agents/skills/shadcn/rules/chat.md",
+      "source_location": "L220-L224",
+      "weight": 1.0
+    },
+    {
+      "source": "_agents_skills_shadcn_rules_chat_md_use_message_scroller_visibility",
+      "target": "_agents_skills_shadcn_rules_chat_md_shadcn_react",
+      "relation": "provided_by",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".agents/skills/shadcn/rules/chat.md",
+      "source_location": "L220-L224",
+      "weight": 1.0
+    },
+    {
+      "source": "_agents_skills_shadcn_rules_chat_md_use_message_scroller_scrollable",
+      "target": "_agents_skills_shadcn_rules_chat_md_shadcn_react",
+      "relation": "provided_by",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".agents/skills/shadcn/rules/chat.md",
+      "source_location": "L220-L224",
+      "weight": 1.0
+    },
+    {
+      "source": "_agents_skills_shadcn_rules_chat_md_use_message_scroller",
+      "target": "_agents_skills_shadcn_rules_chat_md_message_scroller",
+      "relation": "reads_state_from",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".agents/skills/shadcn/rules/chat.md",
+      "source_location": "L220-L222",
+      "weight": 1.0
+    },
+    {
+      "source": "_agents_skills_shadcn_rules_chat_md_use_message_scroller_visibility",
+      "target": "_agents_skills_shadcn_rules_chat_md_message_scroller",
+      "relation": "reads_state_from",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".agents/skills/shadcn/rules/chat.md",
+      "source_location": "L220-L222",
+      "weight": 1.0
+    },
+    {
+      "source": "_agents_skills_shadcn_rules_chat_md_use_message_scroller_scrollable",
+      "target": "_agents_skills_shadcn_rules_chat_md_message_scroller",
+      "relation": "reads_state_from",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".agents/skills/shadcn/rules/chat.md",
+      "source_location": "L220-L222",
+      "weight": 1.0
+    },
+    {
+      "source": "_agents_skills_shadcn_rules_chat_md_state",
+      "target": "_agents_skills_shadcn_rules_chat_md_idle",
+      "relation": "allows_value",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".agents/skills/shadcn/rules/chat.md",
+      "source_location": "L141",
+      "weight": 1.0
+    },
+    {
+      "source": "_agents_skills_shadcn_rules_chat_md_state",
+      "target": "_agents_skills_shadcn_rules_chat_md_uploading",
+      "relation": "allows_value",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".agents/skills/shadcn/rules/chat.md",
+      "source_location": "L141",
+      "weight": 1.0
+    },
+    {
+      "source": "_agents_skills_shadcn_rules_chat_md_state",
+      "target": "_agents_skills_shadcn_rules_chat_md_processing",
+      "relation": "allows_value",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".agents/skills/shadcn/rules/chat.md",
+      "source_location": "L141",
+      "weight": 1.0
+    },
+    {
+      "source": "_agents_skills_shadcn_rules_chat_md_state",
+      "target": "_agents_skills_shadcn_rules_chat_md_error",
+      "relation": "allows_value",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".agents/skills/shadcn/rules/chat.md",
+      "source_location": "L141",
+      "weight": 1.0
+    },
+    {
+      "source": "_agents_skills_shadcn_rules_chat_md_state",
+      "target": "_agents_skills_shadcn_rules_chat_md_done",
+      "relation": "allows_value",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".agents/skills/shadcn/rules/chat.md",
+      "source_location": "L141",
+      "weight": 1.0
+    },
+    {
+      "source": "_agents_skills_shadcn_rules_chat_md_size",
+      "target": "_agents_skills_shadcn_rules_chat_md_size_default",
+      "relation": "allows_value",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".agents/skills/shadcn/rules/chat.md",
+      "source_location": "L143",
+      "weight": 1.0
+    },
+    {
+      "source": "_agents_skills_shadcn_rules_chat_md_size",
+      "target": "_agents_skills_shadcn_rules_chat_md_size_sm",
+      "relation": "allows_value",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".agents/skills/shadcn/rules/chat.md",
+      "source_location": "L143",
+      "weight": 1.0
+    },
+    {
+      "source": "_agents_skills_shadcn_rules_chat_md_size",
+      "target": "_agents_skills_shadcn_rules_chat_md_size_xs",
+      "relation": "allows_value",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".agents/skills/shadcn/rules/chat.md",
+      "source_location": "L143",
+      "weight": 1.0
+    },
+    {
+      "source": "_agents_skills_shadcn_rules_chat_md_orientation",
+      "target": "_agents_skills_shadcn_rules_chat_md_horizontal",
+      "relation": "allows_value",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".agents/skills/shadcn/rules/chat.md",
+      "source_location": "L143",
+      "weight": 1.0
+    },
+    {
+      "source": "_agents_skills_shadcn_rules_chat_md_orientation",
+      "target": "_agents_skills_shadcn_rules_chat_md_vertical",
+      "relation": "allows_value",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".agents/skills/shadcn/rules/chat.md",
+      "source_location": "L143",
+      "weight": 1.0
+    },
+    {
+      "source": "_agents_skills_shadcn_rules_chat_md_shimmer",
+      "target": "_agents_skills_shadcn_rules_chat_md_custom_keyframe_animation",
+      "relation": "preferred_over",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".agents/skills/shadcn/rules/chat.md",
+      "source_location": "L212-L214",
+      "weight": 1.0
+    },
+    {
+      "source": "_agents_skills_shadcn_rules_chat_md_variant",
+      "target": "_agents_skills_shadcn_rules_chat_md_variant_default",
+      "relation": "allows_value",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".agents/skills/shadcn/rules/chat.md",
+      "source_location": "L107",
+      "weight": 1.0
+    },
+    {
+      "source": "_agents_skills_shadcn_rules_chat_md_variant",
+      "target": "_agents_skills_shadcn_rules_chat_md_variant_secondary",
+      "relation": "allows_value",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".agents/skills/shadcn/rules/chat.md",
+      "source_location": "L107",
+      "weight": 1.0
+    },
+    {
+      "source": "_agents_skills_shadcn_rules_chat_md_variant",
+      "target": "_agents_skills_shadcn_rules_chat_md_variant_muted",
+      "relation": "allows_value",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".agents/skills/shadcn/rules/chat.md",
+      "source_location": "L107",
+      "weight": 1.0
+    },
+    {
+      "source": "_agents_skills_shadcn_rules_chat_md_variant",
+      "target": "_agents_skills_shadcn_rules_chat_md_variant_tinted",
+      "relation": "allows_value",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".agents/skills/shadcn/rules/chat.md",
+      "source_location": "L107",
+      "weight": 1.0
+    },
+    {
+      "source": "_agents_skills_shadcn_rules_chat_md_variant",
+      "target": "_agents_skills_shadcn_rules_chat_md_variant_outline",
+      "relation": "allows_value",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".agents/skills/shadcn/rules/chat.md",
+      "source_location": "L107",
+      "weight": 1.0
+    },
+    {
+      "source": "_agents_skills_shadcn_rules_chat_md_variant",
+      "target": "_agents_skills_shadcn_rules_chat_md_variant_ghost",
+      "relation": "allows_value",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".agents/skills/shadcn/rules/chat.md",
+      "source_location": "L107",
+      "weight": 1.0
+    },
+    {
+      "source": "_agents_skills_shadcn_rules_chat_md_variant",
+      "target": "_agents_skills_shadcn_rules_chat_md_variant_destructive",
+      "relation": "allows_value",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".agents/skills/shadcn/rules/chat.md",
+      "source_location": "L107",
+      "weight": 1.0
+    },
+    {
+      "source": "_agents_skills_shadcn_rules_chat_md_align",
+      "target": "_agents_skills_shadcn_rules_chat_md_align_start",
+      "relation": "allows_value",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".agents/skills/shadcn/rules/chat.md",
+      "source_location": "L80-L80",
+      "weight": 1.0
+    },
+    {
+      "source": "_agents_skills_shadcn_rules_chat_md_align",
+      "target": "_agents_skills_shadcn_rules_chat_md_align_end",
+      "relation": "allows_value",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".agents/skills/shadcn/rules/chat.md",
+      "source_location": "L80-L80",
+      "weight": 1.0
+    },
+    {
+      "source": "_agents_skills_shadcn_rules_chat_md_side",
+      "target": "_agents_skills_shadcn_rules_chat_md_side_top",
+      "relation": "allows_value",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".agents/skills/shadcn/rules/chat.md",
+      "source_location": "L110-L111",
+      "weight": 1.0
+    },
+    {
+      "source": "_agents_skills_shadcn_rules_chat_md_side",
+      "target": "_agents_skills_shadcn_rules_chat_md_side_bottom",
+      "relation": "allows_value",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".agents/skills/shadcn/rules/chat.md",
+      "source_location": "L110-L111",
+      "weight": 1.0
+    },
+    {
+      "source": "_agents_skills_shadcn_rules_chat_md_direction",
+      "target": "_agents_skills_shadcn_rules_chat_md_direction_end",
+      "relation": "allows_value",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".agents/skills/shadcn/rules/chat.md",
+      "source_location": "L208",
+      "weight": 1.0
+    },
+    {
+      "source": "_agents_skills_shadcn_rules_chat_md_direction",
+      "target": "_agents_skills_shadcn_rules_chat_md_direction_start",
+      "relation": "allows_value",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": ".agents/skills/shadcn/rules/chat.md",
+      "source_location": "L208",
+      "weight": 1.0
+    }
+  ],
+  "hyperedges": []
+}
